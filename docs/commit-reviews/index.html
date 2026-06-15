@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Commit Reviews — React Learning</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../index.html" class="brand">⚛ React Learning</a>
+    <a href="../syllabus/index.html">Syllabus</a>
+    <a href="../sessions/index.html">Sessions</a>
+    <a href="../quizzes/index.html">Quizzes</a>
+    <a href="../labs/index.html">Labs</a>
+    <a href="../architecture/index.html">Architecture</a>
+    <a href="../session-notes/index.html">Notes</a>
+    <a href="../commit-reviews/index.html" class="active">Commits</a>
+    <a href="../prompts/index.html">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <h1>Commit Reviews</h1>
+    <p class="subtitle">
+      Every commit is reviewed here before the session ends. No moving forward without understanding
+      every line that was changed. This page is a log of that review.
+    </p>
+
+    <div class="alert alert-warning">
+      <strong>Rule:</strong> A session is not complete until the commit is reviewed here and both
+      developers can explain every changed file from memory.
+    </div>
+
+    <h2>Review Format</h2>
+    <div class="card">
+      <p><strong>Commit hash:</strong> (first 7 characters)</p>
+      <p><strong>Commit message:</strong> Exact message from the session doc</p>
+      <p><strong>Session:</strong> Which session this belongs to</p>
+      <p><strong>Files changed:</strong> List of every file with a one-line explanation</p>
+      <p><strong>Can you explain it?</strong> Yes / No (if No, session repeats)</p>
+    </div>
+
+    <hr />
+
+    <h2>Review Log</h2>
+
+    <!-- COMMIT 1 -->
+    <div class="commit-entry">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">Setup: repository structure and documentation infrastructure</span>
+        <span class="badge badge-complete">Committed</span>
+      </div>
+      <p><span class="commit-hash">Pre-curriculum</span> &nbsp;·&nbsp; 2026-06-15</p>
+      <p style="margin-top:10px;"><strong>Files created:</strong></p>
+      <ul>
+        <li><code>CLAUDE.md</code> — AI session instructions; must be read before every session</li>
+        <li><code>docs/styles.css</code> — shared dark theme CSS for all documentation pages</li>
+        <li><code>docs/index.html</code> — master navigation and progress overview</li>
+        <li><code>docs/syllabus/index.html</code> — full 40-session curriculum with dependency ordering</li>
+        <li><code>docs/sessions/index.html</code> — session navigation index</li>
+        <li><code>docs/quizzes/index.html</code> — quiz bank and score tracker</li>
+        <li><code>docs/labs/index.html</code> — lab reference index</li>
+        <li><code>docs/architecture/index.html</code> — architecture decision log (ADR-001 through ADR-005)</li>
+        <li><code>docs/session-notes/index.html</code> — running session notes</li>
+        <li><code>docs/commit-reviews/index.html</code> — this file; commit review log</li>
+        <li><code>docs/prompts/index.html</code> — prompt log with first two prompts recorded</li>
+        <li><code>src/components/.gitkeep</code> — placeholder for components folder</li>
+        <li><code>src/pages/.gitkeep</code> — placeholder for pages folder</li>
+        <li><code>src/hooks/.gitkeep</code> — placeholder for hooks folder (Layer 6+)</li>
+        <li><code>src/services/.gitkeep</code> — placeholder for service layer (Layer 4+)</li>
+        <li><code>src/mock/.gitkeep</code> — placeholder for mock data (Layer 4+)</li>
+        <li><code>src/tests/.gitkeep</code> — placeholder for tests (Layer 5+)</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>Can you explain it?</strong>
+        This commit creates the learning infrastructure only. No React code, no npm project, no application.
+        It establishes the documentation system that all future sessions depend on.
+      </p>
+    </div>
+
+    <!-- Future commit reviews go here -->
+
+  </div>
+</main>
+
+</body>
+</html>

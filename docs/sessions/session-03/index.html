@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 03 — Array map() and filter()</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <style>
+    .quiz-option { display:block; background:var(--surface-2); border:1px solid var(--border); border-radius:var(--radius); padding:10px 14px; margin-bottom:8px; cursor:pointer; font-size:14px; transition:border-color .15s,background .15s; user-select:none; }
+    .quiz-option:hover { border-color:var(--accent); background:var(--surface); }
+    .quiz-option.selected { border-color:var(--accent); background:rgba(88,166,255,.1); }
+    .quiz-option.correct  { border-color:var(--green);  background:rgba(63,185,80,.1); }
+    .quiz-option.wrong    { border-color:var(--red);    background:rgba(248,81,73,.1); }
+    .quiz-question { margin-bottom:28px; }
+    .quiz-question p { font-weight:600; margin-bottom:10px; font-size:15px; }
+    .question-num { color:var(--text-muted); font-size:12px; font-weight:400; margin-bottom:4px; }
+    .quiz-result { display:none; padding:16px 20px; border-radius:var(--radius); margin-top:16px; font-size:15px; font-weight:600; }
+    .quiz-result.pass { background:rgba(63,185,80,.12); border:1px solid var(--green); color:var(--green); }
+    .quiz-result.fail { background:rgba(248,81,73,.12); border:1px solid var(--red);   color:var(--red); }
+    .explanation { display:none; font-size:13px; color:var(--text-muted); margin-top:6px; padding:8px 12px; background:var(--surface-2); border-radius:var(--radius); border-left:2px solid var(--border); }
+    .submit-btn { background:var(--accent); color:#0d1117; border:none; border-radius:var(--radius); padding:10px 22px; font-size:14px; font-weight:700; cursor:pointer; margin-top:8px; }
+    .submit-btn:disabled { opacity:.4; cursor:not-allowed; }
+    .step { display:flex; gap:16px; margin-bottom:20px; }
+    .step-num { flex-shrink:0; width:28px; height:28px; border-radius:50%; background:var(--accent); color:#0d1117; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center; margin-top:2px; }
+    .step-body { flex:1; }
+    .step-body p { margin-bottom:6px; }
+    .section-divider { border:none; border-top:2px solid var(--border); margin:40px 0; }
+    .checklist-item { display:flex; align-items:flex-start; gap:10px; margin-bottom:10px; font-size:14px; }
+    .checklist-item input[type="checkbox"] { margin-top:3px; width:16px; height:16px; accent-color:var(--accent); flex-shrink:0; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+    <a href="../../architecture/index.html">Architecture</a>
+    <a href="../../session-notes/index.html">Notes</a>
+    <a href="../../commit-reviews/index.html">Commits</a>
+    <a href="../../prompts/index.html">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 1</span>
+      <span class="badge badge-current">Session 03</span>
+      <span style="color:var(--text-muted);font-size:13px;">JavaScript Foundations</span>
+    </div>
+    <h1>Array map() and filter()</h1>
+    <p class="subtitle">
+      These are the two most important array methods in React. <code>.map()</code> is literally
+      how every list in JSX gets rendered. <code>.filter()</code> is how search works.
+      Master both here, and Sessions 14 and 21 will feel obvious.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes &nbsp;·&nbsp; Pre-quiz → Concept → Lab → Commit → Post-quiz</div>
+
+    <h2>1. Learning Objective</h2>
+    <div class="card">
+      <ul>
+        <li>Explain what <code>.map()</code> does to an array and what it returns</li>
+        <li>Explain what <code>.filter()</code> does and what the callback must return</li>
+        <li>Confirm neither method mutates the original array</li>
+        <li>Chain <code>.filter()</code> and <code>.map()</code> together</li>
+        <li>Explain exactly how React will use <code>.map()</code> to render a list of components</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept section. Need 4/5 to proceed to the lab.</p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>You call <code>[1, 2, 3].map(x => x * 10)</code>. What is the result?</p>
+        <label class="quiz-option" data-val="a">The original array is changed to <code>[10, 20, 30]</code></label>
+        <label class="quiz-option" data-val="b">A new array <code>[10, 20, 30]</code> is returned; original is unchanged</label>
+        <label class="quiz-option" data-val="c">The number 60 (sum of all transformed values)</label>
+        <label class="quiz-option" data-val="d">undefined — map needs a return statement in a block body</label>
+        <div class="explanation"><code>.map()</code> always returns a new array of the same length. It never mutates the original. The callback runs once per item and its return value becomes the item in the new array.</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>
+          The callback passed to <code>.filter()</code> must return what type of value?
+        </p>
+        <label class="quiz-option" data-val="a">The transformed item (like <code>.map()</code>)</label>
+        <label class="quiz-option" data-val="b">The index of the item to keep</label>
+        <label class="quiz-option" data-val="c">A truthy or falsy value — truthy keeps the item, falsy removes it</label>
+        <label class="quiz-option" data-val="d">Always <code>true</code> or <code>false</code> — other values cause an error</label>
+        <div class="explanation">The filter callback is a predicate — it decides yes or no. Any truthy value (not just <code>true</code>) keeps the item. Any falsy value removes it. The item itself is not transformed — only included or excluded.</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>
+          You have <code>const nums = [1, 2, 3, 4, 5];</code><br/>
+          What does <code>nums.filter(n => n > 3)</code> return?
+        </p>
+        <label class="quiz-option" data-val="a"><code>[4, 5]</code> — a new array with only items that passed the test</label>
+        <label class="quiz-option" data-val="b"><code>[1, 2, 3]</code> — the items that did not pass</label>
+        <label class="quiz-option" data-val="c"><code>2</code> — the count of items that passed</label>
+        <label class="quiz-option" data-val="d"><code>true</code> — because some items pass</label>
+        <div class="explanation"><code>.filter()</code> returns a new array containing only items for which the callback returned truthy. Items 4 and 5 pass the <code>n &gt; 3</code> test.</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>
+          What is the key difference between <code>.map()</code> and <code>.forEach()</code>?
+        </p>
+        <label class="quiz-option" data-val="a"><code>.forEach()</code> is faster</label>
+        <label class="quiz-option" data-val="b"><code>.map()</code> mutates the original array; <code>.forEach()</code> does not</label>
+        <label class="quiz-option" data-val="c">There is no difference — they are aliases</label>
+        <label class="quiz-option" data-val="d"><code>.map()</code> returns a new array; <code>.forEach()</code> always returns undefined</label>
+        <div class="explanation">This is critical. <code>.forEach()</code> runs the callback for side effects and returns nothing (undefined). You cannot store its result. <code>.map()</code> collects the return value of each callback into a new array. In React JSX, you cannot use <code>.forEach()</code> to render a list because it returns nothing.</div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          You chain: <code>countries.filter(c => c.region === "Americas").map(c => c.name)</code><br/>
+          Starting with 5 countries (2 in Americas, 3 elsewhere), what does this return?
+        </p>
+        <label class="quiz-option" data-val="a">An array of 5 names</label>
+        <label class="quiz-option" data-val="b">An array of 2 names — only the Americas countries</label>
+        <label class="quiz-option" data-val="c">A boolean</label>
+        <label class="quiz-option" data-val="d">An error — you cannot chain these methods</label>
+        <div class="explanation">Chaining works because both methods return arrays. <code>.filter()</code> produces a new array of 2 countries. <code>.map()</code> then transforms each of those 2 into just their name. Result: 2 names.</div>
+      </div>
+
+      <button class="submit-btn" onclick="submitQuiz('pre')">Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — map() and filter()</h2>
+
+    <h3>What map() does</h3>
+    <p>
+      <code>.map()</code> runs a function on every item in an array and collects the results into
+      a brand new array of the same length. The original is never touched.
+    </p>
+    <pre><code>const numbers = [1, 2, 3];
+
+const doubled = numbers.map(function(n) {
+  return n * 2;
+});
+
+console.log(doubled);  // [2, 4, 6]
+console.log(numbers);  // [1, 2, 3] — unchanged</code></pre>
+
+    <p>Think of it this way: <code>.map()</code> asks "for every item, what should it become?"</p>
+
+    <h3>What filter() does</h3>
+    <p>
+      <code>.filter()</code> runs a test function on every item. Items that pass (truthy return)
+      go into a new array. Items that fail (falsy return) are excluded.
+    </p>
+    <pre><code>const countries = [
+  { name: "Canada",  region: "Americas" },
+  { name: "Japan",   region: "Asia" },
+  { name: "Brazil",  region: "Americas" }
+];
+
+const americas = countries.filter(function(country) {
+  return country.region === "Americas";
+});
+
+console.log(americas.length);  // 2
+console.log(countries.length); // 3 — unchanged</code></pre>
+
+    <p>Think of it this way: <code>.filter()</code> asks "for every item, should it be kept?"</p>
+
+    <h3>The callback is just a function</h3>
+    <p>
+      The argument you pass to <code>.map()</code> and <code>.filter()</code> is just a normal
+      JavaScript function. It receives the current item on each iteration. Whatever it returns
+      determines the outcome.
+    </p>
+    <pre><code>// These two are identical
+const names1 = countries.map(function(country) { return country.name; });
+
+function getName(country) { return country.name; }
+const names2 = countries.map(getName);  // pass the function by reference</code></pre>
+
+    <h3>Chaining</h3>
+    <p>
+      Because both methods return arrays, you can chain them. Filter first (narrow the list),
+      then map (transform the remaining items).
+    </p>
+    <pre><code>const americaNames = countries
+  .filter(function(c) { return c.region === "Americas"; })
+  .map(function(c)    { return c.name; });
+
+console.log(americaNames);  // ["Canada", "Brazil"]</code></pre>
+
+    <h3>map() vs forEach() — why this matters in React</h3>
+    <pre><code>// forEach — returns undefined. Cannot use in JSX.
+const result1 = [1,2,3].forEach(n => n * 2);
+console.log(result1);  // undefined
+
+// map — returns array. Can embed in JSX.
+const result2 = [1,2,3].map(n => n * 2);
+console.log(result2);  // [2, 4, 6]</code></pre>
+
+    <div class="alert alert-warning">
+      <strong>React connection:</strong> Inside JSX you will write:
+      <code>{'{'} countries.map(c => &lt;CountryCard key={'{c.id}'} name={'{c.name}'} /&gt;) {'}'}</code>
+      This only works because <code>.map()</code> returns an array of JSX elements.
+      <code>.forEach()</code> would return nothing and the screen would be blank.
+    </div>
+
+    <h3>What happens when no items match filter?</h3>
+    <pre><code>const result = countries.filter(c => c.region === "Antarctica");
+console.log(result);        // []  — empty array, not null, not undefined
+console.log(result.length); // 0</code></pre>
+
+    <p>This matters in React: an empty array renders nothing, which is the correct behaviour for "no results found."</p>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Update <code>src/countries.js</code> to use <code>.map()</code>
+      and <code>.filter()</code>. Extract names, filter by region, chain both together.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Open <code>src/countries.js</code> from Session 02.</strong> The array of 3 country objects stays. Add new code below it.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Use map() to extract all names</strong></p>
+        <pre><code>const countryNames = countries.map(function(country) {
+  return country.name;
+});
+console.log("Names:", countryNames);</code></pre>
+        <p>Before running: what length will <code>countryNames</code> be? What type will each item be?</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Use map() to build summary strings</strong></p>
+        <pre><code>const summaries = countries.map(function(country) {
+  return country.name + " (" + country.region + ")";
+});
+console.log("Summaries:", summaries);</code></pre>
+        <p>Notice: <code>.map()</code> can return any type — string, number, object, even JSX later.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Use filter() to get Americas countries</strong></p>
+        <pre><code>const americas = countries.filter(function(country) {
+  return country.region === "Americas";
+});
+console.log("Americas:", americas.length, "of", countries.length);</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Use filter() for large populations</strong></p>
+        <pre><code>const bigCountries = countries.filter(function(country) {
+  return country.population > 100000000;
+});
+console.log("Big countries:", bigCountries.map(function(c) { return c.name; }));</code></pre>
+        <p>Notice you used <code>.map()</code> inside the <code>console.log</code>. Chaining inline.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <p><strong>Chain filter and map</strong></p>
+        <pre><code>const americaNames = countries
+  .filter(function(c) { return c.region === "Americas"; })
+  .map(function(c)    { return c.name; });
+
+console.log("Americas names:", americaNames);</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <p><strong>Prove originals are untouched</strong></p>
+        <pre><code>console.log("Original still has", countries.length, "items");
+console.log("First item still:", countries[0].name);</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">8</div>
+      <div class="step-body">
+        <p><strong>Try forEach — see that it returns nothing</strong></p>
+        <pre><code>const forEachResult = countries.forEach(function(c) {
+  return c.name;  // this return does nothing useful
+});
+console.log("forEach returned:", forEachResult);  // undefined</code></pre>
+        <p>
+          This is why React uses <code>.map()</code> for rendering, never <code>.forEach()</code>.
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/countries.js</code></td><td>Updated</td><td>New map/filter examples added below existing array definition</td></tr>
+          <tr><td><code>docs/sessions/session-03/index.html</code></td><td>Created</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/countries.js docs/sessions/session-03/index.html
+git commit -m "session-03: map and filter on country array, chaining, forEach comparison"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1"><code>.map()</code> used to extract names — result is a new array of strings</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2"><code>.map()</code> used to build summary strings — callback returns a string</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3"><code>.filter()</code> used for region — callback returns a boolean expression</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4"><code>.filter().map()</code> chained — I can explain the order and why filter goes first</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5"><code>.forEach()</code> shown returning undefined</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c6"/><label for="c6">Original <code>countries</code> array length verified as unchanged after all operations</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c7"/><label for="c7">I can explain without looking: why does React use .map() and not .forEach() to render lists?</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>You call <code>[1, 2, 3].map(x => x * 10)</code>. What is the result?</p>
+        <label class="quiz-option" data-val="a">The original array is changed to <code>[10, 20, 30]</code></label>
+        <label class="quiz-option" data-val="b">A new array <code>[10, 20, 30]</code> is returned; original is unchanged</label>
+        <label class="quiz-option" data-val="c">The number 60</label>
+        <label class="quiz-option" data-val="d">undefined</label>
+        <div class="explanation">.map() returns a new array. Never mutates.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>The callback passed to <code>.filter()</code> must return what?</p>
+        <label class="quiz-option" data-val="a">The transformed item</label>
+        <label class="quiz-option" data-val="b">The index of the item to keep</label>
+        <label class="quiz-option" data-val="c">A truthy or falsy value</label>
+        <label class="quiz-option" data-val="d">Always strictly true or false</label>
+        <div class="explanation">Any truthy value keeps the item, any falsy removes it.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p><code>[1,2,3,4,5].filter(n => n > 3)</code> returns?</p>
+        <label class="quiz-option" data-val="a"><code>[4, 5]</code></label>
+        <label class="quiz-option" data-val="b"><code>[1, 2, 3]</code></label>
+        <label class="quiz-option" data-val="c"><code>2</code></label>
+        <label class="quiz-option" data-val="d"><code>true</code></label>
+        <div class="explanation">Items 4 and 5 pass the test. A new array containing them is returned.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Key difference between <code>.map()</code> and <code>.forEach()</code>?</p>
+        <label class="quiz-option" data-val="a">.forEach() is faster</label>
+        <label class="quiz-option" data-val="b">.map() mutates; .forEach() does not</label>
+        <label class="quiz-option" data-val="c">No difference</label>
+        <label class="quiz-option" data-val="d">.map() returns a new array; .forEach() returns undefined</label>
+        <div class="explanation">.forEach() cannot be used in JSX because it returns nothing.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>5 countries (2 Americas). <code>countries.filter(c => c.region === "Americas").map(c => c.name)</code> returns?</p>
+        <label class="quiz-option" data-val="a">5 names</label>
+        <label class="quiz-option" data-val="b">2 names</label>
+        <label class="quiz-option" data-val="c">A boolean</label>
+        <label class="quiz-option" data-val="d">An error</label>
+        <div class="explanation">filter narrows to 2, map transforms those 2 into names.</div>
+      </div>
+      <button class="submit-btn" onclick="submitQuiz('post')">Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>If <code>.map()</code> always returns an array of the same length, what would you use if you needed to both filter AND transform? What order do you chain them in and why?</li>
+        <li>In Session 14, we will write <code>countries.map(c => &lt;CountryCard key={c.id} ... /&gt;)</code>. Looking at that, what is the callback returning each time?</li>
+        <li>When would you use <code>.forEach()</code>? What kind of task is it suited for?</li>
+        <li>What happens if the callback inside <code>.map()</code> doesn't have a <code>return</code> statement? Try it.</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Knowledge Is Missing?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Session 14 (Rendering Lists):</strong> The entire session is <code>.map()</code> inside JSX. Without this session, Session 14 will be incomprehensible.</li>
+        <li><strong>Session 20 (Controlled Inputs / Search):</strong> Search filtering uses <code>.filter()</code> on state. You need to know it returns a new array.</li>
+        <li><strong>Session 22 (Derived State):</strong> Derived state is often a <code>.filter()</code> or <code>.map()</code> result. If you don't understand these, you won't understand why we don't need extra useState.</li>
+      </ul>
+    </div>
+
+    <h2>11. What We Learned</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>JavaScript concepts mastered:</strong> <code>.map()</code> transforms arrays, <code>.filter()</code> narrows arrays, both return new arrays, chaining, <code>.forEach()</code> vs <code>.map()</code>.</p>
+      <p><strong>React concept unlocked:</strong> You now know the exact mechanism React uses to render lists. <code>.map()</code> turns an array of data into an array of JSX. That is literally all Session 14 is.</p>
+      <p><strong>Next session:</strong> <a href="../session-04/index.html">Session 04 — Arrow Functions</a>. We rewrite all these callbacks in the shorter syntax React code uses everywhere.</p>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  function setupQuiz(p){const c=document.getElementById(p+'-quiz');if(!c)return;c.querySelectorAll('.quiz-option').forEach(o=>{o.addEventListener('click',()=>{const q=o.closest('.quiz-question');q.querySelectorAll('.quiz-option').forEach(x=>x.classList.remove('selected'));o.classList.add('selected');});});}
+  function submitQuiz(p){const c=document.getElementById(p+'-quiz');const qs=c.querySelectorAll('.quiz-question');let ok=0;qs.forEach(q=>{const ans=q.dataset.answer;const sel=q.querySelector('.quiz-option.selected');const exp=q.querySelector('.explanation');q.querySelectorAll('.quiz-option').forEach(o=>{o.style.pointerEvents='none';if(o.dataset.val===ans)o.classList.add('correct');});if(sel){if(sel.dataset.val===ans)ok++;else sel.classList.add('wrong');}if(exp)exp.style.display='block';});const r=document.getElementById(p+'-result');const pct=Math.round(ok/qs.length*100);r.style.display='block';if(ok>=4){r.className='quiz-result pass';r.innerHTML=ok+'/5 ('+pct+'%) — Passed. '+(p==='pre'?'Proceed to the lab.':'Session complete. Make your commit.');}else{r.className='quiz-result fail';r.innerHTML=ok+'/5 ('+pct+'%) — Below 80%. Re-read the concept section'+(p==='post'?' and redo the lab':'')+' then retake.';}c.querySelector('.submit-btn').disabled=true;}
+  setupQuiz('pre');setupQuiz('post');
+</script>
+
+</body>
+</html>

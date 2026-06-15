@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prompt Log — React Learning</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../index.html" class="brand">⚛ React Learning</a>
+    <a href="../syllabus/index.html">Syllabus</a>
+    <a href="../sessions/index.html">Sessions</a>
+    <a href="../quizzes/index.html">Quizzes</a>
+    <a href="../labs/index.html">Labs</a>
+    <a href="../architecture/index.html">Architecture</a>
+    <a href="../session-notes/index.html">Notes</a>
+    <a href="../commit-reviews/index.html">Commits</a>
+    <a href="../prompts/index.html" class="active">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <h1>Prompt Log</h1>
+    <p class="subtitle">
+      Every prompt sent to the AI in this project, logged in order. Future AI sessions must
+      append new prompts here before doing anything else. This is a record of intent.
+    </p>
+
+    <div class="alert alert-info">
+      <strong>For AI sessions:</strong> Append each new prompt to this file at the start of every conversation,
+      using the format below. Prompt number increments from the last entry. Include the full prompt text.
+    </div>
+
+    <!-- FORMAT REFERENCE -->
+    <h2>Entry Format</h2>
+    <pre><code>&lt;div class="prompt-entry"&gt;
+  &lt;div class="prompt-meta"&gt;
+    &lt;span&gt;#N&lt;/span&gt;
+    &lt;span&gt;YYYY-MM-DD&lt;/span&gt;
+    &lt;span&gt;Session: session-XX (or "Pre-curriculum")&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="prompt-text"&gt;...full prompt text...&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+
+    <hr />
+
+    <h2>Prompt Entries</h2>
+
+    <!-- PROMPT 1 -->
+    <div class="prompt-entry">
+      <div class="prompt-meta">
+        <span>#1</span>
+        <span>2026-06-15</span>
+        <span>Session: Pre-curriculum (Project Initialization)</span>
+      </div>
+      <div class="prompt-text">You are helping two developers learn React deeply while building a real project.
+
+IMPORTANT CONTEXT
+
+We are both experienced developers who have fallen into "vibe coding."
+
+We can build applications with AI assistance, but we do not deeply understand React architecture, rendering behavior, component design, or many frontend engineering patterns.
+
+We want to continue using AI, but our goal is to become capable engineers who understand what the AI is doing.
+
+Do NOT optimize for speed.
+
+Do NOT optimize for shipping features.
+
+Optimize for understanding.
+
+Your role is NOT code generator.
+
+Your role is teacher, curriculum architect, documentation maintainer, and guided pair programming partner.
+
+====================================================
+PRIMARY GOAL
+====================================================
+
+Create a complete React learning environment inside our repository.
+
+The repository has TWO purposes:
+
+1. Build a country-themed React application progressively.
+
+2. Serve as a self-documenting learning platform where all lessons, quizzes, labs, architecture notes, and progress tracking live inside /docs.
+
+All documentation must be static HTML pages so we can serve them locally or deploy them as a static website.
+
+Future AI sessions MUST read the documentation first before making code changes.
+
+The documentation becomes source of truth.
+
+No coding is allowed without documentation updates.
+
+====================================================
+ABSOLUTE RULES
+====================================================
+
+1. Never jump ahead.
+
+Only teach concepts in dependency order.
+
+2. One session = one tiny slice = one commit.
+
+Never make large code changes.
+
+3. Never introduce React concepts without first teaching the JavaScript concept underneath.
+
+4. Never build large features.
+
+5. Every coding session must end with documentation updates.
+
+6. We must understand every commit before proceeding.
+
+7. If we score poorly on quiz questions, repeat the lesson.
+
+8. Prefer fake/mock data before real APIs.
+
+9. Do not optimize for fancy UI.
+
+10. Code must remain beginner-readable.
+
+11. Never hide complexity behind abstractions too early.
+
+12. Force us to review every changed file.
+
+13. Every lesson should be completable in 35-40 minutes.
+
+====================================================
+WE WANT TO LEARN THESE THINGS IN ORDER
+====================================================
+
+LAYER 1 — JAVASCRIPT FOUNDATIONS (constantly reinforced)
+
+- objects
+- arrays
+- array map
+- array filter
+- spread operator
+- destructuring
+- arrow functions
+- imports exports
+- promises
+- async await
+- closures
+- function scope
+
+LAYER 2 — REACT FUNDAMENTALS
+
+- JSX
+- components are functions
+- rendering model
+- parent child relationships
+- props
+- component composition
+- conditional rendering
+- rendering lists
+- keys
+
+LAYER 3 — STATE
+
+- useState
+- event handlers
+- rerendering
+- controlled inputs
+- lifting state
+- derived state
+- local state vs shared state
+
+LAYER 4 — MOCK DATA (IMPORTANT)
+
+We explicitly want to learn frontend development using fake data.
+
+Teach us how real teams build applications before APIs exist.
+
+We want to learn:
+
+- mock JSON files
+- local data arrays
+- fake API response structures
+- temporary service layers
+- separating UI from backend dependencies
+- designing frontend against fake contracts
+
+Examples:
+
+/mock/countries.json
+
+or
+
+/services/countryService.js
+
+returning fake promises.
+
+Teach us why this matters.
+
+We want to become comfortable building frontend independently from backend.
+
+LAYER 5 — TESTING (IMPORTANT)
+
+We want testing included early.
+
+Teach:
+
+- why testing matters
+- component testing
+- test organization
+- behavior testing
+- testing rendering
+- testing props
+- testing click handlers
+- testing state changes
+- testing mock services
+
+Use:
+
+- Vitest
+- React Testing Library
+
+Do NOT postpone testing until late.
+
+Integrate it gradually.
+
+LAYER 6 — ARCHITECTURE
+
+Teach:
+
+- folder organization
+- reusable components
+- separation of concerns
+- service layer
+- hooks
+- keeping components small
+- avoiding prop drilling
+- maintainability
+
+LAYER 7 — REAL WORLD
+
+Later only:
+
+- useEffect
+- fetch
+- loading states
+- error states
+- API integration
+- caching
+- routing
+
+====================================================
+PROJECT THEME
+====================================================
+
+We are building a country-themed application.
+
+Do NOT worry about advanced game mechanics yet.
+
+Start simple.
+
+Possible progressive ideas:
+
+Phase 1 — Render countries.
+Phase 2 — Country cards.
+Phase 3 — Search countries.
+Phase 4 — Country details.
+Phase 5 — Favorites.
+Phase 6 — Quiz/game later.
+
+But teaching is more important than product.
+
+====================================================
+REPOSITORY STRUCTURE
+====================================================
+
+Create the repository structure.
+
+Example:
+
+/src
+  /components
+  /pages
+  /hooks
+  /services
+  /mock
+  /tests
+
+/docs
+  /index.html
+  /syllabus
+  /quizzes
+  /labs
+  /architecture
+  /session-notes
+  /commit-reviews
+
+CLAUDE.md
+
+====================================================
+EVERY LESSON MUST CONTAIN
+====================================================
+
+Create one HTML document per lesson.
+
+Each lesson must contain:
+
+1. Learning objective
+2. Concept explanation
+3. Underlying JavaScript explanation
+4. 5 multiple choice questions BEFORE coding
+5. Small lab objective
+6. Step-by-step implementation instructions
+7. Expected files changed
+8. Commit checkpoint
+9. Code review checklist
+10. Same quiz AFTER coding
+11. Reflection questions
+12. What could break if code removed
+13. What React concept we learned
+
+====================================================
+QUIZ RULES
+====================================================
+
+We must score 80 percent before moving forward.
+
+If not, repeat lesson.
+
+Questions should test understanding.
+
+Not memorization.
+
+Bad example: "What hook stores state?"
+
+Good example: "What happens when parent props change?"
+
+====================================================
+FIRST TASK
+====================================================
+
+Do NOT start coding.
+
+First:
+
+1. Design full 40-session curriculum.
+
+2. Show dependency ordering.
+
+3. Show repository structure.
+
+4. Create docs architecture.
+
+5. Explain learning progression.
+
+6. Wait for approval before generating files.
+
+Remember:
+
+We are dangerous vibe coders trying to become engineers.
+
+You must stop us from skipping understanding. in docs folder have a section for the prompts i send you in this project and init this project when i load you in console to remember to list those prompts in that section. also remember to have index page.</div>
+    </div>
+
+    <!-- PROMPT 2 -->
+    <div class="prompt-entry">
+      <div class="prompt-meta">
+        <span>#2</span>
+        <span>2026-06-15</span>
+        <span>Session: Pre-curriculum (Approving Design)</span>
+      </div>
+      <div class="prompt-text">npm and minimal CSS dark theme.</div>
+    </div>
+
+    <!-- PROMPT 3 -->
+    <div class="prompt-entry">
+      <div class="prompt-meta">
+        <span>#3</span>
+        <span>2026-06-15</span>
+        <span>Session: Pre-curriculum (Server Setup)</span>
+      </div>
+      <div class="prompt-text">okay can you launch on interface 00000 6969 this so i can view it using python web server</div>
+    </div>
+
+    <!-- PROMPT 4 -->
+    <div class="prompt-entry">
+      <div class="prompt-meta">
+        <span>#4</span>
+        <span>2026-06-15</span>
+        <span>Session: Session 01 (Bug Report)</span>
+      </div>
+      <div class="prompt-text">is this where the quiz is supposed to be 100.72.103.50:6969/sessions/session-01/index.html bc it is giving 404</div>
+    </div>
+
+    <!-- PROMPT 5 -->
+    <div class="prompt-entry">
+      <div class="prompt-meta">
+        <span>#5</span>
+        <span>2026-06-15</span>
+        <span>Session: Pre-curriculum (Autonomy Request)</span>
+      </div>
+      <div class="prompt-text">can you just do what you need to do without asking me permission each time</div>
+    </div>
+
+    <!-- PROMPT 6 -->
+    <div class="prompt-entry">
+      <div class="prompt-meta">
+        <span>#6</span>
+        <span>2026-06-15</span>
+        <span>Session: Pre-curriculum (Continue Request)</span>
+      </div>
+      <div class="prompt-text">play can you do the next section</div>
+    </div>
+
+    <!-- PROMPT 7 -->
+    <div class="prompt-entry">
+      <div class="prompt-meta">
+        <span>#7</span>
+        <span>2026-06-15</span>
+        <span>Session: Pre-curriculum (Autonomy Request 2)</span>
+      </div>
+      <div class="prompt-text">can you just what you need to do with whatever and not ask me permissions in this session?</div>
+    </div>
+
+    <!-- PROMPT 8 -->
+    <div class="prompt-entry">
+      <div class="prompt-meta">
+        <span>#8</span>
+        <span>2026-06-15</span>
+        <span>Session: Sessions 03–07 (Build Request)</span>
+      </div>
+      <div class="prompt-text">well yes up thru 7. but dont ask me for permisssion when you run the powershell comand</div>
+    </div>
+
+    <!-- PROMPT 9 -->
+    <div class="prompt-entry">
+      <div class="prompt-meta">
+        <span>#9</span>
+        <span>2026-06-15</span>
+        <span>Session: Pre-session (Server Setup)</span>
+      </div>
+      <div class="prompt-text">what folder is being server by pthon on 6969</div>
+    </div>
+
+    <!-- PROMPT 10 -->
+    <div class="prompt-entry">
+      <div class="prompt-meta">
+        <span>#10</span>
+        <span>2026-06-15</span>
+        <span>Session: Pre-session (Docs Relocation)</span>
+      </div>
+      <div class="prompt-text">oh shit that folder should be in here in thi folder</div>
+    </div>
+
+    <!-- PROMPT 11 -->
+    <div class="prompt-entry">
+      <div class="prompt-meta">
+        <span>#11</span>
+        <span>2026-06-15</span>
+        <span>Session: Pre-session (Confirm Move)</span>
+      </div>
+      <div class="prompt-text">2</div>
+    </div>
+
+    <!-- PROMPT 12 -->
+    <div class="prompt-entry">
+      <div class="prompt-meta">
+        <span>#12</span>
+        <span>2026-06-15</span>
+        <span>Session: Sessions 02–07 (Build Request)</span>
+      </div>
+      <div class="prompt-text">okay now can you read the docs folder to see what we been doing....i need sections 2-7 generated just like 1 was. don't ask me for per,issino just do it you cna crate whatever oflders an do whatevr you want</div>
+    </div>
+
+    <!-- Future prompts go here -->
+
+  </div>
+</main>
+
+</body>
+</html>

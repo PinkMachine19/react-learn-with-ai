@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 07 — Promises, Async, and Await</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+    @media(max-width:600px){.two-col{grid-template-columns:1fr;}}
+    .timeline{position:relative;padding-left:24px;border-left:2px solid var(--border);margin:16px 0;}
+    .timeline-item{margin-bottom:16px;position:relative;}
+    .timeline-item::before{content:'';position:absolute;left:-29px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--accent);}
+    .timeline-item .label{font-size:12px;color:var(--text-muted);margin-bottom:2px;}
+    .timeline-item p{font-size:14px;margin:0;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+    <a href="../../architecture/index.html">Architecture</a>
+    <a href="../../session-notes/index.html">Notes</a>
+    <a href="../../commit-reviews/index.html">Commits</a>
+    <a href="../../prompts/index.html">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 1</span>
+      <span class="badge badge-gate">Session 07 — Layer Gate</span>
+      <span style="color:var(--text-muted);font-size:13px;">JavaScript Foundations</span>
+    </div>
+    <h1>Promises, Async, and Await</h1>
+    <p class="subtitle">
+      This is the last JavaScript Foundation session. Async programming is how JavaScript
+      handles work that takes time: fetching data, reading files, waiting for user input.
+      React's <code>useEffect</code> and <code>fetch</code> are built entirely on this.
+      After this session, Layer 1 is complete and Layer 2 (React Fundamentals) unlocks.
+    </p>
+    <div class="alert alert-warning">
+      <strong>Layer 1 Gate:</strong> Score ≥80% on BOTH quizzes in this session. Then score ≥80%
+      on the Layer 1 Gate Quiz in the Quizzes section. Layer 2 does not unlock until the gate passes.
+    </div>
+    <div class="alert alert-info">Estimated time: 40–45 minutes</div>
+
+    <h2>1. Learning Objective</h2>
+    <div class="card">
+      <ul>
+        <li>Explain what a Promise is and its three states (pending, fulfilled, rejected)</li>
+        <li>Use <code>.then()</code> and <code>.catch()</code> to handle a resolved or rejected Promise</li>
+        <li>Mark a function as <code>async</code> and use <code>await</code> inside it</li>
+        <li>Wrap async operations in <code>try/catch</code> for error handling</li>
+        <li>Explain why async functions always return a Promise</li>
+        <li>Write a fake async country service using <code>setTimeout</code> and <code>Promise</code></li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>What are the three states a Promise can be in?</p>
+        <label class="quiz-option" data-val="a">loading, success, failure</label>
+        <label class="quiz-option" data-val="b">running, resolved, cancelled</label>
+        <label class="quiz-option" data-val="c">pending, fulfilled, rejected</label>
+        <label class="quiz-option" data-val="d">waiting, done, broken</label>
+        <div class="explanation">A Promise starts as pending. It either fulfills (succeeds) or rejects (fails). Once settled, it never changes state again.</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="a">
+        <div class="question-num">Question 2 of 5</div>
+        <p>What does <code>await</code> do inside an async function?</p>
+        <label class="quiz-option" data-val="a">Pauses execution of that function until the Promise settles, then returns the resolved value</label>
+        <label class="quiz-option" data-val="b">Converts synchronous code into asynchronous code</label>
+        <label class="quiz-option" data-val="c">Blocks the entire JavaScript thread until the Promise resolves</label>
+        <label class="quiz-option" data-val="d">Makes the function return immediately with undefined</label>
+        <div class="explanation">await pauses only that async function — the rest of JavaScript continues running. When the Promise settles, execution resumes at that point. It does NOT block the thread.</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>An async function always returns:</p>
+        <label class="quiz-option" data-val="a">undefined</label>
+        <label class="quiz-option" data-val="b">The direct return value</label>
+        <label class="quiz-option" data-val="c">A callback</label>
+        <label class="quiz-option" data-val="d">A Promise</label>
+        <div class="explanation">Marking a function async wraps its return value in a Promise. If you return 42 from an async function, callers receive Promise&lt;42&gt;, not 42 directly.</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="b">
+        <div class="question-num">Question 4 of 5</div>
+        <p>How do you handle errors from an awaited Promise?</p>
+        <label class="quiz-option" data-val="a"><code>await promise.catch(err => ...)</code></label>
+        <label class="quiz-option" data-val="b"><code>try { await promise } catch (err) { ... }</code></label>
+        <label class="quiz-option" data-val="c"><code>await try(promise)</code></label>
+        <label class="quiz-option" data-val="d">Errors from Promises cannot be caught with try/catch</label>
+        <div class="explanation">With async/await you use try/catch exactly like synchronous error handling. If the awaited Promise rejects, execution jumps to the catch block.</div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="a">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          This code runs. What does the console print, and in what order?
+          <pre><code>console.log("A");
+setTimeout(() => console.log("B"), 0);
+console.log("C");</code></pre>
+        </p>
+        <label class="quiz-option" data-val="a">A, C, B</label>
+        <label class="quiz-option" data-val="b">A, B, C</label>
+        <label class="quiz-option" data-val="c">B, A, C</label>
+        <label class="quiz-option" data-val="d">C, A, B</label>
+        <div class="explanation">setTimeout (even with 0ms) pushes the callback to the task queue. JavaScript finishes the synchronous code (A, C) first, then pulls B from the queue. This is the event loop.</div>
+      </div>
+
+      <button class="submit-btn" onclick="submitQuiz('pre')">Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — Asynchronous JavaScript</h2>
+
+    <h3>Why asynchronous code exists</h3>
+    <p>
+      JavaScript runs on a single thread. If fetching data blocked the thread, the browser would
+      freeze — no scrolling, no clicks, nothing. The solution: start the work, hand it off,
+      continue running, and pick up the result when it's ready. That handoff mechanism is a Promise.
+    </p>
+
+    <h3>The event loop (simplified)</h3>
+    <div class="timeline">
+      <div class="timeline-item"><div class="label">1. Synchronous code runs first</div><p>Your script top-to-bottom: variable declarations, function calls, console.logs.</p></div>
+      <div class="timeline-item"><div class="label">2. Async work is delegated</div><p>fetch(), setTimeout(), file reads — these are handed to the browser/Node runtime.</p></div>
+      <div class="timeline-item"><div class="label">3. Callbacks queue up</div><p>When the async work finishes, its callback or Promise resolution waits in the queue.</p></div>
+      <div class="timeline-item"><div class="label">4. Event loop picks them up</div><p>Once the call stack is empty, the event loop picks the next item from the queue and runs it.</p></div>
+    </div>
+
+    <h3>Promises — the primitive</h3>
+    <pre><code>const p = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve("data is ready");  // or: reject(new Error("something broke"))
+  }, 1000);
+});
+
+p.then(data => console.log(data))   // "data is ready" — after 1 second
+ .catch(err => console.error(err));  // only runs if rejected</code></pre>
+
+    <p>Promise states:</p>
+    <ul>
+      <li><strong>pending</strong> — initial state, neither fulfilled nor rejected</li>
+      <li><strong>fulfilled</strong> — <code>resolve(value)</code> was called; <code>.then()</code> fires</li>
+      <li><strong>rejected</strong> — <code>reject(reason)</code> was called; <code>.catch()</code> fires</li>
+    </ul>
+
+    <h3>async/await — syntactic sugar over Promises</h3>
+    <div class="two-col">
+      <div>
+        <p><strong>Promise chain style</strong></p>
+        <pre><code>function getCountries() {
+  return fetch('/api/countries')
+    .then(res => res.json())
+    .then(data => data)
+    .catch(err => console.error(err));
+}</code></pre>
+      </div>
+      <div>
+        <p><strong>async/await style (same thing)</strong></p>
+        <pre><code>async function getCountries() {
+  try {
+    const res = await fetch('/api/countries');
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+  }
+}</code></pre>
+      </div>
+    </div>
+
+    <p>Rules:</p>
+    <ul>
+      <li><code>await</code> can only be used inside an <code>async</code> function</li>
+      <li><code>async</code> functions always return a Promise (even if you return a plain value)</li>
+      <li><code>await</code> unwraps the Promise value — gives you the resolved data directly</li>
+      <li>If the Promise rejects, <code>await</code> throws — caught by <code>try/catch</code></li>
+    </ul>
+
+    <h3>Fake async — Promise.resolve and setTimeout</h3>
+    <pre><code>// Simulates a network call without a real API
+function fakeDelay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function fetchCountries() {
+  await fakeDelay(300);  // pretend network latency
+  return [
+    { id: 1, name: "Canada",  region: "Americas", population: 38000000 },
+    { id: 2, name: "Japan",   region: "Asia",      population: 125000000 },
+    { id: 3, name: "Brazil",  region: "Americas",  population: 215000000 }
+  ];
+}
+
+// Calling it:
+fetchCountries().then(countries => console.log(countries));
+// or inside another async function:
+// const countries = await fetchCountries();</code></pre>
+
+    <div class="alert alert-info">
+      <strong>React connection:</strong> In Session 32 (<code>useEffect</code> + fetch), you will
+      call a real API from inside a <code>useEffect</code>. The pattern is identical:
+      <code>async function load() &#123; const data = await fetch(...); setCountries(data); &#125;</code>.
+      The fake async service you build now trains the muscle memory for that pattern.
+    </div>
+
+    <h3>Common mistakes</h3>
+    <pre><code>// MISTAKE: await outside async function — syntax error
+function bad() {
+  const data = await fetchCountries();  // SyntaxError
+}
+
+// MISTAKE: forgetting await — gets a Promise object, not the data
+async function alsoWrong() {
+  const data = fetchCountries();  // data is Promise&lt;Array&gt;, not Array
+  console.log(data.length);       // undefined
+}
+
+// CORRECT
+async function correct() {
+  const data = await fetchCountries();  // data is Array
+  console.log(data.length);            // 3
+}</code></pre>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Create <code>src/services/countryService.js</code> — a fake async
+      data layer that wraps the country array in a simulated delay. Add named and default exports.
+      Call it from a <code>main.js</code> using async/await with error handling.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Create <code>src/services/</code> directory and <code>countryService.js</code></strong></p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Write the service module</strong></p>
+        <pre><code>// src/services/countryService.js
+import countries from '../data/countries';
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+export async function fetchAllCountries() {
+  await delay(300);
+  return [...countries];  // return a copy, not the original array
+}
+
+export async function fetchCountryById(id) {
+  await delay(150);
+  const found = countries.find(c => c.id === id);
+  if (!found) throw new Error(`Country with id ${id} not found`);
+  return found;
+}
+
+export async function fetchCountriesByRegion(region) {
+  await delay(200);
+  return countries.filter(c => c.region === region);
+}
+
+const countryService = { fetchAllCountries, fetchCountryById, fetchCountriesByRegion };
+export default countryService;</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Update <code>src/main.js</code> to use the service</strong></p>
+        <pre><code>// src/main.js
+import { fetchAllCountries, fetchCountryById, fetchCountriesByRegion } from './services/countryService';
+
+async function main() {
+  try {
+    const all = await fetchAllCountries();
+    console.log("All countries:", all.map(c => c.name));
+
+    const japan = await fetchCountryById(2);
+    console.log("Country 2:", japan.name);
+
+    const americas = await fetchCountriesByRegion("Americas");
+    console.log("Americas:", americas.map(c => c.name));
+
+    // Test error path
+    const missing = await fetchCountryById(999);
+    console.log("Should not reach here:", missing);
+  } catch (err) {
+    console.error("Caught:", err.message);
+  }
+}
+
+main();</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Run it</strong></p>
+        <pre><code>node src/main.js</code></pre>
+        <p>Expected output (roughly — timing varies):</p>
+        <pre><code>All countries: [ 'Canada', 'Japan', 'Brazil' ]
+Country 2: Japan
+Americas: [ 'Canada', 'Brazil' ]
+Caught: Country with id 999 not found</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Observe the async proof</strong></p>
+        <p>Add this before calling <code>main()</code>:</p>
+        <pre><code>console.log("Before main()");
+main();
+console.log("After main() — this runs BEFORE main() finishes");</code></pre>
+        <p>
+          You should see <em>Before main()</em> and <em>After main() — this runs...</em> printed
+          before the countries. This proves <code>main()</code> is non-blocking — the event loop
+          continues while the delays run.
+        </p>
+        <p>Remove those two extra logs after observing.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/services/countryService.js</code></td><td>Created</td><td>Fake async data layer for country data</td></tr>
+          <tr><td><code>src/main.js</code></td><td>Updated</td><td>Demonstrates async/await with error handling</td></tr>
+          <tr><td><code>docs/sessions/session-07/index.html</code></td><td>Created</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/services/countryService.js src/main.js docs/sessions/session-07/index.html
+git commit -m "session-07: async country service, promise fundamentals — Layer 1 complete"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1"><code>delay()</code> returns a Promise — I can explain how</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">All three service functions are <code>async</code> and use <code>await delay()</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3"><code>fetchCountryById</code> throws on missing id, and the throw is caught by try/catch in main()</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">I observed the non-blocking proof: "After main()" printed before the data</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I can answer: why does the service return <code>[...countries]</code> instead of just <code>countries</code>?</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c6"/><label for="c6">I can describe how useEffect + fetch will look in Session 32, based on what I built here</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz">
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>What are the three states a Promise can be in?</p>
+        <label class="quiz-option" data-val="a">loading, success, failure</label>
+        <label class="quiz-option" data-val="b">running, resolved, cancelled</label>
+        <label class="quiz-option" data-val="c">pending, fulfilled, rejected</label>
+        <label class="quiz-option" data-val="d">waiting, done, broken</label>
+        <div class="explanation">Pending → fulfilled (resolve) or rejected (reject). Once settled, never changes.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="a">
+        <div class="question-num">Question 2 of 5</div>
+        <p>What does await do inside an async function?</p>
+        <label class="quiz-option" data-val="a">Pauses that function until the Promise settles, then returns the resolved value</label>
+        <label class="quiz-option" data-val="b">Converts synchronous code into asynchronous code</label>
+        <label class="quiz-option" data-val="c">Blocks the entire JavaScript thread</label>
+        <label class="quiz-option" data-val="d">Makes the function return immediately with undefined</label>
+        <div class="explanation">await pauses only that async function — the rest of the thread keeps running.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>An async function always returns:</p>
+        <label class="quiz-option" data-val="a">undefined</label>
+        <label class="quiz-option" data-val="b">The direct return value</label>
+        <label class="quiz-option" data-val="c">A callback</label>
+        <label class="quiz-option" data-val="d">A Promise</label>
+        <div class="explanation">async always wraps the return in a Promise, even if you return a plain value.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="b">
+        <div class="question-num">Question 4 of 5</div>
+        <p>How do you handle errors from an awaited Promise?</p>
+        <label class="quiz-option" data-val="a"><code>await promise.catch(err => ...)</code></label>
+        <label class="quiz-option" data-val="b"><code>try { await promise } catch (err) { ... }</code></label>
+        <label class="quiz-option" data-val="c"><code>await try(promise)</code></label>
+        <label class="quiz-option" data-val="d">Errors cannot be caught with try/catch</label>
+        <div class="explanation">With async/await, try/catch handles rejections exactly like synchronous errors.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="a">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          <pre><code>console.log("A");
+setTimeout(() => console.log("B"), 0);
+console.log("C");</code></pre>
+          What prints and in what order?
+        </p>
+        <label class="quiz-option" data-val="a">A, C, B</label>
+        <label class="quiz-option" data-val="b">A, B, C</label>
+        <label class="quiz-option" data-val="c">B, A, C</label>
+        <label class="quiz-option" data-val="d">C, A, B</label>
+        <div class="explanation">Synchronous code (A, C) runs first. setTimeout pushes B to the task queue — runs after the call stack clears.</div>
+      </div>
+      <button class="submit-btn" onclick="submitQuiz('post')">Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>In Session 32 you'll call a real API. Compare <code>countryService.fetchAllCountries()</code> you built today to <code>fetch('/api/countries').then(r => r.json())</code>. What is different? What is the same?</li>
+        <li>If <code>fetchCountryById</code> throws an error and you forgot the <code>try/catch</code>, what happens in the caller? What would you see in the console?</li>
+        <li>Why did the lab return <code>[...countries]</code> instead of <code>countries</code>? What could go wrong if it returned the original array?</li>
+        <li>Explain the event loop proof to someone who hasn't seen it: why did "After main()" print before the country data?</li>
+      </ol>
+    </div>
+
+    <h2>10. Layer 1 Complete</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Layer 1 — JavaScript Foundations — is now complete.</strong></p>
+      <p>You have learned:</p>
+      <ul>
+        <li>Session 01: Objects, dot notation, mutation, reference semantics</li>
+        <li>Session 02: Arrays, iteration, push/pop, arrays of objects with id</li>
+        <li>Session 03: map() and filter() — the core of React list rendering</li>
+        <li>Session 04: Arrow functions — the syntax of every React component</li>
+        <li>Session 05: Destructuring and spread — how props and state updates work</li>
+        <li>Session 06: Imports and exports — how React files are assembled</li>
+        <li>Session 07: Promises, async/await — how data fetching works</li>
+      </ul>
+      <p>
+        <strong>Next step:</strong> Take the <a href="../../quizzes/index.html">Layer 1 Gate Quiz</a>.
+        Score ≥80% to unlock Layer 2.
+      </p>
+      <p>
+        After the gate, proceed to <a href="../session-08/index.html">Session 08 — Vite Setup and Your First Component</a>.
+        This is where React begins.
+      </p>
+    </div>
+
+    <h2>11. What Breaks If This Knowledge Is Missing?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>useEffect:</strong> Data fetching in React happens inside useEffect with async functions. Without async/await, you'll see Promise objects instead of data in your UI.</li>
+        <li><strong>Loading states:</strong> The non-blocking proof (data arrives later) is exactly why React has loading state patterns. You felt it in this lab.</li>
+        <li><strong>Error handling:</strong> API calls fail. Without try/catch, a failed fetch crashes silently or shows a Promise rejection in the console and leaves users with a broken UI.</li>
+      </ul>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  function setupQuiz(p){const c=document.getElementById(p+'-quiz');if(!c)return;c.querySelectorAll('.quiz-option').forEach(o=>{o.addEventListener('click',()=>{const q=o.closest('.quiz-question');q.querySelectorAll('.quiz-option').forEach(x=>x.classList.remove('selected'));o.classList.add('selected');});});}
+  function submitQuiz(p){const c=document.getElementById(p+'-quiz');const qs=c.querySelectorAll('.quiz-question');let ok=0;qs.forEach(q=>{const ans=q.dataset.answer;const sel=q.querySelector('.quiz-option.selected');const exp=q.querySelector('.explanation');q.querySelectorAll('.quiz-option').forEach(o=>{o.style.pointerEvents='none';if(o.dataset.val===ans)o.classList.add('correct');});if(sel){if(sel.dataset.val===ans)ok++;else sel.classList.add('wrong');}if(exp)exp.style.display='block';});const r=document.getElementById(p+'-result');const pct=Math.round(ok/qs.length*100);r.style.display='block';if(ok>=4){r.className='quiz-result pass';r.innerHTML=ok+'/5 ('+pct+'%) — Passed. '+(p==='pre'?'Proceed to the lab.':'Layer 1 complete. Take the Layer 1 Gate Quiz to unlock Layer 2.');}else{r.className='quiz-result fail';r.innerHTML=ok+'/5 ('+pct+'%) — Below 80%. Re-read the concept section'+(p==='post'?' and redo the lab':'')+' then retake.';}c.querySelector('.submit-btn').disabled=true;}
+  setupQuiz('pre');setupQuiz('post');
+</script>
+</body>
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 06 — Imports and Exports</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+    @media(max-width:600px){.two-col{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+    <a href="../../architecture/index.html">Architecture</a>
+    <a href="../../session-notes/index.html">Notes</a>
+    <a href="../../commit-reviews/index.html">Commits</a>
+    <a href="../../prompts/index.html">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 1</span>
+      <span class="badge badge-current">Session 06</span>
+      <span style="color:var(--text-muted);font-size:13px;">JavaScript Foundations</span>
+    </div>
+    <h1>Imports and Exports</h1>
+    <p class="subtitle">
+      React applications are split across many files. Each component lives in its own file.
+      Data lives in its own file. Services live in their own files. ES modules — imports and
+      exports — are how all these files talk to each other. Without this session, you cannot
+      understand how a React app is assembled.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <h2>1. Learning Objective</h2>
+    <div class="card">
+      <ul>
+        <li>Explain the difference between named exports and default exports</li>
+        <li>Write a named export and import it correctly (with curly braces)</li>
+        <li>Write a default export and import it (without curly braces)</li>
+        <li>Import multiple named exports in one statement</li>
+        <li>Explain why a file can only have one default export</li>
+        <li>Move the countries array into its own module and import it</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>
+          File A has: <code>export const PI = 3.14;</code><br/>
+          How does File B import it?
+        </p>
+        <label class="quiz-option" data-val="a"><code>import PI from './fileA';</code></label>
+        <label class="quiz-option" data-val="b"><code>import { PI } from './fileA';</code></label>
+        <label class="quiz-option" data-val="c"><code>import * PI from './fileA';</code></label>
+        <label class="quiz-option" data-val="d"><code>require('./fileA').PI;</code></label>
+        <div class="explanation">Named exports are imported with curly braces. The name inside the braces must match the exported name exactly. No curly braces is for default exports.</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>
+          File A has: <code>export default function greet() { return "hi"; }</code><br/>
+          How does File B import it?
+        </p>
+        <label class="quiz-option" data-val="a"><code>import { greet } from './fileA';</code></label>
+        <label class="quiz-option" data-val="b"><code>import { default } from './fileA';</code></label>
+        <label class="quiz-option" data-val="c"><code>import greet from './fileA';</code></label>
+        <label class="quiz-option" data-val="d"><code>import greet() from './fileA';</code></label>
+        <div class="explanation">Default exports are imported without curly braces. You can name them anything you like — <code>import myGreet from './fileA'</code> would also work.</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>How many default exports can a single file have?</p>
+        <label class="quiz-option" data-val="a">Unlimited — that's the point of default</label>
+        <label class="quiz-option" data-val="b">Two — one function, one value</label>
+        <label class="quiz-option" data-val="c">It depends on file size</label>
+        <label class="quiz-option" data-val="d">Exactly one — multiple defaults cause a syntax error</label>
+        <div class="explanation">A file can have exactly one default export. It represents the primary thing the file provides. You can have as many named exports as you want alongside it.</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>
+          File A exports: <code>export const x = 1; export const y = 2;</code><br/>
+          How do you import both in one line?
+        </p>
+        <label class="quiz-option" data-val="a"><code>import { x, y } from './fileA';</code></label>
+        <label class="quiz-option" data-val="b"><code>import x, y from './fileA';</code></label>
+        <label class="quiz-option" data-val="c"><code>import { x } and { y } from './fileA';</code></label>
+        <label class="quiz-option" data-val="d"><code>import x from './fileA'; import y from './fileA';</code></label>
+        <div class="explanation">Multiple named exports are imported together in one set of curly braces, comma-separated.</div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          You import a named export as a different name: <code>import { PI as pi } from './math';</code><br/>
+          What is the local variable name you can use?
+        </p>
+        <label class="quiz-option" data-val="a">PI — the original name always takes precedence</label>
+        <label class="quiz-option" data-val="b">pi — the alias after <code>as</code> is the local name</label>
+        <label class="quiz-option" data-val="c">Both PI and pi are available</label>
+        <label class="quiz-option" data-val="d">An error — you cannot alias imports</label>
+        <div class="explanation">The <code>as</code> keyword creates an alias. <code>PI</code> is no longer available — only <code>pi</code> is. This is useful when two modules export something with the same name.</div>
+      </div>
+
+      <button class="submit-btn" onclick="submitQuiz('pre')">Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — ES Modules</h2>
+
+    <h3>Why modules exist</h3>
+    <p>
+      Without modules, every JavaScript file shares the same global scope. Variables collide,
+      dependencies are unclear, and files cannot be tested in isolation. ES modules solve this:
+      each file has its own scope, and you explicitly declare what you share.
+    </p>
+
+    <h3>Named exports</h3>
+    <div class="two-col">
+      <div>
+        <p><strong>Exporting (math.js)</strong></p>
+        <pre><code>export const PI = 3.14159;
+
+export function add(a, b) {
+  return a + b;
+}
+
+export const multiply = (a, b) => a * b;</code></pre>
+      </div>
+      <div>
+        <p><strong>Importing</strong></p>
+        <pre><code>import { PI, add, multiply } from './math';
+
+console.log(PI);           // 3.14159
+console.log(add(2, 3));    // 5
+console.log(multiply(4,5)); // 20</code></pre>
+      </div>
+    </div>
+
+    <p>Rules for named exports:</p>
+    <ul>
+      <li>Must use curly braces when importing</li>
+      <li>The name must match exactly (or use <code>as</code> to alias)</li>
+      <li>A file can have as many named exports as needed</li>
+    </ul>
+
+    <h3>Default exports</h3>
+    <div class="two-col">
+      <div>
+        <p><strong>Exporting (CountryCard.jsx)</strong></p>
+        <pre><code>function CountryCard({ name }) {
+  return name;
+}
+
+export default CountryCard;</code></pre>
+      </div>
+      <div>
+        <p><strong>Importing</strong></p>
+        <pre><code>// Name can be anything
+import CountryCard from './CountryCard';
+import Card from './CountryCard'; // also valid</code></pre>
+      </div>
+    </div>
+
+    <p>Rules for default exports:</p>
+    <ul>
+      <li>No curly braces when importing</li>
+      <li>The importer can choose any local name</li>
+      <li>Only one default export per file</li>
+    </ul>
+
+    <div class="alert alert-info">
+      <strong>React convention:</strong> Each component file has one default export — the component itself.
+      Helper functions or constants in the same file use named exports. When you see
+      <code>import React from 'react'</code> or <code>import CountryCard from './CountryCard'</code>,
+      those are default imports.
+    </div>
+
+    <h3>Mixing named and default in one file</h3>
+    <pre><code>// countries.js
+export const REGIONS = ["Americas", "Asia", "Europe", "Africa"];
+
+export function findById(countries, id) {
+  return countries.find(c => c.id === id);
+}
+
+const countries = [
+  { id: 1, name: "Canada",  region: "Americas", population: 38000000 },
+  { id: 2, name: "Japan",   region: "Asia",      population: 125000000 },
+  { id: 3, name: "Brazil",  region: "Americas",  population: 215000000 }
+];
+
+export default countries;</code></pre>
+
+    <pre><code>// main.js — import both types from one file
+import countries, { REGIONS, findById } from './countries';
+
+console.log(countries.length);  // 3
+console.log(REGIONS);           // ["Americas", "Asia", ...]
+console.log(findById(countries, 2).name); // "Japan"</code></pre>
+
+    <h3>Import paths</h3>
+    <pre><code>// Relative path — file in same or nearby directory
+import countries from './countries';        // same folder
+import countries from '../data/countries';  // up one, then into data/
+
+// Package import — from node_modules (no ./ prefix)
+import React from 'react';
+import { useState } from 'react';</code></pre>
+
+    <div class="alert alert-warning">
+      In plain Node.js you may need <code>.js</code> extension. In Vite (our React setup, starting Session 08),
+      extensions can be omitted for <code>.js</code> and <code>.jsx</code> files.
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Move the countries array into <code>src/data/countries.js</code>
+      as a default export. Add named exports for helper data and functions. Import and use them from a separate file.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Create the data directory and new file</strong></p>
+        <p>Create <code>src/data/countries.js</code> (new directory, new file).</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Add named exports and a default export</strong></p>
+        <pre><code>// src/data/countries.js
+
+export const REGIONS = ["Americas", "Asia", "Europe", "Africa", "Oceania"];
+
+export function findById(countries, id) {
+  return countries.find(c => c.id === id);
+}
+
+export function filterByRegion(countries, region) {
+  return countries.filter(c => c.region === region);
+}
+
+const countries = [
+  { id: 1, name: "Canada",  region: "Americas", population: 38000000 },
+  { id: 2, name: "Japan",   region: "Asia",      population: 125000000 },
+  { id: 3, name: "Brazil",  region: "Americas",  population: 215000000 }
+];
+
+export default countries;</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Create <code>src/main.js</code> to import and use it</strong></p>
+        <pre><code>// src/main.js
+import countries, { REGIONS, findById, filterByRegion } from './data/countries';
+
+console.log("Countries:", countries.length);
+console.log("Regions:", REGIONS);
+console.log("Find id 2:", findById(countries, 2).name);
+console.log("Americas:", filterByRegion(countries, "Americas").map(c => c.name));</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Run it</strong></p>
+        <p>In your terminal, from the <code>src/</code> folder (or using Node directly):</p>
+        <pre><code>node src/main.js</code></pre>
+        <p>
+          If you get a module error, add <code>"type": "module"</code> to a <code>package.json</code>
+          in the root, or rename to <code>.mjs</code>. In Session 08 this will be handled automatically by Vite.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Try importing the default under a different name</strong></p>
+        <pre><code>// This is valid — default exports can be named anything
+import allCountries from './data/countries';
+console.log(allCountries === countries); // true if same import — same module instance</code></pre>
+        <p>This shows that the name of a default import is local — it's just a variable.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/data/countries.js</code></td><td>Created</td><td>Country data moved to its own module with named and default exports</td></tr>
+          <tr><td><code>src/main.js</code></td><td>Created</td><td>Demonstrates importing from the module</td></tr>
+          <tr><td><code>docs/sessions/session-06/index.html</code></td><td>Created</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="alert alert-warning">
+      <code>src/countries.js</code> (from earlier sessions) stays as-is for reference. The new canonical data file is <code>src/data/countries.js</code>. From Session 08 onward, components will import from <code>src/data/countries.js</code>.
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/data/countries.js src/main.js docs/sessions/session-06/index.html
+git commit -m "session-06: move country data to module, named and default exports"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1"><code>src/data/countries.js</code> has a default export (the array) and named exports (REGIONS, helpers)</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">Default import in main.js has no curly braces</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">Named imports in main.js use curly braces</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">All four imports used and logged successfully</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I can explain without looking: why does the default import not need curly braces?</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c6"/><label for="c6">I can explain: what would break if I wrote <code>import { countries } from './data/countries'</code> (curly braces around the default)?</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>File A: <code>export const PI = 3.14;</code> — how does File B import it?</p>
+        <label class="quiz-option" data-val="a"><code>import PI from './fileA';</code></label>
+        <label class="quiz-option" data-val="b"><code>import { PI } from './fileA';</code></label>
+        <label class="quiz-option" data-val="c"><code>import * PI from './fileA';</code></label>
+        <label class="quiz-option" data-val="d"><code>require('./fileA').PI;</code></label>
+        <div class="explanation">Named exports use curly braces when importing.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>File A: <code>export default function greet() {}</code> — how does File B import it?</p>
+        <label class="quiz-option" data-val="a"><code>import { greet } from './fileA';</code></label>
+        <label class="quiz-option" data-val="b"><code>import { default } from './fileA';</code></label>
+        <label class="quiz-option" data-val="c"><code>import greet from './fileA';</code></label>
+        <label class="quiz-option" data-val="d"><code>import greet() from './fileA';</code></label>
+        <div class="explanation">Default exports import without curly braces. The name is chosen by the importer.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>How many default exports can a single file have?</p>
+        <label class="quiz-option" data-val="a">Unlimited</label>
+        <label class="quiz-option" data-val="b">Two</label>
+        <label class="quiz-option" data-val="c">Depends on file size</label>
+        <label class="quiz-option" data-val="d">Exactly one</label>
+        <div class="explanation">One default export per file. Syntax error otherwise.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>File A exports <code>x</code> and <code>y</code> as named exports. Import both in one line?</p>
+        <label class="quiz-option" data-val="a"><code>import { x, y } from './fileA';</code></label>
+        <label class="quiz-option" data-val="b"><code>import x, y from './fileA';</code></label>
+        <label class="quiz-option" data-val="c"><code>import { x } and { y } from './fileA';</code></label>
+        <label class="quiz-option" data-val="d">Two separate import statements required</label>
+        <div class="explanation">Multiple named exports in one set of curly braces, comma-separated.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p><code>import { PI as pi } from './math';</code> — what is the local variable name?</p>
+        <label class="quiz-option" data-val="a">PI</label>
+        <label class="quiz-option" data-val="b">pi</label>
+        <label class="quiz-option" data-val="c">Both</label>
+        <label class="quiz-option" data-val="d">Error</label>
+        <div class="explanation">The alias after <code>as</code> is the local name. PI is not accessible.</div>
+      </div>
+      <button class="submit-btn" onclick="submitQuiz('post')">Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>A React component file typically has one default export (the component) and sometimes named exports (helper functions). Why do you think that convention exists?</li>
+        <li>When you write <code>import { useState } from 'react'</code>, is <code>useState</code> a named or default export from the React package?</li>
+        <li>If two different modules you're importing both export a function named <code>format</code>, how would you handle the collision?</li>
+        <li>Predict the folder structure of a React app after Session 10. How many files will there be and what will each export?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Knowledge Is Missing?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Session 08 onward:</strong> Every React file uses imports. Without understanding named vs default, you will see <code>import</code> errors constantly and not know why.</li>
+        <li><strong>The curly brace mistake:</strong> Trying to import a default export with curly braces (<code>import { CountryCard }</code>) gives <code>undefined</code> or an error. This is the most common import mistake.</li>
+        <li><strong>Session 28 (Testing):</strong> Tests import the component under test. Understanding default imports is required.</li>
+      </ul>
+    </div>
+
+    <h2>11. What We Learned</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>JavaScript concept mastered:</strong> ES modules — named exports, default exports, import syntax, aliases, relative paths.</p>
+      <p><strong>React concept unlocked:</strong> Every React component file uses this. <code>import React from 'react'</code>, <code>import { useState } from 'react'</code>, <code>export default CountryCard</code> — all of this makes sense now.</p>
+      <p><strong>Next session:</strong> <a href="../session-07/index.html">Session 07 — Promises, Async, and Await</a>. The last JavaScript foundation before we touch React. After this, Layer 2 unlocks.</p>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  function setupQuiz(p){const c=document.getElementById(p+'-quiz');if(!c)return;c.querySelectorAll('.quiz-option').forEach(o=>{o.addEventListener('click',()=>{const q=o.closest('.quiz-question');q.querySelectorAll('.quiz-option').forEach(x=>x.classList.remove('selected'));o.classList.add('selected');});});}
+  function submitQuiz(p){const c=document.getElementById(p+'-quiz');const qs=c.querySelectorAll('.quiz-question');let ok=0;qs.forEach(q=>{const ans=q.dataset.answer;const sel=q.querySelector('.quiz-option.selected');const exp=q.querySelector('.explanation');q.querySelectorAll('.quiz-option').forEach(o=>{o.style.pointerEvents='none';if(o.dataset.val===ans)o.classList.add('correct');});if(sel){if(sel.dataset.val===ans)ok++;else sel.classList.add('wrong');}if(exp)exp.style.display='block';});const r=document.getElementById(p+'-result');const pct=Math.round(ok/qs.length*100);r.style.display='block';if(ok>=4){r.className='quiz-result pass';r.innerHTML=ok+'/5 ('+pct+'%) — Passed. '+(p==='pre'?'Proceed to the lab.':'Session complete. Make your commit.');}else{r.className='quiz-result fail';r.innerHTML=ok+'/5 ('+pct+'%) — Below 80%. Re-read the concept section'+(p==='post'?' and redo the lab':'')+' then retake.';}c.querySelector('.submit-btn').disabled=true;}
+  setupQuiz('pre');setupQuiz('post');
+</script>
+</body>
+</html>

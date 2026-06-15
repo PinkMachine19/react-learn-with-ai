@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Labs — React Learning</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../index.html" class="brand">⚛ React Learning</a>
+    <a href="../syllabus/index.html">Syllabus</a>
+    <a href="../sessions/index.html">Sessions</a>
+    <a href="../quizzes/index.html">Quizzes</a>
+    <a href="../labs/index.html" class="active">Labs</a>
+    <a href="../architecture/index.html">Architecture</a>
+    <a href="../session-notes/index.html">Notes</a>
+    <a href="../commit-reviews/index.html">Commits</a>
+    <a href="../prompts/index.html">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <h1>Lab Reference Index</h1>
+    <p class="subtitle">
+      Labs are the hands-on portion of each session. Each lab has a tiny, specific objective.
+      Labs are embedded in the session doc — this page is an index for quick lookup.
+    </p>
+
+    <div class="alert alert-info">
+      Labs are designed to be completed in under 20 minutes. The rest of the session is
+      spent reading, quizzing, and reviewing the commit.
+    </div>
+
+    <h2>Lab Objectives by Session</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Lab Objective</th>
+            <th>Files Touched</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="../sessions/session-01/index.html">01</a></td>
+            <td>Define one country as a JavaScript object in a plain .js file</td>
+            <td><code>src/country.js</code></td>
+            <td><span class="badge badge-current">Current</span></td>
+          </tr>
+          <tr>
+            <td>02</td>
+            <td>Store 3 countries in an array; iterate and log each name</td>
+            <td><code>src/countries.js</code></td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>03</td>
+            <td>Map countries to an array of names; filter by region</td>
+            <td><code>src/countries.js</code></td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>04</td>
+            <td>Rewrite all functions using arrow function syntax</td>
+            <td><code>src/countries.js</code></td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>05</td>
+            <td>Destructure a country object; clone one with spread</td>
+            <td><code>src/countries.js</code></td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>06</td>
+            <td>Move country data to its own module; import it elsewhere</td>
+            <td><code>src/data/countries.js</code></td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>07</td>
+            <td>Write a fake async function that resolves country data after a delay</td>
+            <td><code>src/data/countries.js</code></td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>08</td>
+            <td>Create first React project with Vite; understand generated files</td>
+            <td>New Vite project files</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>09</td>
+            <td>Write JSX with a JS expression embedded; see compiled output</td>
+            <td><code>src/App.jsx</code></td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>Write the CountryCard component as a function returning JSX</td>
+            <td><code>src/components/CountryCard.jsx</code></td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td>Accept name and region as props; render them in CountryCard</td>
+            <td><code>src/components/CountryCard.jsx</code>, <code>src/App.jsx</code></td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td>Build CountryList that renders multiple CountryCard components</td>
+            <td><code>src/components/CountryList.jsx</code></td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>13</td>
+            <td>Conditionally render "No countries found" when list is empty</td>
+            <td><code>src/components/CountryList.jsx</code></td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>14</td>
+            <td>Use .map() inside JSX to render all countries from an array</td>
+            <td><code>src/components/CountryList.jsx</code></td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>15</td>
+            <td>Add keys to list items; deliberately remove them and observe console</td>
+            <td><code>src/components/CountryList.jsx</code></td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p style="color:var(--text-muted); font-size:13px;">
+      Lab objectives for sessions 16–40 will be added as layers unlock.
+    </p>
+
+  </div>
+</main>
+
+</body>
+</html>

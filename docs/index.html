@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>React Learning Environment</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="index.html" class="brand active">⚛ React Learning</a>
+    <a href="syllabus/index.html">Syllabus</a>
+    <a href="sessions/index.html">Sessions</a>
+    <a href="quizzes/index.html">Quizzes</a>
+    <a href="labs/index.html">Labs</a>
+    <a href="architecture/index.html">Architecture</a>
+    <a href="session-notes/index.html">Notes</a>
+    <a href="commit-reviews/index.html">Commits</a>
+    <a href="prompts/index.html">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <h1>React Learning Environment</h1>
+    <p class="subtitle">
+      A structured, documentation-first curriculum for two engineers who want to understand
+      React deeply — not just ship code.
+    </p>
+
+    <!-- Progress Overview -->
+    <div class="card">
+      <div class="card-title">Overall Progress</div>
+      <div class="progress-wrap">
+        <div class="progress-label">
+          <span>Sessions completed</span>
+          <span id="progress-text">0 / 40</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar" style="width: 0%"></div>
+        </div>
+      </div>
+      <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:10px;">
+        <span class="badge badge-complete">Complete: 0</span>
+        <span class="badge badge-current">Active: Session 1</span>
+        <span class="badge badge-locked">Locked: 39</span>
+      </div>
+    </div>
+
+    <!-- Active Session Banner -->
+    <div class="alert alert-info" style="margin-bottom: 32px;">
+      <strong>Active session:</strong>
+      <a href="sessions/session-01/index.html">Session 01 — Objects in JavaScript</a>
+      &nbsp;·&nbsp; Layer 1: JavaScript Foundations
+    </div>
+
+    <!-- Navigation Grid -->
+    <h2>Documentation Sections</h2>
+
+    <div class="nav-grid">
+      <a class="nav-card" href="syllabus/index.html">
+        <div class="nav-card-title">Syllabus</div>
+        <div class="nav-card-desc">All 40 sessions, layer breakdown, unlock gates, and dependency ordering.</div>
+      </a>
+      <a class="nav-card" href="sessions/index.html">
+        <div class="nav-card-title">Sessions</div>
+        <div class="nav-card-desc">Individual lesson docs — objectives, quizzes, labs, and commit checkpoints.</div>
+      </a>
+      <a class="nav-card" href="quizzes/index.html">
+        <div class="nav-card-title">Quizzes</div>
+        <div class="nav-card-desc">Quiz bank and score tracker. Must score 80% to advance each layer.</div>
+      </a>
+      <a class="nav-card" href="labs/index.html">
+        <div class="nav-card-title">Labs</div>
+        <div class="nav-card-desc">Lab reference index. Step-by-step coding exercises per session.</div>
+      </a>
+      <a class="nav-card" href="architecture/index.html">
+        <div class="nav-card-title">Architecture</div>
+        <div class="nav-card-desc">Architecture decision log. Every structural choice documented here.</div>
+      </a>
+      <a class="nav-card" href="session-notes/index.html">
+        <div class="nav-card-title">Session Notes</div>
+        <div class="nav-card-desc">Running notes from each session. Questions raised and answered.</div>
+      </a>
+      <a class="nav-card" href="commit-reviews/index.html">
+        <div class="nav-card-title">Commit Reviews</div>
+        <div class="nav-card-desc">Every commit reviewed here before moving forward. No skipping.</div>
+      </a>
+      <a class="nav-card" href="prompts/index.html">
+        <div class="nav-card-title">Prompt Log</div>
+        <div class="nav-card-desc">Every prompt sent to the AI in this project, logged in order.</div>
+      </a>
+    </div>
+
+    <!-- Learning Layers -->
+    <h2>Curriculum Layers</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Layer</th>
+            <th>Topic</th>
+            <th>Sessions</th>
+            <th>Status</th>
+            <th>Unlock Condition</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="badge badge-layer">1</span></td>
+            <td>JavaScript Foundations</td>
+            <td>01 – 07</td>
+            <td><span class="badge badge-current">Active</span></td>
+            <td>None — starting point</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-layer">2</span></td>
+            <td>React Fundamentals</td>
+            <td>08 – 15</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+            <td>Session 07 quiz ≥ 80%</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-layer">3</span></td>
+            <td>State</td>
+            <td>16 – 22</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+            <td>Session 15 quiz ≥ 80%</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-layer">4</span></td>
+            <td>Mock Data</td>
+            <td>23 – 26</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+            <td>Session 22 quiz ≥ 80%</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-layer">5</span></td>
+            <td>Testing</td>
+            <td>27 – 31</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+            <td>Session 26 quiz ≥ 80%</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-layer">6</span></td>
+            <td>Architecture</td>
+            <td>32 – 36</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+            <td>Session 31 quiz ≥ 80%</td>
+          </tr>
+          <tr>
+            <td><span class="badge badge-layer">7</span></td>
+            <td>Real World</td>
+            <td>37 – 40</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+            <td>Session 36 quiz ≥ 80%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Rules reminder -->
+    <h2>Rules We Follow</h2>
+    <div class="card">
+      <ol>
+        <li>Never jump ahead — concepts taught in strict dependency order.</li>
+        <li>One session = one tiny slice = one commit.</li>
+        <li>Never teach React without first teaching the JavaScript underneath.</li>
+        <li>Never build large features.</li>
+        <li>Every coding session ends with documentation updates.</li>
+        <li>We must understand every commit before proceeding.</li>
+        <li>Score below 80% on a quiz = repeat the lesson.</li>
+        <li>Always use fake/mock data before real APIs.</li>
+        <li>Do not optimize for fancy UI.</li>
+        <li>Code must stay beginner-readable.</li>
+        <li>Never hide complexity behind abstractions too early.</li>
+        <li>Force review of every changed file.</li>
+        <li>Every lesson completable in 35–40 minutes.</li>
+      </ol>
+    </div>
+
+    <p class="subtitle" style="margin-top: 32px;">
+      Package manager: <code>npm</code> &nbsp;·&nbsp;
+      Framework: <code>React + Vite</code> &nbsp;·&nbsp;
+      Testing: <code>Vitest + React Testing Library</code> &nbsp;·&nbsp;
+      Language: <code>JavaScript (no TypeScript)</code>
+    </p>
+
+  </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Architecture — React Learning</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../index.html" class="brand">⚛ React Learning</a>
+    <a href="../syllabus/index.html">Syllabus</a>
+    <a href="../sessions/index.html">Sessions</a>
+    <a href="../quizzes/index.html">Quizzes</a>
+    <a href="../labs/index.html">Labs</a>
+    <a href="../architecture/index.html" class="active">Architecture</a>
+    <a href="../session-notes/index.html">Notes</a>
+    <a href="../commit-reviews/index.html">Commits</a>
+    <a href="../prompts/index.html">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <h1>Architecture Decisions</h1>
+    <p class="subtitle">
+      Every structural decision in this project is documented here with the reason behind it.
+      Architecture is not decided by instinct — it is decided consciously and recorded.
+    </p>
+
+    <div class="alert alert-info">
+      When we make a new structural decision — where a file goes, why a component is split,
+      why a folder was created — it gets recorded here before or immediately after the commit.
+    </div>
+
+    <!-- ADR FORMAT -->
+    <h2>Entry Format</h2>
+    <div class="card">
+      <p><strong>Decision:</strong> What we decided.</p>
+      <p><strong>Session:</strong> When we decided it.</p>
+      <p><strong>Why:</strong> The reasoning.</p>
+      <p><strong>Alternatives considered:</strong> What else we could have done.</p>
+      <p><strong>Consequence:</strong> What this decision requires or prevents in the future.</p>
+    </div>
+
+    <hr />
+
+    <!-- DECISION 1 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">ADR-001 — Plain JavaScript (no TypeScript)</span>
+        <span class="badge badge-layer">Pre-curriculum</span>
+      </div>
+      <p><strong>Decision:</strong> Use plain JavaScript throughout the entire curriculum. No TypeScript.</p>
+      <p><strong>Session:</strong> Pre-curriculum (project initialization)</p>
+      <p><strong>Why:</strong> Adding TypeScript types introduces a second mental model on top of React's mental model. Students learning both simultaneously will attribute confusion to the wrong thing. Type errors will distract from the React concept being taught.</p>
+      <p><strong>Alternatives considered:</strong> TypeScript from the start (common in professional environments); adding TypeScript in Layer 6 as an architecture topic.</p>
+      <p><strong>Consequence:</strong> We do not add TypeScript. If this is revisited, it becomes its own session with its own session doc. No implicit TypeScript introduced via library types.</p>
+    </div>
+
+    <!-- DECISION 2 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">ADR-002 — npm as package manager</span>
+        <span class="badge badge-layer">Pre-curriculum</span>
+      </div>
+      <p><strong>Decision:</strong> Use npm. Not pnpm, not yarn.</p>
+      <p><strong>Session:</strong> Pre-curriculum (student preference)</p>
+      <p><strong>Why:</strong> Fewest moving parts. npm comes with Node.js — no additional install. Reduces environment variables. Students can Google npm errors more easily.</p>
+      <p><strong>Alternatives considered:</strong> pnpm (faster, disk-efficient, stricter); yarn (historically popular, slightly nicer output).</p>
+      <p><strong>Consequence:</strong> All install commands use <code>npm install</code>. Lock file is <code>package-lock.json</code>. Scripts run with <code>npm run</code>.</p>
+    </div>
+
+    <!-- DECISION 3 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">ADR-003 — No CSS frameworks or CSS-in-JS</span>
+        <span class="badge badge-layer">Pre-curriculum</span>
+      </div>
+      <p><strong>Decision:</strong> Use plain CSS only. No Tailwind, no CSS Modules, no styled-components.</p>
+      <p><strong>Session:</strong> Pre-curriculum (curriculum design)</p>
+      <p><strong>Why:</strong> CSS frameworks hide what CSS is doing. We need to understand the cascade, specificity, and box model before reaching for utilities. CSS-in-JS adds a library abstraction on top of an abstraction.</p>
+      <p><strong>Alternatives considered:</strong> Tailwind (popular, fast); CSS Modules (scoped, no globals); styled-components.</p>
+      <p><strong>Consequence:</strong> We write plain CSS in <code>.css</code> files imported into components. Styles will be simple and functional, not beautiful. That is intentional.</p>
+    </div>
+
+    <!-- DECISION 4 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">ADR-004 — Docs are static HTML (no build step)</span>
+        <span class="badge badge-layer">Pre-curriculum</span>
+      </div>
+      <p><strong>Decision:</strong> All documentation files are static HTML with inline or linked CSS. No MDX, no Docusaurus, no static site generator.</p>
+      <p><strong>Session:</strong> Pre-curriculum (curriculum design)</p>
+      <p><strong>Why:</strong> Docs must be openable by double-clicking an HTML file in any OS browser. Zero dependencies. Zero build step. A future AI session can read the source directly. Students can edit docs without a tool chain.</p>
+      <p><strong>Alternatives considered:</strong> Docusaurus (powerful but requires Node and a build); VitePress (same); plain Markdown (not viewable without a renderer).</p>
+      <p><strong>Consequence:</strong> Each doc is a self-contained HTML file. One shared <code>styles.css</code> is referenced with a relative path. Internal links use relative paths only.</p>
+    </div>
+
+    <!-- DECISION 5 -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">ADR-005 — Mock data before real APIs</span>
+        <span class="badge badge-layer">Pre-curriculum</span>
+      </div>
+      <p><strong>Decision:</strong> All data used before Layer 7 is fake. Country data lives in <code>/src/mock/</code> and is served by <code>/src/services/</code>. No real HTTP requests until Session 38.</p>
+      <p><strong>Session:</strong> Pre-curriculum (curriculum design)</p>
+      <p><strong>Why:</strong> Real APIs introduce: network errors, CORS, rate limits, response shape uncertainty, and loading/error state complexity — all at once. These are distractions when the goal is to learn component design and state. Mock data lets us control every variable.</p>
+      <p><strong>Alternatives considered:</strong> Use a real free API from Session 1 (common in tutorials); mock with a library like msw.</p>
+      <p><strong>Consequence:</strong> The UI must be buildable and fully demonstrable without an internet connection until Session 38. The service layer interface is designed so switching from mock to real data in Session 38 changes only one file.</p>
+    </div>
+
+    <p style="color:var(--text-muted); font-size:13px; margin-top:24px;">
+      New decisions will be added here as the project evolves. Every ADR must have a session reference.
+    </p>
+
+  </div>
+</main>
+
+</body>
+</html>

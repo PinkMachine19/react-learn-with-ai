@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 05 — Destructuring and Spread</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+    <a href="../../architecture/index.html">Architecture</a>
+    <a href="../../session-notes/index.html">Notes</a>
+    <a href="../../commit-reviews/index.html">Commits</a>
+    <a href="../../prompts/index.html">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 1</span>
+      <span class="badge badge-current">Session 05</span>
+      <span style="color:var(--text-muted);font-size:13px;">JavaScript Foundations</span>
+    </div>
+    <h1>Destructuring and Spread</h1>
+    <p class="subtitle">
+      These two features are how React codebases handle props and state every single day.
+      Destructuring lets you pull values out of objects cleanly.
+      Spread lets you copy or merge objects without mutation.
+      Together they are the foundation of immutable state updates.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <h2>1. Learning Objective</h2>
+    <div class="card">
+      <ul>
+        <li>Destructure properties from an object into local variables</li>
+        <li>Destructure function parameters directly in the parameter list</li>
+        <li>Use the spread operator to copy an object</li>
+        <li>Use spread to create a new object with one property changed</li>
+        <li>Use spread to merge two objects</li>
+        <li>Explain why spread creates a shallow copy and what that means</li>
+        <li>Connect these patterns directly to how React props and state updates work</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>
+          <code>const country = { name: "Canada", region: "Americas" };</code><br/>
+          <code>const { name, region } = country;</code><br/>
+          What is the value of <code>name</code>?
+        </p>
+        <label class="quiz-option" data-val="a">The entire <code>country</code> object</label>
+        <label class="quiz-option" data-val="b">"Canada"</label>
+        <label class="quiz-option" data-val="c">undefined — name is a reserved word</label>
+        <label class="quiz-option" data-val="d">An error</label>
+        <div class="explanation">Destructuring extracts properties by name. <code>const { name } = country</code> is exactly the same as <code>const name = country.name</code>, just shorter.</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>
+          <code>const original = { x: 1, y: 2 };</code><br/>
+          <code>const copy = { ...original };</code><br/>
+          <code>copy.x = 99;</code><br/>
+          What is <code>original.x</code>?
+        </p>
+        <label class="quiz-option" data-val="a">99 — spread doesn't copy, it references</label>
+        <label class="quiz-option" data-val="b">An error — you can't spread into a new object</label>
+        <label class="quiz-option" data-val="c">1 — spread created a new object, so mutating copy doesn't affect original</label>
+        <label class="quiz-option" data-val="d">undefined</label>
+        <div class="explanation">Spread creates a new object with the same top-level properties copied. Mutating a property on the copy does not affect the original — unlike <code>const copy = original</code> which shares the reference.</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>
+          You want to create a new object that is identical to <code>country</code> but with a different <code>name</code>.
+          Which is correct?
+        </p>
+        <label class="quiz-option" data-val="a"><code>const updated = country; updated.name = "Japan";</code></label>
+        <label class="quiz-option" data-val="b"><code>const updated = Object.copy(country); updated.name = "Japan";</code></label>
+        <label class="quiz-option" data-val="c"><code>const updated = spread(country, { name: "Japan" });</code></label>
+        <label class="quiz-option" data-val="d"><code>const updated = { ...country, name: "Japan" };</code></label>
+        <div class="explanation">Option A mutates the original (same reference). Option B: Object.copy doesn't exist. Option C: not valid syntax. Option D is the correct React pattern: spread all existing properties, then override specific ones. Later properties win when keys conflict.</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>
+          You have a function <code>function show(country) { console.log(country.name); }</code><br/>
+          Which is the destructured parameter equivalent?
+        </p>
+        <label class="quiz-option" data-val="a"><code>function show({ name }) { console.log(name); }</code></label>
+        <label class="quiz-option" data-val="b"><code>function show(name) { console.log(name); }</code></label>
+        <label class="quiz-option" data-val="c"><code>function show([name]) { console.log(name); }</code></label>
+        <label class="quiz-option" data-val="d"><code>function show(country.name) { console.log(name); }</code></label>
+        <div class="explanation">You can destructure directly in the parameter list. <code>({ name })</code> receives the same object but immediately extracts <code>name</code>. This is exactly how React components receive props: <code>const CountryCard = ({ name, region }) => ...</code></div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          <code>const a = { x: 1, nested: { y: 2 } };</code><br/>
+          <code>const b = { ...a };</code><br/>
+          <code>b.nested.y = 99;</code><br/>
+          What is <code>a.nested.y</code>?
+        </p>
+        <label class="quiz-option" data-val="a">2 — spread copies everything including nested objects</label>
+        <label class="quiz-option" data-val="b">99 — spread is shallow; nested objects are still shared by reference</label>
+        <label class="quiz-option" data-val="c">undefined</label>
+        <label class="quiz-option" data-val="d">An error</label>
+        <div class="explanation">Spread creates a shallow copy. Top-level primitive values are copied. But nested objects are still shared — only the reference to the nested object is copied, not the nested object itself. This is the shallow vs deep copy distinction.</div>
+      </div>
+
+      <button class="submit-btn" onclick="submitQuiz('pre')">Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — Destructuring and Spread</h2>
+
+    <h3>Object destructuring</h3>
+    <pre><code>const country = { name: "Canada", region: "Americas", population: 38000000 };
+
+// Without destructuring
+const name       = country.name;
+const region     = country.region;
+const population = country.population;
+
+// With destructuring — same result, less repetition
+const { name, region, population } = country;</code></pre>
+
+    <h3>Rename while destructuring</h3>
+    <pre><code>const { name: countryName, region: countryRegion } = country;
+console.log(countryName);   // "Canada"
+console.log(countryRegion); // "Americas"</code></pre>
+
+    <h3>Default values</h3>
+    <pre><code>const { name, capital = "Unknown" } = country;
+console.log(capital); // "Unknown" — property didn't exist, default used</code></pre>
+
+    <h3>Destructuring function parameters — the React pattern</h3>
+    <pre><code>// Regular parameter
+const showCountry = (country) => {
+  console.log(country.name, country.region);
+};
+
+// Destructured parameter — this is how React components receive props
+const showCountry = ({ name, region }) => {
+  console.log(name, region);
+};
+
+showCountry({ name: "Canada", region: "Americas" }); // same result</code></pre>
+
+    <div class="alert alert-info">
+      <strong>React connection:</strong> When you write a component like
+      <code>const CountryCard = ({ name, region }) => ...</code>,
+      you are destructuring the props object in the parameter. React passes one object;
+      you pull out the specific properties you need.
+    </div>
+
+    <h3>Spread operator — copying objects</h3>
+    <pre><code>const original = { name: "Canada", region: "Americas" };
+
+// Spread: copies all key-value pairs into a new object
+const copy = { ...original };
+
+copy.name = "Japan";          // mutate the copy
+console.log(original.name);  // "Canada" — original untouched
+console.log(copy.name);      // "Japan"</code></pre>
+
+    <h3>Spread to update one property — the React state pattern</h3>
+    <pre><code>const country = { name: "Canada", region: "Americas", population: 38000000 };
+
+// Create a new object with updated population — original unchanged
+const updated = { ...country, population: 40000000 };
+
+console.log(country.population); // 38000000 — unchanged
+console.log(updated.population); // 40000000
+
+// Later properties override earlier ones when keys conflict
+const renamed = { ...country, name: "New Canada", region: "North" };
+console.log(renamed);
+// { name: "New Canada", region: "North", population: 38000000 }</code></pre>
+
+    <div class="alert alert-warning">
+      <strong>Why this matters for React state:</strong> In Layer 3 you will update state like this:<br/>
+      <code>setCountry({ ...country, population: 40000000 })</code><br/>
+      This creates a new object (new reference) so React detects the change and re-renders.
+      If you wrote <code>country.population = 40000000</code> instead, the reference wouldn't change
+      and React would not re-render.
+    </div>
+
+    <h3>Spread arrays</h3>
+    <pre><code>const arr = [1, 2, 3];
+const copy = [...arr];          // new array, same contents
+const appended = [...arr, 4];   // new array with 4 added at end
+const prepended = [0, ...arr];  // new array with 0 at start
+
+console.log(arr);        // [1, 2, 3] — all unchanged
+console.log(appended);   // [1, 2, 3, 4]
+console.log(prepended);  // [0, 1, 2, 3]</code></pre>
+
+    <p>
+      This is the correct way to add an item to a React state array — instead of <code>.push()</code>.
+    </p>
+
+    <h3>Shallow copy — the limitation</h3>
+    <pre><code>const a = { x: 1, nested: { y: 2 } };
+const b = { ...a };
+
+// Top-level: copied correctly
+b.x = 99;
+console.log(a.x); // 1 — safe
+
+// Nested: still shared!
+b.nested.y = 99;
+console.log(a.nested.y); // 99 — a.nested was not copied, only the reference to it</code></pre>
+
+    <p>
+      Spread is <em>shallow</em>. Only the top level is copied. Nested objects share the same reference.
+      For the country data we're working with (flat objects), this is fine.
+    </p>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Add destructuring and spread patterns to <code>src/countries.js</code>.
+      Rewrite arrow function parameters to destructure. Create modified copies of countries with spread.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Destructure a country</strong></p>
+        <pre><code>const { name, region, population } = countries[0];
+console.log(name, "—", region, "—", population.toLocaleString());</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Rewrite map callback to destructure the parameter</strong></p>
+        <pre><code>// Before
+const names = countries.map(c => c.name);
+
+// After — destructure in the parameter
+const names = countries.map(({ name }) => name);
+
+console.log(names); // same result</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>More complex destructured callback</strong></p>
+        <pre><code>const summaries = countries.map(({ name, region, population }) =>
+  name + " (" + region + ") — " + population.toLocaleString() + " people"
+);
+console.log(summaries);</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Copy a country with spread</strong></p>
+        <pre><code>const canada = countries[0];
+const canadaCopy = { ...canada };
+
+canadaCopy.name = "New Canada";
+console.log("Original:", canada.name);   // "Canada"
+console.log("Copy:", canadaCopy.name);   // "New Canada"</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Update one property with spread — the React state pattern</strong></p>
+        <pre><code>const updatedCanada = { ...canada, population: 40000000 };
+console.log("Original population:", canada.population);   // 38000000
+console.log("Updated population:", updatedCanada.population); // 40000000</code></pre>
+        <p>This is exactly how you will update state in Session 17.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <p><strong>Spread arrays — simulate adding a country without mutation</strong></p>
+        <pre><code>const france = { id: 4, name: "France", region: "Europe", population: 68000000 };
+
+// Add without push (non-mutating)
+const expanded = [...countries, france];
+console.log("Original:", countries.length);  // 3
+console.log("Expanded:", expanded.length);   // 4</code></pre>
+        <p>This is how you add an item to a React state array correctly.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <p><strong>Prove shallow copy limitation</strong></p>
+        <pre><code>const withLang = { ...canada, languages: { official: ["English", "French"] } };
+const copy2 = { ...withLang };
+
+copy2.languages.official.push("Spanish");
+console.log("Original languages:", withLang.languages.official);
+// ["English", "French", "Spanish"] — the nested object was shared!</code></pre>
+        <p>You don't need to solve this. Just observe it and understand why it happens.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/countries.js</code></td><td>Updated</td><td>Destructuring and spread patterns added</td></tr>
+          <tr><td><code>docs/sessions/session-05/index.html</code></td><td>Created</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/countries.js docs/sessions/session-05/index.html
+git commit -m "session-05: destructuring and spread, immutable update pattern"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">Object destructuring shown — <code>const { name, region } = country</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">Destructured function parameter shown — <code>({ name }) =></code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">Spread copy shown — <code>const copy = { ...original }</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">Spread update shown — <code>{ ...country, population: X }</code> — original unchanged</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">Array spread shown — <code>[...countries, newItem]</code> — original array unchanged</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c6"/><label for="c6">Shallow copy limitation demonstrated</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c7"/><label for="c7">I can explain: why does <code>{ ...country, name: "X" }</code> matter for React state updates?</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p><code>const { name, region } = country;</code> — value of <code>name</code>?</p>
+        <label class="quiz-option" data-val="a">The whole country object</label>
+        <label class="quiz-option" data-val="b">"Canada"</label>
+        <label class="quiz-option" data-val="c">undefined</label>
+        <label class="quiz-option" data-val="d">Error</label>
+        <div class="explanation">Destructuring extracts by property name. name = country.name = "Canada".</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p><code>const copy = { ...original }; copy.x = 99;</code> — what is <code>original.x</code>?</p>
+        <label class="quiz-option" data-val="a">99</label>
+        <label class="quiz-option" data-val="b">Error</label>
+        <label class="quiz-option" data-val="c">1 — spread created a new object</label>
+        <label class="quiz-option" data-val="d">undefined</label>
+        <div class="explanation">Spread creates a new object. Mutating copy doesn't affect original.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Copy <code>country</code> but change its <code>name</code>. Which is correct?</p>
+        <label class="quiz-option" data-val="a"><code>const updated = country; updated.name = "Japan";</code></label>
+        <label class="quiz-option" data-val="b"><code>const updated = Object.copy(country); updated.name = "Japan";</code></label>
+        <label class="quiz-option" data-val="c"><code>const updated = spread(country, { name: "Japan" });</code></label>
+        <label class="quiz-option" data-val="d"><code>const updated = { ...country, name: "Japan" };</code></label>
+        <div class="explanation">Spread all existing properties, then override the specific key. Later keys win.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Destructured parameter equivalent of <code>function show(country) { console.log(country.name); }</code>?</p>
+        <label class="quiz-option" data-val="a"><code>function show({ name }) { console.log(name); }</code></label>
+        <label class="quiz-option" data-val="b"><code>function show(name) { console.log(name); }</code></label>
+        <label class="quiz-option" data-val="c"><code>function show([name]) { console.log(name); }</code></label>
+        <label class="quiz-option" data-val="d"><code>function show(country.name) { console.log(name); }</code></label>
+        <div class="explanation">Destructure the object in the parameter list with curly brace syntax.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p><code>const b = { ...a }; b.nested.y = 99;</code> — what is <code>a.nested.y</code>?</p>
+        <label class="quiz-option" data-val="a">2 — spread copies everything</label>
+        <label class="quiz-option" data-val="b">99 — spread is shallow; nested objects share reference</label>
+        <label class="quiz-option" data-val="c">undefined</label>
+        <label class="quiz-option" data-val="d">Error</label>
+        <div class="explanation">Spread is shallow. Nested objects are not copied — their references are.</div>
+      </div>
+      <button class="submit-btn" onclick="submitQuiz('post')">Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>You've now seen two ways to "copy" an object: <code>const b = a</code> and <code>const b = { ...a }</code>. Explain the difference in one sentence each.</li>
+        <li>In Step 6, you used <code>[...countries, france]</code> to add a country. How would you remove a country without mutation? Guess the approach — we'll implement it in Session 21.</li>
+        <li>In Step 7, you proved shallow copy. What would you have to do to properly deep-copy the nested <code>languages</code> object?</li>
+        <li>When React sees <code>setCountry({ ...country, population: 40000000 })</code>, what specifically does it compare to decide whether to re-render?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Knowledge Is Missing?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Session 11 (Props):</strong> React destructures props constantly. Without this session, the syntax <code>const CountryCard = ({ name, region }) =&gt; ...</code> will be confusing.</li>
+        <li><strong>Session 17 (useState):</strong> Every state update that modifies an object or array uses spread. Without spread, you will mutate state directly, and React will silently not re-render.</li>
+        <li><strong>Session 21 (Lifting State):</strong> The entire pattern of updating shared state uses spread to create new objects.</li>
+      </ul>
+    </div>
+
+    <h2>11. What We Learned</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>JavaScript concepts mastered:</strong> Object destructuring, parameter destructuring, spread operator for objects and arrays, shallow copy behaviour, immutable update pattern.</p>
+      <p><strong>React concepts unlocked:</strong> How props are received (<code>({ name, region })</code>), how state updates create new objects (<code>{ ...state, key: newValue }</code>), how items are added to state arrays (<code>[...arr, newItem]</code>).</p>
+      <p><strong>Next session:</strong> <a href="../session-06/index.html">Session 06 — Imports and Exports</a>. Moving your country data into its own module — the foundation of React's component file structure.</p>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  function setupQuiz(p){const c=document.getElementById(p+'-quiz');if(!c)return;c.querySelectorAll('.quiz-option').forEach(o=>{o.addEventListener('click',()=>{const q=o.closest('.quiz-question');q.querySelectorAll('.quiz-option').forEach(x=>x.classList.remove('selected'));o.classList.add('selected');});});}
+  function submitQuiz(p){const c=document.getElementById(p+'-quiz');const qs=c.querySelectorAll('.quiz-question');let ok=0;qs.forEach(q=>{const ans=q.dataset.answer;const sel=q.querySelector('.quiz-option.selected');const exp=q.querySelector('.explanation');q.querySelectorAll('.quiz-option').forEach(o=>{o.style.pointerEvents='none';if(o.dataset.val===ans)o.classList.add('correct');});if(sel){if(sel.dataset.val===ans)ok++;else sel.classList.add('wrong');}if(exp)exp.style.display='block';});const r=document.getElementById(p+'-result');const pct=Math.round(ok/qs.length*100);r.style.display='block';if(ok>=4){r.className='quiz-result pass';r.innerHTML=ok+'/5 ('+pct+'%) — Passed. '+(p==='pre'?'Proceed to the lab.':'Session complete. Make your commit.');}else{r.className='quiz-result fail';r.innerHTML=ok+'/5 ('+pct+'%) — Below 80%. Re-read the concept section'+(p==='post'?' and redo the lab':'')+' then retake.';}c.querySelector('.submit-btn').disabled=true;}
+  setupQuiz('pre');setupQuiz('post');
+</script>
+</body>
+</html>

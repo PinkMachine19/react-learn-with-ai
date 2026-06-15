@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Syllabus — React Learning</title>
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../index.html" class="brand">⚛ React Learning</a>
+    <a href="../syllabus/index.html" class="active">Syllabus</a>
+    <a href="../sessions/index.html">Sessions</a>
+    <a href="../quizzes/index.html">Quizzes</a>
+    <a href="../labs/index.html">Labs</a>
+    <a href="../architecture/index.html">Architecture</a>
+    <a href="../session-notes/index.html">Notes</a>
+    <a href="../commit-reviews/index.html">Commits</a>
+    <a href="../prompts/index.html">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <h1>40-Session Curriculum</h1>
+    <p class="subtitle">
+      Sessions must be completed in order. Each layer unlocks only after the previous layer's
+      final quiz scores ≥ 80%. A session is not complete until the commit is made and reviewed.
+    </p>
+
+    <div class="alert alert-info">
+      <strong>Active session:</strong> Session 01 — Objects in JavaScript
+    </div>
+
+    <!-- ── LAYER 1 ─────────────────────────────────────────────── -->
+    <div class="layer-header">
+      <span class="badge badge-current">Active</span>
+      <span class="layer-title">Layer 1 — JavaScript Foundations</span>
+    </div>
+    <p class="layer-desc">
+      Before touching React, we must be fluent in the JavaScript patterns React relies on.
+      Every React concept in Layer 2 maps directly to a concept introduced here.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Core Concept</th>
+            <th>Project Milestone</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><a href="../sessions/session-01/index.html">01</a></td>
+            <td>Objects in JavaScript</td>
+            <td>Object literals, dot notation, bracket notation, mutation vs reference</td>
+            <td>Define one country as a JS object</td>
+            <td><span class="badge badge-current">Current</span></td>
+          </tr>
+          <tr>
+            <td><a href="../sessions/session-02/index.html">02</a></td>
+            <td>Arrays and Iteration</td>
+            <td>Arrays, indexing, length, for loops, mutating vs non-mutating</td>
+            <td>Store 3 countries in an array</td>
+            <td><span class="badge badge-current">Available</span></td>
+          </tr>
+          <tr>
+            <td><a href="../sessions/session-03/index.html">03</a></td>
+            <td>Array map() and filter()</td>
+            <td>Transforming arrays, filtering arrays, return values, chaining</td>
+            <td>Map countries to names; filter by region</td>
+            <td><span class="badge badge-current">Available</span></td>
+          </tr>
+          <tr>
+            <td><a href="../sessions/session-04/index.html">04</a></td>
+            <td>Arrow Functions</td>
+            <td>Syntax, implicit return, when to use parens, this difference</td>
+            <td>Rewrite all functions as arrow functions</td>
+            <td><span class="badge badge-current">Available</span></td>
+          </tr>
+          <tr>
+            <td><a href="../sessions/session-05/index.html">05</a></td>
+            <td>Destructuring and Spread</td>
+            <td>Object destructuring, array destructuring, spread operator, rest params</td>
+            <td>Destructure a country object; clone with spread</td>
+            <td><span class="badge badge-current">Available</span></td>
+          </tr>
+          <tr>
+            <td><a href="../sessions/session-06/index.html">06</a></td>
+            <td>Imports and Exports</td>
+            <td>ES modules, named exports, default exports, import syntax</td>
+            <td>Split country data into its own module file</td>
+            <td><span class="badge badge-current">Available</span></td>
+          </tr>
+          <tr>
+            <td><a href="../sessions/session-07/index.html">07</a></td>
+            <td>Promises, Async, Await</td>
+            <td>Event loop idea, Promise, .then/.catch, async/await syntax</td>
+            <td>Write a fake async function that resolves country data</td>
+            <td><span class="badge badge-current">Available</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-warning">
+      <strong>Layer 1 Gate:</strong> Must score ≥ 80% on the Layer 1 review quiz before Session 08 unlocks.
+    </div>
+
+    <!-- ── LAYER 2 ─────────────────────────────────────────────── -->
+    <div class="layer-header">
+      <span class="badge badge-locked">Locked</span>
+      <span class="layer-title">Layer 2 — React Fundamentals</span>
+    </div>
+    <p class="layer-desc">
+      React is built on top of JavaScript functions, objects, and arrays. Every concept here
+      maps to something in Layer 1. We will make those connections explicit every session.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Core Concept</th>
+            <th>Project Milestone</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>08</td>
+            <td>What React Is and Why</td>
+            <td>Virtual DOM idea, React vs vanilla DOM, JSX overview</td>
+            <td>First React file created; nothing renders yet</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>09</td>
+            <td>JSX Deep Dive</td>
+            <td>JSX is syntax sugar for React.createElement, JSX rules</td>
+            <td>Render "Hello World" as JSX with a JS expression inside</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>10</td>
+            <td>Components Are Functions</td>
+            <td>A component is a JS function that returns JSX</td>
+            <td>Write first CountryCard component function</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>11</td>
+            <td>Props — Passing Data Down</td>
+            <td>Props are function arguments; they are read-only</td>
+            <td>Pass country name and region as props to CountryCard</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td>Component Composition</td>
+            <td>Building UIs from nested components</td>
+            <td>Build CountryList that contains multiple CountryCard</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>13</td>
+            <td>Conditional Rendering</td>
+            <td>Ternary, &amp;&amp; short-circuit, early return patterns</td>
+            <td>Show a "No countries found" message conditionally</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>14</td>
+            <td>Rendering Lists with map()</td>
+            <td>Using .map() inside JSX to render arrays</td>
+            <td>Render all mock countries from an array</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>15</td>
+            <td>Keys — Why React Needs Them</td>
+            <td>Reconciliation, diffing algorithm, key as identity</td>
+            <td>Add keys to all list items; see what breaks without them</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-warning">
+      <strong>Layer 2 Gate:</strong> Must score ≥ 80% on the Layer 2 review quiz before Session 16 unlocks.
+    </div>
+
+    <!-- ── LAYER 3 ─────────────────────────────────────────────── -->
+    <div class="layer-header">
+      <span class="badge badge-locked">Locked</span>
+      <span class="layer-title">Layer 3 — State</span>
+    </div>
+    <p class="layer-desc">
+      State is the engine of interactive React applications. We will understand exactly what
+      triggers a re-render, why closures matter here, and how data flows through a component tree.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Core Concept</th>
+            <th>Project Milestone</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>16</td>
+            <td>What Is State?</td>
+            <td>State vs props, why state triggers re-render, mental model</td>
+            <td>Concept only — no code written yet</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>17</td>
+            <td>useState Hook</td>
+            <td>Hook syntax, initial value, setter function, closure capture</td>
+            <td>Add a click counter to CountryCard</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>18</td>
+            <td>Event Handlers</td>
+            <td>Synthetic events, onClick, onChange, the event object</td>
+            <td>Handle a button click on a country card</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>19</td>
+            <td>Re-rendering Deep Dive</td>
+            <td>What causes a re-render, what doesn't, React batching</td>
+            <td>Prove re-renders with console.log; add render counter</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>20</td>
+            <td>Controlled Inputs</td>
+            <td>Input value tied to state, onChange handler pattern</td>
+            <td>Add a search input that controls its own value</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>21</td>
+            <td>Lifting State Up</td>
+            <td>When state needs to be shared, moving state to parent</td>
+            <td>Move search state from input to App; pass filtered list down</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>22</td>
+            <td>Derived State</td>
+            <td>Computing values from existing state; avoiding redundant state</td>
+            <td>Derive filtered countries from search term without extra useState</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-warning">
+      <strong>Layer 3 Gate:</strong> Must score ≥ 80% on the Layer 3 review quiz before Session 23 unlocks.
+    </div>
+
+    <!-- ── LAYER 4 ─────────────────────────────────────────────── -->
+    <div class="layer-header">
+      <span class="badge badge-locked">Locked</span>
+      <span class="layer-title">Layer 4 — Mock Data</span>
+    </div>
+    <p class="layer-desc">
+      Real teams build UIs before the backend exists. We will learn to design against fake
+      contracts, build service layers, and iterate on UI independently from any API.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Core Concept</th>
+            <th>Project Milestone</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>23</td>
+            <td>Why Mock Data Matters</td>
+            <td>Frontend independence, contract-first design, iteration speed</td>
+            <td>Add /mock/countries.json with 10 countries</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>24</td>
+            <td>Building a Service Layer</td>
+            <td>Separation of concerns, encapsulating data access</td>
+            <td>Build countryService.js with functions returning fake data</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>25</td>
+            <td>Fake Async Responses</td>
+            <td>Wrapping data in Promises to simulate real API timing</td>
+            <td>Make countryService.js return Promise.resolve(data) with delay</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>26</td>
+            <td>Designing Against a Contract</td>
+            <td>What an API contract is, defining fake data shapes</td>
+            <td>Define JSDoc comment contracts for the country data shape</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-warning">
+      <strong>Layer 4 Gate:</strong> Must score ≥ 80% on the Layer 4 review quiz before Session 27 unlocks.
+    </div>
+
+    <!-- ── LAYER 5 ─────────────────────────────────────────────── -->
+    <div class="layer-header">
+      <span class="badge badge-locked">Locked</span>
+      <span class="layer-title">Layer 5 — Testing</span>
+    </div>
+    <p class="layer-desc">
+      Testing is not postponed. It is introduced gradually alongside the code it tests.
+      We use Vitest and React Testing Library, testing behavior — not implementation.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Core Concept</th>
+            <th>Project Milestone</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>27</td>
+            <td>Why We Test and What to Test</td>
+            <td>Test types, behavior-driven testing, what NOT to test</td>
+            <td>Concept only — no code</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>28</td>
+            <td>Setting Up Vitest + RTL</td>
+            <td>Install, configure, write first smoke test</td>
+            <td>Test that CountryCard renders without crashing</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>29</td>
+            <td>Testing Props and Output</td>
+            <td>getByRole, getByText, asserting rendered content</td>
+            <td>Test that country name appears in CountryCard output</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>30</td>
+            <td>Testing Events and State</td>
+            <td>fireEvent, userEvent, asserting state changes via DOM</td>
+            <td>Test that clicking a button updates displayed count</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>31</td>
+            <td>Testing the Service Layer</td>
+            <td>vi.mock, testing async functions, asserting resolved shape</td>
+            <td>Test that countryService.getAll() resolves with correct shape</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-warning">
+      <strong>Layer 5 Gate:</strong> Must score ≥ 80% on the Layer 5 review quiz before Session 32 unlocks.
+    </div>
+
+    <!-- ── LAYER 6 ─────────────────────────────────────────────── -->
+    <div class="layer-header">
+      <span class="badge badge-locked">Locked</span>
+      <span class="layer-title">Layer 6 — Architecture</span>
+    </div>
+    <p class="layer-desc">
+      With the foundations in place, we learn how to structure code for long-term
+      maintainability: folder organization, reusable components, custom hooks, and
+      recognizing the prop drilling problem.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Core Concept</th>
+            <th>Project Milestone</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>32</td>
+            <td>Folder Organization</td>
+            <td>Why structure matters, feature vs type grouping</td>
+            <td>Reorganize /src; move all files to correct places</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>33</td>
+            <td>Reusable Components</td>
+            <td>What makes a component reusable, props as API surface</td>
+            <td>Extract Badge, Card, Button as generic components</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>34</td>
+            <td>Custom Hooks</td>
+            <td>When to extract logic into a hook, rules of hooks</td>
+            <td>Extract useCountrySearch hook from App</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>35</td>
+            <td>The Prop Drilling Problem</td>
+            <td>Recognizing the pain, when it matters, what comes next</td>
+            <td>Deliberately hit prop drilling pain with favorites feature</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>36</td>
+            <td>Architecture Review</td>
+            <td>Full codebase audit, refactor planning</td>
+            <td>Document all architecture decisions in /docs/architecture</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-warning">
+      <strong>Layer 6 Gate:</strong> Must score ≥ 80% on the Layer 6 review quiz before Session 37 unlocks.
+    </div>
+
+    <!-- ── LAYER 7 ─────────────────────────────────────────────── -->
+    <div class="layer-header">
+      <span class="badge badge-locked">Locked</span>
+      <span class="layer-title">Layer 7 — Real World</span>
+    </div>
+    <p class="layer-desc">
+      Only now do we touch real APIs, side effects, and loading states. By this point, we
+      have the vocabulary to understand what useEffect is actually doing — and why it exists.
+    </p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Core Concept</th>
+            <th>Project Milestone</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>37</td>
+            <td>useEffect</td>
+            <td>What a side effect is, effect lifecycle, cleanup</td>
+            <td>Replace fake service with useEffect calling fake Promise</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>38</td>
+            <td>Fetch and Real APIs</td>
+            <td>HTTP, fetch(), reading API docs, response shapes</td>
+            <td>Replace fake Promise with real REST Countries API call</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>39</td>
+            <td>Loading and Error States</td>
+            <td>UX for async operations, loading spinner, error message</td>
+            <td>Add loading and error UI to country list</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+          <tr>
+            <td>40</td>
+            <td>Capstone Review</td>
+            <td>End-to-end walkthrough of everything built</td>
+            <td>Document every architectural decision; full quiz across all layers</td>
+            <td><span class="badge badge-locked">Locked</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-success">
+      <strong>Layer 7 Capstone:</strong> Final quiz covers all 7 layers. Must score ≥ 80% to complete the curriculum.
+    </div>
+
+    <!-- Dependency Map -->
+    <h2>Dependency Ordering</h2>
+    <p>Each row depends on everything above it. Nothing skips a level.</p>
+    <pre><code>Objects → Arrays → map/filter → Arrow Functions → Destructuring/Spread
+  → Imports/Exports → Promises/Async
+                  ↓
+          JSX → Components → Props → Composition
+              → Conditional → Lists → Keys
+                        ↓
+                    useState → Events → Re-render
+                    → Controlled Input → Lift State → Derived State
+                                  ↓
+                              Mock Data → Service Layer → Async Service
+                                        ↓
+                                    Testing → Props tests → Event tests → Service tests
+                                              ↓
+                                         Architecture → Custom Hooks → Prop Drilling
+                                                        ↓
+                                                   useEffect → Real Fetch → Error States → Capstone</code></pre>
+
+  </div>
+</main>
+
+</body>
+</html>

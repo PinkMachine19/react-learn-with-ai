@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 04 — Arrow Functions</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+    .compare-table td{font-family:var(--font-mono);font-size:13px;padding:8px 12px;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+    <a href="../../architecture/index.html">Architecture</a>
+    <a href="../../session-notes/index.html">Notes</a>
+    <a href="../../commit-reviews/index.html">Commits</a>
+    <a href="../../prompts/index.html">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 1</span>
+      <span class="badge badge-current">Session 04</span>
+      <span style="color:var(--text-muted);font-size:13px;">JavaScript Foundations</span>
+    </div>
+    <h1>Arrow Functions</h1>
+    <p class="subtitle">
+      Every React codebase is written almost entirely in arrow functions.
+      Every <code>.map()</code> callback, every component, every event handler.
+      This session converts your understanding of functions into the syntax you will actually use.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <h2>1. Learning Objective</h2>
+    <div class="card">
+      <ul>
+        <li>Write an arrow function with explicit and implicit return</li>
+        <li>Know when parentheses around parameters are required and when they are optional</li>
+        <li>Explain what "implicit return" means and when curly braces break it</li>
+        <li>Understand why arrow functions handle <code>this</code> differently (enough to not be confused by it)</li>
+        <li>Rewrite all callbacks from Sessions 02 and 03 using arrow function syntax</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept section. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>Which arrow function correctly doubles a number?</p>
+        <label class="quiz-option" data-val="a"><code>n => { n * 2 }</code></label>
+        <label class="quiz-option" data-val="b"><code>n => { return n * 2 }</code> only — curly braces are always required</label>
+        <label class="quiz-option" data-val="c"><code>n => n * 2</code> — implicit return, no curly braces needed</label>
+        <label class="quiz-option" data-val="d"><code>=> n * 2</code></label>
+        <div class="explanation">Without curly braces, the expression to the right of <code>=&gt;</code> is automatically returned. This is called implicit return. Option A has curly braces but no <code>return</code> keyword — it returns <code>undefined</code>. Option B works but the curly braces are unnecessary for a single expression.</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>You want to implicitly return an object literal from an arrow function. Which is correct?</p>
+        <label class="quiz-option" data-val="a"><code>c => { name: c.name }</code></label>
+        <label class="quiz-option" data-val="b"><code>c => ({ name: c.name })</code></label>
+        <label class="quiz-option" data-val="c"><code>c => return { name: c.name }</code></label>
+        <label class="quiz-option" data-val="d">You cannot implicitly return an object</label>
+        <div class="explanation">Curly braces are ambiguous — JavaScript sees them as a function body, not an object literal. Wrap the object in parentheses to signal "this is an expression, not a block".</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Which is valid syntax for an arrow function with no parameters?</p>
+        <label class="quiz-option" data-val="a"><code>() => "hello"</code></label>
+        <label class="quiz-option" data-val="b"><code>=> "hello"</code></label>
+        <label class="quiz-option" data-val="c"><code>_ "hello"</code></label>
+        <label class="quiz-option" data-val="d"><code>void => "hello"</code></label>
+        <div class="explanation">Empty parentheses <code>()</code> are required when there are no parameters. You cannot omit them entirely.</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>
+          <code>const greet = name => "Hello " + name;</code><br/>
+          What does <code>greet("Canada")</code> return?
+        </p>
+        <label class="quiz-option" data-val="a">undefined — there is no return keyword</label>
+        <label class="quiz-option" data-val="b">An error — single parameter needs parentheses</label>
+        <label class="quiz-option" data-val="c">"Hello"</label>
+        <label class="quiz-option" data-val="d">"Hello Canada"</label>
+        <div class="explanation">Single parameter without parentheses is valid. No curly braces means implicit return. The expression <code>"Hello " + name</code> is evaluated and returned automatically.</div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          Arrow functions and regular functions handle <code>this</code> differently.
+          Which statement is correct?
+        </p>
+        <label class="quiz-option" data-val="a">Arrow functions have their own <code>this</code> that changes per call site</label>
+        <label class="quiz-option" data-val="b">Regular functions inherit <code>this</code> from the surrounding code</label>
+        <label class="quiz-option" data-val="c">Arrow functions inherit <code>this</code> from the surrounding scope at definition time; they do not have their own <code>this</code></label>
+        <label class="quiz-option" data-val="d">There is no difference between them for <code>this</code></label>
+        <div class="explanation">Arrow functions do not have their own <code>this</code>. They capture <code>this</code> from the lexical scope where they were defined. This is why React uses arrow functions for event handlers — they don't accidentally rebind <code>this</code>. In function components (which we use), this matters less, but it's the correct mental model.</div>
+      </div>
+
+      <button class="submit-btn" onclick="submitQuiz('pre')">Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — Arrow Functions</h2>
+
+    <h3>From regular function to arrow function</h3>
+    <p>An arrow function is a shorter syntax for writing a function. These three are equivalent:</p>
+    <pre><code>// Regular function declaration
+function double(n) {
+  return n * 2;
+}
+
+// Regular function expression
+const double = function(n) {
+  return n * 2;
+};
+
+// Arrow function
+const double = n => n * 2;</code></pre>
+
+    <h3>Syntax rules</h3>
+    <div class="table-wrap">
+      <table class="compare-table">
+        <thead><tr><th>Situation</th><th>Syntax</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>No parameters</td><td><code>() =&gt;</code></td><td><code>() =&gt; "hello"</code></td></tr>
+          <tr><td>One parameter</td><td><code>x =&gt;</code> or <code>(x) =&gt;</code></td><td><code>n =&gt; n * 2</code></td></tr>
+          <tr><td>Two+ parameters</td><td><code>(x, y) =&gt;</code></td><td><code>(a, b) =&gt; a + b</code></td></tr>
+          <tr><td>Single expression</td><td>No braces — implicit return</td><td><code>n =&gt; n * 2</code></td></tr>
+          <tr><td>Multiple statements</td><td>Curly braces + explicit return</td><td><code>n =&gt; { const x = n * 2; return x; }</code></td></tr>
+          <tr><td>Return an object</td><td>Wrap object in parens</td><td><code>n =&gt; ({ value: n })</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Implicit return — the most important rule</h3>
+    <pre><code>// With curly braces — you MUST write return
+const add = (a, b) => {
+  return a + b;
+};
+
+// Without curly braces — return is implicit
+const add = (a, b) => a + b;
+
+// Common mistake: curly braces with no return — silently returns undefined
+const broken = (a, b) => {
+  a + b;   // no return! This evaluates a+b and discards the result
+};
+console.log(broken(1, 2));  // undefined</code></pre>
+
+    <h3>Returning an object — the parenthesis trick</h3>
+    <pre><code>// WRONG — JavaScript reads { as start of function body
+const makeObj = n => { value: n };  // returns undefined
+
+// CORRECT — parentheses tell JavaScript "this is an expression"
+const makeObj = n => ({ value: n }); // returns { value: 5 } when called with 5</code></pre>
+
+    <h3>With .map() and .filter() — this is how React code looks</h3>
+    <pre><code>const countries = [
+  { id: 1, name: "Canada",  region: "Americas", population: 38000000 },
+  { id: 2, name: "Japan",   region: "Asia",      population: 125000000 },
+  { id: 3, name: "Brazil",  region: "Americas",  population: 215000000 }
+];
+
+// Before (regular function)
+const names = countries.map(function(c) { return c.name; });
+
+// After (arrow function — this is what React codebases look like)
+const names = countries.map(c => c.name);
+
+// Filter
+const americas = countries.filter(c => c.region === "Americas");
+
+// Chained
+const americaNames = countries
+  .filter(c => c.region === "Americas")
+  .map(c => c.name);</code></pre>
+
+    <h3>Arrow functions and this</h3>
+    <p>
+      This is a subtle but important difference. Regular functions define their own <code>this</code>
+      based on how they are called. Arrow functions capture <code>this</code> from the surrounding scope.
+    </p>
+    <pre><code>const obj = {
+  name: "Canada",
+  greetRegular: function() { console.log(this.name); }, // "Canada" — this = obj
+  greetArrow:   () =>       { console.log(this.name); }  // undefined — this = outer scope (not obj)
+};
+
+obj.greetRegular(); // "Canada"
+obj.greetArrow();   // undefined (or global object's name)</code></pre>
+
+    <div class="alert alert-info">
+      <strong>React context:</strong> In React function components, you won't use <code>this</code> at all.
+      The <code>this</code> difference matters more in class components (which we don't use) and in
+      certain callback patterns. What matters now: know the rule exists, know arrow functions don't
+      have their own <code>this</code>.
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Update <code>src/countries.js</code> — rewrite every callback
+      function from Sessions 02 and 03 using arrow function syntax.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Open <code>src/countries.js</code></strong>. Find every place you used <code>function()</code> as a callback. Rewrite each one as an arrow function.</p>
+        <p>Before:</p>
+        <pre><code>const countryNames = countries.map(function(country) {
+  return country.name;
+});</code></pre>
+        <p>After:</p>
+        <pre><code>const countryNames = countries.map(country => country.name);</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Rewrite the filter callbacks</strong></p>
+        <pre><code>// Before
+const americas = countries.filter(function(country) {
+  return country.region === "Americas";
+});
+
+// After
+const americas = countries.filter(country => country.region === "Americas");</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Rewrite the for loop as an arrow function passed to forEach</strong></p>
+        <pre><code>// This is optional — for loops are fine — but practice the syntax
+countries.forEach(country => {
+  console.log(country.name, "—", country.region);
+});</code></pre>
+        <p>
+          Notice: <code>forEach</code> callback has two statements so it uses curly braces.
+          But no <code>return</code> needed because <code>forEach</code> ignores return values anyway.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Write a standalone arrow function</strong></p>
+        <pre><code>const formatCountry = country => country.name + " (" + country.region + ")";
+
+console.log(formatCountry(countries[0]));  // "Canada (Americas)"
+console.log(countries.map(formatCountry)); // all three formatted</code></pre>
+        <p>
+          Note: <code>formatCountry</code> is defined once and passed by reference to <code>.map()</code>.
+          The parentheses after <code>formatCountry</code> are absent — you are passing the function itself, not calling it.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Try the implicit return of an object</strong></p>
+        <pre><code>const simplified = countries.map(c => ({
+  id: c.id,
+  label: c.name
+}));
+
+console.log(simplified);
+// [{ id: 1, label: "Canada" }, { id: 2, label: "Japan" }, ...]</code></pre>
+        <p>This pattern appears constantly in React when you prepare data for display.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <p><strong>Prove the code still works exactly as before</strong></p>
+        <pre><code>console.log("Names:", countries.map(c => c.name));
+console.log("Americas:", countries.filter(c => c.region === "Americas").map(c => c.name));
+console.log("Big:", countries.filter(c => c.population > 100000000).map(c => c.name));</code></pre>
+        <p>The output should be identical to Session 03. Only the syntax changed.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/countries.js</code></td><td>Updated</td><td>All callbacks rewritten as arrow functions. Output unchanged.</td></tr>
+          <tr><td><code>docs/sessions/session-04/index.html</code></td><td>Created</td><td>This session document.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/countries.js docs/sessions/session-04/index.html
+git commit -m "session-04: rewrite all callbacks as arrow functions, same output"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">Every <code>function()</code> callback is replaced with an arrow function</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">Single-expression callbacks use implicit return (no curly braces, no return keyword)</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">Multi-statement callbacks use curly braces with explicit return where needed</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">Object returned implicitly is wrapped in parentheses <code>=> ({ ... })</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">All console.log output is identical to Session 03 — only syntax changed</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c6"/><label for="c6">I can explain: why does <code>n => { n * 2 }</code> return undefined?</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz">
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>Which arrow function correctly doubles a number?</p>
+        <label class="quiz-option" data-val="a"><code>n => { n * 2 }</code></label>
+        <label class="quiz-option" data-val="b">Curly braces always required</label>
+        <label class="quiz-option" data-val="c"><code>n => n * 2</code> — implicit return</label>
+        <label class="quiz-option" data-val="d"><code>=> n * 2</code></label>
+        <div class="explanation">No curly braces = implicit return of the expression.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>How do you implicitly return an object literal from an arrow function?</p>
+        <label class="quiz-option" data-val="a"><code>c => { name: c.name }</code></label>
+        <label class="quiz-option" data-val="b"><code>c => ({ name: c.name })</code></label>
+        <label class="quiz-option" data-val="c"><code>c => return { name: c.name }</code></label>
+        <label class="quiz-option" data-val="d">Cannot be done</label>
+        <div class="explanation">Wrap the object in parentheses so JS doesn't interpret <code>{</code> as a function body.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Valid arrow function with no parameters?</p>
+        <label class="quiz-option" data-val="a"><code>() => "hello"</code></label>
+        <label class="quiz-option" data-val="b"><code>=> "hello"</code></label>
+        <label class="quiz-option" data-val="c"><code>_ "hello"</code></label>
+        <label class="quiz-option" data-val="d"><code>void => "hello"</code></label>
+        <div class="explanation">Empty parens <code>()</code> are required for zero parameters.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p><code>const greet = name => "Hello " + name;</code> — what does <code>greet("Canada")</code> return?</p>
+        <label class="quiz-option" data-val="a">undefined</label>
+        <label class="quiz-option" data-val="b">Error — single param needs parens</label>
+        <label class="quiz-option" data-val="c">"Hello"</label>
+        <label class="quiz-option" data-val="d">"Hello Canada"</label>
+        <div class="explanation">Single param without parens is valid. Implicit return of the expression.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Arrow functions and <code>this</code>: which is correct?</p>
+        <label class="quiz-option" data-val="a">Arrow functions have their own <code>this</code> per call site</label>
+        <label class="quiz-option" data-val="b">Regular functions inherit <code>this</code> from surrounding scope</label>
+        <label class="quiz-option" data-val="c">Arrow functions capture <code>this</code> from where they were defined; they have no own <code>this</code></label>
+        <label class="quiz-option" data-val="d">No difference</label>
+        <div class="explanation">Arrow functions use lexical this — from where they were defined, not where they were called.</div>
+      </div>
+      <button class="submit-btn" onclick="submitQuiz('post')">Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>You rewrote all the callbacks. The output is identical. What was the point of doing this? What did you gain?</li>
+        <li>If <code>n => { n * 2 }</code> silently returns undefined, why doesn't JavaScript throw an error? What does that tell you about JavaScript's design?</li>
+        <li>Predict: in React, when you write <code>onClick={() => setCount(count + 1)}</code>, is that an explicit or implicit return? Does the return value matter here?</li>
+        <li>When would you still choose a regular <code>function</code> keyword over an arrow function?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Knowledge Is Missing?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Sessions 05–40:</strong> Every React code example uses arrow functions. Without this session, the syntax of every subsequent session will be unfamiliar.</li>
+        <li><strong>Session 10 (Components):</strong> Function components are arrow functions: <code>const CountryCard = (props) => { ... }</code>.</li>
+        <li><strong>Session 17 (useState):</strong> State setters are often arrow callbacks: <code>setCount(prev => prev + 1)</code>.</li>
+        <li><strong>The curly brace trap:</strong> Forgetting to return inside a block body is a silent bug. It will appear in your React code and you need to recognise it.</li>
+      </ul>
+    </div>
+
+    <h2>11. What We Learned</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>JavaScript concept mastered:</strong> Arrow function syntax — implicit return, parameter rules, object literal trap, lexical this.</p>
+      <p><strong>React concept unlocked:</strong> Component syntax. Every React component you write from Session 10 onward will be an arrow function.</p>
+      <p><strong>Next session:</strong> <a href="../session-05/index.html">Session 05 — Destructuring and Spread</a>. The syntax that makes React props clean to work with.</p>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  function setupQuiz(p){const c=document.getElementById(p+'-quiz');if(!c)return;c.querySelectorAll('.quiz-option').forEach(o=>{o.addEventListener('click',()=>{const q=o.closest('.quiz-question');q.querySelectorAll('.quiz-option').forEach(x=>x.classList.remove('selected'));o.classList.add('selected');});});}
+  function submitQuiz(p){const c=document.getElementById(p+'-quiz');const qs=c.querySelectorAll('.quiz-question');let ok=0;qs.forEach(q=>{const ans=q.dataset.answer;const sel=q.querySelector('.quiz-option.selected');const exp=q.querySelector('.explanation');q.querySelectorAll('.quiz-option').forEach(o=>{o.style.pointerEvents='none';if(o.dataset.val===ans)o.classList.add('correct');});if(sel){if(sel.dataset.val===ans)ok++;else sel.classList.add('wrong');}if(exp)exp.style.display='block';});const r=document.getElementById(p+'-result');const pct=Math.round(ok/qs.length*100);r.style.display='block';if(ok>=4){r.className='quiz-result pass';r.innerHTML=ok+'/5 ('+pct+'%) — Passed. '+(p==='pre'?'Proceed to the lab.':'Session complete. Make your commit.');}else{r.className='quiz-result fail';r.innerHTML=ok+'/5 ('+pct+'%) — Below 80%. Re-read the concept section'+(p==='post'?' and redo the lab':'')+' then retake.';}c.querySelector('.submit-btn').disabled=true;}
+  setupQuiz('pre');setupQuiz('post');
+</script>
+</body>
+</html>

@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 02 — Arrays and Iteration</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <style>
+    .quiz-option {
+      display: block;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: border-color 0.15s, background 0.15s;
+      user-select: none;
+    }
+    .quiz-option:hover { border-color: var(--accent); background: var(--surface); }
+    .quiz-option.selected { border-color: var(--accent); background: rgba(88,166,255,0.1); }
+    .quiz-option.correct  { border-color: var(--green);  background: rgba(63,185,80,0.1); }
+    .quiz-option.wrong    { border-color: var(--red);    background: rgba(248,81,73,0.1); }
+
+    .quiz-question { margin-bottom: 28px; }
+    .quiz-question p { font-weight: 600; margin-bottom: 10px; font-size: 15px; }
+    .quiz-question .question-num { color: var(--text-muted); font-size: 12px; font-weight: 400; margin-bottom: 4px; }
+
+    .quiz-result {
+      display: none;
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      margin-top: 16px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .quiz-result.pass { background: rgba(63,185,80,0.12); border: 1px solid var(--green); color: var(--green); }
+    .quiz-result.fail { background: rgba(248,81,73,0.12); border: 1px solid var(--red);   color: var(--red); }
+
+    .explanation {
+      display: none;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      padding: 8px 12px;
+      background: var(--surface-2);
+      border-radius: var(--radius);
+      border-left: 2px solid var(--border);
+    }
+
+    .submit-btn {
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: var(--radius);
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.15s;
+    }
+    .submit-btn:hover { opacity: 0.85; }
+    .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #0d1117;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .step-body { flex: 1; }
+    .step-body p { margin-bottom: 6px; }
+
+    .section-divider {
+      border: none;
+      border-top: 2px solid var(--border);
+      margin: 40px 0;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .checklist-item input[type="checkbox"] {
+      margin-top: 3px;
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+    <a href="../../architecture/index.html">Architecture</a>
+    <a href="../../session-notes/index.html">Notes</a>
+    <a href="../../commit-reviews/index.html">Commits</a>
+    <a href="../../prompts/index.html">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <!-- Header -->
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 1</span>
+      <span class="badge badge-current">Session 02</span>
+      <span style="color:var(--text-muted); font-size:13px;">JavaScript Foundations</span>
+    </div>
+    <h1>Arrays and Iteration</h1>
+    <p class="subtitle">
+      Arrays are how you hold a list of things. In React, every list you render on screen
+      starts as a JavaScript array. Understanding arrays — and how to loop through them —
+      is the direct prerequisite for Session 14 where we render lists with <code>.map()</code>.
+    </p>
+
+    <div style="display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap;">
+      <div class="alert alert-info" style="margin:0; flex:1; min-width:200px;">
+        Estimated time: 35–40 minutes
+      </div>
+      <div class="alert alert-warning" style="margin:0; flex:1; min-width:200px;">
+        Prerequisite: Session 01 post-quiz score ≥ 80%
+      </div>
+    </div>
+
+    <!-- ── SECTION 1: LEARNING OBJECTIVE ─────────────────────── -->
+    <h2>1. Learning Objective</h2>
+    <div class="card">
+      <p>By the end of this session you will be able to:</p>
+      <ul>
+        <li>Create an array and access elements by index</li>
+        <li>Use <code>.length</code> to know how many items are in an array</li>
+        <li>Iterate over an array using a <code>for</code> loop and a <code>for...of</code> loop</li>
+        <li>Explain the difference between mutating and non-mutating array methods</li>
+        <li>Use <code>.push()</code>, <code>.pop()</code>, <code>.includes()</code>, and <code>.indexOf()</code></li>
+        <li>Explain why React will care about whether you mutate an array or create a new one</li>
+      </ul>
+    </div>
+
+    <!-- ── SECTION 2: PRE-CODING QUIZ ─────────────────────────── -->
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer these <strong>before</strong> reading the concept section. Score honestly. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>
+          You have <code>const countries = ["Canada", "Japan", "Brazil"];</code><br/>
+          What does <code>countries[1]</code> return?
+        </p>
+        <label class="quiz-option" data-val="a">"Canada"</label>
+        <label class="quiz-option" data-val="b">undefined</label>
+        <label class="quiz-option" data-val="c">"Japan"</label>
+        <label class="quiz-option" data-val="d">"Brazil"</label>
+        <div class="explanation">
+          Arrays are zero-indexed. Index 0 is "Canada", index 1 is "Japan", index 2 is "Brazil".
+          This is one of the most common off-by-one mistakes in programming.
+        </div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>
+          You write <code>const a = ["X", "Y"];</code> then <code>const b = a;</code> then <code>b.push("Z");</code><br/>
+          What is <code>a.length</code> after this?
+        </p>
+        <label class="quiz-option" data-val="a">2 — because <code>const</code> makes arrays immutable</label>
+        <label class="quiz-option" data-val="b">3 — because <code>b</code> and <code>a</code> point to the same array</label>
+        <label class="quiz-option" data-val="c">2 — because <code>b</code> is a copy of <code>a</code></label>
+        <label class="quiz-option" data-val="d">An error — you cannot push to a const array</label>
+        <div class="explanation">
+          Arrays are objects. Like all objects, <code>const b = a</code> copies the reference, not the contents.
+          Both <code>a</code> and <code>b</code> point to the same array in memory, so <code>b.push("Z")</code>
+          mutates the array that both variables reference. This is the same reference behaviour from Session 01,
+          applied to arrays.
+        </div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>
+          Which of these loops correctly prints every item in <code>const items = [10, 20, 30];</code>?
+        </p>
+        <label class="quiz-option" data-val="a"><code>for (let i = 1; i &lt;= items.length; i++) { console.log(items[i]); }</code></label>
+        <label class="quiz-option" data-val="b"><code>for (let i = 0; i &lt; items.length; i++) { console.log(i); }</code></label>
+        <label class="quiz-option" data-val="c"><code>for (let i = 0; i &lt;= items.length; i++) { console.log(items[i]); }</code></label>
+        <label class="quiz-option" data-val="d"><code>for (let i = 0; i &lt; items.length; i++) { console.log(items[i]); }</code></label>
+        <div class="explanation">
+          Option A starts at index 1 (skips first item) and uses <code>&lt;=</code> (accesses one past the end, returning <code>undefined</code>).
+          Option B prints the index number, not the item. Option C uses <code>&lt;=</code> so it reads <code>items[3]</code> which is <code>undefined</code>.
+          Option D is correct: start at 0, stop before <code>length</code>, access <code>items[i]</code>.
+        </div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>
+          <code>.push()</code> adds an item to an array. Which statement about it is true?
+        </p>
+        <label class="quiz-option" data-val="a">It mutates the original array and returns the new length</label>
+        <label class="quiz-option" data-val="b">It returns a new array with the item added</label>
+        <label class="quiz-option" data-val="c">It mutates the original array and returns the added item</label>
+        <label class="quiz-option" data-val="d">It returns the original array unchanged</label>
+        <div class="explanation">
+          <code>.push()</code> is a mutating method. It changes the original array in-place and returns
+          the new <code>length</code> of the array. This is important for React: if you store an array
+          in state and push to it directly, React will not detect the change because the array reference
+          hasn't changed. You'll learn the correct pattern in Layer 3.
+        </div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          You have <code>const list = ["a", "b", "c"];</code><br/>
+          What does <code>list.indexOf("b")</code> return?
+        </p>
+        <label class="quiz-option" data-val="a">true</label>
+        <label class="quiz-option" data-val="b">2</label>
+        <label class="quiz-option" data-val="c">1</label>
+        <label class="quiz-option" data-val="d">-1</label>
+        <div class="explanation">
+          <code>.indexOf()</code> returns the index of the first matching element, or <code>-1</code> if not found.
+          "b" is at index 1 (zero-indexed). <code>-1</code> would be returned if "b" were not in the array.
+          The pattern <code>if (list.indexOf("b") !== -1)</code> checks for existence — though
+          <code>.includes()</code> is cleaner for that purpose.
+        </div>
+      </div>
+
+      <button class="submit-btn" onclick="submitQuiz('pre')">Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 3: CONCEPT EXPLANATION ─────────────────────── -->
+    <h2>3. The Concept — JavaScript Arrays</h2>
+
+    <h3>What is an array?</h3>
+    <p>
+      An array is an ordered list of values. Unlike an object (which stores values by key name),
+      an array stores values by numeric position — called an <strong>index</strong>.
+    </p>
+
+    <pre><code>// An object stores by name
+const country = { name: "Canada", region: "Americas" };
+
+// An array stores by position
+const countries = ["Canada", "Japan", "Brazil"];
+//                  index 0   index 1   index 2</code></pre>
+
+    <h3>Creating arrays and accessing elements</h3>
+    <pre><code>const countries = ["Canada", "Japan", "Brazil"];
+
+// Access by index (zero-based)
+console.log(countries[0]);  // "Canada"
+console.log(countries[1]);  // "Japan"
+console.log(countries[2]);  // "Brazil"
+console.log(countries[3]);  // undefined — no index 3 exists
+
+// Length: how many items
+console.log(countries.length);  // 3
+
+// Last item (works for any length)
+console.log(countries[countries.length - 1]);  // "Brazil"</code></pre>
+
+    <div class="alert alert-warning">
+      <strong>Common mistake:</strong> Arrays are zero-indexed. The last valid index is always
+      <code>length - 1</code>. Accessing <code>array[array.length]</code> gives <code>undefined</code>,
+      not an error.
+    </div>
+
+    <h3>Arrays are objects — reference behaviour applies</h3>
+    <p>
+      You learned in Session 01 that objects are passed and assigned by reference.
+      Arrays are objects, so the exact same rules apply.
+    </p>
+    <pre><code>const original = ["Canada", "Japan"];
+const alias = original;        // NOT a copy — same reference
+
+alias.push("Brazil");
+console.log(original);  // ["Canada", "Japan", "Brazil"]
+// original was mutated because alias points to the same array</code></pre>
+
+    <h3>Iterating — the for loop</h3>
+    <p>
+      A <code>for</code> loop runs a block of code a set number of times.
+      It has three parts: <em>initialise</em>, <em>condition</em>, <em>update</em>.
+    </p>
+    <pre><code>const countries = ["Canada", "Japan", "Brazil"];
+
+for (let i = 0; i &lt; countries.length; i++) {
+  console.log(i, countries[i]);
+}
+// 0 "Canada"
+// 1 "Japan"
+// 2 "Brazil"</code></pre>
+
+    <p>
+      Read it as: start at <code>i = 0</code>, keep going while <code>i</code> is less than
+      the length, after each iteration add 1 to <code>i</code>.
+    </p>
+
+    <h3>Iterating — the for...of loop</h3>
+    <p>
+      When you don't need the index, <code>for...of</code> is cleaner:
+    </p>
+    <pre><code>for (const country of countries) {
+  console.log(country);
+}
+// "Canada"
+// "Japan"
+// "Brazil"</code></pre>
+
+    <div class="alert alert-info">
+      <strong>React connection:</strong> In Session 03 you will learn <code>.map()</code> —
+      a method that loops over an array and returns a <em>new</em> array of transformed values.
+      <code>.map()</code> is how React renders lists. Everything in this session is the foundation for that.
+    </div>
+
+    <h3>Mutating vs non-mutating methods</h3>
+    <p>
+      This distinction matters enormously in React. Some array methods change the original array.
+      Others return a new array and leave the original untouched.
+    </p>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title" style="color:var(--red);">Mutating — changes original</div>
+        <ul style="margin-top:8px;">
+          <li><code>.push(item)</code> — add to end</li>
+          <li><code>.pop()</code> — remove from end</li>
+          <li><code>.unshift(item)</code> — add to start</li>
+          <li><code>.shift()</code> — remove from start</li>
+          <li><code>.splice(i, n)</code> — remove/insert at index</li>
+          <li><code>.sort()</code> — sort in place</li>
+          <li><code>.reverse()</code> — reverse in place</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--green);">Non-mutating — returns new array</div>
+        <ul style="margin-top:8px;">
+          <li><code>.map(fn)</code> — transform each item</li>
+          <li><code>.filter(fn)</code> — keep matching items</li>
+          <li><code>.slice(i, j)</code> — copy a portion</li>
+          <li><code>.concat(arr)</code> — combine arrays</li>
+          <li><code>[...arr]</code> — spread copy</li>
+          <li><code>.find(fn)</code> — returns one item</li>
+          <li><code>.reduce(fn)</code> — accumulate to one value</li>
+        </ul>
+      </div>
+    </div>
+
+    <p>
+      In Layer 3, when you learn <code>useState</code>, you will discover that React only
+      re-renders when it sees a <em>new reference</em>. If you mutate an array in state,
+      React sees the same reference and does nothing. You must return a new array.
+      That is why this distinction matters right now — not just as trivia.
+    </p>
+
+    <h3>Useful array methods to know now</h3>
+    <pre><code>const countries = ["Canada", "Japan", "Brazil"];
+
+// Check if item exists
+console.log(countries.includes("Japan"));   // true
+console.log(countries.includes("France"));  // false
+
+// Find the position
+console.log(countries.indexOf("Brazil"));   // 2
+console.log(countries.indexOf("France"));   // -1  (not found)
+
+// Add to end (mutating)
+countries.push("France");
+console.log(countries);  // ["Canada", "Japan", "Brazil", "France"]
+
+// Remove from end (mutating)
+const removed = countries.pop();
+console.log(removed);    // "France"
+console.log(countries);  // ["Canada", "Japan", "Brazil"]
+
+// Copy a portion (non-mutating)
+const first2 = countries.slice(0, 2);
+console.log(first2);     // ["Canada", "Japan"]
+console.log(countries);  // ["Canada", "Japan", "Brazil"] — unchanged</code></pre>
+
+    <h3>Arrays of objects — the pattern React uses</h3>
+    <p>
+      In real React applications, you almost never have an array of plain strings.
+      You have an array of objects — one object per item to display.
+    </p>
+    <pre><code>const countries = [
+  { id: 1, name: "Canada",  region: "Americas" },
+  { id: 2, name: "Japan",   region: "Asia" },
+  { id: 3, name: "Brazil",  region: "Americas" }
+];
+
+// Access a specific country's name
+console.log(countries[0].name);   // "Canada"
+console.log(countries[1].region); // "Asia"
+
+// Loop and access properties
+for (const country of countries) {
+  console.log(country.name, "-", country.region);
+}
+// Canada - Americas
+// Japan - Asia
+// Brazil - Americas</code></pre>
+
+    <p>
+      The <code>id</code> field on each object is not accidental. In Session 15, you will learn
+      that React needs a unique <code>key</code> for every item in a rendered list.
+      That key comes from here.
+    </p>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 4: LAB ──────────────────────────────────────── -->
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Create <code>src/countries.js</code> — an array of 3 country
+      objects. Iterate over it two ways, use 4 array methods, and prove you understand
+      mutating vs non-mutating behaviour.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Create the file</strong></p>
+        <p>Create <code>src/countries.js</code>. This file will grow every session through Layer 1.</p>
+        <pre><code>// src/countries.js</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Define an array of 3 country objects</strong></p>
+        <p>Each object must have at least: <code>id</code>, <code>name</code>, <code>region</code>, <code>population</code>.</p>
+        <pre><code>const countries = [
+  { id: 1, name: "Canada",  region: "Americas", population: 38000000 },
+  { id: 2, name: "Japan",   region: "Asia",      population: 125000000 },
+  { id: 3, name: "Brazil",  region: "Americas",  population: 215000000 }
+];</code></pre>
+        <p>Before continuing: why does each object have an <code>id</code>? Write the reason in a comment.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Access elements by index</strong></p>
+        <pre><code>console.log("First country:", countries[0].name);
+console.log("Last country:", countries[countries.length - 1].name);
+console.log("Total countries:", countries.length);</code></pre>
+        <p>Run this. Confirm the output matches your expectations.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Loop with a for loop</strong></p>
+        <pre><code>for (let i = 0; i &lt; countries.length; i++) {
+  console.log(i + ":", countries[i].name, "(" + countries[i].region + ")");
+}</code></pre>
+        <p>
+          Stop and trace this manually before running. What will <code>i</code> be on each iteration?
+          What will <code>countries[i].name</code> evaluate to each time? Write it down, then run and confirm.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Loop with for...of</strong></p>
+        <pre><code>for (const country of countries) {
+  console.log(country.name, "— population:", country.population.toLocaleString());
+}</code></pre>
+        <p>
+          Compare this to Step 4. Both loop over the array. When would you choose one over the other?
+          (Hint: do you need the index number?)
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <p><strong>Use .includes() and .indexOf()</strong></p>
+        <pre><code>const names = ["Canada", "Japan", "Brazil"];
+
+console.log("Includes Japan?", names.includes("Japan"));   // true
+console.log("Includes France?", names.includes("France")); // false
+console.log("Index of Brazil:", names.indexOf("Brazil"));  // 2
+console.log("Index of France:", names.indexOf("France"));  // -1</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <p><strong>Prove mutation: push and pop</strong></p>
+        <pre><code>console.log("Before push:", countries.length); // 3
+
+countries.push({ id: 4, name: "France", region: "Europe", population: 68000000 });
+console.log("After push:", countries.length);  // 4
+
+const removed = countries.pop();
+console.log("Removed:", removed.name);         // "France"
+console.log("After pop:", countries.length);   // 3</code></pre>
+        <p>
+          Notice that <code>.push()</code> and <code>.pop()</code> changed <code>countries</code> directly.
+          The array reference is the same — only the contents changed.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">8</div>
+      <div class="step-body">
+        <p><strong>Prove non-mutation: slice</strong></p>
+        <pre><code>const americasOnly = countries.filter(function(country) {
+  return country.region === "Americas";
+});
+
+console.log("Filtered:", americasOnly.length);   // 2
+console.log("Original:", countries.length);      // 3 — unchanged</code></pre>
+        <p>
+          <code>.filter()</code> is a preview of Session 03. Notice: it does not change <code>countries</code>.
+          It returns a brand new array. This is the pattern React requires for state updates.
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 5: EXPECTED FILES CHANGED ──────────────────── -->
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>File</th><th>Action</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>src/countries.js</code></td>
+            <td>Created</td>
+            <td>Array of country objects. This file will be extended in Sessions 03–06.</td>
+          </tr>
+          <tr>
+            <td><code>docs/sessions/session-02/index.html</code></td>
+            <td>Created</td>
+            <td>This session document.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="alert alert-warning">
+      Do not touch <code>src/country.js</code> from Session 01. That file stays as-is.
+      This is a new file: <code>src/countries.js</code> (plural).
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 6: COMMIT CHECKPOINT ───────────────────────── -->
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/countries.js docs/sessions/session-02/index.html
+git commit -m "session-02: array of country objects, for loop, for...of, mutation proof"</code></pre>
+    <div class="alert alert-info">
+      Before committing, verify out loud: "What is the difference between <code>.push()</code>
+      and <code>.filter()</code> in terms of what they do to the original array?"
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 7: CODE REVIEW CHECKLIST ───────────────────── -->
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item">
+        <input type="checkbox" id="c1" />
+        <label for="c1">Array is declared with <code>const</code></label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c2" />
+        <label for="c2">Each object in the array has an <code>id</code> field and I can explain why</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c3" />
+        <label for="c3">Index access uses <code>[0]</code>, <code>[1]</code>, <code>[countries.length - 1]</code></label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c4" />
+        <label for="c4"><code>for</code> loop is present and correctly uses <code>i &lt; countries.length</code> (not <code>&lt;=</code>)</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c5" />
+        <label for="c5"><code>for...of</code> loop is present</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c6" />
+        <label for="c6"><code>.push()</code> and <code>.pop()</code> mutation is demonstrated with before/after logs</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c7" />
+        <label for="c7"><code>.filter()</code> non-mutation is demonstrated — original array length stays the same</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c8" />
+        <label for="c8">I can explain without looking: why does React care about this mutating/non-mutating difference?</label>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 8: POST-CODING QUIZ ────────────────────────── -->
+    <h2>8. Post-Coding Quiz</h2>
+    <p>Same 5 questions. Need 4/5 to mark this session complete.</p>
+
+    <div id="post-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>
+          You have <code>const countries = ["Canada", "Japan", "Brazil"];</code><br/>
+          What does <code>countries[1]</code> return?
+        </p>
+        <label class="quiz-option" data-val="a">"Canada"</label>
+        <label class="quiz-option" data-val="b">undefined</label>
+        <label class="quiz-option" data-val="c">"Japan"</label>
+        <label class="quiz-option" data-val="d">"Brazil"</label>
+        <div class="explanation">Arrays are zero-indexed. Index 0 = "Canada", 1 = "Japan", 2 = "Brazil".</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>
+          You write <code>const a = ["X", "Y"];</code> then <code>const b = a;</code> then <code>b.push("Z");</code><br/>
+          What is <code>a.length</code> after this?
+        </p>
+        <label class="quiz-option" data-val="a">2 — <code>const</code> makes it immutable</label>
+        <label class="quiz-option" data-val="b">3 — same reference, mutation affects both</label>
+        <label class="quiz-option" data-val="c">2 — <code>b</code> is a copy</label>
+        <label class="quiz-option" data-val="d">An error</label>
+        <div class="explanation">Arrays are objects. <code>b = a</code> copies the reference. Both variables point to the same array.</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Which loop correctly prints every item in <code>const items = [10, 20, 30];</code>?</p>
+        <label class="quiz-option" data-val="a"><code>for (let i = 1; i &lt;= items.length; i++) { console.log(items[i]); }</code></label>
+        <label class="quiz-option" data-val="b"><code>for (let i = 0; i &lt; items.length; i++) { console.log(i); }</code></label>
+        <label class="quiz-option" data-val="c"><code>for (let i = 0; i &lt;= items.length; i++) { console.log(items[i]); }</code></label>
+        <label class="quiz-option" data-val="d"><code>for (let i = 0; i &lt; items.length; i++) { console.log(items[i]); }</code></label>
+        <div class="explanation">Start at 0, use strict less-than, access items[i].</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p><code>.push()</code> adds an item to an array. Which statement is true?</p>
+        <label class="quiz-option" data-val="a">It mutates the original array and returns the new length</label>
+        <label class="quiz-option" data-val="b">It returns a new array with the item added</label>
+        <label class="quiz-option" data-val="c">It mutates the original array and returns the added item</label>
+        <label class="quiz-option" data-val="d">It returns the original array unchanged</label>
+        <div class="explanation"><code>.push()</code> mutates in-place and returns the new length value.</div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          You have <code>const list = ["a", "b", "c"];</code><br/>
+          What does <code>list.indexOf("b")</code> return?
+        </p>
+        <label class="quiz-option" data-val="a">true</label>
+        <label class="quiz-option" data-val="b">2</label>
+        <label class="quiz-option" data-val="c">1</label>
+        <label class="quiz-option" data-val="d">-1</label>
+        <div class="explanation">"b" is at index 1. <code>.indexOf()</code> returns the index, or -1 if not found.</div>
+      </div>
+
+      <button class="submit-btn" onclick="submitQuiz('post')">Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 9: REFLECTION ───────────────────────────────── -->
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>
+          You used <code>.filter()</code> in Step 8 before we formally taught it.
+          Looking at the syntax, what do you think the function argument is doing?
+          Why does it return <code>true</code> or <code>false</code>?
+        </li>
+        <li>
+          If <code>.push()</code> mutates the array, and React requires a new array to detect state changes —
+          how would you add an item to a React state array without using <code>.push()</code>?
+          Take a guess. (We'll confirm this in Session 17.)
+        </li>
+        <li>
+          In Step 2, you gave each country an <code>id</code>. What problem would occur in a real app
+          if two countries had the same <code>id</code>?
+        </li>
+        <li>
+          When is <code>for...of</code> better than a regular <code>for</code> loop?
+          When is the regular <code>for</code> loop better?
+        </li>
+      </ol>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 10: WHAT BREAKS ─────────────────────────────── -->
+    <h2>10. What Breaks If This Knowledge Is Missing?</h2>
+    <div class="card">
+      <ul>
+        <li>
+          <strong>Off-by-one errors:</strong> Starting a <code>for</code> loop at 1 instead of 0,
+          or using <code>&lt;=</code> instead of <code>&lt;</code>, skips the first item or
+          reads one past the end (returning <code>undefined</code>). These are silent — no error thrown.
+        </li>
+        <li>
+          <strong>React state mutations (Layer 3):</strong> Using <code>.push()</code> or <code>.pop()</code>
+          directly on a state array causes the most common React beginner bug: the UI doesn't update
+          even though the data changed. React compares references, not contents.
+        </li>
+        <li>
+          <strong>Session 03 — map/filter:</strong> Those methods take a function argument and return
+          new arrays. If you don't understand what "returns a new array" means, the Session 03 labs
+          will be confusing.
+        </li>
+        <li>
+          <strong>Session 15 — Keys:</strong> React's <code>key</code> prop must uniquely identify
+          each list item. It comes from the <code>id</code> field in your array objects.
+          Duplicate or missing ids cause subtle rendering bugs.
+        </li>
+      </ul>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 11: WHAT WE LEARNED ────────────────────────── -->
+    <h2>11. What We Learned</h2>
+    <div class="card" style="border-color: var(--green);">
+      <p><strong>JavaScript concepts mastered:</strong> Arrays, zero-based indexing, <code>for</code> loop,
+      <code>for...of</code> loop, <code>.push()</code>, <code>.pop()</code>, <code>.includes()</code>,
+      <code>.indexOf()</code>, <code>.filter()</code> preview, mutating vs non-mutating methods.</p>
+      <p><strong>React concept unlocked:</strong> Arrays of objects with <code>id</code> fields are exactly
+      the data shape React renders. When we reach Sessions 14 and 15, the array you built today
+      is the input. <code>.map()</code> will turn it into JSX. <code>id</code> will become the <code>key</code> prop.</p>
+      <p><strong>Next session:</strong>
+        <a href="../session-03/index.html">Session 03 — Array map() and filter()</a>.
+        We go deep on the two most important array methods in all of React.
+      </p>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  function setupQuiz(prefix) {
+    const container = document.getElementById(prefix + '-quiz');
+    if (!container) return;
+    container.querySelectorAll('.quiz-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        const q = opt.closest('.quiz-question');
+        q.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+        opt.classList.add('selected');
+      });
+    });
+  }
+
+  function submitQuiz(prefix) {
+    const container = document.getElementById(prefix + '-quiz');
+    const questions = container.querySelectorAll('.quiz-question');
+    let correct = 0;
+
+    questions.forEach(q => {
+      const answer = q.dataset.answer;
+      const selected = q.querySelector('.quiz-option.selected');
+      const explanation = q.querySelector('.explanation');
+
+      q.querySelectorAll('.quiz-option').forEach(o => {
+        o.style.pointerEvents = 'none';
+        if (o.dataset.val === answer) o.classList.add('correct');
+      });
+
+      if (selected) {
+        if (selected.dataset.val === answer) correct++;
+        else selected.classList.add('wrong');
+      }
+
+      if (explanation) explanation.style.display = 'block';
+    });
+
+    const result = document.getElementById(prefix + '-result');
+    const pct = Math.round((correct / questions.length) * 100);
+    result.style.display = 'block';
+
+    if (correct >= 4) {
+      result.className = 'quiz-result pass';
+      result.innerHTML = correct + '/5 correct (' + pct + '%) — Passed. ' +
+        (prefix === 'pre' ? 'Proceed to the lab.' : 'Session complete. Make your commit.');
+    } else {
+      result.className = 'quiz-result fail';
+      result.innerHTML = correct + '/5 correct (' + pct + '%) — Below 80%. ' +
+        (prefix === 'pre' ? 'Re-read the concept section, then retake.' :
+         'Re-read the concept section and redo the lab before committing.');
+    }
+
+    container.querySelector('.submit-btn').disabled = true;
+  }
+
+  setupQuiz('pre');
+  setupQuiz('post');
+</script>
+
+</body>
+</html>
