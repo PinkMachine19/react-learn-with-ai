@@ -82,6 +82,76 @@
       </p>
     </div>
 
+    <!-- COMMIT 2 -->
+    <div class="commit-entry">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">init: add curriculum docs, sessions 01-07, gitignore, README</span>
+        <span class="badge badge-complete">Committed</span>
+      </div>
+      <p><span class="commit-hash">6cea5a7</span> &nbsp;·&nbsp; 2026-06-15</p>
+      <p style="margin-top:10px;"><strong>Files created:</strong></p>
+      <ul>
+        <li><code>docs/sessions/session-01/index.html</code> — Session 01 lesson doc: Objects in JavaScript</li>
+        <li><code>docs/sessions/session-02/index.html</code> — Session 02 lesson doc: Arrays and Iteration</li>
+        <li><code>docs/sessions/session-03/index.html</code> — Session 03 lesson doc: Array map() and filter()</li>
+        <li><code>docs/sessions/session-04/index.html</code> — Session 04 lesson doc: Arrow Functions</li>
+        <li><code>docs/sessions/session-05/index.html</code> — Session 05 lesson doc: Destructuring and Spread</li>
+        <li><code>docs/sessions/session-06/index.html</code> — Session 06 lesson doc: Imports and Exports</li>
+        <li><code>docs/sessions/session-07/index.html</code> — Session 07 lesson doc: Promises, Async, Await</li>
+        <li><code>.gitignore</code> — ignores node_modules and build output</li>
+        <li><code>README.md</code> — project overview</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>What this commit means:</strong>
+        All 7 Layer 1 session documents were generated. Each contains the full lesson structure:
+        learning objective, pre-quiz, concept explanation, lab steps, commit checkpoint, code review
+        checklist, post-quiz, reflection questions, and what-breaks section. No application code was
+        written. These are the lesson plans only.
+      </p>
+    </div>
+
+    <!-- COMMIT 3 -->
+    <div class="commit-entry">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">session-01: instant quiz feedback on option select, submit unlocks after all answered</span>
+        <span class="badge badge-complete">Committed</span>
+      </div>
+      <p><span class="commit-hash">84c418a</span> &nbsp;·&nbsp; 2026-06-15</p>
+      <p style="margin-top:10px;"><strong>Files changed:</strong></p>
+      <ul>
+        <li><code>docs/sessions/session-01/index.html</code> — rewrote quiz JavaScript</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>What changed and why:</strong>
+        The original quiz required clicking an option then clicking Submit. This was changed so that:
+        (1) selecting an option immediately shows green/red feedback and the explanation,
+        (2) the Submit button starts disabled and only enables once all 5 questions are answered.
+        This prevents submitting with unanswered questions and gives instant reinforcement per answer.
+      </p>
+    </div>
+
+    <!-- COMMIT 4 -->
+    <div class="commit-entry">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">sessions 02-07: apply instant quiz feedback pattern (match session-01)</span>
+        <span class="badge badge-complete">Committed</span>
+      </div>
+      <p><span class="commit-hash">5838bcc</span> &nbsp;·&nbsp; 2026-06-15</p>
+      <p style="margin-top:10px;"><strong>Files changed:</strong></p>
+      <ul>
+        <li><code>docs/sessions/session-02/index.html</code> — quiz logic updated to match session-01</li>
+        <li><code>docs/sessions/session-03/index.html</code> — quiz logic updated to match session-01</li>
+        <li><code>docs/sessions/session-04/index.html</code> — quiz logic updated to match session-01</li>
+        <li><code>docs/sessions/session-05/index.html</code> — quiz logic updated to match session-01</li>
+        <li><code>docs/sessions/session-06/index.html</code> — quiz logic updated to match session-01</li>
+        <li><code>docs/sessions/session-07/index.html</code> — quiz logic updated to match session-01</li>
+        <li><code>docs/prompts/index.html</code> — prompt #13 logged</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>What changed and why:</strong>
+        Propagated the improved quiz interaction from session-01 to all remaining Layer 1 sessions.
+        All 7 sessions now share the same behavior: instant per-question feedback on click,
+        submit button locked until all questions answered, explanation shown immediately after each answer.
+      </p>
+    </div>
+
     <!-- Future commit reviews go here -->
 
   </div>
