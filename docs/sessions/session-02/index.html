@@ -262,7 +262,7 @@
         </div>
       </div>
 
-      <button class="submit-btn" onclick="submitQuiz('pre')">Submit Pre-Quiz</button>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
       <div class="quiz-result" id="pre-result"></div>
     </div>
 
@@ -713,7 +713,7 @@ git commit -m "session-02: array of country objects, for loop, for...of, mutatio
         <div class="explanation">"b" is at index 1. <code>.indexOf()</code> returns the index, or -1 if not found.</div>
       </div>
 
-      <button class="submit-btn" onclick="submitQuiz('post')">Submit Post-Quiz</button>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
       <div class="quiz-result" id="post-result"></div>
     </div>
 
@@ -797,56 +797,46 @@ git commit -m "session-02: array of country objects, for loop, for...of, mutatio
   function setupQuiz(prefix) {
     const container = document.getElementById(prefix + '-quiz');
     if (!container) return;
-    container.querySelectorAll('.quiz-option').forEach(opt => {
-      opt.addEventListener('click', () => {
-        const q = opt.closest('.quiz-question');
-        q.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
-        opt.classList.add('selected');
-      });
-    });
-  }
-
-  function submitQuiz(prefix) {
-    const container = document.getElementById(prefix + '-quiz');
     const questions = container.querySelectorAll('.quiz-question');
+    const btn = container.querySelector('.submit-btn');
+    let answeredCount = 0;
     let correct = 0;
-
     questions.forEach(q => {
-      const answer = q.dataset.answer;
-      const selected = q.querySelector('.quiz-option.selected');
-      const explanation = q.querySelector('.explanation');
-
-      q.querySelectorAll('.quiz-option').forEach(o => {
-        o.style.pointerEvents = 'none';
-        if (o.dataset.val === answer) o.classList.add('correct');
+      q.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          if (q.dataset.answered) return;
+          q.dataset.answered = 'true';
+          answeredCount++;
+          const answer = q.dataset.answer;
+          q.querySelectorAll('.quiz-option').forEach(o => {
+            o.style.pointerEvents = 'none';
+            if (o.dataset.val === answer) o.classList.add('correct');
+          });
+          if (opt.dataset.val === answer) correct++;
+          else opt.classList.add('wrong');
+          const explanation = q.querySelector('.explanation');
+          if (explanation) explanation.style.display = 'block';
+          if (answeredCount === questions.length) btn.disabled = false;
+        });
       });
-
-      if (selected) {
-        if (selected.dataset.val === answer) correct++;
-        else selected.classList.add('wrong');
-      }
-
-      if (explanation) explanation.style.display = 'block';
     });
-
-    const result = document.getElementById(prefix + '-result');
-    const pct = Math.round((correct / questions.length) * 100);
-    result.style.display = 'block';
-
-    if (correct >= 4) {
-      result.className = 'quiz-result pass';
-      result.innerHTML = correct + '/5 correct (' + pct + '%) — Passed. ' +
-        (prefix === 'pre' ? 'Proceed to the lab.' : 'Session complete. Make your commit.');
-    } else {
-      result.className = 'quiz-result fail';
-      result.innerHTML = correct + '/5 correct (' + pct + '%) — Below 80%. ' +
-        (prefix === 'pre' ? 'Re-read the concept section, then retake.' :
-         'Re-read the concept section and redo the lab before committing.');
-    }
-
-    container.querySelector('.submit-btn').disabled = true;
+    btn.addEventListener('click', () => {
+      const result = document.getElementById(prefix + '-result');
+      const pct = Math.round((correct / questions.length) * 100);
+      result.style.display = 'block';
+      btn.disabled = true;
+      if (correct >= 4) {
+        result.className = 'quiz-result pass';
+        result.innerHTML = correct + '/5 correct (' + pct + '%) — Passed. ' +
+          (prefix === 'pre' ? 'You may proceed to the lab.' : 'Session complete. Make your commit.');
+      } else {
+        result.className = 'quiz-result fail';
+        result.innerHTML = correct + '/5 correct (' + pct + '%) — Below 80%. ' +
+          (prefix === 'pre' ? 'Read the concept section carefully, then retake.' :
+           'Re-read the concept section and redo the lab before committing.');
+      }
+    });
   }
-
   setupQuiz('pre');
   setupQuiz('post');
 </script>

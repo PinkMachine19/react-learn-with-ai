@@ -143,7 +143,7 @@
         <div class="explanation">The <code>as</code> keyword creates an alias. <code>PI</code> is no longer available — only <code>pi</code> is. This is useful when two modules export something with the same name.</div>
       </div>
 
-      <button class="submit-btn" onclick="submitQuiz('pre')">Submit Pre-Quiz</button>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
       <div class="quiz-result" id="pre-result"></div>
     </div>
 
@@ -416,7 +416,7 @@ git commit -m "session-06: move country data to module, named and default export
         <label class="quiz-option" data-val="d">Error</label>
         <div class="explanation">The alias after <code>as</code> is the local name. PI is not accessible.</div>
       </div>
-      <button class="submit-btn" onclick="submitQuiz('post')">Submit Post-Quiz</button>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
       <div class="quiz-result" id="post-result"></div>
     </div>
 
@@ -452,9 +452,51 @@ git commit -m "session-06: move country data to module, named and default export
 </main>
 
 <script>
-  function setupQuiz(p){const c=document.getElementById(p+'-quiz');if(!c)return;c.querySelectorAll('.quiz-option').forEach(o=>{o.addEventListener('click',()=>{const q=o.closest('.quiz-question');q.querySelectorAll('.quiz-option').forEach(x=>x.classList.remove('selected'));o.classList.add('selected');});});}
-  function submitQuiz(p){const c=document.getElementById(p+'-quiz');const qs=c.querySelectorAll('.quiz-question');let ok=0;qs.forEach(q=>{const ans=q.dataset.answer;const sel=q.querySelector('.quiz-option.selected');const exp=q.querySelector('.explanation');q.querySelectorAll('.quiz-option').forEach(o=>{o.style.pointerEvents='none';if(o.dataset.val===ans)o.classList.add('correct');});if(sel){if(sel.dataset.val===ans)ok++;else sel.classList.add('wrong');}if(exp)exp.style.display='block';});const r=document.getElementById(p+'-result');const pct=Math.round(ok/qs.length*100);r.style.display='block';if(ok>=4){r.className='quiz-result pass';r.innerHTML=ok+'/5 ('+pct+'%) — Passed. '+(p==='pre'?'Proceed to the lab.':'Session complete. Make your commit.');}else{r.className='quiz-result fail';r.innerHTML=ok+'/5 ('+pct+'%) — Below 80%. Re-read the concept section'+(p==='post'?' and redo the lab':'')+' then retake.';}c.querySelector('.submit-btn').disabled=true;}
-  setupQuiz('pre');setupQuiz('post');
+  function setupQuiz(prefix) {
+    const container = document.getElementById(prefix + '-quiz');
+    if (!container) return;
+    const questions = container.querySelectorAll('.quiz-question');
+    const btn = container.querySelector('.submit-btn');
+    let answeredCount = 0;
+    let correct = 0;
+    questions.forEach(q => {
+      q.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          if (q.dataset.answered) return;
+          q.dataset.answered = 'true';
+          answeredCount++;
+          const answer = q.dataset.answer;
+          q.querySelectorAll('.quiz-option').forEach(o => {
+            o.style.pointerEvents = 'none';
+            if (o.dataset.val === answer) o.classList.add('correct');
+          });
+          if (opt.dataset.val === answer) correct++;
+          else opt.classList.add('wrong');
+          const explanation = q.querySelector('.explanation');
+          if (explanation) explanation.style.display = 'block';
+          if (answeredCount === questions.length) btn.disabled = false;
+        });
+      });
+    });
+    btn.addEventListener('click', () => {
+      const result = document.getElementById(prefix + '-result');
+      const pct = Math.round((correct / questions.length) * 100);
+      result.style.display = 'block';
+      btn.disabled = true;
+      if (correct >= 4) {
+        result.className = 'quiz-result pass';
+        result.innerHTML = correct + '/5 correct (' + pct + '%) — Passed. ' +
+          (prefix === 'pre' ? 'You may proceed to the lab.' : 'Session complete. Make your commit.');
+      } else {
+        result.className = 'quiz-result fail';
+        result.innerHTML = correct + '/5 correct (' + pct + '%) — Below 80%. ' +
+          (prefix === 'pre' ? 'Read the concept section carefully, then retake.' :
+           'Re-read the concept section and redo the lab before committing.');
+      }
+    });
+  }
+  setupQuiz('pre');
+  setupQuiz('post');
 </script>
 </body>
 </html>
