@@ -157,6 +157,188 @@
       </div>
     </div>
 
+    <!-- ── SECTION 0: VISUAL OVERVIEW ───────────────────────── -->
+    <h2>0. Session Map</h2>
+    <p>
+      Nine concepts covered today. Every diagram below reappears — larger and explained — in Section 3.
+      Use this map to orient yourself before diving in.
+    </p>
+
+    <svg width="680" height="510" viewBox="0 0 680 510" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="510" fill="#111111"/>
+      <text x="16" y="26" font-family="monospace" font-size="12" fill="white">Session 02 — Concepts at a Glance</text>
+      <text x="448" y="26" font-family="monospace" font-size="9" fill="white" opacity="0.35">9 concepts · all in Section 3</text>
+
+      <!-- ── 1: Array ── 16,38 -->
+      <rect x="16" y="38" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="28" cy="50" r="9" fill="#ff5ca8"/>
+      <text x="24" y="54" font-family="monospace" font-size="9" fill="#111111">1</text>
+      <text x="40" y="54" font-family="monospace" font-size="10" fill="white">Array</text>
+      <text x="44" y="74" font-family="monospace" font-size="8" fill="#ff5ca8">0</text>
+      <text x="98" y="74" font-family="monospace" font-size="8" fill="#ff5ca8">1</text>
+      <text x="152" y="74" font-family="monospace" font-size="8" fill="#ff5ca8">2</text>
+      <rect x="30" y="78" width="50" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="36" y="96" font-family="monospace" font-size="8" fill="white">Canada</text>
+      <rect x="84" y="78" width="50" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="90" y="96" font-family="monospace" font-size="8" fill="white">Japan</text>
+      <rect x="138" y="78" width="50" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="144" y="96" font-family="monospace" font-size="8" fill="white">Brazil</text>
+      <path d="M30,109 L30,118 L188,116 L188,107" fill="none" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="68" y="132" font-family="monospace" font-size="8" fill="white">countries</text>
+      <text x="24" y="166" font-family="monospace" font-size="8" fill="white" opacity="0.5">ordered · position-based</text>
+
+      <!-- ── 2: Index Access ── 230,38 -->
+      <rect x="230" y="38" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="242" cy="50" r="9" fill="#ff5ca8"/>
+      <text x="238" y="54" font-family="monospace" font-size="9" fill="#111111">2</text>
+      <text x="254" y="54" font-family="monospace" font-size="10" fill="white">Index Access</text>
+      <rect x="244" y="68" width="46" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="250" y="85" font-family="monospace" font-size="8" fill="white">Canada</text>
+      <rect x="294" y="68" width="46" height="26" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1"/>
+      <text x="300" y="85" font-family="monospace" font-size="8" fill="#ff5ca8">Japan</text>
+      <rect x="344" y="68" width="46" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="350" y="85" font-family="monospace" font-size="8" fill="white">Brazil</text>
+      <text x="244" y="112" font-family="monospace" font-size="9" fill="#ff5ca8">countries[1]</text>
+      <path d="M292,110 L314,97" fill="none" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="311,94 315,97 311,100" fill="#ff5ca8"/>
+      <text x="244" y="130" font-family="monospace" font-size="8" fill="white">→ "Japan"</text>
+      <text x="244" y="166" font-family="monospace" font-size="8" fill="white" opacity="0.5">zero-indexed · starts at 0</text>
+
+      <!-- ── 3: Out of Bounds ── 444,38 -->
+      <rect x="444" y="38" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="456" cy="50" r="9" fill="#ff5ca8"/>
+      <text x="452" y="54" font-family="monospace" font-size="9" fill="#111111">3</text>
+      <text x="468" y="54" font-family="monospace" font-size="10" fill="white">Out of Bounds</text>
+      <rect x="454" y="70" width="36" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="459" y="87" font-family="monospace" font-size="8" fill="white">CA</text>
+      <rect x="494" y="70" width="36" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="499" y="87" font-family="monospace" font-size="8" fill="white">JP</text>
+      <rect x="534" y="70" width="36" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="539" y="87" font-family="monospace" font-size="8" fill="white">BR</text>
+      <rect x="574" y="70" width="36" height="26" fill="none" stroke="white" stroke-width="1" rx="1" stroke-dasharray="3,2" opacity="0.4"/>
+      <polygon points="578,112 598,112 588,96" fill="none" stroke="#ff5ca8" stroke-width="1" stroke-linejoin="round"/>
+      <text x="585" y="109" font-family="monospace" font-size="7" fill="#ff5ca8">!</text>
+      <text x="567" y="128" font-family="monospace" font-size="8" fill="#ff5ca8">undefined</text>
+      <text x="454" y="146" font-family="monospace" font-size="8" fill="white">countries[3]</text>
+      <text x="454" y="166" font-family="monospace" font-size="8" fill="white" opacity="0.5">past length − 1</text>
+
+      <!-- ── 4: Reference ── 16,191 -->
+      <rect x="16" y="191" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="28" cy="203" r="9" fill="#ff5ca8"/>
+      <text x="24" y="207" font-family="monospace" font-size="9" fill="#111111">4</text>
+      <text x="40" y="207" font-family="monospace" font-size="10" fill="white">Reference</text>
+      <text x="24" y="236" font-family="monospace" font-size="9" fill="white">original</text>
+      <text x="24" y="258" font-family="monospace" font-size="9" fill="white">alias</text>
+      <path d="M76,232 L112,242" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="109,239 113,243 109,246" fill="white"/>
+      <path d="M60,254 L112,248" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="109,245 113,249 109,252" fill="white"/>
+      <rect x="118" y="232" width="92" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="124" y="250" font-family="monospace" font-size="8" fill="white">["CA","JP","BR"]</text>
+      <rect x="80" y="278" width="86" height="16" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2"/>
+      <text x="85" y="289" font-family="monospace" font-size="8" fill="#ff5ca8">same memory</text>
+      <text x="24" y="319" font-family="monospace" font-size="8" fill="white" opacity="0.5">b = a copies reference only</text>
+
+      <!-- ── 5: for Loop ── 230,191 -->
+      <rect x="230" y="191" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="242" cy="203" r="9" fill="#ff5ca8"/>
+      <text x="238" y="207" font-family="monospace" font-size="9" fill="#111111">5</text>
+      <text x="254" y="207" font-family="monospace" font-size="10" fill="white">for Loop</text>
+      <rect x="244" y="220" width="44" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="256" y="237" font-family="monospace" font-size="8" fill="white">CA</text>
+      <rect x="294" y="220" width="44" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="306" y="237" font-family="monospace" font-size="8" fill="white">JP</text>
+      <rect x="344" y="220" width="44" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="356" y="237" font-family="monospace" font-size="8" fill="white">BR</text>
+      <text x="248" y="258" font-family="monospace" font-size="7" fill="#ff5ca8">i=0</text>
+      <text x="298" y="258" font-family="monospace" font-size="7" fill="#ff5ca8">i=1</text>
+      <text x="348" y="258" font-family="monospace" font-size="7" fill="#ff5ca8">i=2</text>
+      <path d="M244,215 L390,213" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="387,210 391,213 387,216" fill="white"/>
+      <text x="244" y="278" font-family="monospace" font-size="8" fill="white">use when index is needed</text>
+      <text x="244" y="319" font-family="monospace" font-size="8" fill="white" opacity="0.5">for(let i=0; i&lt;len; i++)</text>
+
+      <!-- ── 6: for...of ── 444,191 -->
+      <rect x="444" y="191" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="456" cy="203" r="9" fill="#ff5ca8"/>
+      <text x="452" y="207" font-family="monospace" font-size="9" fill="#111111">6</text>
+      <text x="468" y="207" font-family="monospace" font-size="10" fill="white">for...of</text>
+      <rect x="458" y="220" width="40" height="24" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="466" y="236" font-family="monospace" font-size="7" fill="white">CA</text>
+      <rect x="504" y="220" width="40" height="24" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="512" y="236" font-family="monospace" font-size="7" fill="white">JP</text>
+      <rect x="550" y="220" width="40" height="24" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="558" y="236" font-family="monospace" font-size="7" fill="white">BR</text>
+      <line x1="478" y1="244" x2="478" y2="258" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="475,255 478,260 481,255" fill="white"/>
+      <line x1="524" y1="244" x2="524" y2="258" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="521,255 524,260 527,255" fill="white"/>
+      <line x1="570" y1="244" x2="570" y2="258" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="567,255 570,260 573,255" fill="white"/>
+      <text x="462" y="272" font-family="monospace" font-size="7" fill="#ff5ca8">item</text>
+      <text x="508" y="272" font-family="monospace" font-size="7" fill="#ff5ca8">item</text>
+      <text x="554" y="272" font-family="monospace" font-size="7" fill="#ff5ca8">item</text>
+      <text x="454" y="293" font-family="monospace" font-size="8" fill="white">no index needed</text>
+      <text x="454" y="319" font-family="monospace" font-size="8" fill="white" opacity="0.5">for(const x of arr)</text>
+
+      <!-- ── 7: Mutating Methods ── 16,344 -->
+      <rect x="16" y="344" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="28" cy="356" r="9" fill="#ff5ca8"/>
+      <text x="24" y="360" font-family="monospace" font-size="9" fill="#111111">7</text>
+      <text x="40" y="360" font-family="monospace" font-size="10" fill="white">Mutating Methods</text>
+      <rect x="68" y="374" width="100" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="82" y="392" font-family="monospace" font-size="8" fill="white">[ original ]</text>
+      <text x="22" y="386" font-family="monospace" font-size="8" fill="#ff5ca8">.push()</text>
+      <line x1="60" y1="384" x2="67" y2="384" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,1"/>
+      <text x="22" y="400" font-family="monospace" font-size="8" fill="#ff5ca8">.pop()</text>
+      <line x1="60" y1="398" x2="67" y2="390" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,1"/>
+      <text x="176" y="386" font-family="monospace" font-size="8" fill="#ff5ca8">.sort()</text>
+      <line x1="172" y1="384" x2="169" y2="384" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,1"/>
+      <text x="172" y="400" font-family="monospace" font-size="8" fill="#ff5ca8">.rev()</text>
+      <line x1="172" y1="398" x2="169" y2="390" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,1"/>
+      <rect x="44" y="418" width="138" height="16" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2"/>
+      <text x="49" y="429" font-family="monospace" font-size="8" fill="#ff5ca8">changes original array</text>
+      <text x="22" y="470" font-family="monospace" font-size="8" fill="white" opacity="0.5">also: .splice() .unshift()</text>
+
+      <!-- ── 8: Non-mutating ── 230,344 -->
+      <rect x="230" y="344" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="242" cy="356" r="9" fill="#ff5ca8"/>
+      <text x="238" y="360" font-family="monospace" font-size="9" fill="#111111">8</text>
+      <text x="254" y="360" font-family="monospace" font-size="10" fill="white">Non-mutating</text>
+      <text x="240" y="382" font-family="monospace" font-size="8" fill="white">original</text>
+      <rect x="240" y="386" width="78" height="24" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="249" y="402" font-family="monospace" font-size="7" fill="white">["CA","JP"]</text>
+      <path d="M321,398 L343,398" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="340,395 344,398 340,401" fill="white"/>
+      <text x="348" y="382" font-family="monospace" font-size="8" fill="#ff5ca8">new []</text>
+      <rect x="348" y="386" width="76" height="24" fill="none" stroke="#ff5ca8" stroke-width="1" rx="1"/>
+      <text x="357" y="402" font-family="monospace" font-size="7" fill="white">["CA","JP"]</text>
+      <text x="240" y="426" font-family="monospace" font-size="8" fill="#ff5ca8">.map() .filter() .slice()</text>
+      <text x="240" y="440" font-family="monospace" font-size="8" fill="#ff5ca8">.concat() [...spread]</text>
+      <text x="240" y="470" font-family="monospace" font-size="8" fill="white" opacity="0.5">original stays unchanged</text>
+
+      <!-- ── 9: Arrays of Objects ── 444,344 -->
+      <rect x="444" y="344" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="456" cy="356" r="9" fill="#ff5ca8"/>
+      <text x="452" y="360" font-family="monospace" font-size="9" fill="#111111">9</text>
+      <text x="468" y="360" font-family="monospace" font-size="10" fill="white">Arrays of Objects</text>
+      <rect x="454" y="374" width="58" height="44" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="460" y="389" font-family="monospace" font-size="7" fill="#ff5ca8">id: 1</text>
+      <text x="460" y="401" font-family="monospace" font-size="7" fill="white">CA · Am.</text>
+      <rect x="518" y="374" width="58" height="44" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="524" y="389" font-family="monospace" font-size="7" fill="#ff5ca8">id: 2</text>
+      <text x="524" y="401" font-family="monospace" font-size="7" fill="white">JP · As.</text>
+      <rect x="582" y="374" width="58" height="44" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="588" y="389" font-family="monospace" font-size="7" fill="#ff5ca8">id: 3</text>
+      <text x="588" y="401" font-family="monospace" font-size="7" fill="white">BR · Am.</text>
+      <path d="M444,370 L444,424 L648,422 L648,368" fill="none" stroke="white" stroke-width="1" stroke-dasharray="4,3" stroke-linecap="round" opacity="0.4"/>
+      <text x="454" y="440" font-family="monospace" font-size="8" fill="white">countries[0].name</text>
+      <rect x="454" y="448" width="116" height="16" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2"/>
+      <text x="459" y="459" font-family="monospace" font-size="8" fill="#ff5ca8">React uses this shape</text>
+    </svg>
+
+    <hr class="section-divider" />
+
     <!-- ── SECTION 1: LEARNING OBJECTIVE ─────────────────────── -->
     <h2>1. Learning Objective</h2>
     <div class="card">
