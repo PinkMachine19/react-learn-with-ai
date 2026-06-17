@@ -283,6 +283,30 @@ const country = {
   population: 38000000
 };</code></pre>
 
+    <!-- SVG: Object as a grouped container -->
+    <svg width="480" height="170" viewBox="0 0 480 170" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="170" fill="#111111"/>
+      <text x="14" y="16" font-family="monospace" font-size="9" fill="white" opacity="0.5">3 separate variables</text>
+      <rect x="10" y="22" width="138" height="22" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-1,79,33)"/>
+      <text x="16" y="37" font-family="monospace" font-size="9" fill="white">countryName = "Canada"</text>
+      <rect x="18" y="52" width="138" height="22" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.7,87,63)"/>
+      <text x="24" y="67" font-family="monospace" font-size="9" fill="white">countryRegion = "Am."</text>
+      <rect x="6" y="82" width="138" height="22" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,75,93)"/>
+      <text x="12" y="97" font-family="monospace" font-size="9" fill="white">countryPop = 38000000</text>
+      <path d="M155,66 L188,66" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="185,63 189,66 185,69" fill="white"/>
+      <text x="196" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">one object container</text>
+      <rect x="192" y="22" width="275" height="110" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(-0.4,329,77)"/>
+      <text x="202" y="43" font-family="monospace" font-size="10" fill="white">name: "Canada"</text>
+      <line x1="192" y1="49" x2="467" y2="48" stroke="white" stroke-width="0.5" opacity="0.25"/>
+      <text x="202" y="68" font-family="monospace" font-size="10" fill="white">region: "Americas"</text>
+      <line x1="192" y1="74" x2="467" y2="73" stroke="white" stroke-width="0.5" opacity="0.25"/>
+      <text x="202" y="93" font-family="monospace" font-size="10" fill="white">population: 38000000</text>
+      <line x1="192" y1="99" x2="467" y2="98" stroke="white" stroke-width="0.5" opacity="0.25"/>
+      <text x="202" y="118" font-family="monospace" font-size="10" fill="#ff5ca8">key : value</text>
+      <text x="302" y="118" font-family="monospace" font-size="9" fill="white">← pair</text>
+    </svg>
+
     <p>
       The thing on the left of the colon is called a <strong>key</strong> (or property name).
       The thing on the right is the <strong>value</strong>. Together they are a <strong>key-value pair</strong>.
@@ -306,6 +330,27 @@ console.log(country[key]);    // "Canada" — evaluates the variable first
 const weird = { "my country": "Canada" };
 console.log(weird["my country"]); // "Canada"</code></pre>
 
+    <!-- SVG: Dot notation vs bracket notation -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <rect x="150" y="10" width="180" height="52" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.3,240,36)"/>
+      <text x="160" y="30" font-family="monospace" font-size="9" fill="white">name: "Canada"</text>
+      <line x1="150" y1="36" x2="330" y2="35" stroke="white" stroke-width="0.5" opacity="0.25"/>
+      <text x="160" y="52" font-family="monospace" font-size="9" fill="white">population: 38000000</text>
+      <line x1="200" y1="62" x2="120" y2="96" stroke="#ff5ca8" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="118,93 121,98 124,94" fill="#ff5ca8"/>
+      <text x="14" y="98" font-family="monospace" font-size="10" fill="#ff5ca8">country.name</text>
+      <text x="14" y="114" font-family="monospace" font-size="9" fill="white">know key upfront</text>
+      <text x="14" y="132" font-family="monospace" font-size="10" fill="white">→ "Canada"</text>
+      <line x1="290" y1="62" x2="358" y2="96" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="355,93 359,97 362,93" fill="white"/>
+      <text x="340" y="90" font-family="monospace" font-size="9" fill="white">country[key]</text>
+      <text x="326" y="106" font-family="monospace" font-size="9" fill="#ff5ca8">key = "population"</text>
+      <text x="326" y="121" font-family="monospace" font-size="8" fill="white">evaluates variable first</text>
+      <text x="340" y="138" font-family="monospace" font-size="10" fill="white">→ 38000000</text>
+      <text x="182" y="160" font-family="monospace" font-size="9" fill="#ff5ca8">use bracket when key is dynamic</text>
+    </svg>
+
     <h3>Objects are reference types — this is critical</h3>
     <p>
       In JavaScript there are two categories of values: <strong>primitives</strong> and <strong>objects</strong>.
@@ -326,6 +371,35 @@ const a = { score: 5 };
 const b = a;        // b now points to the SAME object as a
 b.score = 99;
 console.log(a.score); // 99 — because a and b are the same object in memory</code></pre>
+
+    <!-- SVG: Primitives copy vs Objects share reference -->
+    <svg width="480" height="185" viewBox="0 0 480 185" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="185" fill="#111111"/>
+      <text x="20" y="16" font-family="monospace" font-size="10" fill="white">primitives</text>
+      <text x="100" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">— copy made</text>
+      <rect x="14" y="24" width="65" height="26" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,46,37)"/>
+      <text x="21" y="41" font-family="monospace" font-size="10" fill="white">x = 5</text>
+      <rect x="14" y="68" width="65" height="26" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.4,46,81)"/>
+      <text x="21" y="85" font-family="monospace" font-size="10" fill="white">y = 5</text>
+      <line x1="82" y1="37" x2="110" y2="37" stroke="white" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,2" opacity="0.5"/>
+      <line x1="82" y1="81" x2="110" y2="81" stroke="white" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,2" opacity="0.5"/>
+      <text x="114" y="41" font-family="monospace" font-size="8" fill="white">independent</text>
+      <text x="114" y="85" font-family="monospace" font-size="8" fill="white">independent</text>
+      <line x1="215" y1="10" x2="215" y2="165" stroke="white" stroke-width="0.5" stroke-dasharray="4,3" opacity="0.2"/>
+      <text x="228" y="16" font-family="monospace" font-size="10" fill="white">objects</text>
+      <text x="296" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">— reference shared</text>
+      <text x="228" y="42" font-family="monospace" font-size="10" fill="white">a</text>
+      <path d="M242,38 L318,62" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="315,59 319,63 315,66" fill="white"/>
+      <text x="228" y="82" font-family="monospace" font-size="10" fill="white">b</text>
+      <path d="M242,78 L318,72" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="315,69 319,73 315,76" fill="white"/>
+      <rect x="326" y="50" width="138" height="36" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.4,395,68)"/>
+      <text x="334" y="65" font-family="monospace" font-size="9" fill="white">{ score: 5 }</text>
+      <text x="334" y="80" font-family="monospace" font-size="8" fill="white">heap memory</text>
+      <rect x="326" y="116" width="120" height="18" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.3,386,125)"/>
+      <text x="332" y="129" font-family="monospace" font-size="9" fill="#ff5ca8">same memory address</text>
+    </svg>
 
     <div class="alert alert-warning">
       <strong>Why this matters for React:</strong> React components receive their data as an object
@@ -349,6 +423,32 @@ console.log(country.name); // "Canada (updated)"
 delete country.capital;
 console.log(country); // { name: "Canada (updated)" }</code></pre>
 
+    <!-- SVG: Adding and updating properties (mutation timeline) -->
+    <svg width="480" height="160" viewBox="0 0 480 160" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="160" fill="#111111"/>
+      <text x="18" y="16" font-family="monospace" font-size="9" fill="white" opacity="0.5">initial</text>
+      <rect x="12" y="22" width="110" height="28" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,67,36)"/>
+      <text x="20" y="40" font-family="monospace" font-size="10" fill="white">name: "Canada"</text>
+      <path d="M126,36 L165,36" stroke="#ff5ca8" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="162,33 166,36 162,39" fill="#ff5ca8"/>
+      <text x="128" y="28" font-family="monospace" font-size="8" fill="#ff5ca8">.capital = "Ottawa"</text>
+      <text x="174" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">after add</text>
+      <rect x="170" y="22" width="126" height="50" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(0.4,233,47)"/>
+      <text x="178" y="40" font-family="monospace" font-size="10" fill="white">name: "Canada"</text>
+      <line x1="170" y1="46" x2="296" y2="45" stroke="white" stroke-width="0.5" opacity="0.25"/>
+      <text x="178" y="62" font-family="monospace" font-size="10" fill="#ff5ca8">capital: "Ottawa"</text>
+      <path d="M300,47 L338,47" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="335,44 339,47 335,50" fill="white"/>
+      <text x="302" y="38" font-family="monospace" font-size="8" fill="white">.name = "updated"</text>
+      <text x="346" y="16" font-family="monospace" font-size="9" fill="white" opacity="0.5">after update</text>
+      <rect x="344" y="22" width="124" height="50" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.4,406,47)"/>
+      <text x="352" y="40" font-family="monospace" font-size="10" fill="#ff5ca8">name: "updated"</text>
+      <line x1="344" y1="46" x2="468" y2="45" stroke="white" stroke-width="0.5" opacity="0.25"/>
+      <text x="352" y="62" font-family="monospace" font-size="10" fill="white">capital: "Ottawa"</text>
+      <rect x="150" y="106" width="180" height="18" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.3,240,115)"/>
+      <text x="156" y="119" font-family="monospace" font-size="9" fill="#ff5ca8">mutation — same reference</text>
+    </svg>
+
     <h3>Nested objects</h3>
     <p>Property values can themselves be objects:</p>
     <pre><code>const country = {
@@ -361,6 +461,26 @@ console.log(country); // { name: "Canada (updated)" }</code></pre>
 
 console.log(country.location.continent);          // "North America"
 console.log(country.location.coordinates.lat);   // 56.1304</code></pre>
+
+    <!-- SVG: Nested objects as nested containers -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <rect x="10" y="10" width="340" height="152" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.3,180,86)"/>
+      <text x="18" y="28" font-family="monospace" font-size="9" fill="white">country {</text>
+      <text x="28" y="46" font-family="monospace" font-size="9" fill="white">  name: "Canada"</text>
+      <rect x="26" y="54" width="308" height="100" fill="none" stroke="#ff5ca8" stroke-width="1" rx="1" transform="rotate(0.3,180,104)"/>
+      <text x="36" y="70" font-family="monospace" font-size="9" fill="#ff5ca8">  location {</text>
+      <text x="46" y="86" font-family="monospace" font-size="9" fill="white">    continent: "N.America"</text>
+      <rect x="44" y="94" width="272" height="50" fill="none" stroke="white" stroke-width="1" rx="1" opacity="0.5" transform="rotate(-0.4,180,119)"/>
+      <text x="54" y="110" font-family="monospace" font-size="9" fill="white">    coordinates {</text>
+      <text x="64" y="128" font-family="monospace" font-size="9" fill="#ff5ca8">      lat: 56.13  lng: -106.3</text>
+      <text x="360" y="60" font-family="monospace" font-size="9" fill="white">deep access:</text>
+      <text x="360" y="78" font-family="monospace" font-size="8" fill="#ff5ca8">country</text>
+      <text x="360" y="94" font-family="monospace" font-size="8" fill="white">  .location</text>
+      <text x="360" y="110" font-family="monospace" font-size="8" fill="white">    .coordinates</text>
+      <text x="360" y="126" font-family="monospace" font-size="8" fill="#ff5ca8">      .lat</text>
+      <text x="360" y="148" font-family="monospace" font-size="8" fill="white">→ 56.1304</text>
+    </svg>
 
     <h3>Objects in React — the connection</h3>
     <p>
@@ -378,6 +498,35 @@ props = {
 function CountryCard(props) {
   return props.name; // "Canada"
 }</code></pre>
+
+    <!-- SVG: JSX attributes → props object → component reads it -->
+    <svg width="480" height="165" viewBox="0 0 480 165" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="165" fill="#111111"/>
+      <text x="14" y="16" font-family="monospace" font-size="9" fill="white" opacity="0.5">JSX</text>
+      <rect x="10" y="22" width="116" height="56" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,68,50)"/>
+      <text x="16" y="40" font-family="monospace" font-size="9" fill="white">&lt;CountryCard</text>
+      <text x="18" y="56" font-family="monospace" font-size="9" fill="#ff5ca8">  name="Canada"</text>
+      <text x="18" y="71" font-family="monospace" font-size="9" fill="#ff5ca8">  region="Am."</text>
+      <path d="M130,50 L168,50" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="165,47 169,50 165,53" fill="white"/>
+      <text x="130" y="42" font-family="monospace" font-size="7" fill="white">React bundles</text>
+      <text x="178" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">props {}</text>
+      <rect x="174" y="22" width="148" height="56" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(0.4,248,50)"/>
+      <text x="182" y="42" font-family="monospace" font-size="9" fill="white">name: "Canada"</text>
+      <line x1="174" y1="48" x2="322" y2="47" stroke="white" stroke-width="0.5" opacity="0.25"/>
+      <text x="182" y="65" font-family="monospace" font-size="9" fill="white">region: "Americas"</text>
+      <path d="M326,50 L364,50" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="361,47 365,50 361,53" fill="white"/>
+      <text x="328" y="42" font-family="monospace" font-size="7" fill="white">passed to</text>
+      <text x="374" y="16" font-family="monospace" font-size="9" fill="white" opacity="0.5">function</text>
+      <rect x="370" y="22" width="100" height="56" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.4,420,50)"/>
+      <text x="376" y="40" font-family="monospace" font-size="8" fill="white">CountryCard(props)</text>
+      <text x="378" y="58" font-family="monospace" font-size="9" fill="#ff5ca8">props.name</text>
+      <text x="378" y="73" font-family="monospace" font-size="9" fill="#ff5ca8">props.region</text>
+      <text x="148" y="110" font-family="monospace" font-size="9" fill="white">JSX attributes become object properties</text>
+      <text x="148" y="126" font-family="monospace" font-size="9" fill="#ff5ca8">you already know how to read these</text>
+    </svg>
+
     <p>
       We are not writing React yet. But when we do, in Session 10, you will immediately recognise
       this pattern because you already understand it.

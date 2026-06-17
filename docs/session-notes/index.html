@@ -64,6 +64,86 @@
       <p><strong>Next:</strong> Session 01 — Objects in JavaScript.</p>
     </div>
 
+    <!-- Session 01 setup note -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <span class="card-title">Layer 1 Setup — All 7 session docs built</span>
+        <span style="color:var(--text-muted);font-size:13px;">2026-06-15</span>
+      </div>
+      <p><strong>Covered:</strong> All 7 Layer 1 session documents (sessions 01–07) generated and committed.
+      Quiz interaction improved: instant per-question feedback replaces the old select-then-submit flow.
+      Python server running on 0.0.0.0:6969 serving the docs folder.</p>
+      <p><strong>Current active session:</strong> Session 01 — Objects in JavaScript. Pre-quiz, lab, and post-quiz not yet completed.</p>
+      <p><strong>Quiz scores:</strong> Not taken yet.</p>
+      <p><strong>Passed?</strong> Not started — Session 01 lab has not been done.</p>
+      <p><strong>Next:</strong> Student takes the pre-quiz at <code>localhost:6969/sessions/session-01/index.html</code>, then does the lab (create <code>src/country.js</code>), then post-quiz, then commits.</p>
+    </div>
+
+    <!-- SVG diagram system note -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <span class="card-title">SVG Visual Diagram System — Established for All Sessions</span>
+        <span style="color:var(--text-muted);font-size:13px;">2026-06-17</span>
+      </div>
+      <p><strong>What was done:</strong> Inline SVG diagrams were injected directly into Section 3
+      (concept explanation) of sessions 01 and 02. Each SVG immediately follows the paragraph or code
+      block it illustrates. No build step, no external images — pure inline SVG inside the existing HTML.</p>
+
+      <p><strong>SVG style rules (apply to all future sessions):</strong></p>
+      <ul>
+        <li>Dark background: <code>#111111</code></li>
+        <li>White stroke lines: <code>stroke="white" stroke-width="1.5"</code></li>
+        <li>Pink accents: <code>#ff5ca8</code> — used for highlights, notes, key labels, new elements</li>
+        <li>Font: <code>font-family="monospace"</code> throughout</li>
+        <li>Sketch feel: slight <code>transform="rotate(Xdeg)"</code> on boxes, <code>stroke-linecap="round"</code>, <code>stroke-linejoin="round"</code></li>
+        <li>Pink note boxes: <code>&lt;rect&gt;</code> with <code>stroke="#ff5ca8"</code> and <code>fill="none"</code> containing a label</li>
+        <li>Arrows: <code>&lt;path&gt;</code> or <code>&lt;line&gt;</code> + <code>&lt;polygon&gt;</code> arrowhead, filled matching stroke colour</li>
+        <li>Typical size: 480px wide, 155–185px tall</li>
+        <li>Wrapper: just the raw <code>&lt;svg&gt;</code> tag with <code>style="display:block;margin:16px 0;"</code></li>
+        <li>Comment before each: <code>&lt;!-- SVG: concept name --&gt;</code></li>
+      </ul>
+
+      <p><strong>Decision rule for where to insert:</strong> Insert a diagram after any code block or
+      paragraph in Section 3 that introduces an abstract concept that a geometric shape, arrow, or
+      container can make concrete. Skip paragraphs that are already obvious from the code example alone.
+      Typical triggers: a new data structure, a before/after state change, a flow between two things,
+      a comparison of two approaches, or a nesting relationship.</p>
+
+      <p><strong>Diagrams added — Session 01 (6 SVGs):</strong></p>
+      <ul>
+        <li>Object as a grouped container — scattered vars → one bordered box</li>
+        <li>Dot vs bracket notation — two forking arrow paths from same object</li>
+        <li>Primitives copy vs objects share reference — independent boxes vs shared heap box</li>
+        <li>Property mutation timeline — object in three sequential states</li>
+        <li>Nested objects — nested container boxes (country → location → coordinates)</li>
+        <li>React props flow — JSX attributes → props object → component function reads it</li>
+      </ul>
+
+      <p><strong>Diagrams added — Session 02 (10 SVGs):</strong></p>
+      <ul>
+        <li>Objects vs arrays comparison — stacked key:value boxes vs horizontal indexed boxes</li>
+        <li>Array index access — three boxes, pink highlight on target, arrow from <code>countries[1]</code></li>
+        <li>Invalid index access — dashed empty 4th box, pink warning triangle, "undefined"</li>
+        <li>Shared reference — two variable labels both arrowing to same array box</li>
+        <li>For loop — i=0/1/2 labels under boxes, left-to-right arrow, circular loop arrow</li>
+        <li>For...of loop — downward arrows, "country" labels, i crossed out, "cleaner loop"</li>
+        <li>Mutating methods — array box with push/pop/splice/sort/reverse radiating outward</li>
+        <li>Non-mutating methods — original array → arrow → new copy, "new array created"</li>
+        <li>Arrays of objects — three object cards with id/name inside array bracket</li>
+        <li>React keys — three list items each with pink ID badge, arrow to badge</li>
+      </ul>
+
+      <p><strong>Remaining sessions to update (03–07):</strong> Apply the same process to Section 3
+      of each session. Suggested concept triggers per session:</p>
+      <ul>
+        <li><strong>Session 03</strong> (map/filter): <code>.map()</code> transform flow, <code>.filter()</code> keep/discard, chaining, callback function shape</li>
+        <li><strong>Session 04</strong> (arrow functions): traditional vs arrow syntax side-by-side, implicit return, no own <code>this</code></li>
+        <li><strong>Session 05</strong> (destructuring + spread): object destructure = extracting values, array destructure, spread as copy-then-extend</li>
+        <li><strong>Session 06</strong> (imports/exports): module graph — file A exports → file B imports, named vs default export shapes</li>
+        <li><strong>Session 07</strong> (promises/async/await): timeline showing sync vs async execution, promise states (pending → resolved/rejected), async/await as paused execution</li>
+      </ul>
+    </div>
+
     <!-- Future notes go here -->
 
   </div>

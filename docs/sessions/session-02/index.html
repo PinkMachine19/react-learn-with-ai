@@ -157,6 +157,188 @@
       </div>
     </div>
 
+    <!-- ── SECTION 0: VISUAL OVERVIEW ───────────────────────── -->
+    <h2>0. Session Map</h2>
+    <p>
+      Nine concepts covered today. Every diagram below reappears — larger and explained — in Section 3.
+      Use this map to orient yourself before diving in.
+    </p>
+
+    <svg width="680" height="510" viewBox="0 0 680 510" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="510" fill="#111111"/>
+      <text x="16" y="26" font-family="monospace" font-size="12" fill="white">Session 02 — Concepts at a Glance</text>
+      <text x="448" y="26" font-family="monospace" font-size="9" fill="white" opacity="0.35">9 concepts · all in Section 3</text>
+
+      <!-- ── 1: Array ── 16,38 -->
+      <rect x="16" y="38" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="28" cy="50" r="9" fill="#ff5ca8"/>
+      <text x="24" y="54" font-family="monospace" font-size="9" fill="#111111">1</text>
+      <text x="40" y="54" font-family="monospace" font-size="10" fill="white">Array</text>
+      <text x="44" y="74" font-family="monospace" font-size="8" fill="#ff5ca8">0</text>
+      <text x="98" y="74" font-family="monospace" font-size="8" fill="#ff5ca8">1</text>
+      <text x="152" y="74" font-family="monospace" font-size="8" fill="#ff5ca8">2</text>
+      <rect x="30" y="78" width="50" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="36" y="96" font-family="monospace" font-size="8" fill="white">Canada</text>
+      <rect x="84" y="78" width="50" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="90" y="96" font-family="monospace" font-size="8" fill="white">Japan</text>
+      <rect x="138" y="78" width="50" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="144" y="96" font-family="monospace" font-size="8" fill="white">Brazil</text>
+      <path d="M30,109 L30,118 L188,116 L188,107" fill="none" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="68" y="132" font-family="monospace" font-size="8" fill="white">countries</text>
+      <text x="24" y="166" font-family="monospace" font-size="8" fill="white" opacity="0.5">ordered · position-based</text>
+
+      <!-- ── 2: Index Access ── 230,38 -->
+      <rect x="230" y="38" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="242" cy="50" r="9" fill="#ff5ca8"/>
+      <text x="238" y="54" font-family="monospace" font-size="9" fill="#111111">2</text>
+      <text x="254" y="54" font-family="monospace" font-size="10" fill="white">Index Access</text>
+      <rect x="244" y="68" width="46" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="250" y="85" font-family="monospace" font-size="8" fill="white">Canada</text>
+      <rect x="294" y="68" width="46" height="26" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1"/>
+      <text x="300" y="85" font-family="monospace" font-size="8" fill="#ff5ca8">Japan</text>
+      <rect x="344" y="68" width="46" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="350" y="85" font-family="monospace" font-size="8" fill="white">Brazil</text>
+      <text x="244" y="112" font-family="monospace" font-size="9" fill="#ff5ca8">countries[1]</text>
+      <path d="M292,110 L314,97" fill="none" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="311,94 315,97 311,100" fill="#ff5ca8"/>
+      <text x="244" y="130" font-family="monospace" font-size="8" fill="white">→ "Japan"</text>
+      <text x="244" y="166" font-family="monospace" font-size="8" fill="white" opacity="0.5">zero-indexed · starts at 0</text>
+
+      <!-- ── 3: Out of Bounds ── 444,38 -->
+      <rect x="444" y="38" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="456" cy="50" r="9" fill="#ff5ca8"/>
+      <text x="452" y="54" font-family="monospace" font-size="9" fill="#111111">3</text>
+      <text x="468" y="54" font-family="monospace" font-size="10" fill="white">Out of Bounds</text>
+      <rect x="454" y="70" width="36" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="459" y="87" font-family="monospace" font-size="8" fill="white">CA</text>
+      <rect x="494" y="70" width="36" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="499" y="87" font-family="monospace" font-size="8" fill="white">JP</text>
+      <rect x="534" y="70" width="36" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="539" y="87" font-family="monospace" font-size="8" fill="white">BR</text>
+      <rect x="574" y="70" width="36" height="26" fill="none" stroke="white" stroke-width="1" rx="1" stroke-dasharray="3,2" opacity="0.4"/>
+      <polygon points="578,112 598,112 588,96" fill="none" stroke="#ff5ca8" stroke-width="1" stroke-linejoin="round"/>
+      <text x="585" y="109" font-family="monospace" font-size="7" fill="#ff5ca8">!</text>
+      <text x="567" y="128" font-family="monospace" font-size="8" fill="#ff5ca8">undefined</text>
+      <text x="454" y="146" font-family="monospace" font-size="8" fill="white">countries[3]</text>
+      <text x="454" y="166" font-family="monospace" font-size="8" fill="white" opacity="0.5">past length − 1</text>
+
+      <!-- ── 4: Reference ── 16,191 -->
+      <rect x="16" y="191" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="28" cy="203" r="9" fill="#ff5ca8"/>
+      <text x="24" y="207" font-family="monospace" font-size="9" fill="#111111">4</text>
+      <text x="40" y="207" font-family="monospace" font-size="10" fill="white">Reference</text>
+      <text x="24" y="236" font-family="monospace" font-size="9" fill="white">original</text>
+      <text x="24" y="258" font-family="monospace" font-size="9" fill="white">alias</text>
+      <path d="M76,232 L112,242" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="109,239 113,243 109,246" fill="white"/>
+      <path d="M60,254 L112,248" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="109,245 113,249 109,252" fill="white"/>
+      <rect x="118" y="232" width="92" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="124" y="250" font-family="monospace" font-size="8" fill="white">["CA","JP","BR"]</text>
+      <rect x="80" y="278" width="86" height="16" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2"/>
+      <text x="85" y="289" font-family="monospace" font-size="8" fill="#ff5ca8">same memory</text>
+      <text x="24" y="319" font-family="monospace" font-size="8" fill="white" opacity="0.5">b = a copies reference only</text>
+
+      <!-- ── 5: for Loop ── 230,191 -->
+      <rect x="230" y="191" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="242" cy="203" r="9" fill="#ff5ca8"/>
+      <text x="238" y="207" font-family="monospace" font-size="9" fill="#111111">5</text>
+      <text x="254" y="207" font-family="monospace" font-size="10" fill="white">for Loop</text>
+      <rect x="244" y="220" width="44" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="256" y="237" font-family="monospace" font-size="8" fill="white">CA</text>
+      <rect x="294" y="220" width="44" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="306" y="237" font-family="monospace" font-size="8" fill="white">JP</text>
+      <rect x="344" y="220" width="44" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="356" y="237" font-family="monospace" font-size="8" fill="white">BR</text>
+      <text x="248" y="258" font-family="monospace" font-size="7" fill="#ff5ca8">i=0</text>
+      <text x="298" y="258" font-family="monospace" font-size="7" fill="#ff5ca8">i=1</text>
+      <text x="348" y="258" font-family="monospace" font-size="7" fill="#ff5ca8">i=2</text>
+      <path d="M244,215 L390,213" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="387,210 391,213 387,216" fill="white"/>
+      <text x="244" y="278" font-family="monospace" font-size="8" fill="white">use when index is needed</text>
+      <text x="244" y="319" font-family="monospace" font-size="8" fill="white" opacity="0.5">for(let i=0; i&lt;len; i++)</text>
+
+      <!-- ── 6: for...of ── 444,191 -->
+      <rect x="444" y="191" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="456" cy="203" r="9" fill="#ff5ca8"/>
+      <text x="452" y="207" font-family="monospace" font-size="9" fill="#111111">6</text>
+      <text x="468" y="207" font-family="monospace" font-size="10" fill="white">for...of</text>
+      <rect x="458" y="220" width="40" height="24" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="466" y="236" font-family="monospace" font-size="7" fill="white">CA</text>
+      <rect x="504" y="220" width="40" height="24" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="512" y="236" font-family="monospace" font-size="7" fill="white">JP</text>
+      <rect x="550" y="220" width="40" height="24" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="558" y="236" font-family="monospace" font-size="7" fill="white">BR</text>
+      <line x1="478" y1="244" x2="478" y2="258" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="475,255 478,260 481,255" fill="white"/>
+      <line x1="524" y1="244" x2="524" y2="258" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="521,255 524,260 527,255" fill="white"/>
+      <line x1="570" y1="244" x2="570" y2="258" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="567,255 570,260 573,255" fill="white"/>
+      <text x="462" y="272" font-family="monospace" font-size="7" fill="#ff5ca8">item</text>
+      <text x="508" y="272" font-family="monospace" font-size="7" fill="#ff5ca8">item</text>
+      <text x="554" y="272" font-family="monospace" font-size="7" fill="#ff5ca8">item</text>
+      <text x="454" y="293" font-family="monospace" font-size="8" fill="white">no index needed</text>
+      <text x="454" y="319" font-family="monospace" font-size="8" fill="white" opacity="0.5">for(const x of arr)</text>
+
+      <!-- ── 7: Mutating Methods ── 16,344 -->
+      <rect x="16" y="344" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="28" cy="356" r="9" fill="#ff5ca8"/>
+      <text x="24" y="360" font-family="monospace" font-size="9" fill="#111111">7</text>
+      <text x="40" y="360" font-family="monospace" font-size="10" fill="white">Mutating Methods</text>
+      <rect x="68" y="374" width="100" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="82" y="392" font-family="monospace" font-size="8" fill="white">[ original ]</text>
+      <text x="22" y="386" font-family="monospace" font-size="8" fill="#ff5ca8">.push()</text>
+      <line x1="60" y1="384" x2="67" y2="384" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,1"/>
+      <text x="22" y="400" font-family="monospace" font-size="8" fill="#ff5ca8">.pop()</text>
+      <line x1="60" y1="398" x2="67" y2="390" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,1"/>
+      <text x="176" y="386" font-family="monospace" font-size="8" fill="#ff5ca8">.sort()</text>
+      <line x1="172" y1="384" x2="169" y2="384" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,1"/>
+      <text x="172" y="400" font-family="monospace" font-size="8" fill="#ff5ca8">.rev()</text>
+      <line x1="172" y1="398" x2="169" y2="390" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,1"/>
+      <rect x="44" y="418" width="138" height="16" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2"/>
+      <text x="49" y="429" font-family="monospace" font-size="8" fill="#ff5ca8">changes original array</text>
+      <text x="22" y="470" font-family="monospace" font-size="8" fill="white" opacity="0.5">also: .splice() .unshift()</text>
+
+      <!-- ── 8: Non-mutating ── 230,344 -->
+      <rect x="230" y="344" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="242" cy="356" r="9" fill="#ff5ca8"/>
+      <text x="238" y="360" font-family="monospace" font-size="9" fill="#111111">8</text>
+      <text x="254" y="360" font-family="monospace" font-size="10" fill="white">Non-mutating</text>
+      <text x="240" y="382" font-family="monospace" font-size="8" fill="white">original</text>
+      <rect x="240" y="386" width="78" height="24" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="249" y="402" font-family="monospace" font-size="7" fill="white">["CA","JP"]</text>
+      <path d="M321,398 L343,398" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="340,395 344,398 340,401" fill="white"/>
+      <text x="348" y="382" font-family="monospace" font-size="8" fill="#ff5ca8">new []</text>
+      <rect x="348" y="386" width="76" height="24" fill="none" stroke="#ff5ca8" stroke-width="1" rx="1"/>
+      <text x="357" y="402" font-family="monospace" font-size="7" fill="white">["CA","JP"]</text>
+      <text x="240" y="426" font-family="monospace" font-size="8" fill="#ff5ca8">.map() .filter() .slice()</text>
+      <text x="240" y="440" font-family="monospace" font-size="8" fill="#ff5ca8">.concat() [...spread]</text>
+      <text x="240" y="470" font-family="monospace" font-size="8" fill="white" opacity="0.5">original stays unchanged</text>
+
+      <!-- ── 9: Arrays of Objects ── 444,344 -->
+      <rect x="444" y="344" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="456" cy="356" r="9" fill="#ff5ca8"/>
+      <text x="452" y="360" font-family="monospace" font-size="9" fill="#111111">9</text>
+      <text x="468" y="360" font-family="monospace" font-size="10" fill="white">Arrays of Objects</text>
+      <rect x="454" y="374" width="58" height="44" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="460" y="389" font-family="monospace" font-size="7" fill="#ff5ca8">id: 1</text>
+      <text x="460" y="401" font-family="monospace" font-size="7" fill="white">CA · Am.</text>
+      <rect x="518" y="374" width="58" height="44" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="524" y="389" font-family="monospace" font-size="7" fill="#ff5ca8">id: 2</text>
+      <text x="524" y="401" font-family="monospace" font-size="7" fill="white">JP · As.</text>
+      <rect x="582" y="374" width="58" height="44" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="588" y="389" font-family="monospace" font-size="7" fill="#ff5ca8">id: 3</text>
+      <text x="588" y="401" font-family="monospace" font-size="7" fill="white">BR · Am.</text>
+      <path d="M444,370 L444,424 L648,422 L648,368" fill="none" stroke="white" stroke-width="1" stroke-dasharray="4,3" stroke-linecap="round" opacity="0.4"/>
+      <text x="454" y="440" font-family="monospace" font-size="8" fill="white">countries[0].name</text>
+      <rect x="454" y="448" width="116" height="16" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2"/>
+      <text x="459" y="459" font-family="monospace" font-size="8" fill="#ff5ca8">React uses this shape</text>
+    </svg>
+
+    <hr class="section-divider" />
+
     <!-- ── SECTION 1: LEARNING OBJECTIVE ─────────────────────── -->
     <h2>1. Learning Objective</h2>
     <div class="card">
@@ -262,7 +444,7 @@
         </div>
       </div>
 
-      <button class="submit-btn" onclick="submitQuiz('pre')">Submit Pre-Quiz</button>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
       <div class="quiz-result" id="pre-result"></div>
     </div>
 
@@ -284,6 +466,34 @@ const country = { name: "Canada", region: "Americas" };
 const countries = ["Canada", "Japan", "Brazil"];
 //                  index 0   index 1   index 2</code></pre>
 
+    <!-- SVG: Objects vs Arrays comparison -->
+    <svg width="480" height="170" viewBox="0 0 480 170" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="170" fill="#111111"/>
+      <text x="28" y="16" font-family="monospace" font-size="11" fill="#ff5ca8">object {}</text>
+      <rect x="12" y="22" width="170" height="33" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.6,97,38)"/>
+      <text x="20" y="43" font-family="monospace" font-size="10" fill="white">  name: "Canada"</text>
+      <rect x="12" y="55" width="170" height="33" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.4,97,71)"/>
+      <text x="20" y="76" font-family="monospace" font-size="10" fill="white">  region: "Americas"</text>
+      <line x1="185" y1="46" x2="212" y2="46" stroke="#ff5ca8" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="209,43 213,46 209,49" fill="#ff5ca8"/>
+      <text x="216" y="50" font-family="monospace" font-size="9" fill="#ff5ca8">keys</text>
+      <text x="222" y="96" font-family="monospace" font-size="14" fill="white" opacity="0.2">VS</text>
+      <text x="305" y="16" font-family="monospace" font-size="11" fill="#ff5ca8">array []</text>
+      <text x="320" y="28" font-family="monospace" font-size="8" fill="#ff5ca8">0</text>
+      <text x="373" y="28" font-family="monospace" font-size="8" fill="#ff5ca8">1</text>
+      <text x="426" y="28" font-family="monospace" font-size="8" fill="#ff5ca8">2</text>
+      <rect x="307" y="31" width="50" height="36" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,332,49)"/>
+      <text x="313" y="53" font-family="monospace" font-size="9" fill="white">Canada</text>
+      <rect x="357" y="31" width="50" height="36" fill="none" stroke="white" stroke-width="1.5" rx="1"/>
+      <text x="363" y="53" font-family="monospace" font-size="9" fill="white">Japan</text>
+      <rect x="407" y="31" width="50" height="36" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.5,432,49)"/>
+      <text x="413" y="53" font-family="monospace" font-size="9" fill="white">Brazil</text>
+      <path d="M307,70 L307,82 L457,80 L457,68" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="360" y="98" font-family="monospace" font-size="9" fill="white">countries</text>
+      <rect x="307" y="110" width="116" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.4,365,119)"/>
+      <text x="313" y="123" font-family="monospace" font-size="9" fill="#ff5ca8">order matters</text>
+    </svg>
+
     <h3>Creating arrays and accessing elements</h3>
     <pre><code>const countries = ["Canada", "Japan", "Brazil"];
 
@@ -299,11 +509,51 @@ console.log(countries.length);  // 3
 // Last item (works for any length)
 console.log(countries[countries.length - 1]);  // "Brazil"</code></pre>
 
+    <!-- SVG: Array index access -->
+    <svg width="480" height="155" viewBox="0 0 480 155" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="155" fill="#111111"/>
+      <text x="108" y="20" font-family="monospace" font-size="8" fill="#ff5ca8">0</text>
+      <text x="197" y="20" font-family="monospace" font-size="8" fill="#ff5ca8">1</text>
+      <text x="286" y="20" font-family="monospace" font-size="8" fill="#ff5ca8">2</text>
+      <rect x="80" y="25" width="80" height="38" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.4,120,44)"/>
+      <text x="92" y="48" font-family="monospace" font-size="10" fill="white">Canada</text>
+      <rect x="160" y="25" width="80" height="38" fill="none" stroke="#ff5ca8" stroke-width="2" rx="1"/>
+      <text x="172" y="48" font-family="monospace" font-size="10" fill="#ff5ca8">Japan</text>
+      <rect x="240" y="25" width="80" height="38" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.4,280,44)"/>
+      <text x="252" y="48" font-family="monospace" font-size="10" fill="white">Brazil</text>
+      <text x="22" y="104" font-family="monospace" font-size="11" fill="white">countries[1]</text>
+      <path d="M112,98 L112,85 L196,67" fill="none" stroke="#ff5ca8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <polygon points="193,64 197,68 193,71" fill="#ff5ca8"/>
+      <text x="155" y="125" font-family="monospace" font-size="10" fill="white">returns value</text>
+    </svg>
+
     <div class="alert alert-warning">
       <strong>Common mistake:</strong> Arrays are zero-indexed. The last valid index is always
       <code>length - 1</code>. Accessing <code>array[array.length]</code> gives <code>undefined</code>,
       not an error.
     </div>
+
+    <!-- SVG: Invalid index access -->
+    <svg width="480" height="160" viewBox="0 0 480 160" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="160" fill="#111111"/>
+      <text x="44" y="18" font-family="monospace" font-size="8" fill="#ff5ca8">0</text>
+      <text x="109" y="18" font-family="monospace" font-size="8" fill="#ff5ca8">1</text>
+      <text x="174" y="18" font-family="monospace" font-size="8" fill="#ff5ca8">2</text>
+      <text x="239" y="18" font-family="monospace" font-size="8" fill="#ff5ca8">3</text>
+      <rect x="28" y="23" width="62" height="34" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,59,40)"/>
+      <text x="34" y="44" font-family="monospace" font-size="9" fill="white">Canada</text>
+      <rect x="93" y="23" width="62" height="34" fill="none" stroke="white" stroke-width="1.5" rx="1"/>
+      <text x="99" y="44" font-family="monospace" font-size="9" fill="white">Japan</text>
+      <rect x="158" y="23" width="62" height="34" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.3,189,40)"/>
+      <text x="164" y="44" font-family="monospace" font-size="9" fill="white">Brazil</text>
+      <rect x="223" y="23" width="62" height="34" fill="none" stroke="white" stroke-width="1" rx="1" stroke-dasharray="4,3" opacity="0.5"/>
+      <line x1="254" y1="57" x2="258" y2="76" stroke="#ff5ca8" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="255,74 258,79 261,74" fill="#ff5ca8"/>
+      <polygon points="245,100 275,100 260,80" fill="none" stroke="#ff5ca8" stroke-width="1.5" stroke-linejoin="round"/>
+      <text x="257" y="97" font-family="monospace" font-size="8" fill="#ff5ca8">!</text>
+      <text x="225" y="122" font-family="monospace" font-size="11" fill="#ff5ca8">undefined</text>
+      <text x="228" y="140" font-family="monospace" font-size="9" fill="white">countries[3]</text>
+    </svg>
 
     <h3>Arrays are objects — reference behaviour applies</h3>
     <p>
@@ -316,6 +566,24 @@ const alias = original;        // NOT a copy — same reference
 alias.push("Brazil");
 console.log(original);  // ["Canada", "Japan", "Brazil"]
 // original was mutated because alias points to the same array</code></pre>
+
+    <!-- SVG: Shared reference -->
+    <svg width="480" height="165" viewBox="0 0 480 165" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="165" fill="#111111"/>
+      <text x="20" y="42" font-family="monospace" font-size="11" fill="white">original</text>
+      <text x="20" y="100" font-family="monospace" font-size="11" fill="white">alias</text>
+      <line x1="92" y1="37" x2="175" y2="37" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="172,34 176,37 172,40" fill="white"/>
+      <line x1="64" y1="95" x2="175" y2="80" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="172,77 176,80 172,83" fill="white"/>
+      <rect x="180" y="22" width="200" height="70" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,280,57)"/>
+      <text x="190" y="48" font-family="monospace" font-size="10" fill="white">["Canada", "Japan",</text>
+      <text x="190" y="66" font-family="monospace" font-size="10" fill="white"> "Brazil"]</text>
+      <rect x="180" y="115" width="138" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.4,249,124)"/>
+      <text x="186" y="128" font-family="monospace" font-size="9" fill="#ff5ca8">same memory</text>
+      <text x="395" y="50" font-family="monospace" font-size="8" fill="#ff5ca8">← both variables</text>
+      <text x="395" y="63" font-family="monospace" font-size="8" fill="#ff5ca8">  point here</text>
+    </svg>
 
     <h3>Iterating — the for loop</h3>
     <p>
@@ -336,6 +604,27 @@ for (let i = 0; i &lt; countries.length; i++) {
       the length, after each iteration add 1 to <code>i</code>.
     </p>
 
+    <!-- SVG: for loop -->
+    <svg width="480" height="180" viewBox="0 0 480 180" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="180" fill="#111111"/>
+      <rect x="60" y="30" width="70" height="40" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,95,50)"/>
+      <text x="73" y="54" font-family="monospace" font-size="10" fill="white">Canada</text>
+      <rect x="135" y="30" width="70" height="40" fill="none" stroke="white" stroke-width="1.5" rx="1"/>
+      <text x="148" y="54" font-family="monospace" font-size="10" fill="white">Japan</text>
+      <rect x="210" y="30" width="70" height="40" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.5,245,50)"/>
+      <text x="223" y="54" font-family="monospace" font-size="10" fill="white">Brazil</text>
+      <text x="78" y="84" font-family="monospace" font-size="9" fill="#ff5ca8">i=0</text>
+      <text x="153" y="84" font-family="monospace" font-size="9" fill="#ff5ca8">i=1</text>
+      <text x="228" y="84" font-family="monospace" font-size="9" fill="#ff5ca8">i=2</text>
+      <path d="M60,20 L285,18" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="282,15 286,18 282,21" fill="white"/>
+      <path d="M290,30 Q320,20 310,55 Q305,78 280,78" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <polygon points="277,75 281,79 277,82" fill="white"/>
+      <rect x="320" y="110" width="120" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.4,380,119)"/>
+      <text x="326" y="123" font-family="monospace" font-size="9" fill="#ff5ca8">manual loop</text>
+      <text x="60" y="110" font-family="monospace" font-size="9" fill="white">for (let i = 0; i &lt; length; i++)</text>
+    </svg>
+
     <h3>Iterating — the for...of loop</h3>
     <p>
       When you don't need the index, <code>for...of</code> is cleaner:
@@ -346,6 +635,33 @@ for (let i = 0; i &lt; countries.length; i++) {
 // "Canada"
 // "Japan"
 // "Brazil"</code></pre>
+
+    <!-- SVG: for...of loop -->
+    <svg width="480" height="180" viewBox="0 0 480 180" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="180" fill="#111111"/>
+      <rect x="60" y="18" width="70" height="38" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.4,95,37)"/>
+      <text x="73" y="41" font-family="monospace" font-size="10" fill="white">Canada</text>
+      <rect x="135" y="18" width="70" height="38" fill="none" stroke="white" stroke-width="1.5" rx="1"/>
+      <text x="148" y="41" font-family="monospace" font-size="10" fill="white">Japan</text>
+      <rect x="210" y="18" width="70" height="38" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.4,245,37)"/>
+      <text x="223" y="41" font-family="monospace" font-size="10" fill="white">Brazil</text>
+      <line x1="95" y1="56" x2="95" y2="78" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="92,75 95,80 98,75" fill="white"/>
+      <line x1="170" y1="56" x2="170" y2="78" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="167,75 170,80 173,75" fill="white"/>
+      <line x1="245" y1="56" x2="245" y2="78" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="242,75 245,80 248,75" fill="white"/>
+      <text x="75" y="98" font-family="monospace" font-size="9" fill="white">country</text>
+      <text x="148" y="98" font-family="monospace" font-size="9" fill="white">country</text>
+      <text x="223" y="98" font-family="monospace" font-size="9" fill="white">country</text>
+      <line x1="345" y1="48" x2="380" y2="48" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="346" y1="52" x2="379" y2="52" stroke="#ff5ca8" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="340" y="38" font-family="monospace" font-size="9" fill="white">i</text>
+      <text x="385" y="55" font-family="monospace" font-size="9" fill="#ff5ca8">no index</text>
+      <rect x="320" y="116" width="120" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.3,380,125)"/>
+      <text x="326" y="129" font-family="monospace" font-size="9" fill="#ff5ca8">cleaner loop</text>
+      <text x="60" y="116" font-family="monospace" font-size="9" fill="white">for (const country of countries)</text>
+    </svg>
 
     <div class="alert alert-info">
       <strong>React connection:</strong> In Session 03 you will learn <code>.map()</code> —
@@ -385,6 +701,48 @@ for (let i = 0; i &lt; countries.length; i++) {
         </ul>
       </div>
     </div>
+
+    <!-- SVG: Mutating methods -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <rect x="160" y="55" width="160" height="60" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,240,85)"/>
+      <text x="190" y="82" font-family="monospace" font-size="10" fill="white">["Canada",</text>
+      <text x="190" y="98" font-family="monospace" font-size="10" fill="white"> "Japan"...]</text>
+      <text x="22" y="42" font-family="monospace" font-size="10" fill="#ff5ca8">.push()</text>
+      <line x1="70" y1="46" x2="158" y2="70" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <text x="22" y="72" font-family="monospace" font-size="10" fill="#ff5ca8">.pop()</text>
+      <line x1="65" y1="72" x2="158" y2="82" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <text x="22" y="102" font-family="monospace" font-size="10" fill="#ff5ca8">.splice()</text>
+      <line x1="82" y1="100" x2="158" y2="94" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <text x="330" y="42" font-family="monospace" font-size="10" fill="#ff5ca8">.sort()</text>
+      <line x1="330" y1="44" x2="322" y2="62" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <text x="330" y="72" font-family="monospace" font-size="10" fill="#ff5ca8">.reverse()</text>
+      <line x1="330" y1="72" x2="322" y2="80" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <rect x="155" y="132" width="170" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.3,240,141)"/>
+      <text x="161" y="145" font-family="monospace" font-size="9" fill="#ff5ca8">changes original</text>
+    </svg>
+
+    <!-- SVG: Non-mutating methods -->
+    <svg width="480" height="160" viewBox="0 0 480 160" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="160" fill="#111111"/>
+      <text x="18" y="16" font-family="monospace" font-size="9" fill="white">original</text>
+      <rect x="14" y="22" width="120" height="50" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,74,47)"/>
+      <text x="22" y="44" font-family="monospace" font-size="9" fill="white">["Canada",</text>
+      <text x="22" y="60" font-family="monospace" font-size="9" fill="white"> "Japan"...]</text>
+      <path d="M140,47 L200,47" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="197,44 201,47 197,50" fill="white"/>
+      <text x="142" y="38" font-family="monospace" font-size="8" fill="#ff5ca8">.map()</text>
+      <text x="142" y="50" font-family="monospace" font-size="8" fill="#ff5ca8">.filter()</text>
+      <text x="142" y="62" font-family="monospace" font-size="8" fill="#ff5ca8">.slice()</text>
+      <text x="340" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">new []</text>
+      <rect x="212" y="22" width="120" height="50" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(0.4,272,47)"/>
+      <text x="220" y="44" font-family="monospace" font-size="9" fill="white">["Canada",</text>
+      <text x="220" y="60" font-family="monospace" font-size="9" fill="white"> "Japan"...]</text>
+      <rect x="175" y="105" width="160" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.3,255,114)"/>
+      <text x="181" y="118" font-family="monospace" font-size="9" fill="#ff5ca8">new array created</text>
+      <text x="356" y="50" font-family="monospace" font-size="8" fill="#ff5ca8">.concat()</text>
+      <text x="356" y="62" font-family="monospace" font-size="8" fill="#ff5ca8">[...spread]</text>
+    </svg>
 
     <p>
       In Layer 3, when you learn <code>useState</code>, you will discover that React only
@@ -441,11 +799,60 @@ for (const country of countries) {
 // Japan - Asia
 // Brazil - Americas</code></pre>
 
+    <!-- SVG: Arrays of objects -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <rect x="30" y="25" width="110" height="70" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.6,85,60)"/>
+      <text x="38" y="47" font-family="monospace" font-size="9" fill="#ff5ca8">id:</text>
+      <text x="60" y="47" font-family="monospace" font-size="9" fill="white">1</text>
+      <text x="38" y="63" font-family="monospace" font-size="9" fill="#ff5ca8">name:</text>
+      <text x="74" y="63" font-family="monospace" font-size="9" fill="white">"Canada"</text>
+      <text x="38" y="79" font-family="monospace" font-size="9" fill="white">region: "Am."</text>
+      <rect x="185" y="25" width="110" height="70" fill="none" stroke="white" stroke-width="1.5" rx="1"/>
+      <text x="193" y="47" font-family="monospace" font-size="9" fill="#ff5ca8">id:</text>
+      <text x="215" y="47" font-family="monospace" font-size="9" fill="white">2</text>
+      <text x="193" y="63" font-family="monospace" font-size="9" fill="#ff5ca8">name:</text>
+      <text x="229" y="63" font-family="monospace" font-size="9" fill="white">"Japan"</text>
+      <text x="193" y="79" font-family="monospace" font-size="9" fill="white">region: "As."</text>
+      <rect x="340" y="25" width="110" height="70" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.5,395,60)"/>
+      <text x="348" y="47" font-family="monospace" font-size="9" fill="#ff5ca8">id:</text>
+      <text x="370" y="47" font-family="monospace" font-size="9" fill="white">3</text>
+      <text x="348" y="63" font-family="monospace" font-size="9" fill="#ff5ca8">name:</text>
+      <text x="384" y="63" font-family="monospace" font-size="9" fill="white">"Brazil"</text>
+      <text x="348" y="79" font-family="monospace" font-size="9" fill="white">region: "Am."</text>
+      <path d="M20,18 L20,105 L460,103 L460,16 L20,18" fill="none" stroke="white" stroke-width="1" stroke-dasharray="5,3" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="180" y="130" font-family="monospace" font-size="9" fill="white">countries [ {...}, {...}, {...} ]</text>
+      <rect x="150" y="143" width="180" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.3,240,152)"/>
+      <text x="156" y="156" font-family="monospace" font-size="9" fill="#ff5ca8">React uses this</text>
+    </svg>
+
     <p>
       The <code>id</code> field on each object is not accidental. In Session 15, you will learn
       that React needs a unique <code>key</code> for every item in a rendered list.
       That key comes from here.
     </p>
+
+    <!-- SVG: React keys -->
+    <svg width="480" height="165" viewBox="0 0 480 165" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="165" fill="#111111"/>
+      <rect x="50" y="20" width="280" height="28" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.4,190,34)"/>
+      <text x="58" y="38" font-family="monospace" font-size="10" fill="white">Canada — Americas</text>
+      <rect x="26" y="19" width="22" height="28" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(-0.4,37,33)"/>
+      <text x="32" y="37" font-family="monospace" font-size="9" fill="#ff5ca8">1</text>
+      <rect x="50" y="58" width="280" height="28" fill="none" stroke="white" stroke-width="1.5" rx="1"/>
+      <text x="58" y="76" font-family="monospace" font-size="10" fill="white">Japan — Asia</text>
+      <rect x="26" y="58" width="22" height="28" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1"/>
+      <text x="32" y="76" font-family="monospace" font-size="9" fill="#ff5ca8">2</text>
+      <rect x="50" y="96" width="280" height="28" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.4,190,110)"/>
+      <text x="58" y="114" font-family="monospace" font-size="10" fill="white">Brazil — Americas</text>
+      <rect x="26" y="96" width="22" height="28" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(0.4,37,110)"/>
+      <text x="32" y="114" font-family="monospace" font-size="9" fill="#ff5ca8">3</text>
+      <path d="M380,72 L340,72" stroke="#ff5ca8" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="343,69 339,72 343,75" fill="#ff5ca8"/>
+      <text x="384" y="67" font-family="monospace" font-size="9" fill="#ff5ca8">key={id}</text>
+      <rect x="362" y="115" width="100" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.4,412,124)"/>
+      <text x="368" y="128" font-family="monospace" font-size="9" fill="#ff5ca8">unique keys</text>
+    </svg>
 
     <hr class="section-divider" />
 
@@ -713,7 +1120,7 @@ git commit -m "session-02: array of country objects, for loop, for...of, mutatio
         <div class="explanation">"b" is at index 1. <code>.indexOf()</code> returns the index, or -1 if not found.</div>
       </div>
 
-      <button class="submit-btn" onclick="submitQuiz('post')">Submit Post-Quiz</button>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
       <div class="quiz-result" id="post-result"></div>
     </div>
 
@@ -797,56 +1204,46 @@ git commit -m "session-02: array of country objects, for loop, for...of, mutatio
   function setupQuiz(prefix) {
     const container = document.getElementById(prefix + '-quiz');
     if (!container) return;
-    container.querySelectorAll('.quiz-option').forEach(opt => {
-      opt.addEventListener('click', () => {
-        const q = opt.closest('.quiz-question');
-        q.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
-        opt.classList.add('selected');
-      });
-    });
-  }
-
-  function submitQuiz(prefix) {
-    const container = document.getElementById(prefix + '-quiz');
     const questions = container.querySelectorAll('.quiz-question');
+    const btn = container.querySelector('.submit-btn');
+    let answeredCount = 0;
     let correct = 0;
-
     questions.forEach(q => {
-      const answer = q.dataset.answer;
-      const selected = q.querySelector('.quiz-option.selected');
-      const explanation = q.querySelector('.explanation');
-
-      q.querySelectorAll('.quiz-option').forEach(o => {
-        o.style.pointerEvents = 'none';
-        if (o.dataset.val === answer) o.classList.add('correct');
+      q.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          if (q.dataset.answered) return;
+          q.dataset.answered = 'true';
+          answeredCount++;
+          const answer = q.dataset.answer;
+          q.querySelectorAll('.quiz-option').forEach(o => {
+            o.style.pointerEvents = 'none';
+            if (o.dataset.val === answer) o.classList.add('correct');
+          });
+          if (opt.dataset.val === answer) correct++;
+          else opt.classList.add('wrong');
+          const explanation = q.querySelector('.explanation');
+          if (explanation) explanation.style.display = 'block';
+          if (answeredCount === questions.length) btn.disabled = false;
+        });
       });
-
-      if (selected) {
-        if (selected.dataset.val === answer) correct++;
-        else selected.classList.add('wrong');
-      }
-
-      if (explanation) explanation.style.display = 'block';
     });
-
-    const result = document.getElementById(prefix + '-result');
-    const pct = Math.round((correct / questions.length) * 100);
-    result.style.display = 'block';
-
-    if (correct >= 4) {
-      result.className = 'quiz-result pass';
-      result.innerHTML = correct + '/5 correct (' + pct + '%) — Passed. ' +
-        (prefix === 'pre' ? 'Proceed to the lab.' : 'Session complete. Make your commit.');
-    } else {
-      result.className = 'quiz-result fail';
-      result.innerHTML = correct + '/5 correct (' + pct + '%) — Below 80%. ' +
-        (prefix === 'pre' ? 'Re-read the concept section, then retake.' :
-         'Re-read the concept section and redo the lab before committing.');
-    }
-
-    container.querySelector('.submit-btn').disabled = true;
+    btn.addEventListener('click', () => {
+      const result = document.getElementById(prefix + '-result');
+      const pct = Math.round((correct / questions.length) * 100);
+      result.style.display = 'block';
+      btn.disabled = true;
+      if (correct >= 4) {
+        result.className = 'quiz-result pass';
+        result.innerHTML = correct + '/5 correct (' + pct + '%) — Passed. ' +
+          (prefix === 'pre' ? 'You may proceed to the lab.' : 'Session complete. Make your commit.');
+      } else {
+        result.className = 'quiz-result fail';
+        result.innerHTML = correct + '/5 correct (' + pct + '%) — Below 80%. ' +
+          (prefix === 'pre' ? 'Read the concept section carefully, then retake.' :
+           'Re-read the concept section and redo the lab before committing.');
+      }
+    });
   }
-
   setupQuiz('pre');
   setupQuiz('post');
 </script>

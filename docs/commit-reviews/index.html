@@ -82,6 +82,138 @@
       </p>
     </div>
 
+    <!-- COMMIT 2 -->
+    <div class="commit-entry">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">init: add curriculum docs, sessions 01-07, gitignore, README</span>
+        <span class="badge badge-complete">Committed</span>
+      </div>
+      <p><span class="commit-hash">6cea5a7</span> &nbsp;·&nbsp; 2026-06-15</p>
+      <p style="margin-top:10px;"><strong>Files created:</strong></p>
+      <ul>
+        <li><code>docs/sessions/session-01/index.html</code> — Session 01 lesson doc: Objects in JavaScript</li>
+        <li><code>docs/sessions/session-02/index.html</code> — Session 02 lesson doc: Arrays and Iteration</li>
+        <li><code>docs/sessions/session-03/index.html</code> — Session 03 lesson doc: Array map() and filter()</li>
+        <li><code>docs/sessions/session-04/index.html</code> — Session 04 lesson doc: Arrow Functions</li>
+        <li><code>docs/sessions/session-05/index.html</code> — Session 05 lesson doc: Destructuring and Spread</li>
+        <li><code>docs/sessions/session-06/index.html</code> — Session 06 lesson doc: Imports and Exports</li>
+        <li><code>docs/sessions/session-07/index.html</code> — Session 07 lesson doc: Promises, Async, Await</li>
+        <li><code>.gitignore</code> — ignores node_modules and build output</li>
+        <li><code>README.md</code> — project overview</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>What this commit means:</strong>
+        All 7 Layer 1 session documents were generated. Each contains the full lesson structure:
+        learning objective, pre-quiz, concept explanation, lab steps, commit checkpoint, code review
+        checklist, post-quiz, reflection questions, and what-breaks section. No application code was
+        written. These are the lesson plans only.
+      </p>
+    </div>
+
+    <!-- COMMIT 3 -->
+    <div class="commit-entry">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">session-01: instant quiz feedback on option select, submit unlocks after all answered</span>
+        <span class="badge badge-complete">Committed</span>
+      </div>
+      <p><span class="commit-hash">84c418a</span> &nbsp;·&nbsp; 2026-06-15</p>
+      <p style="margin-top:10px;"><strong>Files changed:</strong></p>
+      <ul>
+        <li><code>docs/sessions/session-01/index.html</code> — rewrote quiz JavaScript</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>What changed and why:</strong>
+        The original quiz required clicking an option then clicking Submit. This was changed so that:
+        (1) selecting an option immediately shows green/red feedback and the explanation,
+        (2) the Submit button starts disabled and only enables once all 5 questions are answered.
+        This prevents submitting with unanswered questions and gives instant reinforcement per answer.
+      </p>
+    </div>
+
+    <!-- COMMIT 4 -->
+    <div class="commit-entry">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">sessions 02-07: apply instant quiz feedback pattern (match session-01)</span>
+        <span class="badge badge-complete">Committed</span>
+      </div>
+      <p><span class="commit-hash">5838bcc</span> &nbsp;·&nbsp; 2026-06-15</p>
+      <p style="margin-top:10px;"><strong>Files changed:</strong></p>
+      <ul>
+        <li><code>docs/sessions/session-02/index.html</code> — quiz logic updated to match session-01</li>
+        <li><code>docs/sessions/session-03/index.html</code> — quiz logic updated to match session-01</li>
+        <li><code>docs/sessions/session-04/index.html</code> — quiz logic updated to match session-01</li>
+        <li><code>docs/sessions/session-05/index.html</code> — quiz logic updated to match session-01</li>
+        <li><code>docs/sessions/session-06/index.html</code> — quiz logic updated to match session-01</li>
+        <li><code>docs/sessions/session-07/index.html</code> — quiz logic updated to match session-01</li>
+        <li><code>docs/prompts/index.html</code> — prompt #13 logged</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>What changed and why:</strong>
+        Propagated the improved quiz interaction from session-01 to all remaining Layer 1 sessions.
+        All 7 sessions now share the same behavior: instant per-question feedback on click,
+        submit button locked until all questions answered, explanation shown immediately after each answer.
+      </p>
+    </div>
+
+    <!-- COMMIT 5 -->
+    <div class="commit-entry">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">docs: log prompt #14</span>
+        <span class="badge badge-complete">Committed</span>
+      </div>
+      <p><span class="commit-hash">937597f</span> &nbsp;·&nbsp; 2026-06-17</p>
+      <p style="margin-top:10px;"><strong>Files changed:</strong></p>
+      <ul>
+        <li><code>docs/prompts/index.html</code> — prompt #14 appended to the running log</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>What changed and why:</strong>
+        Per CLAUDE.md rules, every prompt sent in a session is logged before any other work begins.
+        Prompt #14 was the instruction to add SVG visual diagrams to session-02's Section 3.
+      </p>
+    </div>
+
+    <!-- COMMIT 6 -->
+    <div class="commit-entry">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">session-02: inject SVG diagrams into section 3 concept explanations</span>
+        <span class="badge badge-complete">Committed</span>
+      </div>
+      <p><span class="commit-hash">eb98288</span> &nbsp;·&nbsp; 2026-06-17</p>
+      <p style="margin-top:10px;"><strong>Files changed:</strong></p>
+      <ul>
+        <li><code>docs/sessions/session-02/index.html</code> — 10 inline SVG diagrams injected into Section 3</li>
+        <li><code>docs/prompts/index.html</code> — prompt log updated alongside</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>What changed and why:</strong>
+        Ten SVG diagrams were inserted directly into the concept explanation section of session-02
+        to make abstract array concepts visual. Each SVG follows the section it illustrates.
+        Diagrams cover: objects vs arrays comparison, array index access, invalid index (undefined),
+        shared reference, for loop, for...of loop, mutating methods, non-mutating methods,
+        arrays of objects, and React keys. All SVGs use the established dark/white/pink sketch style.
+        235 lines added.
+      </p>
+    </div>
+
+    <!-- COMMIT 7 -->
+    <div class="commit-entry">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">session-01: inject SVG diagrams into section 3 concept explanations</span>
+        <span class="badge badge-complete">Committed</span>
+      </div>
+      <p><span class="commit-hash">d6fbef9</span> &nbsp;·&nbsp; 2026-06-17</p>
+      <p style="margin-top:10px;"><strong>Files changed:</strong></p>
+      <ul>
+        <li><code>docs/sessions/session-01/index.html</code> — 6 inline SVG diagrams injected into Section 3</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>What changed and why:</strong>
+        Six SVG diagrams were inserted into the concept explanation section of session-01.
+        Diagrams cover: object as a grouped container (scattered vars vs one box),
+        dot notation vs bracket notation (two forking arrow paths), primitives copy vs objects
+        share reference (independent boxes vs shared heap box), property mutation timeline
+        (object in three sequential states), nested objects (nested container boxes), and
+        React props flow (JSX attributes → props object → component function reads it).
+        149 lines added. This commit also established the SVG visual language and style rules
+        that all future sessions will follow — see session-notes for the full spec.
+      </p>
+    </div>
+
     <!-- Future commit reviews go here -->
 
   </div>
