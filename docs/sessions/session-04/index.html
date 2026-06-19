@@ -62,6 +62,123 @@
     </p>
     <div class="alert alert-info">Estimated time: 35–40 minutes</div>
 
+<!-- SVG: session-04 concept map — 8-panel overview -->
+<svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;" font-family="monospace">
+  <rect width="680" height="370" fill="#111111"/>
+  <!-- header -->
+  <text x="340" y="22" fill="white" font-size="11" text-anchor="middle" font-weight="bold">Session 04 — Arrow Functions</text>
+
+  <!-- Panel 1: 3 forms (x=16, y=36, w=154, h=148) -->
+  <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,110)"/>
+  <circle cx="29" cy="36" r="9" fill="#ff5ca8"/>
+  <text x="29" y="40" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+  <text x="93" y="52" fill="white" font-size="8" text-anchor="middle" font-weight="bold">3 forms</text>
+  <text x="30" y="72" fill="white" font-size="7" opacity="0.45">function(n){</text>
+  <text x="30" y="83" fill="white" font-size="7" opacity="0.45">  return n*2;</text>
+  <text x="30" y="94" fill="white" font-size="7" opacity="0.45">}</text>
+  <text x="30" y="109" fill="white" font-size="7" opacity="0.45">const d=function(n){</text>
+  <text x="30" y="120" fill="white" font-size="7" opacity="0.45">  return n*2;</text>
+  <text x="30" y="131" fill="white" font-size="7" opacity="0.45">};</text>
+  <rect x="24" y="140" width="138" height="16" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+  <text x="30" y="152" fill="#ff5ca8" font-size="8">n =&gt; n * 2</text>
+  <text x="93" y="176" fill="white" font-size="8" text-anchor="middle" opacity="0.5">arrow = shortest form</text>
+
+  <!-- Panel 2: params (x=180, y=36, w=154, h=148) -->
+  <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,257,110)"/>
+  <circle cx="193" cy="36" r="9" fill="#ff5ca8"/>
+  <text x="193" y="40" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+  <text x="257" y="52" fill="white" font-size="8" text-anchor="middle" font-weight="bold">params</text>
+  <rect x="188" y="60" width="138" height="18" fill="none" stroke="white" stroke-width="1"/>
+  <text x="194" y="73" fill="white" font-size="8">() =&gt;</text>
+  <text x="290" y="73" fill="white" font-size="7" opacity="0.6">no params</text>
+  <rect x="188" y="85" width="138" height="18" fill="none" stroke="white" stroke-width="1"/>
+  <text x="194" y="98" fill="white" font-size="8">n =&gt;</text>
+  <text x="290" y="98" fill="white" font-size="7" opacity="0.6">one param</text>
+  <rect x="188" y="110" width="138" height="18" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+  <text x="194" y="123" fill="#ff5ca8" font-size="8">(a,b) =&gt;</text>
+  <text x="257" y="148" fill="white" font-size="7" text-anchor="middle" opacity="0.6">two+ always need ()</text>
+  <text x="257" y="176" fill="white" font-size="8" text-anchor="middle" opacity="0.5">() always req. with 0 params</text>
+
+  <!-- Panel 3: implicit return (x=344, y=36, w=154, h=148) -->
+  <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.5,421,110)"/>
+  <circle cx="357" cy="36" r="9" fill="#ff5ca8"/>
+  <text x="357" y="40" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+  <text x="421" y="52" fill="white" font-size="8" text-anchor="middle" font-weight="bold">implicit return</text>
+  <rect x="352" y="62" width="138" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+  <text x="421" y="77" fill="#ff5ca8" font-size="8" text-anchor="middle">n =&gt; n * 2</text>
+  <line x1="421" y1="84" x2="421" y2="110" stroke="white" stroke-width="1"/>
+  <polygon points="421,113 417,106 425,106" fill="white"/>
+  <rect x="352" y="113" width="138" height="22" fill="none" stroke="white" stroke-width="1"/>
+  <text x="421" y="128" fill="white" font-size="8" text-anchor="middle">n * 2 is returned</text>
+  <text x="421" y="176" fill="white" font-size="8" text-anchor="middle" opacity="0.5">right of =&gt; = return value</text>
+
+  <!-- Panel 4: { } trap (x=508, y=36, w=154, h=148) -->
+  <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,585,110)"/>
+  <circle cx="521" cy="36" r="9" fill="#ff5ca8"/>
+  <text x="521" y="40" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+  <text x="585" y="52" fill="white" font-size="8" text-anchor="middle" font-weight="bold">&#123; &#125; trap</text>
+  <rect x="516" y="62" width="138" height="22" fill="none" stroke="#f85149" stroke-width="1.5"/>
+  <text x="522" y="77" fill="#f85149" font-size="7.5">n =&gt; &#123; n * 2; &#125;</text>
+  <line x1="585" y1="84" x2="585" y2="108" stroke="white" stroke-width="1"/>
+  <polygon points="585,111 581,104 589,104" fill="white"/>
+  <rect x="516" y="111" width="138" height="22" fill="none" stroke="#f85149" stroke-width="1"/>
+  <text x="585" y="126" fill="#f85149" font-size="9" text-anchor="middle">undefined</text>
+  <text x="585" y="176" fill="white" font-size="8" text-anchor="middle" opacity="0.5">&#123; &#125; always needs return</text>
+
+  <!-- Panel 5: object return (x=16, y=204, w=154, h=148) -->
+  <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,93,278)"/>
+  <circle cx="29" cy="204" r="9" fill="#ff5ca8"/>
+  <text x="29" y="208" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+  <text x="93" y="220" fill="white" font-size="8" text-anchor="middle" font-weight="bold">object return</text>
+  <text x="24" y="240" fill="white" font-size="7" opacity="0.6">n =&gt; &#123; val: n &#125;</text>
+  <text x="24" y="254" fill="#f85149" font-size="7">→ undefined</text>
+  <line x1="24" y1="264" x2="158" y2="264" stroke="white" stroke-width="0.5" opacity="0.3"/>
+  <text x="24" y="282" fill="#ff5ca8" font-size="7">n =&gt; (&#123; val: n &#125;)</text>
+  <text x="24" y="296" fill="#3fb950" font-size="7">→ &#123; val: n &#125;</text>
+  <text x="93" y="344" fill="white" font-size="8" text-anchor="middle" opacity="0.5">() wraps obj literal</text>
+
+  <!-- Panel 6: .map() style (x=180, y=204, w=154, h=148) -->
+  <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.5,257,278)"/>
+  <circle cx="193" cy="204" r="9" fill="#ff5ca8"/>
+  <text x="193" y="208" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+  <text x="257" y="220" fill="white" font-size="8" text-anchor="middle" font-weight="bold">.map() style</text>
+  <text x="188" y="240" fill="white" font-size="6.5" opacity="0.45">countries.map(</text>
+  <text x="188" y="252" fill="white" font-size="6.5" opacity="0.45">  function(c){</text>
+  <text x="188" y="264" fill="white" font-size="6.5" opacity="0.45">    return c.name;</text>
+  <text x="188" y="276" fill="white" font-size="6.5" opacity="0.45">  }</text>
+  <text x="188" y="288" fill="white" font-size="6.5" opacity="0.45">);</text>
+  <rect x="188" y="295" width="138" height="18" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+  <text x="194" y="308" fill="#ff5ca8" font-size="7">.map(c =&gt; c.name)</text>
+  <text x="257" y="344" fill="white" font-size="8" text-anchor="middle" opacity="0.5">same result · React style</text>
+
+  <!-- Panel 7: this (x=344, y=204, w=154, h=148) -->
+  <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,421,278)"/>
+  <circle cx="357" cy="204" r="9" fill="#ff5ca8"/>
+  <text x="357" y="208" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+  <text x="421" y="220" fill="white" font-size="8" text-anchor="middle" font-weight="bold">this</text>
+  <rect x="352" y="228" width="138" height="34" fill="none" stroke="white" stroke-width="1"/>
+  <text x="421" y="243" fill="white" font-size="7.5" text-anchor="middle">regular fn:</text>
+  <text x="421" y="256" fill="white" font-size="7.5" text-anchor="middle">this = caller</text>
+  <rect x="352" y="270" width="138" height="34" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+  <text x="421" y="285" fill="#ff5ca8" font-size="7.5" text-anchor="middle">arrow fn:</text>
+  <text x="421" y="298" fill="#ff5ca8" font-size="7.5" text-anchor="middle">this = definition</text>
+  <text x="421" y="344" fill="white" font-size="8" text-anchor="middle" opacity="0.5">arrow has no own this</text>
+
+  <!-- Panel 8: React uses (x=508, y=204, w=154, h=148) -->
+  <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+  <circle cx="521" cy="204" r="9" fill="#ff5ca8"/>
+  <text x="521" y="208" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+  <text x="585" y="220" fill="white" font-size="8" text-anchor="middle" font-weight="bold">React uses</text>
+  <text x="516" y="242" fill="white" font-size="6.5">const Card =</text>
+  <text x="516" y="254" fill="#ff5ca8" font-size="6.5">(props) =&gt; &#123;...&#125;</text>
+  <line x1="516" y1="264" x2="654" y2="264" stroke="white" stroke-width="0.5" opacity="0.3"/>
+  <text x="516" y="282" fill="white" font-size="6.5">setCount(</text>
+  <text x="516" y="294" fill="#ff5ca8" font-size="6.5">prev =&gt; prev + 1</text>
+  <text x="516" y="306" fill="white" font-size="6.5">)</text>
+  <text x="585" y="344" fill="white" font-size="8" text-anchor="middle" opacity="0.5">arrow fns everywhere in React</text>
+</svg>
+<hr class="section-divider" />
+
     <h2>1. Learning Objective</h2>
     <div class="card">
       <ul>
@@ -157,6 +274,33 @@ const double = function(n) {
 // Arrow function
 const double = n => n * 2;</code></pre>
 
+<!-- SVG: arrow function 3-forms evolution -->
+<svg width="480" height="130" viewBox="0 0 480 130" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;" font-family="monospace">
+  <rect width="480" height="130" fill="#111111"/>
+  <!-- box 1: function declaration -->
+  <rect x="8" y="28" width="128" height="74" fill="none" stroke="white" stroke-width="1.5" opacity="0.4" transform="rotate(-0.4,72,65)"/>
+  <text x="16" y="48" fill="white" font-size="8" opacity="0.45">function(n) &#123;</text>
+  <text x="16" y="62" fill="white" font-size="8" opacity="0.45">  return n*2;</text>
+  <text x="16" y="76" fill="white" font-size="8" opacity="0.45">&#125;</text>
+  <text x="72" y="112" fill="white" font-size="7.5" text-anchor="middle" opacity="0.4">declaration</text>
+  <!-- arrow 1 -->
+  <line x1="140" y1="65" x2="172" y2="65" stroke="white" stroke-width="1.5" opacity="0.5"/>
+  <polygon points="175,65 168,61 168,69" fill="white" opacity="0.5"/>
+  <!-- box 2: function expression -->
+  <rect x="178" y="28" width="128" height="74" fill="none" stroke="white" stroke-width="1.5" opacity="0.4" transform="rotate(0.3,242,65)"/>
+  <text x="186" y="48" fill="white" font-size="8" opacity="0.45">const d=function(n)&#123;</text>
+  <text x="186" y="62" fill="white" font-size="8" opacity="0.45">  return n*2;</text>
+  <text x="186" y="76" fill="white" font-size="8" opacity="0.45">&#125;;</text>
+  <text x="242" y="112" fill="white" font-size="7.5" text-anchor="middle" opacity="0.4">expression</text>
+  <!-- arrow 2 -->
+  <line x1="310" y1="65" x2="342" y2="65" stroke="#ff5ca8" stroke-width="1.5"/>
+  <polygon points="345,65 338,61 338,69" fill="#ff5ca8"/>
+  <!-- box 3: arrow function (pink) -->
+  <rect x="348" y="38" width="120" height="44" fill="none" stroke="#ff5ca8" stroke-width="1.5" transform="rotate(0.5,408,60)"/>
+  <text x="408" y="57" fill="#ff5ca8" font-size="9.5" text-anchor="middle" font-weight="bold">n =&gt; n * 2</text>
+  <text x="408" y="112" fill="#ff5ca8" font-size="7.5" text-anchor="middle" opacity="0.7">arrow function</text>
+</svg>
+
     <h3>Syntax rules</h3>
     <div class="table-wrap">
       <table class="compare-table">
@@ -187,12 +331,67 @@ const broken = (a, b) => {
 };
 console.log(broken(1, 2));  // undefined</code></pre>
 
+<!-- SVG: explicit vs implicit vs broken return comparison -->
+<svg width="480" height="155" viewBox="0 0 480 155" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;" font-family="monospace">
+  <rect width="480" height="155" fill="#111111"/>
+  <!-- LEFT column: explicit return -->
+  <rect x="12" y="20" width="140" height="90" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,82,65)"/>
+  <text x="82" y="38" fill="white" font-size="8" text-anchor="middle">explicit</text>
+  <text x="20" y="56" fill="white" font-size="7.5">(a,b) =&gt; &#123;</text>
+  <text x="20" y="70" fill="white" font-size="7.5">  return a+b;</text>
+  <text x="20" y="84" fill="white" font-size="7.5">&#125;</text>
+  <text x="82" y="125" fill="#3fb950" font-size="8" text-anchor="middle">explicit ✓</text>
+
+  <!-- MIDDLE column: implicit return (pink) -->
+  <rect x="172" y="30" width="136" height="58" fill="none" stroke="#ff5ca8" stroke-width="1.5" transform="rotate(0.3,240,59)"/>
+  <text x="240" y="50" fill="#ff5ca8" font-size="8" text-anchor="middle">implicit</text>
+  <text x="180" y="68" fill="#ff5ca8" font-size="8">(a,b) =&gt; a+b</text>
+  <text x="240" y="125" fill="#ff5ca8" font-size="8" text-anchor="middle">implicit ✓</text>
+
+  <!-- RIGHT column: broken -->
+  <rect x="328" y="20" width="140" height="90" fill="none" stroke="#f85149" stroke-width="1.5" transform="rotate(0.5,398,65)"/>
+  <text x="398" y="38" fill="#f85149" font-size="8" text-anchor="middle">broken</text>
+  <text x="336" y="56" fill="white" font-size="7.5">(a,b) =&gt; &#123;</text>
+  <text x="336" y="70" fill="#f85149" font-size="7.5">  a+b;</text>
+  <text x="336" y="84" fill="white" font-size="7.5">&#125;</text>
+  <text x="398" y="125" fill="#f85149" font-size="8" text-anchor="middle">undefined ✗</text>
+
+  <!-- dividers -->
+  <line x1="160" y1="15" x2="160" y2="140" stroke="white" stroke-width="0.5" opacity="0.2"/>
+  <line x1="320" y1="15" x2="320" y2="140" stroke="white" stroke-width="0.5" opacity="0.2"/>
+</svg>
+
     <h3>Returning an object — the parenthesis trick</h3>
     <pre><code>// WRONG — JavaScript reads { as start of function body
 const makeObj = n => { value: n };  // returns undefined
 
 // CORRECT — parentheses tell JavaScript "this is an expression"
 const makeObj = n => ({ value: n }); // returns { value: 5 } when called with 5</code></pre>
+
+<!-- SVG: object return — wrong vs correct -->
+<svg width="480" height="145" viewBox="0 0 480 145" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;" font-family="monospace">
+  <rect width="480" height="145" fill="#111111"/>
+  <!-- LEFT: wrong -->
+  <rect x="12" y="18" width="210" height="90" fill="none" stroke="#f85149" stroke-width="1.5" transform="rotate(-0.4,117,63)"/>
+  <text x="20" y="38" fill="white" font-size="8">n =&gt; &#123; value: n &#125;</text>
+  <rect x="20" y="47" width="44" height="14" fill="none" stroke="#f85149" stroke-width="1"/>
+  <text x="42" y="58" fill="#f85149" font-size="6.5" text-anchor="middle">fn body</text>
+  <line x1="117" y1="84" x2="117" y2="104" stroke="#f85149" stroke-width="1"/>
+  <polygon points="117,107 113,100 121,100" fill="#f85149"/>
+  <text x="117" y="122" fill="#f85149" font-size="9" text-anchor="middle">undefined</text>
+
+  <!-- divider -->
+  <line x1="240" y1="10" x2="240" y2="135" stroke="white" stroke-width="0.5" opacity="0.25"/>
+
+  <!-- RIGHT: correct -->
+  <rect x="258" y="18" width="210" height="90" fill="none" stroke="#ff5ca8" stroke-width="1.5" transform="rotate(0.4,363,63)"/>
+  <text x="266" y="38" fill="white" font-size="8">n =&gt; (&#123; value: n &#125;)</text>
+  <rect x="266" y="47" width="54" height="14" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+  <text x="293" y="58" fill="#ff5ca8" font-size="6.5" text-anchor="middle">expression</text>
+  <line x1="363" y1="84" x2="363" y2="104" stroke="#ff5ca8" stroke-width="1"/>
+  <polygon points="363,107 359,100 367,100" fill="#ff5ca8"/>
+  <text x="363" y="122" fill="#3fb950" font-size="9" text-anchor="middle">&#123; value: 5 &#125;</text>
+</svg>
 
     <h3>With .map() and .filter() — this is how React code looks</h3>
     <pre><code>const countries = [
@@ -214,6 +413,32 @@ const americas = countries.filter(c => c.region === "Americas");
 const americaNames = countries
   .filter(c => c.region === "Americas")
   .map(c => c.name);</code></pre>
+
+<!-- SVG: .map() old style vs arrow style -->
+<svg width="480" height="145" viewBox="0 0 480 145" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;" font-family="monospace">
+  <rect width="480" height="145" fill="#111111"/>
+  <!-- TOP ROW: old style -->
+  <rect x="12" y="14" width="280" height="42" fill="none" stroke="white" stroke-width="1.5" opacity="0.5" transform="rotate(-0.3,152,35)"/>
+  <text x="20" y="30" fill="white" font-size="7.5" opacity="0.55">countries.map(function(c) &#123; return c.name; &#125;)</text>
+  <text x="20" y="46" fill="white" font-size="7" opacity="0.4">old style</text>
+  <!-- arrow pointing to result -->
+  <line x1="296" y1="35" x2="326" y2="35" stroke="white" stroke-width="1" opacity="0.5"/>
+  <polygon points="329,35 322,31 322,39" fill="white" opacity="0.5"/>
+  <!-- BOTTOM ROW: arrow style (pink) -->
+  <rect x="12" y="78" width="280" height="38" fill="none" stroke="#ff5ca8" stroke-width="1.5" transform="rotate(0.4,152,97)"/>
+  <text x="20" y="95" fill="#ff5ca8" font-size="7.5">countries.map(c =&gt; c.name)</text>
+  <text x="20" y="108" fill="#ff5ca8" font-size="7" opacity="0.7">React style</text>
+  <!-- arrow pointing to result -->
+  <line x1="296" y1="97" x2="326" y2="97" stroke="#ff5ca8" stroke-width="1"/>
+  <polygon points="329,97 322,93 322,101" fill="#ff5ca8"/>
+  <!-- shared result box -->
+  <rect x="330" y="52" width="136" height="44" fill="none" stroke="#3fb950" stroke-width="1.5" transform="rotate(0.3,398,74)"/>
+  <text x="398" y="71" fill="#3fb950" font-size="8" text-anchor="middle">same output</text>
+  <text x="398" y="87" fill="#3fb950" font-size="7" text-anchor="middle">["Canada","Japan",...]</text>
+  <!-- connector lines from both arrows to box -->
+  <line x1="329" y1="35" x2="330" y2="65" stroke="white" stroke-width="0.5" opacity="0.3"/>
+  <line x1="329" y1="97" x2="330" y2="83" stroke="#ff5ca8" stroke-width="0.5" opacity="0.5"/>
+</svg>
 
     <h3>Arrow functions and this</h3>
     <p>
