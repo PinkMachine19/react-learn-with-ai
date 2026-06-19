@@ -144,6 +144,37 @@
       </ul>
     </div>
 
+    <!-- Session 03 hydration note -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <span class="card-title">Session 03 — SVG Hydration Complete</span>
+        <span style="color:var(--text-muted);font-size:13px;">2026-06-19</span>
+      </div>
+      <p><strong>What was done:</strong> Session-03 hydrated to match sessions 01 and 02. Added Section 0
+      concept map (8-panel, 680×370) before Section 1, and 6 inline SVG diagrams within Section 3.</p>
+
+      <p><strong>Diagrams added (6 SVGs):</strong></p>
+      <ul>
+        <li>map() transform — [1,2,3] through callback to [2,4,6]; labels for same length / runs once per item</li>
+        <li>filter() keep/discard — 3 countries, Americas pass (✓), Asia fails (✗), new array has 2 items</li>
+        <li>Callback shape — one function ref called per item; return value becomes new array element</li>
+        <li>Chaining pipeline — countries[3] → .filter(Americas) → filtered[2] → .map(c.name) → names[2]</li>
+        <li>forEach vs map — .map() returns [2,4,6] (usable in JSX); .forEach() returns undefined (blank screen)</li>
+        <li>Empty filter — all items fail test → [] not null, length=0, renders nothing (correct behavior)</li>
+      </ul>
+
+      <p><strong>Commit-reviews backfill:</strong> Added missing entries for d98fce9 (SVG system doc) and
+      72cb613 (session-02 concept map) that were not previously logged.</p>
+
+      <p><strong>Remaining sessions to hydrate (04–07):</strong></p>
+      <ul>
+        <li><strong>Session 04</strong> (arrow functions): traditional vs arrow syntax, implicit return, no own <code>this</code></li>
+        <li><strong>Session 05</strong> (destructuring + spread): extracting values, array destructure, spread as copy-then-extend</li>
+        <li><strong>Session 06</strong> (imports/exports): module graph — file A exports → file B imports, named vs default</li>
+        <li><strong>Session 07</strong> (promises/async/await): sync vs async timeline, promise states, await as paused execution</li>
+      </ul>
+    </div>
+
     <!-- Future notes go here -->
 
   </div>

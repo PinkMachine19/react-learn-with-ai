@@ -61,6 +61,172 @@
     </p>
     <div class="alert alert-info">Estimated time: 35–40 minutes &nbsp;·&nbsp; Pre-quiz → Concept → Lab → Commit → Post-quiz</div>
 
+    <!-- ── SECTION 0: VISUAL OVERVIEW ───────────────────────── -->
+    <h2>0. Session Map</h2>
+    <p>
+      Eight concepts covered today. Every diagram below reappears — larger and explained — in Section 3.
+      Use this map to orient yourself before diving in.
+    </p>
+
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="16" y="26" font-family="monospace" font-size="12" fill="white">Session 03 — Concepts at a Glance</text>
+      <text x="448" y="26" font-family="monospace" font-size="9" fill="white" opacity="0.35">8 concepts · all in Section 3</text>
+
+      <!-- ── 1: map() ── 16,36 -->
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="24" y="52" font-family="monospace" font-size="9" fill="#111111">1</text>
+      <text x="40" y="52" font-family="monospace" font-size="10" fill="white">map()</text>
+      <rect x="22" y="64" width="24" height="22" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="30" y="79" font-family="monospace" font-size="9" fill="white">1</text>
+      <rect x="50" y="64" width="24" height="22" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="58" y="79" font-family="monospace" font-size="9" fill="white">2</text>
+      <rect x="78" y="64" width="24" height="22" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="86" y="79" font-family="monospace" font-size="9" fill="white">3</text>
+      <rect x="112" y="60" width="46" height="30" fill="none" stroke="#ff5ca8" stroke-width="1" rx="1"/>
+      <text x="116" y="74" font-family="monospace" font-size="7" fill="#ff5ca8">x * 2</text>
+      <text x="116" y="85" font-family="monospace" font-size="7" fill="#ff5ca8">callback</text>
+      <line x1="52" y1="86" x2="52" y2="104" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="49,101 52,106 55,101" fill="white"/>
+      <rect x="22" y="108" width="24" height="22" fill="none" stroke="#ff5ca8" stroke-width="1" rx="1"/>
+      <text x="30" y="123" font-family="monospace" font-size="9" fill="#ff5ca8">2</text>
+      <rect x="50" y="108" width="24" height="22" fill="none" stroke="#ff5ca8" stroke-width="1" rx="1"/>
+      <text x="58" y="123" font-family="monospace" font-size="9" fill="#ff5ca8">4</text>
+      <rect x="78" y="108" width="24" height="22" fill="none" stroke="#ff5ca8" stroke-width="1" rx="1"/>
+      <text x="86" y="123" font-family="monospace" font-size="9" fill="#ff5ca8">6</text>
+      <text x="22" y="166" font-family="monospace" font-size="8" fill="white" opacity="0.5">same length · new array</text>
+
+      <!-- ── 2: filter() ── 180,36 -->
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="188" y="52" font-family="monospace" font-size="9" fill="#111111">2</text>
+      <text x="204" y="52" font-family="monospace" font-size="10" fill="white">filter()</text>
+      <rect x="186" y="64" width="52" height="18" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="190" y="77" font-family="monospace" font-size="7" fill="white">Canada·Am</text>
+      <text x="242" y="77" font-family="monospace" font-size="9" fill="#3fb950">✓</text>
+      <rect x="186" y="86" width="52" height="18" fill="none" stroke="white" stroke-width="1" rx="1" opacity="0.35"/>
+      <text x="190" y="99" font-family="monospace" font-size="7" fill="white" opacity="0.45">Japan·As</text>
+      <text x="242" y="99" font-family="monospace" font-size="9" fill="#f85149">✗</text>
+      <rect x="186" y="108" width="52" height="18" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="190" y="121" font-family="monospace" font-size="7" fill="white">Brazil·Am</text>
+      <text x="242" y="121" font-family="monospace" font-size="9" fill="#3fb950">✓</text>
+      <path d="M258,88 L276,102" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="273,99 277,103 273,106" fill="white"/>
+      <rect x="280" y="86" width="48" height="40" fill="none" stroke="#ff5ca8" stroke-width="1" rx="1"/>
+      <text x="284" y="102" font-family="monospace" font-size="7" fill="#ff5ca8">Canada</text>
+      <text x="284" y="116" font-family="monospace" font-size="7" fill="#ff5ca8">Brazil</text>
+      <text x="186" y="166" font-family="monospace" font-size="8" fill="white" opacity="0.5">keep · discard · new array</text>
+
+      <!-- ── 3: callback shape ── 344,36 -->
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="352" y="52" font-family="monospace" font-size="9" fill="#111111">3</text>
+      <text x="368" y="52" font-family="monospace" font-size="10" fill="white">callback fn</text>
+      <rect x="350" y="64" width="140" height="46" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="354" y="78" font-family="monospace" font-size="7" fill="#ff5ca8">function(item) {</text>
+      <text x="354" y="90" font-family="monospace" font-size="7" fill="white">  return item * 2;</text>
+      <text x="354" y="102" font-family="monospace" font-size="7" fill="#ff5ca8">}</text>
+      <text x="350" y="124" font-family="monospace" font-size="8" fill="white">item[0] → fn → out[0]</text>
+      <text x="350" y="138" font-family="monospace" font-size="8" fill="white">item[1] → fn → out[1]</text>
+      <text x="350" y="152" font-family="monospace" font-size="8" fill="white">item[2] → fn → out[2]</text>
+      <text x="350" y="174" font-family="monospace" font-size="8" fill="white" opacity="0.5">called once per item</text>
+
+      <!-- ── 4: chaining ── 508,36 -->
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="516" y="52" font-family="monospace" font-size="9" fill="#111111">4</text>
+      <text x="532" y="52" font-family="monospace" font-size="10" fill="white">chaining</text>
+      <rect x="522" y="60" width="50" height="22" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="533" y="75" font-family="monospace" font-size="8" fill="white">arr [5]</text>
+      <line x1="547" y1="82" x2="547" y2="97" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="544,94 547,99 550,94" fill="white"/>
+      <text x="578" y="93" font-family="monospace" font-size="8" fill="#ff5ca8">.filter()</text>
+      <rect x="522" y="99" width="50" height="22" fill="none" stroke="#ff5ca8" stroke-width="1" rx="1"/>
+      <text x="527" y="114" font-family="monospace" font-size="8" fill="#ff5ca8">arr [2]</text>
+      <line x1="547" y1="121" x2="547" y2="136" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="544,133 547,138 550,133" fill="white"/>
+      <text x="578" y="132" font-family="monospace" font-size="8" fill="#ff5ca8">.map()</text>
+      <rect x="514" y="139" width="64" height="22" fill="none" stroke="#ff5ca8" stroke-width="1" rx="1"/>
+      <text x="518" y="154" font-family="monospace" font-size="8" fill="#ff5ca8">names [2]</text>
+      <text x="514" y="174" font-family="monospace" font-size="8" fill="white" opacity="0.5">filter → map pipeline</text>
+
+      <!-- ── 5: forEach vs map ── 16,204 -->
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="24" y="220" font-family="monospace" font-size="9" fill="#111111">5</text>
+      <text x="40" y="220" font-family="monospace" font-size="10" fill="white">vs forEach</text>
+      <text x="22" y="248" font-family="monospace" font-size="8" fill="#ff5ca8">.map()</text>
+      <line x1="60" y1="244" x2="78" y2="244" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="75,241 79,244 75,247" fill="white"/>
+      <rect x="82" y="233" width="76" height="22" fill="none" stroke="#ff5ca8" stroke-width="1" rx="1"/>
+      <text x="86" y="248" font-family="monospace" font-size="8" fill="#ff5ca8">[2, 4, 6]</text>
+      <text x="22" y="282" font-family="monospace" font-size="8" fill="white" opacity="0.6">.forEach()</text>
+      <line x1="74" y1="278" x2="92" y2="278" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="89,275 93,278 89,281" fill="white"/>
+      <text x="96" y="282" font-family="monospace" font-size="8" fill="#f85149">undefined</text>
+      <rect x="20" y="300" width="142" height="18" fill="none" stroke="#f85149" stroke-width="1" rx="2"/>
+      <text x="25" y="313" font-family="monospace" font-size="7" fill="#f85149">undefined breaks JSX rendering</text>
+      <text x="22" y="336" font-family="monospace" font-size="8" fill="white" opacity="0.5">always use .map() in React</text>
+
+      <!-- ── 6: empty [] ── 180,204 -->
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="188" y="220" font-family="monospace" font-size="9" fill="#111111">6</text>
+      <text x="204" y="220" font-family="monospace" font-size="10" fill="white">empty []</text>
+      <rect x="186" y="234" width="52" height="16" fill="none" stroke="white" stroke-width="1" rx="1" opacity="0.3"/>
+      <text x="190" y="246" font-family="monospace" font-size="7" fill="white" opacity="0.4">Canada</text>
+      <text x="241" y="246" font-family="monospace" font-size="9" fill="#f85149">✗</text>
+      <rect x="186" y="254" width="52" height="16" fill="none" stroke="white" stroke-width="1" rx="1" opacity="0.3"/>
+      <text x="190" y="266" font-family="monospace" font-size="7" fill="white" opacity="0.4">Japan</text>
+      <text x="241" y="266" font-family="monospace" font-size="9" fill="#f85149">✗</text>
+      <rect x="186" y="274" width="52" height="16" fill="none" stroke="white" stroke-width="1" rx="1" opacity="0.3"/>
+      <text x="190" y="286" font-family="monospace" font-size="7" fill="white" opacity="0.4">Brazil</text>
+      <text x="241" y="286" font-family="monospace" font-size="9" fill="#f85149">✗</text>
+      <path d="M258,264 L276,264" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="273,261 277,264 273,267" fill="white"/>
+      <text x="280" y="268" font-family="monospace" font-size="10" fill="#ff5ca8">[ ]</text>
+      <rect x="186" y="300" width="138" height="18" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2"/>
+      <text x="190" y="312" font-family="monospace" font-size="7" fill="#ff5ca8">not null · length = 0</text>
+      <text x="186" y="336" font-family="monospace" font-size="8" fill="white" opacity="0.5">renders nothing (correct)</text>
+
+      <!-- ── 7: no mutation ── 344,204 -->
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="352" y="220" font-family="monospace" font-size="9" fill="#111111">7</text>
+      <text x="368" y="220" font-family="monospace" font-size="10" fill="white">no mutation</text>
+      <rect x="350" y="236" width="100" height="30" fill="none" stroke="white" stroke-width="1.5" rx="1"/>
+      <text x="358" y="252" font-family="monospace" font-size="8" fill="white">original [3]</text>
+      <text x="358" y="262" font-family="monospace" font-size="7" fill="white" opacity="0.5">length = 3</text>
+      <path d="M416,251 L438,263" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,1"/>
+      <text x="440" y="256" font-family="monospace" font-size="8" fill="#ff5ca8">.map()</text>
+      <text x="440" y="268" font-family="monospace" font-size="8" fill="#ff5ca8">.filter()</text>
+      <line x1="400" y1="266" x2="400" y2="284" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="397,281 400,286 403,281" fill="white"/>
+      <rect x="350" y="286" width="100" height="30" fill="none" stroke="#ff5ca8" stroke-width="1" rx="1"/>
+      <text x="358" y="302" font-family="monospace" font-size="8" fill="#ff5ca8">new array</text>
+      <text x="358" y="312" font-family="monospace" font-size="7" fill="#ff5ca8">different ref</text>
+      <text x="350" y="336" font-family="monospace" font-size="8" fill="white" opacity="0.5">original stays untouched</text>
+
+      <!-- ── 8: React .map() ── 508,204 -->
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="516" y="220" font-family="monospace" font-size="9" fill="#111111">8</text>
+      <text x="532" y="220" font-family="monospace" font-size="10" fill="white">React .map()</text>
+      <rect x="514" y="234" width="140" height="22" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="518" y="249" font-family="monospace" font-size="7" fill="white">countries [{...},{...}]</text>
+      <line x1="584" y1="256" x2="584" y2="270" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="581,267 584,272 587,267" fill="white"/>
+      <text x="514" y="268" font-family="monospace" font-size="7" fill="#ff5ca8">.map(c =&gt; &lt;Card /&gt;)</text>
+      <rect x="514" y="276" width="140" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1"/>
+      <text x="518" y="291" font-family="monospace" font-size="7" fill="#ff5ca8">[&lt;Card/&gt; &lt;Card/&gt; &lt;Card/&gt;]</text>
+      <rect x="514" y="312" width="140" height="18" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2"/>
+      <text x="518" y="324" font-family="monospace" font-size="7" fill="#ff5ca8">JSX array — unlocked Session 14</text>
+      <text x="514" y="344" font-family="monospace" font-size="8" fill="white" opacity="0.5">how React renders lists</text>
+    </svg>
+
+    <hr class="section-divider" />
+
     <h2>1. Learning Objective</h2>
     <div class="card">
       <ul>
@@ -161,6 +327,41 @@ console.log(numbers);  // [1, 2, 3] — unchanged</code></pre>
 
     <p>Think of it this way: <code>.map()</code> asks "for every item, what should it become?"</p>
 
+    <!-- SVG: map() transform — input array through callback to new array -->
+    <svg width="480" height="155" viewBox="0 0 480 155" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="155" fill="#111111"/>
+      <text x="14" y="16" font-family="monospace" font-size="9" fill="white" opacity="0.5">input</text>
+      <rect x="14" y="22" width="38" height="32" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,33,38)"/>
+      <text x="28" y="43" font-family="monospace" font-size="12" fill="white">1</text>
+      <rect x="58" y="22" width="38" height="32" fill="none" stroke="white" stroke-width="1.5" rx="1"/>
+      <text x="72" y="43" font-family="monospace" font-size="12" fill="white">2</text>
+      <rect x="102" y="22" width="38" height="32" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.4,121,38)"/>
+      <text x="116" y="43" font-family="monospace" font-size="12" fill="white">3</text>
+      <path d="M146,38 L178,38" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="175,35 179,38 175,41" fill="white"/>
+      <rect x="182" y="14" width="116" height="48" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(-0.3,240,38)"/>
+      <text x="190" y="32" font-family="monospace" font-size="9" fill="#ff5ca8">function(n) {</text>
+      <text x="190" y="46" font-family="monospace" font-size="9" fill="white">  return n * 2;</text>
+      <text x="190" y="58" font-family="monospace" font-size="8" fill="#ff5ca8">}</text>
+      <path d="M300,38 L332,38" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="329,35 333,38 329,41" fill="white"/>
+      <text x="340" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">new array</text>
+      <rect x="340" y="22" width="38" height="32" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(-0.4,359,38)"/>
+      <text x="354" y="43" font-family="monospace" font-size="12" fill="#ff5ca8">2</text>
+      <rect x="384" y="22" width="38" height="32" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1"/>
+      <text x="398" y="43" font-family="monospace" font-size="12" fill="#ff5ca8">4</text>
+      <rect x="428" y="22" width="38" height="32" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(0.4,447,38)"/>
+      <text x="442" y="43" font-family="monospace" font-size="12" fill="#ff5ca8">6</text>
+      <text x="14" y="80" font-family="monospace" font-size="8" fill="white">original</text>
+      <text x="14" y="93" font-family="monospace" font-size="8" fill="white">unchanged</text>
+      <text x="182" y="80" font-family="monospace" font-size="8" fill="#ff5ca8">runs once</text>
+      <text x="182" y="93" font-family="monospace" font-size="8" fill="#ff5ca8">per item</text>
+      <text x="340" y="80" font-family="monospace" font-size="8" fill="#ff5ca8">same length</text>
+      <text x="340" y="93" font-family="monospace" font-size="8" fill="white">as input</text>
+      <rect x="86" y="114" width="308" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.3,240,123)"/>
+      <text x="118" y="127" font-family="monospace" font-size="9" fill="#ff5ca8">.map() always returns a new array of the same length</text>
+    </svg>
+
     <h3>What filter() does</h3>
     <p>
       <code>.filter()</code> runs a test function on every item. Items that pass (truthy return)
@@ -181,6 +382,37 @@ console.log(countries.length); // 3 — unchanged</code></pre>
 
     <p>Think of it this way: <code>.filter()</code> asks "for every item, should it be kept?"</p>
 
+    <!-- SVG: filter() — each item tested, passing items go to new array -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <text x="14" y="16" font-family="monospace" font-size="9" fill="white" opacity="0.5">all items</text>
+      <rect x="14" y="22" width="126" height="26" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.4,77,35)"/>
+      <text x="20" y="39" font-family="monospace" font-size="10" fill="white">Canada · Americas</text>
+      <rect x="14" y="56" width="126" height="26" fill="none" stroke="white" stroke-width="1" rx="1" opacity="0.35"/>
+      <text x="20" y="73" font-family="monospace" font-size="10" fill="white" opacity="0.45">Japan · Asia</text>
+      <rect x="14" y="90" width="126" height="26" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.4,77,103)"/>
+      <text x="20" y="107" font-family="monospace" font-size="10" fill="white">Brazil · Americas</text>
+      <text x="148" y="37" font-family="monospace" font-size="10" fill="#3fb950">✓</text>
+      <text x="148" y="71" font-family="monospace" font-size="10" fill="#f85149">✗</text>
+      <text x="148" y="105" font-family="monospace" font-size="10" fill="#3fb950">✓</text>
+      <rect x="168" y="14" width="126" height="26" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(-0.3,231,27)"/>
+      <text x="172" y="31" font-family="monospace" font-size="9" fill="#ff5ca8">region === "Americas"</text>
+      <path d="M142,35 L348,40" stroke="#3fb950" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <polygon points="345,37 349,40 345,43" fill="#3fb950"/>
+      <path d="M142,103 L348,74" stroke="#3fb950" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <polygon points="345,71 349,74 345,77" fill="#3fb950"/>
+      <line x1="142" y1="69" x2="200" y2="69" stroke="#f85149" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,2" opacity="0.5"/>
+      <line x1="200" y1="69" x2="200" y2="136" stroke="#f85149" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,2" opacity="0.5"/>
+      <text x="180" y="150" font-family="monospace" font-size="8" fill="#f85149" opacity="0.7">excluded</text>
+      <text x="354" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">new array</text>
+      <rect x="354" y="22" width="114" height="26" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(-0.4,411,35)"/>
+      <text x="360" y="39" font-family="monospace" font-size="10" fill="#ff5ca8">Canada</text>
+      <rect x="354" y="56" width="114" height="26" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(0.4,411,69)"/>
+      <text x="360" y="73" font-family="monospace" font-size="10" fill="#ff5ca8">Brazil</text>
+      <rect x="10" y="148" width="460" height="18" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.2,240,157)"/>
+      <text x="68" y="161" font-family="monospace" font-size="9" fill="#ff5ca8">filter never transforms items — it only keeps or removes · original unchanged</text>
+    </svg>
+
     <h3>The callback is just a function</h3>
     <p>
       The argument you pass to <code>.map()</code> and <code>.filter()</code> is just a normal
@@ -193,6 +425,37 @@ const names1 = countries.map(function(country) { return country.name; });
 function getName(country) { return country.name; }
 const names2 = countries.map(getName);  // pass the function by reference</code></pre>
 
+    <!-- SVG: callback — same function ref called once per item, return value = new array element -->
+    <svg width="480" height="150" viewBox="0 0 480 150" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="150" fill="#111111"/>
+      <rect x="10" y="10" width="140" height="80" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(-0.4,80,50)"/>
+      <text x="16" y="28" font-family="monospace" font-size="8" fill="#ff5ca8">function getName(country)</text>
+      <text x="16" y="42" font-family="monospace" font-size="8" fill="white">  return country.name;</text>
+      <text x="16" y="56" font-family="monospace" font-size="8" fill="#ff5ca8">}</text>
+      <text x="16" y="78" font-family="monospace" font-size="7" fill="white" opacity="0.5">one function reference</text>
+      <text x="16" y="90" font-family="monospace" font-size="7" fill="white" opacity="0.5">called 3 times</text>
+      <path d="M152,30 L200,30" stroke="white" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <polygon points="197,27 201,30 197,33" fill="white"/>
+      <path d="M152,50 L200,50" stroke="white" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <polygon points="197,47 201,50 197,53" fill="white"/>
+      <path d="M152,70 L200,70" stroke="white" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <polygon points="197,67 201,70 197,73" fill="white"/>
+      <text x="204" y="34" font-family="monospace" font-size="9" fill="white">countries[0] → "Canada"</text>
+      <text x="204" y="54" font-family="monospace" font-size="9" fill="white">countries[1] → "Japan"</text>
+      <text x="204" y="74" font-family="monospace" font-size="9" fill="white">countries[2] → "Brazil"</text>
+      <path d="M430,34 L456,34" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="453,31 457,34 453,37" fill="#ff5ca8"/>
+      <path d="M422,54 L456,54" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="453,51 457,54 453,57" fill="#ff5ca8"/>
+      <path d="M430,74 L456,74" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="453,71 457,74 453,77" fill="#ff5ca8"/>
+      <text x="460" y="34" font-family="monospace" font-size="7" fill="#ff5ca8">names[0]</text>
+      <text x="460" y="54" font-family="monospace" font-size="7" fill="#ff5ca8">names[1]</text>
+      <text x="460" y="74" font-family="monospace" font-size="7" fill="#ff5ca8">names[2]</text>
+      <rect x="10" y="114" width="460" height="18" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.2,240,123)"/>
+      <text x="56" y="127" font-family="monospace" font-size="9" fill="#ff5ca8">return value of each call becomes one item in the new array</text>
+    </svg>
+
     <h3>Chaining</h3>
     <p>
       Because both methods return arrays, you can chain them. Filter first (narrow the list),
@@ -203,6 +466,35 @@ const names2 = countries.map(getName);  // pass the function by reference</code>
   .map(function(c)    { return c.name; });
 
 console.log(americaNames);  // ["Canada", "Brazil"]</code></pre>
+
+    <!-- SVG: chaining pipeline — filter narrows, map transforms -->
+    <svg width="480" height="145" viewBox="0 0 480 145" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="145" fill="#111111"/>
+      <text x="14" y="16" font-family="monospace" font-size="9" fill="white" opacity="0.5">start</text>
+      <rect x="10" y="22" width="76" height="54" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,48,49)"/>
+      <text x="16" y="38" font-family="monospace" font-size="8" fill="white">Canada·Am</text>
+      <text x="16" y="52" font-family="monospace" font-size="8" fill="white">Japan·As</text>
+      <text x="16" y="66" font-family="monospace" font-size="8" fill="white">Brazil·Am</text>
+      <text x="22" y="90" font-family="monospace" font-size="8" fill="white" opacity="0.5">countries[3]</text>
+      <path d="M88,49 L128,49" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="125,46 129,49 125,52" fill="white"/>
+      <text x="96" y="42" font-family="monospace" font-size="8" fill="#ff5ca8">.filter(</text>
+      <text x="96" y="54" font-family="monospace" font-size="8" fill="#ff5ca8">Americas)</text>
+      <rect x="132" y="28" width="72" height="42" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(0.3,168,49)"/>
+      <text x="138" y="44" font-family="monospace" font-size="8" fill="#ff5ca8">Canada·Am</text>
+      <text x="138" y="58" font-family="monospace" font-size="8" fill="#ff5ca8">Brazil·Am</text>
+      <text x="138" y="86" font-family="monospace" font-size="8" fill="#ff5ca8" opacity="0.7">filtered[2]</text>
+      <path d="M206,49 L246,49" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="243,46 247,49 243,52" fill="white"/>
+      <text x="208" y="42" font-family="monospace" font-size="8" fill="#ff5ca8">.map(c</text>
+      <text x="208" y="54" font-family="monospace" font-size="8" fill="#ff5ca8">=> c.name)</text>
+      <rect x="250" y="30" width="80" height="40" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(-0.4,290,50)"/>
+      <text x="256" y="46" font-family="monospace" font-size="9" fill="#ff5ca8">"Canada"</text>
+      <text x="256" y="60" font-family="monospace" font-size="9" fill="#ff5ca8">"Brazil"</text>
+      <text x="250" y="86" font-family="monospace" font-size="8" fill="#ff5ca8" opacity="0.7">names[2]</text>
+      <rect x="10" y="108" width="460" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.2,240,117)"/>
+      <text x="84" y="121" font-family="monospace" font-size="9" fill="#ff5ca8">chaining works because both methods return arrays — filter first, then map</text>
+    </svg>
 
     <h3>map() vs forEach() — why this matters in React</h3>
     <pre><code>// forEach — returns undefined. Cannot use in JSX.
@@ -220,12 +512,55 @@ console.log(result2);  // [2, 4, 6]</code></pre>
       <code>.forEach()</code> would return nothing and the screen would be blank.
     </div>
 
+    <!-- SVG: map() returns array, forEach() returns undefined -->
+    <svg width="480" height="150" viewBox="0 0 480 150" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="150" fill="#111111"/>
+      <text x="14" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">.map(n => n * 2)</text>
+      <path d="M148,12 L184,12" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="181,9 185,12 181,15" fill="white"/>
+      <rect x="188" y="2" width="80" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(-0.3,228,13)"/>
+      <text x="196" y="17" font-family="monospace" font-size="10" fill="#ff5ca8">[2, 4, 6]</text>
+      <text x="278" y="16" font-family="monospace" font-size="9" fill="#3fb950">← array · usable in JSX</text>
+      <line x1="10" y1="38" x2="470" y2="38" stroke="white" stroke-width="0.5" stroke-dasharray="4,4" opacity="0.2"/>
+      <text x="14" y="58" font-family="monospace" font-size="9" fill="white" opacity="0.6">.forEach(n => n * 2)</text>
+      <path d="M178,54 L214,54" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+      <polygon points="211,51 215,54 211,57" fill="white" opacity="0.5"/>
+      <text x="218" y="58" font-family="monospace" font-size="10" fill="#f85149">undefined</text>
+      <text x="310" y="58" font-family="monospace" font-size="9" fill="#f85149">← nothing to render</text>
+      <rect x="10" y="80" width="460" height="50" fill="none" stroke="#f85149" stroke-width="1" rx="2" opacity="0.4"/>
+      <text x="22" y="98" font-family="monospace" font-size="9" fill="#f85149">In JSX: {'{'} countries.forEach(c =&gt; &lt;Card /&gt;) {'}'}</text>
+      <text x="22" y="114" font-family="monospace" font-size="9" fill="white" opacity="0.6">forEach returns undefined. JSX sees nothing. Screen is blank.</text>
+      <text x="22" y="128" font-family="monospace" font-size="9" fill="#ff5ca8">Use .map() — it returns the array of JSX elements React needs.</text>
+    </svg>
+
     <h3>What happens when no items match filter?</h3>
     <pre><code>const result = countries.filter(c => c.region === "Antarctica");
 console.log(result);        // []  — empty array, not null, not undefined
 console.log(result.length); // 0</code></pre>
 
     <p>This matters in React: an empty array renders nothing, which is the correct behaviour for "no results found."</p>
+
+    <!-- SVG: empty filter result — all items fail → [] not null/undefined -->
+    <svg width="480" height="145" viewBox="0 0 480 145" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="145" fill="#111111"/>
+      <text x="14" y="16" font-family="monospace" font-size="9" fill="white" opacity="0.5">filter(c => c.region === "Antarctica")</text>
+      <rect x="14" y="24" width="108" height="22" fill="none" stroke="white" stroke-width="1" rx="1" opacity="0.3"/>
+      <text x="18" y="39" font-family="monospace" font-size="9" fill="white" opacity="0.4">Canada · Americas</text>
+      <text x="126" y="39" font-family="monospace" font-size="10" fill="#f85149">✗</text>
+      <rect x="14" y="52" width="108" height="22" fill="none" stroke="white" stroke-width="1" rx="1" opacity="0.3"/>
+      <text x="18" y="67" font-family="monospace" font-size="9" fill="white" opacity="0.4">Japan · Asia</text>
+      <text x="126" y="67" font-family="monospace" font-size="10" fill="#f85149">✗</text>
+      <rect x="14" y="80" width="108" height="22" fill="none" stroke="white" stroke-width="1" rx="1" opacity="0.3"/>
+      <text x="18" y="95" font-family="monospace" font-size="9" fill="white" opacity="0.4">Brazil · Americas</text>
+      <text x="126" y="95" font-family="monospace" font-size="10" fill="#f85149">✗</text>
+      <path d="M148,60 L210,60" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="207,57 211,60 207,63" fill="white"/>
+      <text x="218" y="55" font-family="monospace" font-size="14" fill="#ff5ca8">[ ]</text>
+      <text x="218" y="74" font-family="monospace" font-size="8" fill="#ff5ca8">not null · not undefined</text>
+      <text x="218" y="88" font-family="monospace" font-size="8" fill="#ff5ca8">length = 0</text>
+      <rect x="10" y="112" width="460" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.2,240,121)"/>
+      <text x="68" y="125" font-family="monospace" font-size="9" fill="#ff5ca8">React renders [] as nothing — no crash, no error, just an empty list</text>
+    </svg>
 
     <hr class="section-divider" />
 
