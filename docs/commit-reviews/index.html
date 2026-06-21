@@ -214,6 +214,70 @@
       </p>
     </div>
 
+    <!-- COMMIT 8 -->
+    <div class="commit-entry">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">docs: log SVG diagram system in session-notes and commit-reviews</span>
+        <span class="badge badge-complete">Committed</span>
+      </div>
+      <p><span class="commit-hash">d98fce9</span> &nbsp;·&nbsp; 2026-06-17</p>
+      <p style="margin-top:10px;"><strong>Files changed:</strong></p>
+      <ul>
+        <li><code>docs/session-notes/index.html</code> — added SVG visual diagram system spec card (style rules, insertion decisions, sessions completed)</li>
+        <li><code>docs/commit-reviews/index.html</code> — added commit review entries for eb98288 and d6fbef9</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>What changed and why:</strong>
+        Documented the SVG diagram system established during the session-01 and session-02 hydration work.
+        The session-notes card captures all style rules (dark bg, white stroke, pink accents, monospace font,
+        sketch rotations) and the decision rule for when to insert a diagram. This ensures future sessions
+        follow the same visual language without guesswork.
+      </p>
+    </div>
+
+    <!-- COMMIT 9 -->
+    <div class="commit-entry">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">session-02: add section 0 concept map — 9-panel visual overview</span>
+        <span class="badge badge-complete">Committed</span>
+      </div>
+      <p><span class="commit-hash">72cb613</span> &nbsp;·&nbsp; 2026-06-19</p>
+      <p style="margin-top:10px;"><strong>Files changed:</strong></p>
+      <ul>
+        <li><code>docs/sessions/session-02/index.html</code> — Section 0 "Session Map" added before Section 1; 9-panel SVG overview (680×510) at top of page</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>What changed and why:</strong>
+        A 9-panel concept map was added as Section 0 of session-02, matching the pattern established in session-01.
+        Each panel is a mini-diagram of one core concept: Array, Index Access, Out of Bounds, Reference,
+        for Loop, for...of, Mutating Methods, Non-mutating Methods, Arrays of Objects.
+        This gives students a visual overview before diving into the detail of Section 3.
+      </p>
+    </div>
+
+    <!-- COMMIT 10 -->
+    <div class="commit-entry">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span class="card-title">session-03: inject section 0 concept map and SVG diagrams into section 3</span>
+        <span class="badge badge-complete">Committed</span>
+      </div>
+      <p><span class="commit-hash">pending</span> &nbsp;·&nbsp; 2026-06-19</p>
+      <p style="margin-top:10px;"><strong>Files changed:</strong></p>
+      <ul>
+        <li><code>docs/sessions/session-03/index.html</code> — Section 0 concept map (8-panel, 680×370) + 6 inline SVG diagrams in Section 3</li>
+        <li><code>docs/prompts/index.html</code> — prompt #16 logged</li>
+        <li><code>docs/commit-reviews/index.html</code> — this file; backfill entries for d98fce9 and 72cb613</li>
+      </ul>
+      <p style="margin-top:12px;"><strong>Diagrams added — Session 03 (8-panel map + 6 SVGs):</strong></p>
+      <ul>
+        <li>Section 0 concept map: map() transform, filter() keep/discard, callback shape, chaining, forEach vs map, empty [], no mutation, React .map()</li>
+        <li>SVG 1 — map() transform: input [1,2,3] → callback → output [2,4,6]; labels same length / new array</li>
+        <li>SVG 2 — filter() keep/discard: 3 countries, 2 pass Americas test, 1 excluded; new array with just passers</li>
+        <li>SVG 3 — callback shape: one function reference called 3 times; return value → new array element</li>
+        <li>SVG 4 — chaining pipeline: countries[3] → .filter() → filtered[2] → .map() → names[2]</li>
+        <li>SVG 5 — forEach vs map: .map() → [2,4,6] usable in JSX; .forEach() → undefined → blank screen</li>
+        <li>SVG 6 — empty filter: all 3 items fail test → [] not null, length=0, renders nothing</li>
+      </ul>
+    </div>
+
     <!-- Future commit reviews go here -->
 
   </div>

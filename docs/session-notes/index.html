@@ -144,6 +144,74 @@
       </ul>
     </div>
 
+    <!-- Session 03 hydration note -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <span class="card-title">Session 03 — SVG Hydration Complete</span>
+        <span style="color:var(--text-muted);font-size:13px;">2026-06-19</span>
+      </div>
+      <p><strong>What was done:</strong> Session-03 hydrated to match sessions 01 and 02. Added Section 0
+      concept map (8-panel, 680×370) before Section 1, and 6 inline SVG diagrams within Section 3.</p>
+
+      <p><strong>Diagrams added (6 SVGs):</strong></p>
+      <ul>
+        <li>map() transform — [1,2,3] through callback to [2,4,6]; labels for same length / runs once per item</li>
+        <li>filter() keep/discard — 3 countries, Americas pass (✓), Asia fails (✗), new array has 2 items</li>
+        <li>Callback shape — one function ref called per item; return value becomes new array element</li>
+        <li>Chaining pipeline — countries[3] → .filter(Americas) → filtered[2] → .map(c.name) → names[2]</li>
+        <li>forEach vs map — .map() returns [2,4,6] (usable in JSX); .forEach() returns undefined (blank screen)</li>
+        <li>Empty filter — all items fail test → [] not null, length=0, renders nothing (correct behavior)</li>
+      </ul>
+
+      <p><strong>Commit-reviews backfill:</strong> Added missing entries for d98fce9 (SVG system doc) and
+      72cb613 (session-02 concept map) that were not previously logged.</p>
+
+      <p><strong>Remaining sessions to hydrate (04–07):</strong></p>
+      <ul>
+        <li><strong>Session 04</strong> (arrow functions): traditional vs arrow syntax, implicit return, no own <code>this</code></li>
+        <li><strong>Session 05</strong> (destructuring + spread): extracting values, array destructure, spread as copy-then-extend</li>
+        <li><strong>Session 06</strong> (imports/exports): module graph — file A exports → file B imports, named vs default</li>
+        <li><strong>Session 07</strong> (promises/async/await): sync vs async timeline, promise states, await as paused execution</li>
+      </ul>
+    </div>
+
+    <!-- Sessions 04 and 05 hydration note -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <span class="card-title">Sessions 04 &amp; 05 — SVG Hydration Complete</span>
+        <span style="color:var(--text-muted);font-size:13px;">2026-06-19</span>
+      </div>
+      <p><strong>What was done:</strong> Sessions 04 and 05 hydrated in parallel to match the established
+      SVG diagram system. Each received a Section 0 concept map (8-panel, 680×370) and inline SVG
+      diagrams within Section 3 after key code blocks.</p>
+
+      <p><strong>Session 04 (Arrow Functions) — 4 inline SVGs + concept map:</strong></p>
+      <ul>
+        <li>Concept map: 3 syntax forms, parameter rules, implicit return, { } trap, object return trick, .map() style, <code>this</code> behaviour, React usage preview</li>
+        <li>SVG 1: left-to-right syntax evolution — function declaration → expression → arrow (pink)</li>
+        <li>SVG 2: three-column comparison — explicit ✓ / implicit ✓ / undefined ✗ (red curly brace trap)</li>
+        <li>SVG 3: side-by-side object return — wrong <code>&#123; val:n &#125;</code> → undefined vs correct <code>(&#123; val:n &#125;)</code> → object</li>
+        <li>SVG 4: before/after .map() callback — verbose function style (faded) vs arrow style (pink), same output</li>
+      </ul>
+
+      <p><strong>Session 05 (Destructuring &amp; Spread) — 6 inline SVGs + concept map:</strong></p>
+      <ul>
+        <li>Concept map: object destructure, param destructure (React props), rename, defaults, spread copy, spread update, spread arrays, shallow copy limitation</li>
+        <li>SVG 1: object box → 3 arrows → 3 variable boxes (destructuring extraction)</li>
+        <li>SVG 2: same object passed into (country) vs &#123; name, region &#125; — both produce same output</li>
+        <li>SVG 3: spread copy — original box (white) vs new copy box (pink), mutation only affects copy</li>
+        <li>SVG 4: spread update — country box + override population → new merged result box</li>
+        <li>SVG 5: spread arrays — [1,2,3] branching into appended and prepended variants, original unchanged</li>
+        <li>SVG 6: shallow copy — a and b have own outer boxes, both arrows converge on shared nested box (red)</li>
+      </ul>
+
+      <p><strong>Remaining sessions to hydrate (06–07):</strong></p>
+      <ul>
+        <li><strong>Session 06</strong> (imports/exports): module graph — file A exports → file B imports, named vs default export shapes</li>
+        <li><strong>Session 07</strong> (promises/async/await): sync vs async timeline, promise states (pending → resolved/rejected), await as paused execution</li>
+      </ul>
+    </div>
+
     <!-- Future notes go here -->
 
   </div>
