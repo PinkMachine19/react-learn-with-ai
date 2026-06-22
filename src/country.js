@@ -1,3 +1,4 @@
+//session 01
 // this creates the object country as const which can't be changed
 // const country = {
 //     name: "Canada",
@@ -40,7 +41,7 @@
 // console.log(country.languages.official)
 // console.log(country.languages.official[0])
 
-
+//session 02
 //Lab objective: Create src/countries.js — an array of 3 country objects. 
 // Iterate over it two ways, use 4 array methods, and prove you understand 
 // mutating vs non-mutating behaviour.
@@ -124,3 +125,47 @@
 // for (let i=0; i< countries.length; i++) {
 //       console.log(countries[i].name, "-", countries[i].region)
 //   }
+
+
+//session 03 
+// Lab objective: Update src/countries.js to use .map() and .filter(). Extract names
+// filter by region, chain both together.
+
+// const countries = [
+//      {id:1, name: "Canada" , region: "Americas", population : 50000000},
+//      {id:2, name: "Japan", region: "Asia", population : 150000000},
+//      {id:3, name:"India", region: "Asia", population: 1500000000}]
+
+// // const countryNames = countries.map(c => {
+//     return c.name;
+// });
+// console.log("Names:", countryNames)
+
+// const summaries = countries.map(c => {
+//     return c.name + "(" + c.region + ")" ;
+// });
+// console.log(summaries)
+
+// const Asia = countries.filter(c => {
+//     return c.region === "Asia";
+// });
+// console.log("Asia:", Asia.length, "of", countries.length)
+
+// const bigCountry = countries.filter(c => {
+//     return c.population > 100000000;
+// });
+// console.log("Big countries:", bigCountry.map(c=> c.name))
+
+// const Asia = countries.filter(c =>
+//    {return c.region === "Asia"})
+//   .map(c=> {return c.name})
+// console.log(Asia)
+
+// console.log("Original still has", countries.length, "items");
+// console.log("First item still:", countries[0].name);
+
+// const forEachResult = countries.forEach(function(c) {
+//   return c.name;  // this return does nothing useful
+// });
+// console.log("forEach returned:", forEachResult);  // undefined
+
