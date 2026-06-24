@@ -131,10 +131,10 @@
 // Lab objective: Update src/countries.js to use .map() and .filter(). Extract names
 // filter by region, chain both together.
 
-// const countries = [
-//      {id:1, name: "Canada" , region: "Americas", population : 50000000},
-//      {id:2, name: "Japan", region: "Asia", population : 150000000},
-//      {id:3, name:"India", region: "Asia", population: 1500000000}]
+const countries = [
+      {id:1, name: "Canada" , region: "Americas", population : 50000000},
+      {id:2, name: "Japan", region: "Asia", population : 150000000},
+      {id:3, name:"India", region: "Asia", population: 1500000000}]
 
 // // const countryNames = countries.map(c => {
 //     return c.name;
@@ -169,3 +169,11 @@
 // });
 // console.log("forEach returned:", forEachResult);  // undefined
 
+// session 04
+// const countryNames = countries.map(c =>c.name);
+// console.log(countryNames)
+
+//  const forEachResult = countries.forEach(c => c.name );
+// console.log("forEach returned:", forEachResult);  // undefined
+
+// countries.forEach(c => console.log(c.name, "-",c.region) )
