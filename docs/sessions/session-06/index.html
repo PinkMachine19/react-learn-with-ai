@@ -64,6 +64,131 @@
     </p>
     <div class="alert alert-info">Estimated time: 35–40 minutes</div>
 
+    <!-- SVG: session-06 concept map -->
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="340" y="20" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Session 06 — Imports &amp; Exports</text>
+
+      <!-- Panel 1: file scope (x=16,y=36,w=154,h=148) -->
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,93,110)"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="28" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+      <text x="93" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">file scope</text>
+      <rect x="24" y="58" width="58" height="36" fill="none" stroke="white" stroke-width="1"/>
+      <text x="53" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">math.js</text>
+      <text x="53" y="84" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">own scope</text>
+      <rect x="104" y="58" width="58" height="36" fill="none" stroke="white" stroke-width="1"/>
+      <text x="133" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">main.js</text>
+      <text x="133" y="84" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">own scope</text>
+      <text x="93" y="108" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">no global collision</text>
+      <line x1="53" y1="94" x2="93" y2="118" stroke="white" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="133" y1="94" x2="93" y2="118" stroke="white" stroke-width="1" stroke-dasharray="3,2"/>
+      <rect x="44" y="120" width="98" height="22" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="93" y="135" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">explicit export/import</text>
+      <text x="93" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">each file is isolated</text>
+
+      <!-- Panel 2: named export -->
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,257,110)"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="192" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+      <text x="257" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">named export</text>
+      <rect x="192" y="60" width="130" height="52" fill="none" stroke="white" stroke-width="1"/>
+      <text x="257" y="74" fill="white" font-family="monospace" font-size="7" text-anchor="middle">export const PI = 3.14;</text>
+      <text x="257" y="88" fill="white" font-family="monospace" font-size="7" text-anchor="middle">export function add() {"{}"}</text>
+      <text x="257" y="102" fill="white" font-family="monospace" font-size="7" text-anchor="middle">export const multiply = …</text>
+      <line x1="257" y1="112" x2="257" y2="128" stroke="#ff5ca8" stroke-width="1"/>
+      <polygon points="257,128 253,122 261,122" fill="#ff5ca8"/>
+      <text x="257" y="142" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">name must match on import</text>
+      <text x="257" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">many per file allowed</text>
+
+      <!-- Panel 3: named import -->
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,421,110)"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="356" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+      <text x="421" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">named import</text>
+      <rect x="356" y="62" width="130" height="28" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="421" y="80" fill="#ff5ca8" font-family="monospace" font-size="7.5" text-anchor="middle">import {"{ PI, add }"} from './math'</text>
+      <text x="421" y="106" fill="white" font-family="monospace" font-size="8" text-anchor="middle">curly braces required</text>
+      <rect x="368" y="112" width="46" height="18" fill="none" stroke="white" stroke-width="1"/>
+      <text x="391" y="125" fill="white" font-family="monospace" font-size="7" text-anchor="middle">PI</text>
+      <rect x="428" y="112" width="46" height="18" fill="none" stroke="white" stroke-width="1"/>
+      <text x="451" y="125" fill="white" font-family="monospace" font-size="7" text-anchor="middle">add</text>
+      <text x="421" y="148" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">import PI from './math' ✗</text>
+      <text x="421" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">exact name or alias</text>
+
+      <!-- Panel 4: default export -->
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,585,110)"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="520" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+      <text x="585" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">default export</text>
+      <rect x="520" y="60" width="130" height="36" fill="none" stroke="white" stroke-width="1"/>
+      <text x="585" y="74" fill="white" font-family="monospace" font-size="7" text-anchor="middle">const countries = […];</text>
+      <text x="585" y="88" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">export default countries;</text>
+      <text x="585" y="112" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">ONE per file only</text>
+      <rect x="536" y="118" width="98" height="18" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="585" y="131" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">2nd default = syntax error</text>
+      <text x="585" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">the primary thing the file provides</text>
+
+      <!-- Panel 5: default import -->
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,278)"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="28" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+      <text x="93" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">default import</text>
+      <rect x="24" y="230" width="138" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="93" y="245" fill="#ff5ca8" font-family="monospace" font-size="7.5" text-anchor="middle">import countries from './data/countries'</text>
+      <text x="93" y="268" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">NO curly braces</text>
+      <text x="93" y="284" fill="white" font-family="monospace" font-size="7" text-anchor="middle">import allCountries from './data/countries'</text>
+      <text x="93" y="298" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">also valid — name is local</text>
+      <text x="93" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">importer picks the variable name</text>
+
+      <!-- Panel 6: multiple named -->
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,257,278)"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="192" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+      <text x="257" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">multiple named</text>
+      <rect x="190" y="232" width="130" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="255" y="247" fill="white" font-family="monospace" font-size="7" text-anchor="middle">export const x = 1;</text>
+      <rect x="190" y="258" width="130" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="255" y="273" fill="white" font-family="monospace" font-size="7" text-anchor="middle">export const y = 2;</text>
+      <line x1="255" y1="284" x2="255" y2="298" stroke="#ff5ca8" stroke-width="1"/>
+      <polygon points="255,298 251,292 259,292" fill="#ff5ca8"/>
+      <rect x="190" y="300" width="130" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="255" y="315" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">import {"{ x, y }"} from './file'</text>
+      <text x="257" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">one import line · comma-separated</text>
+
+      <!-- Panel 7: mix import -->
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,421,278)"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="356" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+      <text x="421" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">mix import</text>
+      <rect x="352" y="232" width="138" height="44" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="421" y="246" fill="#ff5ca8" font-family="monospace" font-size="6.5" text-anchor="middle">import countries,</text>
+      <text x="421" y="258" fill="#ff5ca8" font-family="monospace" font-size="6.5" text-anchor="middle">{"{ REGIONS, findById }"}</text>
+      <text x="421" y="270" fill="#ff5ca8" font-family="monospace" font-size="6.5" text-anchor="middle">from './countries';</text>
+      <text x="421" y="292" fill="white" font-family="monospace" font-size="7" text-anchor="middle">default first · named in {"{}"}</text>
+      <rect x="368" y="298" width="52" height="16" fill="none" stroke="white" stroke-width="1"/>
+      <text x="394" y="309" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">countries</text>
+      <rect x="428" y="298" width="52" height="16" fill="none" stroke="white" stroke-width="1"/>
+      <text x="454" y="309" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">REGIONS…</text>
+      <text x="421" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">both types from one file</text>
+
+      <!-- Panel 8: alias -->
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="520" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+      <text x="585" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">alias</text>
+      <rect x="516" y="232" width="138" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="585" y="247" fill="white" font-family="monospace" font-size="7" text-anchor="middle">export const PI = 3.14;</text>
+      <line x1="585" y1="254" x2="585" y2="268" stroke="white" stroke-width="1"/>
+      <polygon points="585,268 581,262 589,262" fill="white"/>
+      <rect x="516" y="270" width="138" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="585" y="285" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">import {"{ PI as pi }"} from './math'</text>
+      <text x="585" y="308" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">use: pi ✓</text>
+      <text x="585" y="322" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">PI ✗ not available</text>
+      <text x="585" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">avoids name collisions</text>
+    </svg>
+    <hr class="section-divider" />
+
     <h2>1. Learning Objective</h2>
     <div class="card">
       <ul>
@@ -157,6 +282,45 @@
       dependencies are unclear, and files cannot be tested in isolation. ES modules solve this:
       each file has its own scope, and you explicitly declare what you share.
     </p>
+
+    <!-- SVG: global scope vs module isolation -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <text x="120" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold" opacity="0.6">WITHOUT modules</text>
+      <text x="360" y="18" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">WITH modules</text>
+      <!-- left: global chaos -->
+      <rect x="16" y="26" width="208" height="120" fill="none" stroke="#f85149" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="120" y="42" fill="#f85149" font-family="monospace" font-size="8" text-anchor="middle">global scope (shared)</text>
+      <rect x="28" y="50" width="80" height="28" fill="none" stroke="white" stroke-width="1"/>
+      <text x="68" y="62" fill="white" font-family="monospace" font-size="7" text-anchor="middle">fileA.js</text>
+      <text x="68" y="74" fill="white" font-family="monospace" font-size="7" text-anchor="middle">var x = 1</text>
+      <rect x="132" y="50" width="80" height="28" fill="none" stroke="white" stroke-width="1"/>
+      <text x="172" y="62" fill="white" font-family="monospace" font-size="7" text-anchor="middle">fileB.js</text>
+      <text x="172" y="74" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">var x = 2 ← clash!</text>
+      <text x="120" y="100" fill="#f85149" font-family="monospace" font-size="7.5" text-anchor="middle">who owns x?</text>
+      <text x="120" y="114" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">dependencies hidden</text>
+      <text x="120" y="128" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">hard to test in isolation</text>
+      <!-- divider -->
+      <line x1="240" y1="24" x2="240" y2="150" stroke="white" stroke-width="1" opacity="0.3"/>
+      <!-- right: isolated modules -->
+      <rect x="256" y="26" width="96" height="56" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="304" y="40" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">math.js</text>
+      <text x="304" y="52" fill="white" font-family="monospace" font-size="7" text-anchor="middle">private scope</text>
+      <text x="304" y="64" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">export const PI</text>
+      <text x="304" y="76" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">export function add</text>
+      <rect x="368" y="26" width="96" height="56" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="416" y="40" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">main.js</text>
+      <text x="416" y="52" fill="white" font-family="monospace" font-size="7" text-anchor="middle">private scope</text>
+      <text x="416" y="64" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">import {"{ PI, add }"}</text>
+      <text x="416" y="76" fill="white" font-family="monospace" font-size="7" text-anchor="middle">from './math'</text>
+      <!-- arrow between files -->
+      <line x1="352" y1="54" x2="368" y2="54" stroke="#3fb950" stroke-width="1.5"/>
+      <polygon points="368,54 362,51 362,57" fill="#3fb950"/>
+      <text x="360" y="92" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">explicit link</text>
+      <text x="360" y="106" fill="white" font-family="monospace" font-size="7" text-anchor="middle">only exported names cross files</text>
+      <text x="360" y="120" fill="white" font-family="monospace" font-size="7" text-anchor="middle">each file testable alone</text>
+      <text x="240" y="162" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">modules = private scope + explicit public API (exports)</text>
+    </svg>
 
     <h3>Named exports</h3>
     <div class="two-col">
