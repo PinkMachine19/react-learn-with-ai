@@ -131,10 +131,11 @@
 // Lab objective: Update src/countries.js to use .map() and .filter(). Extract names
 // filter by region, chain both together.
 
-const countries = [
-      {id:1, name: "Canada" , region: "Americas", population : 50000000},
-      {id:2, name: "Japan", region: "Asia", population : 150000000},
-      {id:3, name:"India", region: "Asia", population: 1500000000}]
+// const countries = [
+//       {id:1, name: "Canada" , region: "Americas", population : 50000000},
+//       {id:2, name: "Japan", region: "Asia", population : 150000000},
+//       {id:3, name:"India", region: "Asia", population: 1500000000}]
+
 
 // // const countryNames = countries.map(c => {
 //     return c.name;
@@ -177,3 +178,63 @@ const countries = [
 // console.log("forEach returned:", forEachResult);  // undefined
 
 // countries.forEach(c => console.log(c.name, "-",c.region) )
+
+
+// session 05
+//Lab objective: Add destructuring and spread patterns to src/countries.js. Rewrite arrow function 
+// parameters to destructure. Create modified copies of countries with spread.
+
+
+// const countries = [
+//       {id:1, name: "Canada" , region: "Americas", population : 50000000},
+//       {id:2, name: "Japan", region: "Asia", population : 150000000},
+//       {id:3, name:"India", region: "Asia", population: 1500000000}];
+
+// const {name, region, population} = countries[0];
+// console.log(name,"-",region,"-",population.toLocaleString());
+
+// const names= countries.map(({name})=> name)
+// console.log(names);
+
+// const summaries = countries.map(({name,region,population}) => name +" ("+region+")-" + 
+// population.toLocaleString() + "people");
+// console.log(summaries);
+// const canada = countries[0];
+// const canadaCopy = {...canada};
+// canadaCopy.name = "New canada";
+// console.log(canada);
+// console.log(canadaCopy)
+
+//Update one property with spread — the React state pattern
+// const canada = countries[0]
+// const canadaCopy = {...canada, population: 10}
+// console.log(canada)
+// console.log(canadaCopy)
+
+//Spread arrays — simulate adding a country without mutation
+// const france = { id: 4, name: "France", region: "Europe", population: 68000000 };
+// const expanded = [...countries, france]
+
+// console.log(countries.length)
+// console.log(expanded.length)
+
+
+// Prove shallow copy limitation
+
+// const canada = countries[0]
+// const withlang = {...canada, languages : {offical: ["English", "French"]}}
+// const copy = {...withlang}
+// console.log(withlang.languages.offical)
+// copy.languages.offical.push("Spanish")
+// console.log(withlang.languages.offical)
+// console.log(copy.languages.offical)
+
+// const countryCP = [...countries]
+// console.log(countries[0])
+// console.log(countries[1].id)
+// countryCP[1].id = 10
+// countryCP[0]= 100000
+// console.log("-------------")
+// console.log(countries[0])
+// console.log(countries[1].id)
+// console.log(countryCP[0])
