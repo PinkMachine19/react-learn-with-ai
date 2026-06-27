@@ -73,6 +73,135 @@
     </div>
     <div class="alert alert-info">Estimated time: 40–45 minutes</div>
 
+    <!-- SVG: session-07 concept map -->
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="340" y="20" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Session 07 — Promises, Async &amp; Await</text>
+
+      <!-- Panel 1: single thread -->
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,93,110)"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="28" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+      <text x="93" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">single thread</text>
+      <rect x="24" y="60" width="138" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="93" y="75" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">one JS call stack</text>
+      <text x="93" y="98" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">blocking fetch = frozen UI</text>
+      <text x="93" y="112" fill="white" font-family="monospace" font-size="7" text-anchor="middle">no scroll · no clicks</text>
+      <rect x="44" y="120" width="98" height="22" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="93" y="135" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">async = hand off &amp; continue</text>
+      <text x="93" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">why async exists</text>
+
+      <!-- Panel 2: event loop -->
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,257,110)"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="192" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+      <text x="257" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">event loop</text>
+      <text x="257" y="72" fill="white" font-family="monospace" font-size="8" text-anchor="middle">sync code runs first</text>
+      <rect x="192" y="78" width="130" height="20" fill="none" stroke="white" stroke-width="1"/>
+      <text x="257" y="92" fill="white" font-family="monospace" font-size="8" text-anchor="middle">A → C (immediate)</text>
+      <line x1="257" y1="98" x2="257" y2="110" stroke="white" stroke-width="1"/>
+      <polygon points="257,110 253,104 261,104" fill="white"/>
+      <rect x="192" y="112" width="130" height="20" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="257" y="126" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">B (from task queue)</text>
+      <text x="257" y="148" fill="white" font-family="monospace" font-size="7" text-anchor="middle">setTimeout(…, 0) still waits</text>
+      <text x="257" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">order: A, C, B</text>
+
+      <!-- Panel 3: promise states -->
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,421,110)"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="356" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+      <text x="421" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">promise states</text>
+      <rect x="368" y="62" width="106" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="421" y="77" fill="white" font-family="monospace" font-size="8" text-anchor="middle">pending</text>
+      <line x1="395" y1="84" x2="368" y2="104" stroke="#3fb950" stroke-width="1"/>
+      <polygon points="368,104 372,97 376,105" fill="#3fb950"/>
+      <line x1="447" y1="84" x2="474" y2="104" stroke="#f85149" stroke-width="1"/>
+      <polygon points="474,104 466,103 472,97" fill="#f85149"/>
+      <rect x="344" y="106" width="58" height="22" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="373" y="121" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">fulfilled</text>
+      <rect x="440" y="106" width="58" height="22" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="469" y="121" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">rejected</text>
+      <text x="421" y="144" fill="white" font-family="monospace" font-size="7" text-anchor="middle">settled = never changes again</text>
+      <text x="421" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">resolve() or reject()</text>
+
+      <!-- Panel 4: then catch -->
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,585,110)"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="520" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+      <text x="585" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">.then / .catch</text>
+      <rect x="520" y="60" width="130" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="585" y="75" fill="white" font-family="monospace" font-size="7" text-anchor="middle">new Promise(…)</text>
+      <line x1="553" y1="82" x2="536" y2="98" stroke="#3fb950" stroke-width="1"/>
+      <polygon points="536,98 542,93 542,101" fill="#3fb950"/>
+      <rect x="516" y="100" width="68" height="20" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="550" y="114" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">.then(data)</text>
+      <line x1="617" y1="82" x2="634" y2="98" stroke="#f85149" stroke-width="1"/>
+      <polygon points="634,98 626,99 632,93" fill="#f85149"/>
+      <rect x="586" y="100" width="68" height="20" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="620" y="114" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">.catch(err)</text>
+      <text x="585" y="138" fill="white" font-family="monospace" font-size="7" text-anchor="middle">handlers run when settled</text>
+      <text x="585" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Promise chain style</text>
+
+      <!-- Panel 5: async -->
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,278)"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="28" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+      <text x="93" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">async</text>
+      <rect x="24" y="230" width="138" height="28" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="93" y="244" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">async function getData()</text>
+      <text x="93" y="256" fill="white" font-family="monospace" font-size="7" text-anchor="middle">{"{ return 42; }"}</text>
+      <line x1="93" y1="258" x2="93" y2="272" stroke="white" stroke-width="1"/>
+      <polygon points="93,272 89,266 97,266" fill="white"/>
+      <rect x="24" y="274" width="138" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="93" y="289" fill="white" font-family="monospace" font-size="7" text-anchor="middle">caller gets Promise&lt;42&gt;</text>
+      <text x="93" y="308" fill="white" font-family="monospace" font-size="7" text-anchor="middle">NOT 42 directly</text>
+      <text x="93" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">async always returns Promise</text>
+
+      <!-- Panel 6: await -->
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,257,278)"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="192" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+      <text x="257" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">await</text>
+      <text x="257" y="238" fill="white" font-family="monospace" font-size="7" text-anchor="middle">pauses THIS function only</text>
+      <rect x="190" y="244" width="130" height="36" fill="none" stroke="white" stroke-width="1"/>
+      <text x="255" y="258" fill="white" font-family="monospace" font-size="7" text-anchor="middle">const data = await fetch…</text>
+      <text x="255" y="272" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">⏸ until Promise settles</text>
+      <text x="257" y="296" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">thread keeps running elsewhere</text>
+      <text x="257" y="310" fill="white" font-family="monospace" font-size="7" text-anchor="middle">data = resolved value</text>
+      <text x="257" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">unwraps the Promise</text>
+
+      <!-- Panel 7: try catch -->
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,421,278)"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="356" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+      <text x="421" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">try / catch</text>
+      <rect x="352" y="232" width="138" height="44" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="421" y="246" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">try {"{"}</text>
+      <text x="421" y="258" fill="white" font-family="monospace" font-size="7" text-anchor="middle">await fetchCountryById(999)</text>
+      <text x="421" y="270" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">{"}"}</text>
+      <line x1="421" y1="276" x2="421" y2="288" stroke="#f85149" stroke-width="1"/>
+      <polygon points="421,288 417,282 425,282" fill="#f85149"/>
+      <rect x="352" y="290" width="138" height="22" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="421" y="305" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">catch (err) → handle reject</text>
+      <text x="421" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">reject = thrown error</text>
+
+      <!-- Panel 8: fake async -->
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="520" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+      <text x="585" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">fake async</text>
+      <rect x="516" y="232" width="138" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="585" y="247" fill="white" font-family="monospace" font-size="7" text-anchor="middle">await delay(300)</text>
+      <line x1="585" y1="254" x2="585" y2="266" stroke="white" stroke-width="1"/>
+      <polygon points="585,266 581,260 589,260" fill="white"/>
+      <rect x="516" y="268" width="138" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="585" y="283" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">return countries copy</text>
+      <text x="585" y="308" fill="white" font-family="monospace" font-size="7" text-anchor="middle">setTimeout simulates network</text>
+      <text x="585" y="322" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">trains useEffect + fetch</text>
+      <text x="585" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">countryService pattern</text>
+    </svg>
+    <hr class="section-divider" />
+
     <h2>1. Learning Objective</h2>
     <div class="card">
       <ul>
@@ -160,6 +289,32 @@ console.log("C");</code></pre>
       continue running, and pick up the result when it's ready. That handoff mechanism is a Promise.
     </p>
 
+    <!-- SVG: blocking vs non-blocking -->
+    <svg width="480" height="155" viewBox="0 0 480 155" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="155" fill="#111111"/>
+      <text x="120" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold" opacity="0.6">BLOCKING (bad)</text>
+      <text x="360" y="18" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">NON-BLOCKING (async)</text>
+      <!-- left: frozen -->
+      <rect x="16" y="26" width="208" height="100" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="120" y="44" fill="white" font-family="monospace" font-size="8" text-anchor="middle">fetch data… (3 sec)</text>
+      <rect x="28" y="52" width="184" height="14" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="120" y="63" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">UI FROZEN — thread busy</text>
+      <text x="120" y="84" fill="white" font-family="monospace" font-size="7" text-anchor="middle">no scroll · no clicks</text>
+      <text x="120" y="98" fill="white" font-family="monospace" font-size="7" text-anchor="middle">browser feels broken</text>
+      <text x="120" y="118" fill="#f85149" font-family="monospace" font-size="7.5" text-anchor="middle">single thread stuck waiting</text>
+      <!-- divider -->
+      <line x1="240" y1="24" x2="240" y2="130" stroke="white" stroke-width="1" opacity="0.3"/>
+      <!-- right: hand off -->
+      <rect x="256" y="26" width="208" height="100" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="360" y="44" fill="white" font-family="monospace" font-size="8" text-anchor="middle">start fetch → hand off</text>
+      <text x="360" y="60" fill="#3fb950" font-family="monospace" font-size="7.5" text-anchor="middle">JS keeps running (UI alive)</text>
+      <line x1="280" y1="68" x2="440" y2="68" stroke="white" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="360" y="84" fill="white" font-family="monospace" font-size="7" text-anchor="middle">… user scrolls, clicks …</text>
+      <rect x="280" y="92" width="160" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="360" y="107" fill="#ff5ca8" font-family="monospace" font-size="7.5" text-anchor="middle">Promise resolves → .then / await</text>
+      <text x="240" y="145" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">start work · continue · pick up result later</text>
+    </svg>
+
     <h3>The event loop (simplified)</h3>
     <div class="timeline">
       <div class="timeline-item"><div class="label">1. Synchronous code runs first</div><p>Your script top-to-bottom: variable declarations, function calls, console.logs.</p></div>
@@ -167,6 +322,34 @@ console.log("C");</code></pre>
       <div class="timeline-item"><div class="label">3. Callbacks queue up</div><p>When the async work finishes, its callback or Promise resolution waits in the queue.</p></div>
       <div class="timeline-item"><div class="label">4. Event loop picks them up</div><p>Once the call stack is empty, the event loop picks the next item from the queue and runs it.</p></div>
     </div>
+
+    <!-- SVG: event loop A C B -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <text x="120" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">call stack (sync)</text>
+      <text x="360" y="18" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">task queue (async)</text>
+      <!-- call stack boxes -->
+      <rect x="16" y="28" width="208" height="28" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="120" y="46" fill="#3fb950" font-family="monospace" font-size="9" text-anchor="middle">console.log("A") → A</text>
+      <rect x="16" y="60" width="208" height="28" fill="none" stroke="white" stroke-width="1"/>
+      <text x="120" y="72" fill="white" font-family="monospace" font-size="8" text-anchor="middle">setTimeout(B, 0) → push B to queue</text>
+      <text x="120" y="84" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">does NOT run B yet</text>
+      <rect x="16" y="92" width="208" height="28" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="120" y="110" fill="#3fb950" font-family="monospace" font-size="9" text-anchor="middle">console.log("C") → C</text>
+      <text x="120" y="132" fill="white" font-family="monospace" font-size="8" text-anchor="middle">stack empty → event loop runs queue</text>
+      <!-- arrow to queue -->
+      <line x1="224" y1="72" x2="256" y2="72" stroke="white" stroke-width="1"/>
+      <polygon points="256,72 250,69 250,75" fill="white"/>
+      <!-- task queue -->
+      <rect x="256" y="52" width="208" height="36" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="360" y="68" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">waiting: () =&gt; log("B")</text>
+      <text x="360" y="82" fill="white" font-family="monospace" font-size="7" text-anchor="middle">runs AFTER sync code</text>
+      <rect x="256" y="96" width="208" height="28" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="360" y="114" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle">console.log("B") → B</text>
+      <!-- output order -->
+      <rect x="140" y="140" width="200" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="240" y="156" fill="white" font-family="monospace" font-size="9" text-anchor="middle">print order: <tspan fill="#3fb950">A</tspan> → <tspan fill="#3fb950">C</tspan> → <tspan fill="#ff5ca8">B</tspan></text>
+    </svg>
 
     <h3>Promises — the primitive</h3>
     <pre><code>const p = new Promise((resolve, reject) => {
@@ -184,6 +367,57 @@ p.then(data => console.log(data))   // "data is ready" — after 1 second
       <li><strong>fulfilled</strong> — <code>resolve(value)</code> was called; <code>.then()</code> fires</li>
       <li><strong>rejected</strong> — <code>reject(reason)</code> was called; <code>.catch()</code> fires</li>
     </ul>
+
+    <!-- SVG: promise state machine -->
+    <svg width="480" height="150" viewBox="0 0 480 150" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="150" fill="#111111"/>
+      <!-- pending -->
+      <rect x="180" y="24" width="120" height="32" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="240" y="38" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">pending</text>
+      <text x="240" y="50" fill="white" font-family="monospace" font-size="7" text-anchor="middle">initial state</text>
+      <!-- resolve arrow -->
+      <line x1="210" y1="56" x2="100" y2="88" stroke="#3fb950" stroke-width="1.5"/>
+      <polygon points="100,88 108,84 104,92" fill="#3fb950"/>
+      <text x="148" y="78" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">resolve(value)</text>
+      <!-- reject arrow -->
+      <line x1="270" y1="56" x2="380" y2="88" stroke="#f85149" stroke-width="1.5"/>
+      <polygon points="380,88 372,92 374,84" fill="#f85149"/>
+      <text x="332" y="78" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">reject(reason)</text>
+      <!-- fulfilled -->
+      <rect x="40" y="90" width="120" height="32" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="100" y="104" fill="#3fb950" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">fulfilled</text>
+      <text x="100" y="116" fill="white" font-family="monospace" font-size="7" text-anchor="middle">.then(data) runs</text>
+      <!-- rejected -->
+      <rect x="320" y="90" width="120" height="32" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="380" y="104" fill="#f85149" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">rejected</text>
+      <text x="380" y="116" fill="white" font-family="monospace" font-size="7" text-anchor="middle">.catch(err) runs</text>
+      <!-- settled note -->
+      <text x="240" y="140" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.6">once fulfilled or rejected → settled forever · cannot go back to pending</text>
+    </svg>
+
+    <!-- SVG: .then / .catch chain -->
+    <svg width="480" height="130" viewBox="0 0 480 130" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="130" fill="#111111"/>
+      <rect x="16" y="28" width="100" height="36" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="66" y="42" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">Promise</text>
+      <text x="66" y="56" fill="white" font-family="monospace" font-size="7" text-anchor="middle">setTimeout 1s</text>
+      <line x1="116" y1="46" x2="148" y2="46" stroke="white" stroke-width="1"/>
+      <polygon points="148,46 142,43 142,49" fill="white"/>
+      <!-- success path -->
+      <line x1="66" y1="64" x2="66" y2="78" stroke="#3fb950" stroke-width="1"/>
+      <rect x="148" y="24" width="130" height="28" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="213" y="38" fill="#3fb950" font-family="monospace" font-size="7.5" text-anchor="middle">.then(data =&gt; log(data))</text>
+      <text x="213" y="48" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">"data is ready"</text>
+      <!-- fail path -->
+      <rect x="148" y="60" width="130" height="28" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="213" y="74" fill="#f85149" font-family="monospace" font-size="7.5" text-anchor="middle">.catch(err =&gt; log(err))</text>
+      <text x="213" y="84" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">only if rejected</text>
+      <line x1="278" y1="38" x2="320" y2="38" stroke="#3fb950" stroke-width="1"/>
+      <polygon points="320,38 314,35 314,41" fill="#3fb950"/>
+      <rect x="322" y="24" width="140" height="28" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="392" y="42" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">handler runs later</text>
+      <text x="240" y="118" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">register handlers now · they fire when Promise settles (after delay)</text>
+    </svg>
 
     <h3>async/await — syntactic sugar over Promises</h3>
     <div class="two-col">
@@ -218,6 +452,42 @@ p.then(data => console.log(data))   // "data is ready" — after 1 second
       <li>If the Promise rejects, <code>await</code> throws — caught by <code>try/catch</code></li>
     </ul>
 
+    <!-- SVG: promise chain vs async/await -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <text x="120" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold" opacity="0.6">.then() chain</text>
+      <text x="360" y="18" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">async / await</text>
+      <!-- left chain -->
+      <rect x="16" y="28" width="80" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="56" y="44" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">fetch()</text>
+      <line x1="96" y1="40" x2="112" y2="40" stroke="white" stroke-width="1"/>
+      <polygon points="112,40 106,37 106,43" fill="white"/>
+      <rect x="114" y="28" width="80" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="154" y="44" fill="white" font-family="monospace" font-size="7" text-anchor="middle">.then(res)</text>
+      <line x1="194" y1="40" x2="210" y2="40" stroke="white" stroke-width="1"/>
+      <polygon points="210,40 204,37 204,43" fill="white"/>
+      <rect x="16" y="60" width="80" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="56" y="76" fill="white" font-family="monospace" font-size="7" text-anchor="middle">.then(json)</text>
+      <line x1="96" y1="72" x2="112" y2="72" stroke="white" stroke-width="1"/>
+      <rect x="114" y="60" width="80" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="154" y="76" fill="white" font-family="monospace" font-size="7" text-anchor="middle">.then(data)</text>
+      <rect x="16" y="92" width="178" height="24" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="105" y="108" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">.catch(err) at end</text>
+      <text x="120" y="132" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">nested callbacks · harder to read</text>
+      <!-- divider -->
+      <line x1="240" y1="24" x2="240" y2="150" stroke="white" stroke-width="1" opacity="0.3"/>
+      <!-- right async -->
+      <rect x="256" y="28" width="208" height="88" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="360" y="44" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">async function getCountries()</text>
+      <text x="360" y="58" fill="white" font-family="monospace" font-size="7" text-anchor="middle">try {"{"}</text>
+      <text x="360" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">const res = await fetch(…)</text>
+      <text x="360" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">const data = await res.json()</text>
+      <text x="360" y="100" fill="white" font-family="monospace" font-size="7" text-anchor="middle">return data</text>
+      <text x="360" y="114" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">{"}"} catch (err) {"{ … }"}</text>
+      <text x="360" y="148" fill="white" font-family="monospace" font-size="7" text-anchor="middle">same behaviour · reads top-to-bottom like sync code</text>
+      <text x="240" y="168" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">await only works inside async functions</text>
+    </svg>
+
     <h3>Fake async — Promise.resolve and setTimeout</h3>
     <pre><code>// Simulates a network call without a real API
 function fakeDelay(ms) {
@@ -237,6 +507,40 @@ async function fetchCountries() {
 fetchCountries().then(countries => console.log(countries));
 // or inside another async function:
 // const countries = await fetchCountries();</code></pre>
+
+    <!-- SVG: fake delay flow -->
+    <svg width="480" height="155" viewBox="0 0 480 155" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="155" fill="#111111"/>
+      <!-- caller -->
+      <rect x="16" y="28" width="100" height="36" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="66" y="42" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">caller</text>
+      <text x="66" y="56" fill="white" font-family="monospace" font-size="7" text-anchor="middle">await fetchCountries()</text>
+      <!-- arrow to service -->
+      <line x1="116" y1="46" x2="148" y2="46" stroke="white" stroke-width="1"/>
+      <polygon points="148,46 142,43 142,49" fill="white"/>
+      <!-- service -->
+      <rect x="150" y="20" width="130" height="70" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="215" y="34" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">fetchCountries()</text>
+      <text x="215" y="48" fill="white" font-family="monospace" font-size="7" text-anchor="middle">await delay(300)</text>
+      <text x="215" y="62" fill="white" font-family="monospace" font-size="7" text-anchor="middle">setTimeout → Promise</text>
+      <text x="215" y="76" fill="white" font-family="monospace" font-size="7" text-anchor="middle">return countries[]</text>
+      <!-- delay box -->
+      <rect x="300" y="36" width="80" height="40" fill="none" stroke="white" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="340" y="52" fill="white" font-family="monospace" font-size="8" text-anchor="middle">300ms</text>
+      <text x="340" y="66" fill="white" font-family="monospace" font-size="7" text-anchor="middle">fake network</text>
+      <!-- result -->
+      <line x1="280" y1="56" x2="300" y2="56" stroke="white" stroke-width="1"/>
+      <line x1="380" y1="56" x2="400" y2="56" stroke="#3fb950" stroke-width="1"/>
+      <polygon points="400,56 394,53 394,59" fill="#3fb950"/>
+      <rect x="402" y="40" width="62" height="36" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="433" y="54" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">resolved</text>
+      <text x="433" y="68" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">[CA, JP, BR]</text>
+      <!-- timeline -->
+      <text x="66" y="100" fill="white" font-family="monospace" font-size="7" text-anchor="middle">t=0: call starts</text>
+      <text x="215" y="100" fill="white" font-family="monospace" font-size="7" text-anchor="middle">t=0–300ms: paused at await</text>
+      <text x="433" y="100" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">t=300ms: data arrives</text>
+      <text x="240" y="140" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">same pattern as real fetch in useEffect — just with fake delay instead of HTTP</text>
+    </svg>
 
     <div class="alert alert-info">
       <strong>React connection:</strong> In Session 32 (<code>useEffect</code> + fetch), you will
@@ -262,6 +566,57 @@ async function correct() {
   const data = await fetchCountries();  // data is Array
   console.log(data.length);            // 3
 }</code></pre>
+
+    <!-- SVG: common async mistakes -->
+    <svg width="480" height="165" viewBox="0 0 480 165" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="165" fill="#111111"/>
+      <text x="120" y="18" fill="#f85149" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">MISTAKE 1</text>
+      <text x="360" y="18" fill="#f85149" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">MISTAKE 2</text>
+      <!-- mistake 1 -->
+      <rect x="16" y="26" width="208" height="52" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="120" y="42" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">function bad() {"{"}</text>
+      <text x="120" y="56" fill="#f85149" font-family="monospace" font-size="7.5" text-anchor="middle">await fetchCountries() ✗</text>
+      <text x="120" y="70" fill="white" font-family="monospace" font-size="7" text-anchor="middle">SyntaxError — not async</text>
+      <!-- mistake 2 -->
+      <rect x="256" y="26" width="208" height="52" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="360" y="42" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">async function alsoWrong()</text>
+      <text x="360" y="56" fill="#f85149" font-family="monospace" font-size="7.5" text-anchor="middle">data = fetchCountries() ✗</text>
+      <text x="360" y="70" fill="white" font-family="monospace" font-size="7" text-anchor="middle">data is Promise — .length undefined</text>
+      <!-- correct -->
+      <text x="240" y="92" fill="#3fb950" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">CORRECT</text>
+      <rect x="80" y="100" width="320" height="40" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="240" y="116" fill="#3fb950" font-family="monospace" font-size="7.5" text-anchor="middle">async function correct() {"{"}</text>
+      <text x="240" y="130" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">const data = await fetchCountries(); // data is Array ✓</text>
+      <!-- async return note -->
+      <text x="240" y="158" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">async + await together · missing either one breaks the pattern</text>
+    </svg>
+
+    <!-- SVG: non-blocking main() proof -->
+    <svg width="480" height="145" viewBox="0 0 480 145" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="145" fill="#111111"/>
+      <text x="240" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">lab proof: main() does not block</text>
+      <!-- timeline -->
+      <line x1="40" y1="70" x2="440" y2="70" stroke="white" stroke-width="1" opacity="0.4"/>
+      <!-- events -->
+      <circle cx="60" cy="70" r="6" fill="#3fb950"/>
+      <text x="60" y="52" fill="#3fb950" font-family="monospace" font-size="7.5" text-anchor="middle">Before main()</text>
+      <circle cx="140" cy="70" r="6" fill="#3fb950"/>
+      <text x="140" y="52" fill="#3fb950" font-family="monospace" font-size="7.5" text-anchor="middle">After main()</text>
+      <text x="140" y="92" fill="white" font-family="monospace" font-size="7" text-anchor="middle">runs immediately!</text>
+      <circle cx="220" cy="70" r="6" fill="white"/>
+      <text x="220" y="52" fill="white" font-family="monospace" font-size="7" text-anchor="middle">main() starts</text>
+      <text x="220" y="92" fill="white" font-family="monospace" font-size="7" text-anchor="middle">returns Promise</text>
+      <circle cx="340" cy="70" r="6" fill="#ff5ca8"/>
+      <text x="340" y="52" fill="#ff5ca8" font-family="monospace" font-size="7.5" text-anchor="middle">await delay(300)</text>
+      <text x="340" y="92" fill="white" font-family="monospace" font-size="7" text-anchor="middle">main paused here</text>
+      <circle cx="420" cy="70" r="6" fill="#ff5ca8"/>
+      <text x="420" y="52" fill="#ff5ca8" font-family="monospace" font-size="7.5" text-anchor="middle">countries log</text>
+      <text x="420" y="92" fill="white" font-family="monospace" font-size="7" text-anchor="middle">~300ms later</text>
+      <!-- order label -->
+      <rect x="100" y="108" width="280" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="240" y="124" fill="white" font-family="monospace" font-size="8" text-anchor="middle">print order: Before → After → (wait) → country data</text>
+      <text x="240" y="140" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">why React needs loading state — data arrives after first render</text>
+    </svg>
 
     <hr class="section-divider" />
 
