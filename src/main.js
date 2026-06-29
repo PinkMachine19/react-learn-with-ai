@@ -238,3 +238,49 @@
 // console.log(countries[0])
 // console.log(countries[1].id)
 // console.log(countryCP[0])
+
+
+//session 06
+//Lab objective: Move the countries array into src/data/countries.js as a default export. Add named 
+// exports for helper data and functions. Import and use them from a separate file.
+
+//import countries, {REGIONS,findById,filterByRegion} from './data/countries.js'
+
+//Create src/main.js to import and use it
+    // let C = countries
+    // console.log(REGIONS)
+    // const respone = findbyid(C,1)
+    // console.log(respone)
+    // console.log(filterbyregion(C, 'Americas'))
+
+    // console.log("Countries:", countries.length);
+    // console.log("Regions:", REGIONS);
+    // console.log("Find id 2:", findById(countries, 2).name);
+    // console.log("Americas:", filterByRegion(countries, "Americas").map(c => c.name));
+
+//Try importing the default under a different name
+    // import allCountries from './data/countries.js';
+    // console.log(allCountries === countries); // true if same import — same module instance
+
+import Cservice from './services/countryServices.js'
+async function main() {
+   try {
+        const all = await Cservice.fetchAllCountries();
+        console.log("All Countries:",all.map(c=> c.name ))
+
+        const Cname = await Cservice.fetchAllById(2);
+        console.log('Country 2:',Cname.name)
+
+        const americas = await Cservice.fetchAllByRegion('Americas');
+        console.log("Americas:",americas.map(c=> c.name))
+
+        // Testing error 
+        const missing = await Cservice.fetchAllById(999);
+        console.log("Should not reach there:",missing)
+    } catch (err) {
+       console.error("Caught :",err.message);
+        
+   }
+}
+
+main();
