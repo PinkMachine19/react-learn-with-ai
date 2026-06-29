@@ -261,3 +261,26 @@
 //Try importing the default under a different name
     // import allCountries from './data/countries.js';
     // console.log(allCountries === countries); // true if same import — same module instance
+
+import Cservice from './services/countryServices.js'
+async function main() {
+   try {
+        const all = await Cservice.fetchAllCountries();
+        console.log("All Countries:",all.map(c=> c.name ))
+
+        const Cname = await Cservice.fetchAllById(2);
+        console.log('Country 2:',Cname.name)
+
+        const americas = await Cservice.fetchAllByRegion('Americas');
+        console.log("Americas:",americas.map(c=> c.name))
+
+        // Testing error 
+        const missing = await Cservice.fetchAllById(999);
+        console.log("Should not reach there:",missing)
+    } catch (err) {
+       console.error("Caught :",err.message);
+        
+   }
+}
+
+main();
