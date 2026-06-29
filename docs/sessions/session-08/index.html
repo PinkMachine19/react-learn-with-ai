@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 08 — What React Is and Why</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+    @media(max-width:600px){.two-col{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+    <a href="../../architecture/index.html">Architecture</a>
+    <a href="../../session-notes/index.html">Notes</a>
+    <a href="../../commit-reviews/index.html">Commits</a>
+    <a href="../../prompts/index.html">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 2</span>
+      <span class="badge badge-current">Session 08</span>
+      <span style="color:var(--text-muted);font-size:13px;">React Fundamentals</span>
+    </div>
+    <h1>What React Is and Why</h1>
+    <p class="subtitle">
+      Layer 2 begins here. Before writing components, you need to understand what problem React
+      solves: updating the browser DOM safely and predictably as your UI changes. Today you learn
+      the DOM tree, imperative vs declarative UI, the virtual DOM idea, and how Vite scaffolds a
+      React project. You will create your first React file — and intentionally render nothing yet.
+    </p>
+    <div class="alert alert-warning">
+      <strong>Layer 2 unlocked</strong> after passing the Layer 1 Gate Quiz (≥80%). Do not start
+      this session until Layer 1 is complete and the gate quiz is passed.
+    </div>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <!-- SVG: session-08 concept map -->
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="340" y="20" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Session 08 — What React Is and Why</text>
+
+      <!-- Panel 1: DOM tree -->
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,93,110)"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="28" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+      <text x="93" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">DOM tree</text>
+      <rect x="68" y="58" width="50" height="20" fill="none" stroke="white" stroke-width="1"/>
+      <text x="93" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">document</text>
+      <line x1="93" y1="78" x2="60" y2="92" stroke="white" stroke-width="1"/>
+      <line x1="93" y1="78" x2="126" y2="92" stroke="white" stroke-width="1"/>
+      <rect x="36" y="92" width="48" height="18" fill="none" stroke="white" stroke-width="1"/>
+      <text x="60" y="104" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">&lt;html&gt;</text>
+      <rect x="102" y="92" width="48" height="18" fill="none" stroke="white" stroke-width="1"/>
+      <text x="126" y="104" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">&lt;head&gt;</text>
+      <rect x="68" y="116" width="50" height="18" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="93" y="128" fill="#3fb950" font-family="monospace" font-size="6.5" text-anchor="middle">&lt;body&gt;</text>
+      <text x="93" y="148" fill="white" font-family="monospace" font-size="7" text-anchor="middle">objects in memory</text>
+      <text x="93" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">parent → child nodes</text>
+
+      <!-- Panel 2: imperative -->
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,257,110)"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="192" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+      <text x="257" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">imperative</text>
+      <rect x="192" y="60" width="130" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="257" y="75" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">querySelector("#title")</text>
+      <line x1="257" y1="82" x2="257" y2="94" stroke="white" stroke-width="1"/>
+      <polygon points="257,94 253,88 261,88" fill="white"/>
+      <rect x="192" y="96" width="130" height="22" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="257" y="111" fill="#f85149" font-family="monospace" font-size="6.5" text-anchor="middle">.textContent = "Hello"</text>
+      <text x="257" y="132" fill="white" font-family="monospace" font-size="7" text-anchor="middle">step-by-step DOM edits</text>
+      <text x="257" y="146" fill="white" font-family="monospace" font-size="7" text-anchor="middle">you manage every change</text>
+      <text x="257" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">vanilla JS style</text>
+
+      <!-- Panel 3: declarative -->
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,421,110)"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="356" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+      <text x="421" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">declarative</text>
+      <rect x="352" y="62" width="138" height="44" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="421" y="76" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">UI = f(state)</text>
+      <text x="421" y="90" fill="white" font-family="monospace" font-size="7" text-anchor="middle">describe WHAT you want</text>
+      <text x="421" y="102" fill="white" font-family="monospace" font-size="7" text-anchor="middle">React figures out HOW</text>
+      <text x="421" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">state changes → re-render</text>
+      <text x="421" y="148" fill="white" font-family="monospace" font-size="7" text-anchor="middle">no manual DOM steps</text>
+      <text x="421" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">React's core model</text>
+
+      <!-- Panel 4: virtual DOM -->
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,585,110)"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="520" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+      <text x="585" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">virtual DOM</text>
+      <rect x="516" y="60" width="58" height="36" fill="none" stroke="white" stroke-width="1"/>
+      <text x="545" y="74" fill="white" font-family="monospace" font-size="7" text-anchor="middle">real DOM</text>
+      <text x="545" y="88" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">(browser)</text>
+      <rect x="588" y="60" width="58" height="36" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="617" y="74" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">vDOM</text>
+      <text x="617" y="88" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">(in memory)</text>
+      <line x1="574" y1="78" x2="588" y2="78" stroke="white" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="585" y="112" fill="white" font-family="monospace" font-size="7" text-anchor="middle">lightweight copy</text>
+      <text x="585" y="126" fill="white" font-family="monospace" font-size="7" text-anchor="middle">React diffs old vs new</text>
+      <text x="585" y="148" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">minimal real DOM writes</text>
+      <text x="585" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">approximates real DOM</text>
+
+      <!-- Panel 5: diff & patch -->
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,278)"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="28" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+      <text x="93" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">diff &amp; patch</text>
+      <rect x="24" y="230" width="58" height="36" fill="none" stroke="white" stroke-width="1"/>
+      <text x="53" y="244" fill="white" font-family="monospace" font-size="7" text-anchor="middle">old tree</text>
+      <text x="53" y="258" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">A · B · C</text>
+      <rect x="96" y="230" width="58" height="36" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="125" y="244" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">new tree</text>
+      <text x="125" y="258" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">A · B' · C</text>
+      <line x1="93" y1="272" x2="93" y2="284" stroke="#3fb950" stroke-width="1"/>
+      <polygon points="93,284 89,278 97,278" fill="#3fb950"/>
+      <rect x="24" y="286" width="138" height="22" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="93" y="301" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">patch only B → B'</text>
+      <text x="93" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">why React is fast enough</text>
+
+      <!-- Panel 6: React library -->
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,257,278)"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="192" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+      <text x="257" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">React library</text>
+      <text x="257" y="238" fill="white" font-family="monospace" font-size="7" text-anchor="middle">UI library — not a framework</text>
+      <text x="257" y="252" fill="white" font-family="monospace" font-size="7" text-anchor="middle">components = functions</text>
+      <rect x="190" y="260" width="130" height="36" fill="none" stroke="white" stroke-width="1"/>
+      <text x="255" y="274" fill="white" font-family="monospace" font-size="7" text-anchor="middle">react + react-dom</text>
+      <text x="255" y="288" fill="white" font-family="monospace" font-size="7" text-anchor="middle">npm packages</text>
+      <text x="257" y="310" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">built on JS you know</text>
+      <text x="257" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Layer 1 → Layer 2 bridge</text>
+
+      <!-- Panel 7: Vite -->
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,421,278)"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="356" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+      <text x="421" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">Vite</text>
+      <rect x="352" y="232" width="138" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="421" y="247" fill="white" font-family="monospace" font-size="7" text-anchor="middle">npm create vite</text>
+      <text x="421" y="268" fill="white" font-family="monospace" font-size="7" text-anchor="middle">dev server + HMR</text>
+      <text x="421" y="282" fill="white" font-family="monospace" font-size="7" text-anchor="middle">bundles JSX → JS</text>
+      <text x="421" y="304" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">browser can't read JSX raw</text>
+      <text x="421" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">build tool, not React itself</text>
+
+      <!-- Panel 8: App returns null -->
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="520" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+      <text x="585" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">return null</text>
+      <rect x="516" y="232" width="138" height="36" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="585" y="246" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">function App() {"{"}</text>
+      <text x="585" y="260" fill="white" font-family="monospace" font-size="7" text-anchor="middle">return null;</text>
+      <text x="585" y="274" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">{"}"}</text>
+      <text x="585" y="296" fill="white" font-family="monospace" font-size="7" text-anchor="middle">blank page = success</text>
+      <text x="585" y="310" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">scaffold works · no UI yet</text>
+      <text x="585" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">intentional milestone</text>
+    </svg>
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objective</h2>
+    <div class="card">
+      <ul>
+        <li>Describe the DOM as a tree of JavaScript objects representing HTML elements</li>
+        <li>Contrast imperative DOM updates (<code>querySelector</code>, <code>textContent</code>) with React's declarative model</li>
+        <li>Explain the virtual DOM idea at a high level — why React keeps an in-memory copy and diffs it</li>
+        <li>Describe what Vite does: dev server, JSX bundling, and project scaffolding</li>
+        <li>Identify the roles of <code>index.html</code>, <code>main.jsx</code>, and <code>App.jsx</code></li>
+        <li>Scaffold a Vite React project and confirm a blank page when <code>App</code> returns <code>null</code></li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>The DOM is best described as:</p>
+        <label class="quiz-option" data-val="a">A flat list of CSS class names</label>
+        <label class="quiz-option" data-val="b">A tree of JavaScript objects representing HTML elements</label>
+        <label class="quiz-option" data-val="c">A network protocol for fetching pages</label>
+        <label class="quiz-option" data-val="d">A React-specific data structure</label>
+        <div class="explanation">The browser parses HTML into a live tree of objects in memory. Each node is an element, text node, or attribute. React builds on top of this — it does not replace the DOM itself.</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>In imperative DOM programming, you:</p>
+        <label class="quiz-option" data-val="a">Describe what the UI should look like and let the library figure out the steps</label>
+        <label class="quiz-option" data-val="b">Tell the browser step-by-step how to find and change each element</label>
+        <label class="quiz-option" data-val="c">Write JSX that maps directly to HTML tags</label>
+        <label class="quiz-option" data-val="d">Return a component function from main.jsx</label>
+        <div class="explanation">Imperative code says HOW: "find this element, change its text, add a class." Declarative code says WHAT: "when state is X, the UI should look like Y." React is declarative.</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="b">
+        <div class="question-num">Question 3 of 5</div>
+        <p>The virtual DOM approximates:</p>
+        <label class="quiz-option" data-val="a">The server's database schema</label>
+        <label class="quiz-option" data-val="b">The real DOM — a lightweight in-memory copy React can compare and patch against</label>
+        <label class="quiz-option" data-val="c">CSS computed styles only</label>
+        <label class="quiz-option" data-val="d">Network request payloads from fetch()</label>
+        <div class="explanation">React builds a lightweight tree in JavaScript memory that mirrors what the UI should look like. When state changes, it diffs the old virtual tree against the new one and applies only the necessary changes to the real DOM.</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="b">
+        <div class="question-num">Question 4 of 5</div>
+        <p>What does Vite do in this project?</p>
+        <label class="quiz-option" data-val="a">Replaces React entirely with its own UI system</label>
+        <label class="quiz-option" data-val="b">Runs a dev server, bundles JSX into JavaScript, and provides hot module replacement</label>
+        <label class="quiz-option" data-val="c">Stores country data in a local database</label>
+        <label class="quiz-option" data-val="d">Compiles TypeScript and nothing else</label>
+        <div class="explanation">Vite is a build tool. Browsers cannot execute JSX directly — Vite transforms it into plain JavaScript at dev time. It also serves your files locally and reloads changed modules without a full page refresh.</div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Why does <code>App</code> return <code>null</code> in this session?</p>
+        <label class="quiz-option" data-val="a"><code>null</code> is invalid in React and will crash the app</label>
+        <label class="quiz-option" data-val="b">Intentionally — nothing renders yet; a blank page proves the Vite scaffold works</label>
+        <label class="quiz-option" data-val="c">Because Vite requires <code>null</code> on the first run before JSX is allowed</label>
+        <label class="quiz-option" data-val="d"><code>null</code> tells React to show an error page</label>
+        <div class="explanation">Returning null is valid — it means "render nothing." Today's milestone is wiring the toolchain, not building UI. A blank white page with no console errors means success.</div>
+      </div>
+
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — JavaScript First, Then React</h2>
+
+    <h3>JavaScript: The DOM as a tree of objects</h3>
+    <p>
+      When the browser loads a page, it parses HTML and builds the <strong>Document Object Model (DOM)</strong> —
+      a live tree of objects in memory. Every tag becomes a node. Nodes have parents and children.
+      You have been using this tree implicitly whenever JavaScript touched a page.
+    </p>
+    <pre><code>// The browser built this tree from HTML:
+// document
+//   └── html
+//         ├── head
+//         │     └── title  →  text: "My Page"
+//         └── body
+//               └── h1     →  text: "Hello"
+//               └── p      →  text: "World"
+
+console.log(document.body.children.length);  // how many direct children body has
+console.log(document.querySelector("h1").textContent);  // "Hello"</code></pre>
+    <p>
+      Key idea: the DOM is not the HTML file on disk. It is a mutable, in-memory object tree
+      the browser maintains. Change a node and the page updates immediately.
+    </p>
+
+    <!-- SVG: DOM tree -->
+    <svg width="480" height="200" viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="200" fill="#111111"/>
+      <text x="240" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">DOM tree (simplified)</text>
+      <!-- document root -->
+      <rect x="200" y="28" width="80" height="24" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="240" y="44" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">document</text>
+      <!-- html -->
+      <line x1="240" y1="52" x2="240" y2="64" stroke="white" stroke-width="1"/>
+      <rect x="200" y="64" width="80" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="240" y="80" fill="white" font-family="monospace" font-size="8" text-anchor="middle">&lt;html&gt;</text>
+      <!-- head and body -->
+      <line x1="220" y1="88" x2="120" y2="104" stroke="white" stroke-width="1"/>
+      <line x1="260" y1="88" x2="360" y2="104" stroke="white" stroke-width="1"/>
+      <rect x="80" y="104" width="80" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="120" y="120" fill="white" font-family="monospace" font-size="8" text-anchor="middle">&lt;head&gt;</text>
+      <rect x="320" y="104" width="80" height="24" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="360" y="120" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">&lt;body&gt;</text>
+      <!-- body children -->
+      <line x1="340" y1="128" x2="280" y2="144" stroke="white" stroke-width="1"/>
+      <line x1="380" y1="128" x2="440" y2="144" stroke="white" stroke-width="1"/>
+      <rect x="240" y="144" width="80" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="280" y="160" fill="white" font-family="monospace" font-size="8" text-anchor="middle">&lt;h1&gt; Hello</text>
+      <rect x="400" y="144" width="80" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="440" y="160" fill="white" font-family="monospace" font-size="8" text-anchor="middle">&lt;p&gt; World</text>
+      <!-- head child -->
+      <line x1="120" y1="128" x2="120" y2="144" stroke="white" stroke-width="1"/>
+      <rect x="80" y="144" width="80" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="120" y="160" fill="white" font-family="monospace" font-size="8" text-anchor="middle">&lt;title&gt;</text>
+      <text x="240" y="188" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">each box = JS object · edges = parent → child</text>
+    </svg>
+
+    <h3>JavaScript: Imperative DOM updates</h3>
+    <p>
+      Vanilla JavaScript updates the UI <strong>imperatively</strong> — you write explicit steps
+      to find elements and mutate them. This works for small pages but becomes fragile as UI grows.
+    </p>
+    <pre><code>// Imperative: HOW to update the page
+const titleEl = document.querySelector("#title");
+const countEl = document.querySelector("#count");
+let count = 0;
+
+document.querySelector("#btn").addEventListener("click", () => {
+  count++;
+  countEl.textContent = String(count);       // step 1: update count text
+  if (count > 5) {
+    titleEl.textContent = "High score!";     // step 2: maybe update title
+    titleEl.classList.add("winner");         // step 3: maybe add a class
+  }
+});
+// You must remember every element that depends on count.
+// Miss one? UI is out of sync with state.</code></pre>
+
+    <!-- SVG: imperative vs declarative -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <text x="120" y="18" fill="#f85149" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">IMPERATIVE (vanilla JS)</text>
+      <text x="360" y="18" fill="#3fb950" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">DECLARATIVE (React)</text>
+      <!-- left imperative steps -->
+      <rect x="16" y="28" width="208" height="120" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="120" y="44" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">1. querySelector("#count")</text>
+      <text x="120" y="58" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">2. .textContent = count</text>
+      <text x="120" y="72" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">3. querySelector("#title")</text>
+      <text x="120" y="86" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">4. .classList.add("winner")</text>
+      <text x="120" y="108" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">you write every DOM step</text>
+      <text x="120" y="122" fill="white" font-family="monospace" font-size="7" text-anchor="middle">easy to miss a dependent element</text>
+      <text x="120" y="136" fill="white" font-family="monospace" font-size="7" text-anchor="middle">state and DOM drift apart</text>
+      <!-- divider -->
+      <line x1="240" y1="24" x2="240" y2="155" stroke="white" stroke-width="1" opacity="0.3"/>
+      <!-- right declarative -->
+      <rect x="256" y="28" width="208" height="120" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="360" y="44" fill="#3fb950" font-family="monospace" font-size="7.5" text-anchor="middle">function App() {"{"}</text>
+      <text x="360" y="58" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">return (</text>
+      <text x="360" y="72" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">&lt;div&gt;</text>
+      <text x="360" y="86" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">&lt;h1&gt;{"{title}"}&lt;/h1&gt;</text>
+      <text x="360" y="100" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">&lt;p&gt;{"{count}"}&lt;/p&gt;</text>
+      <text x="360" y="114" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">&lt;/div&gt;</text>
+      <text x="360" y="128" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">); {"}"}</text>
+      <text x="360" y="148" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">describe UI · React applies DOM changes</text>
+      <text x="240" y="168" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">same count state · two completely different mental models</text>
+    </svg>
+
+    <h3>React: A library for building UI</h3>
+    <p>
+      React is a <strong>JavaScript library</strong> (not a full framework) for building user interfaces.
+      It does not replace the DOM — it manages updates to it. React gives you:
+    </p>
+    <ul>
+      <li>A <strong>component model</strong> — UI split into reusable functions (Session 10)</li>
+      <li>A <strong>declarative render model</strong> — describe UI as a function of state</li>
+      <li>An efficient update mechanism — the virtual DOM diff (below)</li>
+    </ul>
+    <p>
+      React sits on top of everything you learned in Layer 1: functions, objects, arrays,
+      <code>map()</code>, arrow functions, destructuring, imports/exports, and async data fetching.
+    </p>
+
+    <h3>React: Declarative model — UI = f(state)</h3>
+    <p>
+      In React you do not manually find and update DOM nodes. You describe what the UI
+      <em>should look like</em> given the current state. When state changes, React re-runs your
+      component function and reconciles the result with what's on screen.
+    </p>
+    <pre><code>// Declarative mental model (conceptual — full JSX in Session 09)
+function Counter({ count }) {
+  return (
+    &lt;div&gt;
+      &lt;h1 className={count > 5 ? "winner" : ""}&gt;
+        {count > 5 ? "High score!" : "Keep clicking"}
+      &lt;/h1&gt;
+      &lt;p&gt;{count}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+// Change count → React re-renders → DOM updates automatically.
+// You never call querySelector.</code></pre>
+
+    <h3>React: Virtual DOM (simplified)</h3>
+    <p>
+      Updating the real DOM is expensive. React keeps a lightweight <strong>virtual DOM</strong> —
+      a JavaScript object tree describing what the UI should look like. On each render:
+    </p>
+    <ol>
+      <li>React builds a new virtual tree from your component output</li>
+      <li>It <strong>diffs</strong> the new tree against the previous one</li>
+      <li>It applies only the <strong>minimal set of changes</strong> to the real DOM</li>
+    </ol>
+    <p>
+      You do not need to implement this — React handles it. But understanding <em>why</em> React
+      exists helps you debug weird UI behaviour later.
+    </p>
+
+    <!-- SVG: virtual DOM diff -->
+    <svg width="480" height="195" viewBox="0 0 480 195" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="195" fill="#111111"/>
+      <text x="240" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">virtual DOM diff — old tree vs new tree</text>
+      <!-- old tree -->
+      <text x="100" y="36" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.6">previous render</text>
+      <rect x="40" y="42" width="120" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="100" y="58" fill="white" font-family="monospace" font-size="8" text-anchor="middle">&lt;div&gt;</text>
+      <line x1="70" y1="66" x2="60" y2="80" stroke="white" stroke-width="1"/>
+      <line x1="130" y1="66" x2="140" y2="80" stroke="white" stroke-width="1"/>
+      <rect x="20" y="80" width="80" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="60" y="96" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;h1&gt; Hi &lt;/h1&gt;</text>
+      <rect x="120" y="80" width="80" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="160" y="96" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;p&gt; 3 &lt;/p&gt;</text>
+      <!-- new tree -->
+      <text x="380" y="36" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">new render</text>
+      <rect x="320" y="42" width="120" height="24" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="380" y="58" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">&lt;div&gt;</text>
+      <line x1="350" y1="66" x2="340" y2="80" stroke="white" stroke-width="1"/>
+      <line x1="410" y1="66" x2="420" y2="80" stroke="white" stroke-width="1"/>
+      <rect x="300" y="80" width="80" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="340" y="96" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;h1&gt; Hi &lt;/h1&gt;</text>
+      <rect x="400" y="80" width="80" height="24" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="440" y="96" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">&lt;p&gt; 4 &lt;/p&gt;</text>
+      <!-- diff arrow -->
+      <line x1="160" y1="92" x2="300" y2="92" stroke="white" stroke-width="1"/>
+      <polygon points="300,92 294,89 294,95" fill="white"/>
+      <text x="230" y="84" fill="white" font-family="monospace" font-size="7" text-anchor="middle">diff</text>
+      <!-- patch result -->
+      <rect x="140" y="120" width="200" height="32" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="240" y="136" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">patch real DOM</text>
+      <text x="240" y="148" fill="white" font-family="monospace" font-size="7" text-anchor="middle">only &lt;p&gt; text: 3 → 4 changed</text>
+      <text x="240" y="178" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">&lt;h1&gt; untouched · minimal DOM writes</text>
+    </svg>
+
+    <h3>Vite: dev server, JSX bundling, scaffolding</h3>
+    <p>
+      Browsers cannot run JSX. Vite is the build tool that transforms your React source files
+      into plain JavaScript the browser understands, serves them on a local dev server, and
+      hot-reloads changed files without a full page refresh.
+    </p>
+    <pre><code># Create a React project in the current directory
+npm create vite@latest . -- --template react
+
+# Install dependencies
+npm install
+
+# Start the dev server
+npm run dev</code></pre>
+    <p>Vite handles:</p>
+    <ul>
+      <li><strong>Dev server</strong> — serves files at <code>http://localhost:5173</code> (default)</li>
+      <li><strong>JSX transform</strong> — converts <code>&lt;App /&gt;</code> into <code>React.createElement(...)</code></li>
+      <li><strong>HMR</strong> — Hot Module Replacement; save a file, see changes instantly</li>
+      <li><strong>Production build</strong> — <code>npm run build</code> (later sessions)</li>
+    </ul>
+
+    <!-- SVG: Vite boot chain -->
+    <svg width="480" height="155" viewBox="0 0 480 155" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="155" fill="#111111"/>
+      <text x="240" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">Vite boot chain</text>
+      <!-- index.html -->
+      <rect x="16" y="36" width="100" height="44" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="66" y="52" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">index.html</text>
+      <text x="66" y="66" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;div id="root"&gt;</text>
+      <text x="66" y="76" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;script src=main.jsx&gt;</text>
+      <!-- arrow -->
+      <line x1="116" y1="58" x2="148" y2="58" stroke="white" stroke-width="1"/>
+      <polygon points="148,58 142,55 142,61" fill="white"/>
+      <!-- main.jsx -->
+      <rect x="150" y="36" width="120" height="44" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="210" y="52" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">main.jsx</text>
+      <text x="210" y="66" fill="white" font-family="monospace" font-size="7" text-anchor="middle">import App from App.jsx</text>
+      <text x="210" y="76" fill="white" font-family="monospace" font-size="7" text-anchor="middle">createRoot(#root)</text>
+      <!-- arrow -->
+      <line x1="270" y1="58" x2="302" y2="58" stroke="white" stroke-width="1"/>
+      <polygon points="302,58 296,55 296,61" fill="white"/>
+      <!-- App.jsx -->
+      <rect x="304" y="36" width="100" height="44" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="354" y="52" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">App.jsx</text>
+      <text x="354" y="66" fill="white" font-family="monospace" font-size="7" text-anchor="middle">function App()</text>
+      <text x="354" y="76" fill="white" font-family="monospace" font-size="7" text-anchor="middle">return null</text>
+      <!-- arrow to browser -->
+      <line x1="404" y1="58" x2="436" y2="58" stroke="#3fb950" stroke-width="1"/>
+      <polygon points="436,58 430,55 430,61" fill="#3fb950"/>
+      <rect x="408" y="88" width="56" height="28" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="436" y="106" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">browser</text>
+      <!-- vite layer -->
+      <rect x="16" y="100" width="448" height="36" fill="none" stroke="white" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="240" y="116" fill="white" font-family="monospace" font-size="8" text-anchor="middle">Vite dev server — transforms JSX · bundles modules · serves at localhost:5173</text>
+      <text x="240" y="130" fill="white" font-family="monospace" font-size="7" text-anchor="middle">ReactDOM.createRoot(document.getElementById("root")).render(&lt;App /&gt;)</text>
+      <text x="240" y="150" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">null → blank page · no errors → scaffold success</text>
+    </svg>
+
+    <h3>Project structure: index.html, main.jsx, App.jsx</h3>
+    <pre><code>react-learn-with-ai/
+├── index.html          ← single HTML shell; has &lt;div id="root"&gt;
+├── package.json        ← scripts: dev, build, preview
+├── vite.config.js      ← Vite configuration
+└── src/
+    ├── main.jsx        ← entry point: mounts React to #root
+    ├── App.jsx         ← root component (returns null today)
+    └── App.css         ← styles (unused until we render UI)</code></pre>
+    <p><strong>index.html</strong> — the only HTML file. Contains <code>&lt;div id="root"&gt;&lt;/div&gt;</code> where React attaches.</p>
+    <p><strong>main.jsx</strong> — JavaScript entry. Calls <code>ReactDOM.createRoot</code> and renders <code>&lt;App /&gt;</code>.</p>
+    <p><strong>App.jsx</strong> — your root React component. Today it returns <code>null</code> — intentionally nothing.</p>
+
+    <!-- SVG: file/folder structure -->
+    <svg width="480" height="210" viewBox="0 0 480 210" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="210" fill="#111111"/>
+      <text x="240" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">project file structure</text>
+      <!-- root folder -->
+      <rect x="180" y="28" width="180" height="24" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="270" y="44" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">react-learn-with-ai/</text>
+      <!-- children -->
+      <line x1="220" y1="52" x2="120" y2="68" stroke="white" stroke-width="1"/>
+      <line x1="240" y1="52" x2="200" y2="68" stroke="white" stroke-width="1"/>
+      <line x1="260" y1="52" x2="280" y2="68" stroke="white" stroke-width="1"/>
+      <line x1="280" y1="52" x2="360" y2="68" stroke="white" stroke-width="1"/>
+      <!-- index.html -->
+      <rect x="60" y="68" width="120" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="120" y="84" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">index.html</text>
+      <!-- package.json -->
+      <rect x="140" y="68" width="120" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="200" y="84" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">package.json</text>
+      <!-- vite.config.js -->
+      <rect x="220" y="68" width="120" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="280" y="84" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">vite.config.js</text>
+      <!-- src folder -->
+      <rect x="300" y="68" width="80" height="24" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="340" y="84" fill="#3fb950" font-family="monospace" font-size="7.5" text-anchor="middle">src/</text>
+      <!-- src children -->
+      <line x1="320" y1="92" x2="260" y2="108" stroke="white" stroke-width="1"/>
+      <line x1="340" y1="92" x2="340" y2="108" stroke="white" stroke-width="1"/>
+      <line x1="360" y1="92" x2="420" y2="108" stroke="white" stroke-width="1"/>
+      <rect x="200" y="108" width="120" height="24" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="260" y="124" fill="#ff5ca8" font-family="monospace" font-size="7.5" text-anchor="middle">main.jsx ← entry</text>
+      <rect x="280" y="108" width="120" height="24" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="340" y="124" fill="#ff5ca8" font-family="monospace" font-size="7.5" text-anchor="middle">App.jsx ← root</text>
+      <rect x="360" y="108" width="100" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="410" y="124" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">App.css</text>
+      <!-- roles -->
+      <rect x="40" y="148" width="400" height="48" fill="none" stroke="white" stroke-width="1"/>
+      <text x="240" y="164" fill="white" font-family="monospace" font-size="7" text-anchor="middle">index.html → loads main.jsx → createRoot(#root) → renders &lt;App /&gt;</text>
+      <text x="240" y="178" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">App.jsx returns null → #root stays empty → blank page ✓</text>
+      <text x="240" y="204" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Layer 1 src/ files (data, services) will merge back in later sessions</text>
+    </svg>
+
+    <h3>JSX overview (preview — deep dive in Session 09)</h3>
+    <p>
+      JSX looks like HTML inside JavaScript. It is <strong>syntax sugar</strong> for
+      <code>React.createElement(...)</code> calls. Vite transforms it before the browser sees it.
+    </p>
+    <pre><code>// These are equivalent (Session 09 proves this):
+const element = &lt;h1 className="title"&gt;Hello&lt;/h1&gt;;
+
+const element = React.createElement("h1", { className: "title" }, "Hello");</code></pre>
+    <p>JSX rules preview (full list in Session 09):</p>
+    <ul>
+      <li>One root element per return (or use a Fragment)</li>
+      <li><code>className</code> not <code>class</code>; <code>htmlFor</code> not <code>for</code></li>
+      <li>JavaScript expressions go inside <code>{"{ expression }"}</code></li>
+      <li>Self-closing tags must close: <code>&lt;img /&gt;</code></li>
+    </ul>
+
+    <div class="alert alert-info">
+      <strong>Layer 1 connection:</strong> <code>main.jsx</code> uses ES module imports exactly like
+      Session 06. <code>App</code> is a function — exactly like Session 04 arrow functions.
+      Country data from <code>src/data/countries.js</code> will appear in components starting Session 10.
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Scaffold a Vite React project in the repo root. Create
+      <code>App.jsx</code> returning <code>null</code>. Wire <code>main.jsx</code> to mount it.
+      Run <code>npm run dev</code> — a blank page with no console errors is success.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Scaffold Vite in the repo root</strong></p>
+        <p>From the project root (<code>react-learn-with-ai/</code>):</p>
+        <pre><code>npm create vite@latest . -- --template react</code></pre>
+        <p>
+          If prompted about overwriting existing files, accept for <code>package.json</code> and
+          new Vite files. Keep any existing <code>src/data/</code> or <code>src/services/</code>
+          folders from Layer 1 — do not delete them.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Install dependencies</strong></p>
+        <pre><code>npm install</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Write <code>src/App.jsx</code> — return null</strong></p>
+        <pre><code>// src/App.jsx
+function App() {
+  return null;
+}
+
+export default App;</code></pre>
+        <p>
+          Do not add JSX yet. Do not import CSS yet unless Vite scaffolded it — if
+          <code>main.jsx</code> imports <code>App.css</code>, leave that import; it won't affect
+          a null render.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Verify <code>src/main.jsx</code> wires React to the DOM</strong></p>
+        <p>Vite scaffolds this — read it, don't blindly paste. It should look like:</p>
+        <pre><code>// src/main.jsx
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './App.jsx';
+import './App.css';
+
+createRoot(document.getElementById('root')).render(
+  &lt;StrictMode&gt;
+    &lt;App /&gt;
+  &lt;/StrictMode&gt;
+);</code></pre>
+        <p>
+          Trace the chain: <code>index.html</code> has <code>&lt;div id="root"&gt;</code> →
+          <code>main.jsx</code> calls <code>createRoot</code> → renders <code>&lt;App /&gt;</code> →
+          <code>App</code> returns <code>null</code> → nothing appears in <code>#root</code>.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Run the dev server</strong></p>
+        <pre><code>npm run dev</code></pre>
+        <p>Open the URL shown (usually <code>http://localhost:5173</code>).</p>
+        <p><strong>Expected result:</strong> a blank white page. Open DevTools → Console. No red errors.</p>
+        <p>
+          If you see content, check that <code>App.jsx</code> truly returns <code>null</code> and
+          not the default Vite template JSX.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <p><strong>Confirm the boot chain in DevTools</strong></p>
+        <p>In Elements tab, find <code>&lt;div id="root"&gt;&lt;/div&gt;</code>. It should be empty.</p>
+        <p>This proves React mounted successfully but chose to render nothing — exactly as designed.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>package.json</code></td><td>Updated</td><td>Vite + React dependencies and scripts</td></tr>
+          <tr><td><code>package-lock.json</code></td><td>Updated</td><td>Locked dependency tree after npm install</td></tr>
+          <tr><td><code>index.html</code></td><td>Created</td><td>HTML shell with <code>#root</code> mount point</td></tr>
+          <tr><td><code>vite.config.js</code></td><td>Created</td><td>Vite configuration</td></tr>
+          <tr><td><code>src/main.jsx</code></td><td>Created</td><td>Entry point — createRoot + render App</td></tr>
+          <tr><td><code>src/App.jsx</code></td><td>Created</td><td>Root component returning null</td></tr>
+          <tr><td><code>src/App.css</code></td><td>Created</td><td>Scaffolded styles (unused until Session 09)</td></tr>
+          <tr><td><code>docs/sessions/session-08/index.html</code></td><td>Created</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add package.json package-lock.json index.html vite.config.js src/main.jsx src/App.jsx src/App.css docs/sessions/session-08/index.html
+git commit -m "session-08: vite react scaffold, declarative UI concepts — Layer 2 begins"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">I can describe the DOM as a tree of objects, not just an HTML file</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">I can explain imperative vs declarative UI in my own words</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">I can trace the boot chain: index.html → main.jsx → createRoot → App</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4"><code>App.jsx</code> returns <code>null</code> and the page is blank with no console errors</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I can explain why a blank page is the correct outcome for this session</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c6"/><label for="c6">I can explain what Vite does vs what React does — they are different tools</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>The DOM is best described as:</p>
+        <label class="quiz-option" data-val="a">A flat list of CSS class names</label>
+        <label class="quiz-option" data-val="b">A tree of JavaScript objects representing HTML elements</label>
+        <label class="quiz-option" data-val="c">A network protocol for fetching pages</label>
+        <label class="quiz-option" data-val="d">A React-specific data structure</label>
+        <div class="explanation">The DOM is a live in-memory tree built by the browser. React reads and writes to it — but the tree itself is a browser concept, not a React invention.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>In imperative DOM programming, you:</p>
+        <label class="quiz-option" data-val="a">Describe what the UI should look like and let the library figure out the steps</label>
+        <label class="quiz-option" data-val="b">Tell the browser step-by-step how to find and change each element</label>
+        <label class="quiz-option" data-val="c">Write JSX that maps directly to HTML tags</label>
+        <label class="quiz-option" data-val="d">Return a component function from main.jsx</label>
+        <div class="explanation">Imperative = HOW (manual steps). Declarative = WHAT (describe desired UI). React is declarative.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="b">
+        <div class="question-num">Question 3 of 5</div>
+        <p>The virtual DOM approximates:</p>
+        <label class="quiz-option" data-val="a">The server's database schema</label>
+        <label class="quiz-option" data-val="b">The real DOM — a lightweight in-memory copy React can compare and patch against</label>
+        <label class="quiz-option" data-val="c">CSS computed styles only</label>
+        <label class="quiz-option" data-val="d">Network request payloads from fetch()</label>
+        <div class="explanation">React diffs old vs new virtual trees and patches only what changed in the real DOM.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="b">
+        <div class="question-num">Question 4 of 5</div>
+        <p>What does Vite do in this project?</p>
+        <label class="quiz-option" data-val="a">Replaces React entirely with its own UI system</label>
+        <label class="quiz-option" data-val="b">Runs a dev server, bundles JSX into JavaScript, and provides hot module replacement</label>
+        <label class="quiz-option" data-val="c">Stores country data in a local database</label>
+        <label class="quiz-option" data-val="d">Compiles TypeScript and nothing else</label>
+        <div class="explanation">Vite is the build tool. React is the UI library. Both are needed but serve different roles.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Why does <code>App</code> return <code>null</code> in this session?</p>
+        <label class="quiz-option" data-val="a"><code>null</code> is invalid in React and will crash the app</label>
+        <label class="quiz-option" data-val="b">Intentionally — nothing renders yet; a blank page proves the Vite scaffold works</label>
+        <label class="quiz-option" data-val="c">Because Vite requires <code>null</code> on the first run before JSX is allowed</label>
+        <label class="quiz-option" data-val="d"><code>null</code> tells React to show an error page</label>
+        <div class="explanation">null is valid. Blank page + no errors = toolchain works. UI comes in Session 09.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>Open DevTools → Elements. Find <code>&lt;div id="root"&gt;&lt;/div&gt;</code>. Is it empty? What does that tell you about what <code>return null</code> means in React?</li>
+        <li>Compare the imperative counter example in the concept section to how you would write it in React (conceptually). Which approach would be easier to maintain with 20 UI elements that all depend on the same state?</li>
+        <li>Explain the difference between React and Vite to someone who thinks they are the same thing.</li>
+        <li>When React diffs the virtual DOM, why is it better to change only one <code>&lt;p&gt;</code> text node instead of rebuilding the entire page?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Knowledge Is Missing?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Debugging blank screens:</strong> Without understanding the boot chain (index.html → main.jsx → App), a blank page looks like a failure instead of intentional success — or a real error goes unnoticed.</li>
+        <li><strong>Imperative habits in React:</strong> Calling <code>document.querySelector</code> inside a React component fights the declarative model and causes bugs that are hard to trace.</li>
+        <li><strong>Confusing React with Vite:</strong> JSX errors are Vite/build errors. Runtime bugs are React errors. Without separating the two, you debug the wrong tool.</li>
+        <li><strong>Virtual DOM misconceptions:</strong> Thinking React "replaces the DOM" leads to confusion when you inspect real DOM nodes in DevTools and they look like normal HTML.</li>
+      </ul>
+    </div>
+
+    <h2>11. What We Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Layer 2 — React Fundamentals — has begun.</strong></p>
+      <p>Today you learned:</p>
+      <ul>
+        <li>The DOM is a tree of JavaScript objects — the foundation React builds on</li>
+        <li>Imperative DOM code (querySelector, textContent) vs React's declarative model</li>
+        <li>The virtual DOM idea: diff old vs new, patch only what changed</li>
+        <li>Vite scaffolds and serves React; it transforms JSX the browser cannot read natively</li>
+        <li>Project structure: <code>index.html</code>, <code>main.jsx</code>, <code>App.jsx</code></li>
+        <li>First React file created — <code>App</code> returns <code>null</code>; blank page is success</li>
+      </ul>
+      <p>
+        <strong>Next:</strong> Proceed to
+        <a href="../session-09/index.html">Session 09 — JSX Deep Dive</a>.
+        You will render "Hello World" as JSX with a JavaScript expression inside — your first visible UI.
+      </p>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  function setupQuiz(prefix) {
+    const container = document.getElementById(prefix + '-quiz');
+    if (!container) return;
+    const questions = container.querySelectorAll('.quiz-question');
+    const btn = container.querySelector('.submit-btn');
+    let answeredCount = 0;
+    let correct = 0;
+    questions.forEach(q => {
+      q.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          if (q.dataset.answered) return;
+          q.dataset.answered = 'true';
+          answeredCount++;
+          const answer = q.dataset.answer;
+          q.querySelectorAll('.quiz-option').forEach(o => {
+            o.style.pointerEvents = 'none';
+            if (o.dataset.val === answer) o.classList.add('correct');
+          });
+          if (opt.dataset.val === answer) correct++;
+          else opt.classList.add('wrong');
+          const explanation = q.querySelector('.explanation');
+          if (explanation) explanation.style.display = 'block';
+          if (answeredCount === questions.length) btn.disabled = false;
+        });
+      });
+    });
+    btn.addEventListener('click', () => {
+      const result = document.getElementById(prefix + '-result');
+      const pct = Math.round((correct / questions.length) * 100);
+      result.style.display = 'block';
+      btn.disabled = true;
+      if (correct >= 4) {
+        result.className = 'quiz-result pass';
+        result.innerHTML = correct + '/5 correct (' + pct + '%) — Passed. ' +
+          (prefix === 'pre' ? 'You may proceed to the lab.' : 'Session 08 complete. Proceed to Session 09 — JSX Deep Dive.');
+      } else {
+        result.className = 'quiz-result fail';
+        result.innerHTML = correct + '/5 correct (' + pct + '%) — Below 80%. ' +
+          (prefix === 'pre' ? 'Read the concept section carefully, then retake.' :
+           'Re-read the concept section and redo the lab before committing.');
+      }
+    });
+  }
+  setupQuiz('pre');
+  setupQuiz('post');
+</script>
+</body>
+</html>

@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 10 — Components Are Functions</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+    @media(max-width:600px){.two-col{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+    <a href="../../architecture/index.html">Architecture</a>
+    <a href="../../session-notes/index.html">Notes</a>
+    <a href="../../commit-reviews/index.html">Commits</a>
+    <a href="../../prompts/index.html">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 2</span>
+      <span class="badge badge-current">Session 10</span>
+      <span style="color:var(--text-muted);font-size:13px;">React Fundamentals</span>
+    </div>
+    <h1>Components Are Functions</h1>
+    <p class="subtitle">
+      A React component is not magic — it is a JavaScript function that returns JSX.
+      Session 04 taught you arrow functions and return values. Session 06 taught you
+      import/export. Today you combine both: write your first real component function,
+      <code>CountryCard</code>, in its own file and use it inside <code>App</code>.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <!-- SVG: session-10 concept map -->
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="340" y="20" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Session 10 — Components Are Functions</text>
+
+      <!-- Panel 1: JS function returns value -->
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,93,110)"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="28" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+      <text x="93" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">JS function</text>
+      <rect x="24" y="60" width="138" height="36" fill="none" stroke="white" stroke-width="1"/>
+      <text x="93" y="74" fill="white" font-family="monospace" font-size="7" text-anchor="middle">function greet() {"{"}</text>
+      <text x="93" y="88" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">return "Hello";</text>
+      <line x1="93" y1="96" x2="93" y2="112" stroke="white" stroke-width="1"/>
+      <polygon points="93,112 89,106 97,106" fill="white"/>
+      <rect x="44" y="114" width="98" height="22" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="93" y="129" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">caller gets "Hello"</text>
+      <text x="93" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Session 04 — return values</text>
+
+      <!-- Panel 2: component returns JSX -->
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,257,110)"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="192" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+      <text x="257" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">returns JSX</text>
+      <rect x="190" y="60" width="130" height="44" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="255" y="74" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">function CountryCard()</text>
+      <text x="255" y="88" fill="white" font-family="monospace" font-size="7" text-anchor="middle">return &lt;div&gt;…&lt;/div&gt;;</text>
+      <text x="255" y="102" fill="white" font-family="monospace" font-size="7" text-anchor="middle">{"}"}</text>
+      <text x="257" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">same pattern — different</text>
+      <text x="257" y="138" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">return type is UI description</text>
+      <text x="257" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">component = function</text>
+
+      <!-- Panel 3: PascalCase -->
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,421,110)"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="356" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+      <text x="421" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">PascalCase</text>
+      <rect x="356" y="62" width="62" height="22" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="387" y="77" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">CountryCard</text>
+      <rect x="430" y="62" width="62" height="22" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="461" y="77" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">countryCard</text>
+      <text x="421" y="100" fill="white" font-family="monospace" font-size="7" text-anchor="middle">React uses first letter to decide:</text>
+      <text x="421" y="114" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">Capital = component</text>
+      <text x="421" y="128" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">lowercase = HTML tag</text>
+      <text x="421" y="148" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;div&gt; vs &lt;CountryCard /&gt;</text>
+      <text x="421" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">naming is a rule, not style</text>
+
+      <!-- Panel 4: JSX tag vs function call -->
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,585,110)"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="520" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+      <text x="585" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">JSX usage</text>
+      <rect x="516" y="60" width="138" height="22" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="585" y="75" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">CountryCard() ✗ in JSX</text>
+      <rect x="516" y="88" width="138" height="22" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="585" y="103" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">&lt;CountryCard /&gt; ✓</text>
+      <text x="585" y="126" fill="white" font-family="monospace" font-size="7" text-anchor="middle">React calls the function</text>
+      <text x="585" y="140" fill="white" font-family="monospace" font-size="7" text-anchor="middle">for you when rendering</text>
+      <text x="585" y="158" fill="white" font-family="monospace" font-size="7" text-anchor="middle">self-closing or paired tags</text>
+      <text x="585" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">&lt;Component /&gt; syntax</text>
+
+      <!-- Panel 5: default export -->
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,278)"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="28" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+      <text x="93" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">default export</text>
+      <rect x="24" y="230" width="138" height="36" fill="none" stroke="white" stroke-width="1"/>
+      <text x="93" y="244" fill="white" font-family="monospace" font-size="7" text-anchor="middle">function CountryCard() …</text>
+      <text x="93" y="258" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">export default CountryCard;</text>
+      <line x1="93" y1="266" x2="93" y2="282" stroke="white" stroke-width="1"/>
+      <polygon points="93,282 89,276 97,276" fill="white"/>
+      <rect x="24" y="284" width="138" height="22" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="93" y="299" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">import CountryCard from '…'</text>
+      <text x="93" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Session 06 pattern</text>
+
+      <!-- Panel 6: composition -->
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,257,278)"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="192" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+      <text x="257" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">composition</text>
+      <rect x="190" y="232" width="130" height="52" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="255" y="246" fill="white" font-family="monospace" font-size="7" text-anchor="middle">function App() {"{"}</text>
+      <text x="255" y="260" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">return &lt;CountryCard /&gt;;</text>
+      <text x="255" y="274" fill="white" font-family="monospace" font-size="7" text-anchor="middle">{"}"}</text>
+      <text x="257" y="298" fill="white" font-family="monospace" font-size="7" text-anchor="middle">App uses CountryCard</text>
+      <text x="257" y="312" fill="white" font-family="monospace" font-size="7" text-anchor="middle">like HTML inside JSX</text>
+      <text x="257" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">components nest inside components</text>
+
+      <!-- Panel 7: reuse -->
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,421,278)"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="356" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+      <text x="421" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">reuse</text>
+      <rect x="352" y="232" width="138" height="44" fill="none" stroke="white" stroke-width="1"/>
+      <text x="421" y="246" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;CountryCard /&gt;</text>
+      <text x="421" y="260" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;CountryCard /&gt;</text>
+      <text x="421" y="274" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;CountryCard /&gt;</text>
+      <text x="421" y="296" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">one function · many instances</text>
+      <text x="421" y="312" fill="white" font-family="monospace" font-size="7" text-anchor="middle">DRY — define once, use everywhere</text>
+      <text x="421" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">why components exist</text>
+
+      <!-- Panel 8: props preview -->
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="520" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+      <text x="585" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">props preview</text>
+      <rect x="516" y="232" width="138" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="585" y="247" fill="white" font-family="monospace" font-size="7" text-anchor="middle">function add(a, b) {"{ return a+b }"}</text>
+      <line x1="585" y1="254" x2="585" y2="268" stroke="white" stroke-width="1"/>
+      <polygon points="585,268 581,262 589,262" fill="white"/>
+      <rect x="516" y="270" width="138" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="585" y="285" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">function Card(props) …</text>
+      <text x="585" y="308" fill="white" font-family="monospace" font-size="7" text-anchor="middle">args = read-only input</text>
+      <text x="585" y="322" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">Session 11 — full props</text>
+      <text x="585" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">today: hardcoded values</text>
+    </svg>
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
+    <div class="card">
+      <ul>
+        <li>Explain that a React component is a JavaScript function that returns JSX</li>
+        <li>Connect Session 04 (functions return values) to Session 10 (components return UI)</li>
+        <li>Name components in PascalCase and explain why lowercase names are treated as HTML tags</li>
+        <li>Use <code>&lt;CountryCard /&gt;</code> in JSX instead of calling <code>CountryCard()</code> directly</li>
+        <li>Create <code>src/components/CountryCard.jsx</code> with a default export (Session 06 pattern)</li>
+        <li>Import and render <code>CountryCard</code> inside <code>App.jsx</code> — composition</li>
+        <li>Preview props as read-only function arguments (full props come in Session 11)</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>In JSX, what is the difference between <code>&lt;div&gt;</code> and <code>&lt;CountryCard /&gt;</code>?</p>
+        <label class="quiz-option" data-val="a">They are the same — both are HTML elements</label>
+        <label class="quiz-option" data-val="b"><code>&lt;div&gt;</code> is a built-in HTML element; <code>&lt;CountryCard /&gt;</code> tells React to call your component function</label>
+        <label class="quiz-option" data-val="c"><code>&lt;CountryCard /&gt;</code> is invalid JSX — you must write <code>CountryCard()</code></label>
+        <label class="quiz-option" data-val="d"><code>&lt;div&gt;</code> is a React component; <code>&lt;CountryCard /&gt;</code> is HTML</label>
+        <div class="explanation">Lowercase tags map to HTML elements. Capitalized tags map to your component functions. React calls the function and renders whatever JSX it returns.</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Why must a React component be named <code>CountryCard</code> (PascalCase) instead of <code>countryCard</code>?</p>
+        <label class="quiz-option" data-val="a">JavaScript requires all function names to start with a capital letter</label>
+        <label class="quiz-option" data-val="b">It is only a style preference — both work the same in JSX</label>
+        <label class="quiz-option" data-val="c">React uses the first letter to distinguish components from HTML tags — lowercase is treated as HTML</label>
+        <label class="quiz-option" data-val="d">PascalCase makes the component run faster</label>
+        <div class="explanation">This is a React rule, not a JavaScript rule. &lt;countryCard /&gt; would be interpreted as an unknown HTML element, not your function.</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>What must a component function return?</p>
+        <label class="quiz-option" data-val="a">JSX — a description of UI (or null in edge cases)</label>
+        <label class="quiz-option" data-val="b">A DOM element created with document.createElement</label>
+        <label class="quiz-option" data-val="c">Nothing — components never use return</label>
+        <label class="quiz-option" data-val="d">A Promise that resolves to HTML</label>
+        <div class="explanation">A component is a function. Functions return values. A component's return value is JSX — React turns that into DOM updates. Same return pattern you learned in Session 04.</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Props in React are most like which JavaScript idea?</p>
+        <label class="quiz-option" data-val="a">Global variables any file can change</label>
+        <label class="quiz-option" data-val="b">The return value of the component function</label>
+        <label class="quiz-option" data-val="c">CSS class names on HTML elements</label>
+        <label class="quiz-option" data-val="d">Function arguments — read-only inputs passed in from the caller</label>
+        <div class="explanation">Props are how a parent passes data to a child component. Like function arguments, the child receives them but does not modify them. You will use props fully in Session 11.</div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Why extract UI into a separate <code>CountryCard</code> component instead of writing all the JSX directly in <code>App</code>?</p>
+        <label class="quiz-option" data-val="a">React requires every line of JSX to be in its own file</label>
+        <label class="quiz-option" data-val="b">Define the UI once, reuse it in multiple places, and keep App readable</label>
+        <label class="quiz-option" data-val="c">Components cannot contain HTML tags like &lt;div&gt;</label>
+        <label class="quiz-option" data-val="d">App.jsx is too small to hold more than one &lt;div&gt;</label>
+        <div class="explanation">Components are reusable functions. Write the card layout once in CountryCard, then use &lt;CountryCard /&gt; wherever you need a card. App stays focused on page structure.</div>
+      </div>
+
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — JavaScript First, Then React</h2>
+
+    <h3>JavaScript: functions that return values (Session 04)</h3>
+    <p>
+      In Session 04 you learned that a function computes a value and returns it.
+      The caller receives that value and uses it.
+    </p>
+    <pre><code>function getCountryName() {
+  return "Canada";
+}
+
+const name = getCountryName();  // name is "Canada"
+console.log(name);              // prints: Canada</code></pre>
+    <p>
+      Arrow functions work the same way — with or without curly braces:
+    </p>
+    <pre><code>const getRegion = () => "Americas";           // implicit return
+const formatLabel = (text) => { return text }; // explicit return</code></pre>
+
+    <!-- SVG: function → return value → caller -->
+    <svg width="480" height="140" viewBox="0 0 480 140" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="140" fill="#111111"/>
+      <text x="240" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">JS function → return value → caller uses it</text>
+      <!-- function box -->
+      <rect x="16" y="32" width="120" height="52" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="76" y="48" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">getCountryName()</text>
+      <text x="76" y="62" fill="white" font-family="monospace" font-size="7" text-anchor="middle">function body runs</text>
+      <text x="76" y="76" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">return "Canada"</text>
+      <!-- arrow -->
+      <line x1="136" y1="58" x2="168" y2="58" stroke="#3fb950" stroke-width="1.5"/>
+      <polygon points="168,58 162,55 162,61" fill="#3fb950"/>
+      <!-- return value -->
+      <rect x="170" y="42" width="80" height="32" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="210" y="58" fill="#3fb950" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">"Canada"</text>
+      <text x="210" y="70" fill="white" font-family="monospace" font-size="7" text-anchor="middle">return value</text>
+      <!-- arrow to caller -->
+      <line x1="250" y1="58" x2="282" y2="58" stroke="white" stroke-width="1"/>
+      <polygon points="282,58 276,55 276,61" fill="white"/>
+      <!-- caller -->
+      <rect x="284" y="32" width="180" height="52" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="374" y="48" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">caller</text>
+      <text x="374" y="64" fill="white" font-family="monospace" font-size="7" text-anchor="middle">const name = getCountryName();</text>
+      <text x="374" y="78" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">name === "Canada"</text>
+      <text x="240" y="110" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">every function you write follows this pattern</text>
+      <text x="240" y="130" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">a React component is the same — it returns something</text>
+    </svg>
+
+    <h3>React: a component is a function that returns JSX</h3>
+    <p>
+      A React component follows the exact same pattern. The only difference is what it returns:
+      instead of a string or number, it returns <strong>JSX</strong> — a description of UI.
+    </p>
+    <pre><code>function CountryCard() {
+  return (
+    &lt;div className="country-card"&gt;
+      &lt;h2&gt;Canada&lt;/h2&gt;
+      &lt;p&gt;Region: Americas&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+    <!-- SVG: function → JSX → React renders DOM -->
+    <svg width="480" height="155" viewBox="0 0 480 155" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="155" fill="#111111"/>
+      <text x="240" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">component function → JSX → React renders DOM</text>
+      <!-- function -->
+      <rect x="16" y="30" width="110" height="56" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="71" y="46" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">CountryCard()</text>
+      <text x="71" y="60" fill="white" font-family="monospace" font-size="7" text-anchor="middle">function runs</text>
+      <text x="71" y="74" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">return &lt;div&gt;…&lt;/div&gt;</text>
+      <!-- arrow -->
+      <line x1="126" y1="58" x2="152" y2="58" stroke="#3fb950" stroke-width="1.5"/>
+      <polygon points="152,58 146,55 146,61" fill="#3fb950"/>
+      <!-- JSX -->
+      <rect x="154" y="38" width="90" height="40" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="199" y="54" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">JSX tree</text>
+      <text x="199" y="68" fill="white" font-family="monospace" font-size="7" text-anchor="middle">UI description</text>
+      <!-- arrow -->
+      <line x1="244" y1="58" x2="270" y2="58" stroke="white" stroke-width="1"/>
+      <polygon points="270,58 264,55 264,61" fill="white"/>
+      <!-- React -->
+      <rect x="272" y="30" width="80" height="56" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="312" y="50" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">React</text>
+      <text x="312" y="64" fill="white" font-family="monospace" font-size="7" text-anchor="middle">diff + patch</text>
+      <text x="312" y="78" fill="white" font-family="monospace" font-size="7" text-anchor="middle">reconcile</text>
+      <!-- arrow -->
+      <line x1="352" y1="58" x2="378" y2="58" stroke="white" stroke-width="1"/>
+      <polygon points="378,58 372,55 372,61" fill="white"/>
+      <!-- DOM -->
+      <rect x="380" y="38" width="84" height="40" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="422" y="54" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">DOM</text>
+      <text x="422" y="68" fill="white" font-family="monospace" font-size="7" text-anchor="middle">visible UI</text>
+      <text x="240" y="108" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">you write the function · React handles the DOM updates</text>
+      <text x="240" y="130" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Session 09: JSX is syntax sugar for React.createElement — same idea, nicer syntax</text>
+      <text x="240" y="148" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">return JSX is the component's job — exactly like return "Canada" in plain JS</text>
+    </svg>
+
+    <h3>PascalCase — React's naming rule</h3>
+    <p>
+      In JSX, React decides what something is by its first letter:
+    </p>
+    <ul>
+      <li><strong>lowercase</strong> (<code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;span&gt;</code>) → built-in HTML element</li>
+      <li><strong>Capitalized</strong> (<code>&lt;CountryCard /&gt;</code>, <code>&lt;App /&gt;</code>) → your component function</li>
+    </ul>
+
+    <!-- SVG: PascalCase vs lowercase -->
+    <svg width="480" height="165" viewBox="0 0 480 165" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="165" fill="#111111"/>
+      <text x="120" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold" opacity="0.6">lowercase = HTML</text>
+      <text x="360" y="18" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">PascalCase = component</text>
+      <!-- left -->
+      <rect x="16" y="28" width="208" height="100" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="120" y="48" fill="white" font-family="monospace" font-size="8" text-anchor="middle">&lt;div&gt; … &lt;/div&gt;</text>
+      <text x="120" y="64" fill="white" font-family="monospace" font-size="8" text-anchor="middle">&lt;p&gt; … &lt;/p&gt;</text>
+      <text x="120" y="80" fill="white" font-family="monospace" font-size="8" text-anchor="middle">&lt;span&gt; … &lt;/span&gt;</text>
+      <line x1="120" y1="88" x2="120" y2="102" stroke="white" stroke-width="1"/>
+      <polygon points="120,102 116,96 124,96" fill="white"/>
+      <text x="120" y="118" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">browser knows these tags</text>
+      <!-- divider -->
+      <line x1="240" y1="24" x2="240" y2="140" stroke="white" stroke-width="1" opacity="0.3"/>
+      <!-- right -->
+      <rect x="256" y="28" width="208" height="100" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="360" y="48" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">&lt;CountryCard /&gt;</text>
+      <text x="360" y="64" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">&lt;App /&gt;</text>
+      <text x="360" y="80" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">&lt;CountryList /&gt;</text>
+      <line x1="360" y1="88" x2="360" y2="102" stroke="#ff5ca8" stroke-width="1"/>
+      <polygon points="360,102 356,96 364,96" fill="#ff5ca8"/>
+      <text x="360" y="118" fill="#ff5ca8" font-family="monospace" font-size="7.5" text-anchor="middle">React calls YOUR function</text>
+      <!-- wrong example -->
+      <rect x="80" y="132" width="320" height="24" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="240" y="148" fill="#f85149" font-family="monospace" font-size="8" text-anchor="middle">&lt;countryCard /&gt; ✗ treated as unknown HTML element — not your component</text>
+    </svg>
+
+    <h3>Using a component: <code>&lt;CountryCard /&gt;</code> not <code>CountryCard()</code></h3>
+    <p>
+      Inside JSX, you write component tags — you do not call the function yourself.
+      React calls <code>CountryCard()</code> internally when it sees <code>&lt;CountryCard /&gt;</code>.
+    </p>
+    <pre><code>// Inside App's return — CORRECT
+return (
+  &lt;div&gt;
+    &lt;h1&gt;Countries&lt;/h1&gt;
+    &lt;CountryCard /&gt;
+  &lt;/div&gt;
+);
+
+// WRONG inside JSX — do not call it yourself
+return (
+  &lt;div&gt;
+    {CountryCard()}  // works technically but breaks React patterns — avoid
+  &lt;/div&gt;
+);</code></pre>
+
+    <h3>CountryCard anatomy</h3>
+    <p>Today's component has three parts: the function, the return, and the export.</p>
+
+    <!-- SVG: CountryCard anatomy -->
+    <svg width="480" height="200" viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="200" fill="#111111"/>
+      <text x="240" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">CountryCard.jsx — anatomy</text>
+      <!-- file box -->
+      <rect x="40" y="28" width="400" height="150" fill="none" stroke="white" stroke-width="1.5"/>
+      <!-- part 1: function declaration -->
+      <rect x="52" y="38" width="180" height="28" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="142" y="56" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">① function CountryCard() {"{"}</text>
+      <text x="52" y="78" fill="#ff5ca8" font-family="monospace" font-size="7">← component name · PascalCase</text>
+      <!-- part 2: return JSX -->
+      <rect x="52" y="88" width="280" height="52" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="192" y="104" fill="#3fb950" font-family="monospace" font-size="7.5" text-anchor="middle">② return (</text>
+      <text x="192" y="118" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;div&gt;&lt;h2&gt;Canada&lt;/h2&gt;&lt;p&gt;Americas&lt;/p&gt;&lt;/div&gt;</text>
+      <text x="192" y="132" fill="#3fb950" font-family="monospace" font-size="7.5" text-anchor="middle">);</text>
+      <text x="340" y="110" fill="#3fb950" font-family="monospace" font-size="7">← JSX return value</text>
+      <!-- closing brace -->
+      <text x="60" y="152" fill="white" font-family="monospace" font-size="8">{"}"}</text>
+      <!-- part 3: export -->
+      <rect x="52" y="158" width="200" height="22" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="152" y="173" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">③ export default CountryCard;</text>
+      <text x="270" y="173" fill="white" font-family="monospace" font-size="7">← Session 06 default export</text>
+      <text x="240" y="192" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">hardcoded "Canada" / "Americas" today — props replace these in Session 11</text>
+    </svg>
+
+    <h3>Composition — App uses CountryCard</h3>
+    <p>
+      <code>App</code> is also a component function. It composes smaller components
+      the same way you nest HTML tags. Import CountryCard, then place it in App's JSX.
+    </p>
+
+    <!-- SVG: App composes CountryCard -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <text x="240" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">App composes CountryCard</text>
+      <!-- App outer -->
+      <rect x="80" y="30" width="320" height="120" fill="none" stroke="#ff5ca8" stroke-width="2"/>
+      <text x="100" y="48" fill="#ff5ca8" font-family="monospace" font-size="9" font-weight="bold">App</text>
+      <!-- App inner structure -->
+      <rect x="100" y="56" width="280" height="24" fill="none" stroke="white" stroke-width="1"/>
+      <text x="240" y="72" fill="white" font-family="monospace" font-size="8" text-anchor="middle">&lt;h1&gt;Countries&lt;/h1&gt;</text>
+      <!-- CountryCard nested -->
+      <rect x="120" y="88" width="240" height="52" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="240" y="106" fill="#3fb950" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">&lt;CountryCard /&gt;</text>
+      <text x="240" y="122" fill="white" font-family="monospace" font-size="7" text-anchor="middle">React calls CountryCard()</text>
+      <text x="240" y="134" fill="white" font-family="monospace" font-size="7" text-anchor="middle">renders returned JSX here</text>
+      <text x="240" y="162" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">parent component · child component — nesting is composition</text>
+    </svg>
+
+    <h3>File import/export flow (Session 06)</h3>
+    <p>
+      Each component lives in its own file. The default export pattern from Session 06
+      is the standard for React components.
+    </p>
+
+    <!-- SVG: import/export flow -->
+    <svg width="480" height="165" viewBox="0 0 480 165" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="165" fill="#111111"/>
+      <text x="240" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">file import / export flow</text>
+      <!-- CountryCard file -->
+      <rect x="16" y="32" width="180" height="100" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="106" y="50" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">CountryCard.jsx</text>
+      <text x="106" y="68" fill="white" font-family="monospace" font-size="7" text-anchor="middle">function CountryCard() …</text>
+      <rect x="28" y="76" width="156" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="106" y="91" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">export default CountryCard</text>
+      <text x="106" y="118" fill="white" font-family="monospace" font-size="7" text-anchor="middle">exports the function</text>
+      <!-- arrow -->
+      <line x1="196" y1="82" x2="240" y2="82" stroke="white" stroke-width="1.5"/>
+      <polygon points="240,82 234,79 234,85" fill="white"/>
+      <text x="218" y="74" fill="white" font-family="monospace" font-size="7" text-anchor="middle">import</text>
+      <!-- App file -->
+      <rect x="244" y="32" width="220" height="100" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="354" y="50" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">App.jsx</text>
+      <rect x="256" y="58" width="196" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="354" y="73" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">import CountryCard from './components/CountryCard'</text>
+      <text x="354" y="96" fill="white" font-family="monospace" font-size="7" text-anchor="middle">uses &lt;CountryCard /&gt; in return</text>
+      <text x="354" y="118" fill="white" font-family="monospace" font-size="7" text-anchor="middle">no curly braces — default import</text>
+      <text x="240" y="148" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">one component per file · default export · default import</text>
+    </svg>
+
+    <h3>Props preview — function arguments (Session 11)</h3>
+    <p>
+      Today the country name and region are hardcoded inside CountryCard.
+      Next session you will pass them as <strong>props</strong> — just like passing
+      arguments to a function:
+    </p>
+    <pre><code>// Session 11 preview — do NOT write this today
+function CountryCard(props) {
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;{props.name}&lt;/h2&gt;
+      &lt;p&gt;Region: {props.region}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+// Parent passes data in:
+&lt;CountryCard name="Canada" region="Americas" /&gt;</code></pre>
+    <p>
+      Props are <strong>read-only</strong>. A component receives them; it does not
+      reassign them. Think: function arguments you must not mutate.
+    </p>
+
+    <div class="alert alert-info">
+      <strong>Layer 1 → Layer 2 connection:</strong>
+      Session 04 (arrow functions + return) +
+      Session 06 (import/export) +
+      Session 09 (JSX) =
+      Session 10 (component function in its own file).
+    </div>
+
+    <h3>Common mistakes</h3>
+    <pre><code>// MISTAKE: lowercase component name
+function countryCard() { … }  // JSX &lt;countryCard /&gt; won't work as intended
+
+// MISTAKE: forgetting return
+function CountryCard() {
+  (&lt;div&gt;Canada&lt;/div&gt;);  // returns undefined — blank screen
+}
+
+// MISTAKE: calling the component like a regular function in JSX
+return CountryCard();  // avoid — use &lt;CountryCard /&gt;
+
+// MISTAKE: forgetting export
+function CountryCard() { … }
+// App.jsx: import fails — nothing exported from module</code></pre>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Create <code>src/components/CountryCard.jsx</code> as a
+      component function with hardcoded country info. Export it as default. Import and render
+      it in <code>App.jsx</code>.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Create the <code>src/components/</code> directory</strong></p>
+        <p>If it does not exist yet, create it. React components live here.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Create <code>src/components/CountryCard.jsx</code></strong></p>
+        <pre><code>function CountryCard() {
+  return (
+    &lt;div className="country-card"&gt;
+      &lt;h2&gt;Canada&lt;/h2&gt;
+      &lt;p&gt;Region: Americas&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default CountryCard;</code></pre>
+        <p>
+          Hardcode <code>Canada</code> and <code>Americas</code> for now.
+          Session 11 replaces these with props.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Update <code>src/App.jsx</code> to import and use CountryCard</strong></p>
+        <pre><code>import CountryCard from './components/CountryCard';
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Countries&lt;/h1&gt;
+      &lt;CountryCard /&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Run the dev server and verify</strong></p>
+        <pre><code>npm run dev</code></pre>
+        <p>Expected in the browser:</p>
+        <ul>
+          <li>A heading: <strong>Countries</strong></li>
+          <li>Below it: a card showing <strong>Canada</strong> and <strong>Region: Americas</strong></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Read both files out loud before committing</strong></p>
+        <p>
+          Trace the flow: App imports CountryCard → JSX has &lt;CountryCard /&gt; →
+          React calls the function → function returns JSX → browser shows the card.
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/components/CountryCard.jsx</code></td><td>Created</td><td>First reusable component function — returns hardcoded country JSX</td></tr>
+          <tr><td><code>src/App.jsx</code></td><td>Updated</td><td>Imports CountryCard and composes it in the page</td></tr>
+          <tr><td><code>docs/sessions/session-10/index.html</code></td><td>Created</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/components/CountryCard.jsx src/App.jsx docs/sessions/session-10/index.html
+git commit -m "session-10: first CountryCard component function"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1"><code>CountryCard</code> is a function that <code>return</code>s JSX</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">Component name is PascalCase: <code>CountryCard</code>, not <code>countryCard</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3"><code>CountryCard.jsx</code> has <code>export default CountryCard</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4"><code>App.jsx</code> imports with no curly braces: <code>import CountryCard from './components/CountryCard'</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">App uses <code>&lt;CountryCard /&gt;</code> in JSX — not <code>CountryCard()</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c6"/><label for="c6">I can explain: what happens when React sees <code>&lt;CountryCard /&gt;</code>?</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c7"/><label for="c7">I can explain: how is a component like a regular JS function that returns a value?</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>In JSX, what is the difference between <code>&lt;div&gt;</code> and <code>&lt;CountryCard /&gt;</code>?</p>
+        <label class="quiz-option" data-val="a">They are the same — both are HTML elements</label>
+        <label class="quiz-option" data-val="b"><code>&lt;div&gt;</code> is a built-in HTML element; <code>&lt;CountryCard /&gt;</code> tells React to call your component function</label>
+        <label class="quiz-option" data-val="c"><code>&lt;CountryCard /&gt;</code> is invalid JSX — you must write <code>CountryCard()</code></label>
+        <label class="quiz-option" data-val="d"><code>&lt;div&gt;</code> is a React component; <code>&lt;CountryCard /&gt;</code> is HTML</label>
+        <div class="explanation">Capitalized JSX tags invoke your component functions. Lowercase tags are HTML.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Why must a React component be named <code>CountryCard</code> (PascalCase) instead of <code>countryCard</code>?</p>
+        <label class="quiz-option" data-val="a">JavaScript requires all function names to start with a capital letter</label>
+        <label class="quiz-option" data-val="b">It is only a style preference — both work the same in JSX</label>
+        <label class="quiz-option" data-val="c">React uses the first letter to distinguish components from HTML tags — lowercase is treated as HTML</label>
+        <label class="quiz-option" data-val="d">PascalCase makes the component run faster</label>
+        <div class="explanation">React's JSX parser uses capitalization to route to your function vs HTML.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>What must a component function return?</p>
+        <label class="quiz-option" data-val="a">JSX — a description of UI (or null in edge cases)</label>
+        <label class="quiz-option" data-val="b">A DOM element created with document.createElement</label>
+        <label class="quiz-option" data-val="c">Nothing — components never use return</label>
+        <label class="quiz-option" data-val="d">A Promise that resolves to HTML</label>
+        <div class="explanation">Component = function + return JSX. You built this in CountryCard.jsx today.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Props in React are most like which JavaScript idea?</p>
+        <label class="quiz-option" data-val="a">Global variables any file can change</label>
+        <label class="quiz-option" data-val="b">The return value of the component function</label>
+        <label class="quiz-option" data-val="c">CSS class names on HTML elements</label>
+        <label class="quiz-option" data-val="d">Function arguments — read-only inputs passed in from the caller</label>
+        <div class="explanation">Session 11 adds props to CountryCard. Same mental model as function args.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Why extract UI into a separate <code>CountryCard</code> component instead of writing all the JSX directly in <code>App</code>?</p>
+        <label class="quiz-option" data-val="a">React requires every line of JSX to be in its own file</label>
+        <label class="quiz-option" data-val="b">Define the UI once, reuse it in multiple places, and keep App readable</label>
+        <label class="quiz-option" data-val="c">Components cannot contain HTML tags like &lt;div&gt;</label>
+        <label class="quiz-option" data-val="d">App.jsx is too small to hold more than one &lt;div&gt;</label>
+        <div class="explanation">Reusable component functions are the core reason React apps are structured as components.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>Trace the full path from <code>import CountryCard</code> in App.jsx to pixels on screen. List every step.</li>
+        <li>How is <code>CountryCard</code> similar to <code>getCountryName()</code> from Session 04? How is it different?</li>
+        <li>What would happen if you renamed the function to <code>countryCard</code> but kept writing <code>&lt;CountryCard /&gt;</code> in App?</li>
+        <li>Why are name and region hardcoded today instead of passed as props? What will Session 11 change?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>No CountryCard.jsx:</strong> App's import fails — Vite shows a module not found error. Nothing renders.</li>
+        <li><strong>No export default:</strong> Import succeeds but gets <code>undefined</code> — React error: "Element type is invalid."</li>
+        <li><strong>No return in CountryCard:</strong> Function returns <code>undefined</code> — React renders nothing for that component (blank area).</li>
+        <li><strong>Lowercase name + lowercase JSX tag:</strong> Browser treats it as an unknown HTML element — your function never runs.</li>
+        <li><strong>Remove &lt;CountryCard /&gt; from App:</strong> Page renders only the heading — the card UI disappears. The component file exists but is unused.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: a component is a JavaScript function that returns JSX.</strong></p>
+      <p>You applied:</p>
+      <ul>
+        <li>Session 04 — functions and return values</li>
+        <li>Session 06 — default export / default import across files</li>
+        <li>Session 09 — JSX syntax inside the return</li>
+      </ul>
+      <p>
+        <strong>Next session:</strong>
+        <a href="../session-11/index.html">Session 11 — Props: Passing Data Down</a>.
+        You will add a <code>props</code> parameter to <code>CountryCard</code> and pass
+        <code>name</code> and <code>region</code> from App — making the same component
+        show different countries without rewriting its JSX structure.
+      </p>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  function setupQuiz(prefix) {
+    const container = document.getElementById(prefix + '-quiz');
+    if (!container) return;
+    const questions = container.querySelectorAll('.quiz-question');
+    const btn = container.querySelector('.submit-btn');
+    let answeredCount = 0;
+    let correct = 0;
+    questions.forEach(q => {
+      q.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          if (q.dataset.answered) return;
+          q.dataset.answered = 'true';
+          answeredCount++;
+          const answer = q.dataset.answer;
+          q.querySelectorAll('.quiz-option').forEach(o => {
+            o.style.pointerEvents = 'none';
+            if (o.dataset.val === answer) o.classList.add('correct');
+          });
+          if (opt.dataset.val === answer) correct++;
+          else opt.classList.add('wrong');
+          const explanation = q.querySelector('.explanation');
+          if (explanation) explanation.style.display = 'block';
+          if (answeredCount === questions.length) btn.disabled = false;
+        });
+      });
+    });
+    btn.addEventListener('click', () => {
+      const result = document.getElementById(prefix + '-result');
+      const pct = Math.round((correct / questions.length) * 100);
+      result.style.display = 'block';
+      btn.disabled = true;
+      if (correct >= 4) {
+        result.className = 'quiz-result pass';
+        result.innerHTML = correct + '/5 correct (' + pct + '%) — Passed. ' +
+          (prefix === 'pre' ? 'You may proceed to the lab.' : 'Proceed to Session 11 after committing.');
+      } else {
+        result.className = 'quiz-result fail';
+        result.innerHTML = correct + '/5 correct (' + pct + '%) — Below 80%. ' +
+          (prefix === 'pre' ? 'Read the concept section carefully, then retake.' :
+           'Re-read the concept section and redo the lab before committing.');
+      }
+    });
+  }
+  setupQuiz('pre');
+  setupQuiz('post');
+</script>
+</body>
+</html>

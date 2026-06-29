@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 09 — JSX Deep Dive</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+    @media(max-width:600px){.two-col{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+    <a href="../../architecture/index.html">Architecture</a>
+    <a href="../../session-notes/index.html">Notes</a>
+    <a href="../../commit-reviews/index.html">Commits</a>
+    <a href="../../prompts/index.html">Prompts</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <p style="margin-bottom:12px;font-size:13px;">
+      <a href="../session-08/index.html">← Session 08 — What React Is and Why</a>
+    </p>
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 2</span>
+      <span class="badge badge-current">Session 09</span>
+      <span style="color:var(--text-muted);font-size:13px;">React Fundamentals</span>
+    </div>
+    <h1>JSX Deep Dive</h1>
+    <p class="subtitle">
+      JSX looks like HTML inside JavaScript, but it is not HTML. It is syntax sugar for
+      <code>React.createElement</code> — a function call that returns a plain JavaScript object
+      describing what should appear on screen. Today you learn the rules, write your first JSX
+      with an embedded expression, and see what the compiler produces underneath.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes &nbsp;·&nbsp; Pre-quiz → Concept → Lab → Commit → Post-quiz</div>
+
+    <!-- SVG: session-09 concept map (8 panels) -->
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="340" y="20" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Session 09 — JSX Deep Dive</text>
+
+      <!-- Panel 1: function returns value -->
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,93,110)"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="28" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+      <text x="93" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">return value</text>
+      <rect x="24" y="60" width="138" height="28" fill="none" stroke="white" stroke-width="1"/>
+      <text x="93" y="74" fill="white" font-family="monospace" font-size="7" text-anchor="middle">function greet() {"{"}</text>
+      <text x="93" y="86" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">return "Hello";</text>
+      <text x="93" y="108" fill="white" font-family="monospace" font-size="7" text-anchor="middle">greet() → "Hello"</text>
+      <text x="93" y="122" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">no return → undefined</text>
+      <text x="93" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">JS first — functions return things</text>
+
+      <!-- Panel 2: createElement -->
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,257,110)"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="192" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+      <text x="257" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">createElement</text>
+      <rect x="192" y="60" width="130" height="36" fill="none" stroke="white" stroke-width="1"/>
+      <text x="257" y="74" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">React.createElement('h1', null, 'Hi')</text>
+      <text x="257" y="88" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">→ plain JS object</text>
+      <text x="257" y="112" fill="white" font-family="monospace" font-size="7" text-anchor="middle">type · props · children</text>
+      <text x="257" y="148" fill="white" font-family="monospace" font-size="7" text-anchor="middle">just a function call</text>
+      <text x="257" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">what JSX compiles to</text>
+
+      <!-- Panel 3: JSX sugar -->
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,421,110)"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="356" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+      <text x="421" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">JSX sugar</text>
+      <rect x="356" y="62" width="130" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="421" y="77" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">&lt;h1&gt;Hi&lt;/h1&gt;</text>
+      <line x1="421" y1="84" x2="421" y2="98" stroke="white" stroke-width="1"/>
+      <polygon points="421,98 417,92 425,92" fill="white"/>
+      <rect x="356" y="100" width="130" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="421" y="115" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">createElement('h1'…)</text>
+      <text x="421" y="138" fill="white" font-family="monospace" font-size="7" text-anchor="middle">same output · easier to read</text>
+      <text x="421" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Babel transforms at build time</text>
+
+      <!-- Panel 4: one root -->
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,585,110)"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="520" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+      <text x="585" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">one root</text>
+      <rect x="528" y="62" width="114" height="52" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="585" y="76" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">&lt;div&gt;</text>
+      <text x="585" y="90" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;p&gt;…&lt;/p&gt;</text>
+      <text x="585" y="104" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">&lt;/div&gt; ✓</text>
+      <text x="585" y="128" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">&lt;p/&gt;&lt;p/&gt; ✗ siblings</text>
+      <text x="585" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">wrap or use Fragment</text>
+
+      <!-- Panel 5: camelCase / className -->
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,278)"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="28" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+      <text x="93" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">camelCase attrs</text>
+      <text x="93" y="238" fill="white" font-family="monospace" font-size="7" text-anchor="middle">HTML: class → JSX: className</text>
+      <text x="93" y="252" fill="white" font-family="monospace" font-size="7" text-anchor="middle">onclick → onClick</text>
+      <text x="93" y="266" fill="white" font-family="monospace" font-size="7" text-anchor="middle">tabindex → tabIndex</text>
+      <rect x="24" y="274" width="138" height="22" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="93" y="289" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">class= ✗ reserved word</text>
+      <text x="93" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">JS object keys, not HTML</text>
+
+      <!-- Panel 6: expressions in braces -->
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,257,278)"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="192" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+      <text x="257" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">{"{ }"} expressions</text>
+      <rect x="190" y="232" width="130" height="36" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="255" y="246" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">&lt;p&gt;{"{2 + 2}"}&lt;/p&gt;</text>
+      <text x="255" y="260" fill="white" font-family="monospace" font-size="7" text-anchor="middle">→ renders 4</text>
+      <text x="257" y="284" fill="white" font-family="monospace" font-size="7" text-anchor="middle">{"{countryName}"}</text>
+      <text x="257" y="298" fill="white" font-family="monospace" font-size="7" text-anchor="middle">{"{items.map(…)}"} later</text>
+      <text x="257" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">JS inside JSX · not strings</text>
+
+      <!-- Panel 7: self-closing -->
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,421,278)"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="356" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+      <text x="421" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">self-closing</text>
+      <rect x="356" y="232" width="58" height="22" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="385" y="247" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">&lt;img /&gt; ✓</text>
+      <rect x="428" y="232" width="58" height="22" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="457" y="247" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">&lt;img&gt; ✗</text>
+      <text x="421" y="272" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;br /&gt; · &lt;input /&gt;</text>
+      <text x="421" y="286" fill="white" font-family="monospace" font-size="7" text-anchor="middle">no children · must close</text>
+      <text x="421" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">void elements in JSX</text>
+
+      <!-- Panel 8: Fragment preview -->
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="520" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+      <text x="585" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">Fragment preview</text>
+      <rect x="516" y="232" width="138" height="44" fill="none" stroke="white" stroke-width="1"/>
+      <text x="585" y="246" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;&gt;</text>
+      <text x="585" y="258" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;p&gt;A&lt;/p&gt;&lt;p&gt;B&lt;/p&gt;</text>
+      <text x="585" y="270" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;/&gt;</text>
+      <text x="585" y="292" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">multiple roots · no extra DOM</text>
+      <text x="585" y="322" fill="white" font-family="monospace" font-size="7" text-anchor="middle">full detail later — preview only</text>
+      <text x="585" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">React.Fragment shorthand</text>
+    </svg>
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
+    <div class="card">
+      <ul>
+        <li>Explain that a JavaScript function call returns a value — and JSX is built on that idea</li>
+        <li>Describe what <code>React.createElement</code> returns and why JSX is syntax sugar for it</li>
+        <li>Apply JSX rules: one root element, camelCase attributes, <code>className</code>, self-closing tags</li>
+        <li>Embed a JavaScript expression inside JSX using curly braces <code>{"{}"}</code></li>
+        <li>Contrast HTML attribute names with their JSX equivalents</li>
+        <li>Update <code>App.jsx</code> to render "Hello World" with a dynamic expression on screen</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>
+          <pre><code>function sayHi() {
+  console.log("hi");
+}
+const result = sayHi();</code></pre>
+          What is the value of <code>result</code>?
+        </p>
+        <label class="quiz-option" data-val="a"><code>"hi"</code></label>
+        <label class="quiz-option" data-val="b"><code>undefined</code></label>
+        <label class="quiz-option" data-val="c"><code>true</code></label>
+        <label class="quiz-option" data-val="d">A function</label>
+        <div class="explanation">Functions only return a value when you use <code>return</code>. <code>console.log</code> prints to the console but does not return anything. Without an explicit return, the function returns <code>undefined</code>.</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>What does <code>React.createElement('h1', null, 'Hello')</code> return?</p>
+        <label class="quiz-option" data-val="a">An actual DOM node in the browser</label>
+        <label class="quiz-option" data-val="b">A string of HTML</label>
+        <label class="quiz-option" data-val="c">A plain JavaScript object describing the UI element</label>
+        <label class="quiz-option" data-val="d"><code>undefined</code></label>
+        <div class="explanation"><code>createElement</code> is a function call that returns a React element object — a description of what to render. React turns that object into real DOM later. It is not HTML text and not a live DOM node yet.</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>How do you embed the result of <code>2 + 2</code> inside JSX text?</p>
+        <label class="quiz-option" data-val="a"><code>&lt;p&gt;{"{2 + 2}"}&lt;/p&gt;</code></label>
+        <label class="quiz-option" data-val="b"><code>&lt;p&gt;"2 + 2"&lt;/p&gt;</code></label>
+        <label class="quiz-option" data-val="c"><code>&lt;p&gt;(2 + 2)&lt;/p&gt;</code></label>
+        <label class="quiz-option" data-val="d"><code>&lt;p&gt;[[2 + 2]]&lt;/p&gt;</code></label>
+        <div class="explanation">Curly braces in JSX mean "evaluate this JavaScript expression." Without braces, everything inside the tag is treated as plain text.</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Which is valid JSX for applying a CSS class?</p>
+        <label class="quiz-option" data-val="a"><code>&lt;div class="container"&gt;&lt;/div&gt;</code></label>
+        <label class="quiz-option" data-val="b"><code>&lt;div CLASS="container"&gt;&lt;/div&gt;</code></label>
+        <label class="quiz-option" data-val="c"><code>&lt;div css="container"&gt;&lt;/div&gt;</code></label>
+        <label class="quiz-option" data-val="d"><code>&lt;div className="container"&gt;&lt;/div&gt;</code></label>
+        <div class="explanation"><code>class</code> is a reserved word in JavaScript. JSX attributes become object properties, so React uses <code>className</code> instead of <code>class</code>.</div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Can this be valid JSX returned from a component?</p>
+        <pre><code>return (
+  &lt;h1&gt;Hello&lt;/h1&gt;
+  &lt;p&gt;World&lt;/p&gt;
+);</code></pre>
+        <label class="quiz-option" data-val="a">Yes — multiple elements are fine</label>
+        <label class="quiz-option" data-val="b">No — JSX must have one root element</label>
+        <label class="quiz-option" data-val="c">Yes — if both tags are lowercase</label>
+        <label class="quiz-option" data-val="d">Only inside a <code>.map()</code> callback</label>
+        <div class="explanation">A JSX expression must have exactly one root element. Two sibling elements need a wrapper (<code>&lt;div&gt;</code>) or a Fragment (<code>&lt;&gt;…&lt;/&gt;</code>).</div>
+      </div>
+
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — JavaScript First, Then JSX</h2>
+
+    <h3>Step 1 — Functions return values</h3>
+    <p>
+      Before JSX makes sense, remember what you already know from Layer 1: a function call
+      produces a return value. That value can be a string, a number, an object, or
+      <code>undefined</code> if nothing is returned.
+    </p>
+    <pre><code>function greet(name) {
+  return "Hello, " + name;
+}
+
+const message = greet("World");  // message is "Hello, World"
+
+function broken() {
+  console.log("I print but don't return");
+}
+const nothing = broken();        // nothing is undefined</code></pre>
+    <p>
+      React components are functions too. Whatever they <code>return</code> is what React tries
+      to put on screen. JSX is just a readable way to write that return value.
+    </p>
+
+    <h3>Step 2 — React.createElement is a function call</h3>
+    <p>
+      Under the hood, this JSX:
+    </p>
+    <pre><code>const element = &lt;h1 className="title"&gt;Hello World&lt;/h1&gt;;</code></pre>
+    <p>compiles to this JavaScript:</p>
+    <pre><code>const element = React.createElement(
+  'h1',
+  { className: 'title' },
+  'Hello World'
+);</code></pre>
+    <p>
+      <code>React.createElement</code> takes three arguments: the tag name (or component),
+      a props object, and children. It <strong>returns a plain object</strong> — a React element.
+      Not HTML. Not a DOM node yet. Just a description React can work with.
+    </p>
+
+    <!-- SVG: JSX → createElement compile pipeline -->
+    <svg width="680" height="165" viewBox="0 0 680 165" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="165" fill="#111111"/>
+      <text x="340" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">JSX → createElement compile pipeline</text>
+      <!-- source JSX -->
+      <rect x="16" y="32" width="180" height="56" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="106" y="48" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">App.jsx (source)</text>
+      <text x="106" y="62" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;h1 className="title"&gt;</text>
+      <text x="106" y="74" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Hello World&lt;/h1&gt;</text>
+      <!-- arrow to Babel -->
+      <line x1="196" y1="60" x2="228" y2="60" stroke="white" stroke-width="1"/>
+      <polygon points="228,60 222,57 222,63" fill="white"/>
+      <rect x="230" y="40" width="72" height="40" fill="none" stroke="white" stroke-width="1"/>
+      <text x="266" y="56" fill="white" font-family="monospace" font-size="8" text-anchor="middle">Babel</text>
+      <text x="266" y="70" fill="white" font-family="monospace" font-size="7" text-anchor="middle">(Vite)</text>
+      <!-- arrow to compiled -->
+      <line x1="302" y1="60" x2="334" y2="60" stroke="white" stroke-width="1"/>
+      <polygon points="334,60 328,57 328,63" fill="white"/>
+      <rect x="336" y="32" width="200" height="56" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="436" y="48" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">compiled JS</text>
+      <text x="436" y="62" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">React.createElement('h1',</text>
+      <text x="436" y="74" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">{"{ className: 'title' }"}, 'Hello')"}</text>
+      <!-- arrow to object -->
+      <line x1="536" y1="60" x2="568" y2="60" stroke="#3fb950" stroke-width="1"/>
+      <polygon points="568,60 562,57 562,63" fill="#3fb950"/>
+      <rect x="570" y="36" width="94" height="48" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="617" y="52" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">element</text>
+      <text x="617" y="66" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">{"{ type, props,"}</text>
+      <text x="617" y="78" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">children {"}"}</text>
+      <!-- runtime -->
+      <line x1="617" y1="84" x2="617" y2="100" stroke="white" stroke-width="1"/>
+      <polygon points="617,100 613,94 621,94" fill="white"/>
+      <rect x="520" y="102" width="194" height="28" fill="none" stroke="white" stroke-width="1"/>
+      <text x="617" y="120" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">React renders object → real DOM in browser</text>
+      <text x="340" y="148" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">you write JSX · bundler compiles · React consumes the object</text>
+    </svg>
+
+    <h3>Step 3 — JSX rules</h3>
+    <ul>
+      <li><strong>One root element</strong> — a return must wrap siblings in one parent (or Fragment)</li>
+      <li><strong>camelCase attributes</strong> — <code>onClick</code>, <code>tabIndex</code>, <code>htmlFor</code></li>
+      <li><strong><code>className</code> not <code>class</code></strong> — because props become a JS object</li>
+      <li><strong>Expressions in <code>{"{}"}</code></strong> — any valid JS expression evaluates inside JSX</li>
+      <li><strong>Self-closing tags</strong> — <code>&lt;img /&gt;</code>, <code>&lt;input /&gt;</code>, <code>&lt;br /&gt;</code></li>
+      <li><strong>Fragments (preview)</strong> — <code>&lt;&gt;…&lt;/&gt;</code> groups siblings without an extra DOM node (details later)</li>
+    </ul>
+
+    <!-- SVG: expressions in braces -->
+    <svg width="480" height="155" viewBox="0 0 480 155" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="155" fill="#111111"/>
+      <text x="240" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">expressions in curly braces</text>
+      <!-- JSX side -->
+      <rect x="16" y="32" width="200" height="72" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="116" y="48" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">JSX source</text>
+      <text x="116" y="64" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">const name = "Canada";</text>
+      <text x="116" y="78" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">&lt;p&gt;Hello {"{name}"}&lt;/p&gt;</text>
+      <text x="116" y="92" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">&lt;p&gt;{"{2 + 2}"}&lt;/p&gt;</text>
+      <!-- arrow -->
+      <line x1="216" y1="68" x2="252" y2="68" stroke="white" stroke-width="1"/>
+      <polygon points="252,68 246,65 246,71" fill="white"/>
+      <text x="234" y="58" fill="white" font-family="monospace" font-size="7" text-anchor="middle">eval</text>
+      <!-- output side -->
+      <rect x="254" y="32" width="210" height="72" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="359" y="48" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">rendered text</text>
+      <text x="359" y="68" fill="white" font-family="monospace" font-size="9" text-anchor="middle">Hello Canada</text>
+      <text x="359" y="88" fill="white" font-family="monospace" font-size="9" text-anchor="middle">4</text>
+      <!-- invalid -->
+      <rect x="16" y="112" width="448" height="32" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="240" y="128" fill="#f85149" font-family="monospace" font-size="7.5" text-anchor="middle">&lt;p&gt;{"{ if (x) { … } }"}&lt;/p&gt; ✗ statements illegal · use ternary or &amp;&amp; later</text>
+      <text x="240" y="148" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">braces = expression · not a full statement block</text>
+    </svg>
+
+    <!-- SVG: valid vs invalid JSX -->
+    <svg width="480" height="195" viewBox="0 0 480 195" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="195" fill="#111111"/>
+      <text x="120" y="18" fill="#3fb950" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">VALID</text>
+      <text x="360" y="18" fill="#f85149" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">INVALID</text>
+      <!-- valid column -->
+      <rect x="16" y="28" width="208" height="36" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="120" y="42" fill="white" font-family="monospace" font-size="7" text-anchor="middle">return ( &lt;div&gt;…&lt;/div&gt; );</text>
+      <text x="120" y="56" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">one root ✓</text>
+      <rect x="16" y="70" width="208" height="36" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="120" y="84" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;img src="x.png" alt="flag" /&gt;</text>
+      <text x="120" y="98" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">self-closing ✓</text>
+      <rect x="16" y="112" width="208" height="36" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="120" y="126" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;div className="box"&gt;</text>
+      <text x="120" y="140" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">className ✓</text>
+      <rect x="16" y="154" width="208" height="32" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="120" y="168" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;&gt;&lt;p/&gt;&lt;p/&gt;&lt;/&gt; Fragment ✓</text>
+      <!-- invalid column -->
+      <rect x="256" y="28" width="208" height="36" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="360" y="42" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;h1/&gt;&lt;p/&gt; siblings</text>
+      <text x="360" y="56" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">two roots ✗</text>
+      <rect x="256" y="70" width="208" height="36" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="360" y="84" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;img src="x.png"&gt;</text>
+      <text x="360" y="98" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">missing / ✗</text>
+      <rect x="256" y="112" width="208" height="36" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="360" y="126" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;div class="box"&gt;</text>
+      <text x="360" y="140" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">class reserved ✗</text>
+      <rect x="256" y="154" width="208" height="32" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="360" y="168" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;p&gt;{"{ const x = 1; }"}&lt;/p&gt; statement ✗</text>
+      <line x1="240" y1="24" x2="240" y2="190" stroke="white" stroke-width="1" opacity="0.3"/>
+      <text x="240" y="188" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">compiler errors before the app runs</text>
+    </svg>
+
+    <h3>HTML vs JSX — attribute differences</h3>
+    <p>
+      JSX attributes look like HTML but behave like JavaScript object keys. The table below
+      lists the most common differences you will hit in this project.
+    </p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>HTML</th><th>JSX</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>class="box"</code></td><td><code>className="box"</code></td><td><code>class</code> is a reserved word in JavaScript</td></tr>
+          <tr><td><code>for="email"</code></td><td><code>htmlFor="email"</code></td><td><code>for</code> is a reserved word in JavaScript</td></tr>
+          <tr><td><code>onclick="…"</code></td><td><code>onClick={"{handler}"}</code></td><td>camelCase; value is a JS function, not a string</td></tr>
+          <tr><td><code>tabindex="0"</code></td><td><code>tabIndex={0}</code></td><td>camelCase; numbers use braces without quotes</td></tr>
+          <tr><td><code>style="color:red"</code></td><td><code>style={"{{ color: 'red' }}"}</code></td><td>style is a JS object, not a CSS string (details later)</td></tr>
+          <tr><td><code>&lt;img&gt;</code> (no close)</td><td><code>&lt;img /&gt;</code></td><td>JSX requires explicit self-closing syntax</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SVG: HTML vs JSX attrs side by side -->
+    <svg width="480" height="150" viewBox="0 0 480 150" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="150" fill="#111111"/>
+      <text x="120" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold" opacity="0.6">HTML</text>
+      <text x="360" y="18" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">JSX</text>
+      <rect x="16" y="28" width="208" height="100" fill="none" stroke="white" stroke-width="1"/>
+      <text x="120" y="48" fill="white" font-family="monospace" font-size="8" text-anchor="middle">&lt;div class="card"&gt;</text>
+      <text x="120" y="64" fill="white" font-family="monospace" font-size="8" text-anchor="middle">&lt;label for="name"&gt;</text>
+      <text x="120" y="80" fill="white" font-family="monospace" font-size="8" text-anchor="middle">&lt;button onclick="go()"&gt;</text>
+      <text x="120" y="96" fill="white" font-family="monospace" font-size="8" text-anchor="middle">&lt;img src="flag.png"&gt;</text>
+      <text x="120" y="118" fill="white" font-family="monospace" font-size="7" text-anchor="middle">string attributes · lowercase</text>
+      <line x1="240" y1="24" x2="240" y2="132" stroke="white" stroke-width="1" opacity="0.3"/>
+      <rect x="256" y="28" width="208" height="100" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="360" y="48" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">&lt;div className="card"&gt;</text>
+      <text x="360" y="64" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">&lt;label htmlFor="name"&gt;</text>
+      <text x="360" y="80" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">&lt;button onClick={"{go}"}&gt;</text>
+      <text x="360" y="96" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">&lt;img src="flag.png" /&gt;</text>
+      <text x="360" y="118" fill="white" font-family="monospace" font-size="7" text-anchor="middle">camelCase · JS values · self-close</text>
+      <text x="240" y="142" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">same visual result · different syntax rules</text>
+    </svg>
+
+    <h3>What the browser actually shows</h3>
+    <p>
+      JSX describes a tree of elements. React walks that tree and creates matching DOM nodes.
+      Your lab today produces a simple tree: one heading with static text, plus a paragraph
+      whose content comes from a JavaScript expression.
+    </p>
+
+    <!-- SVG: rendered output tree -->
+    <svg width="480" height="200" viewBox="0 0 480 200" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="200" fill="#111111"/>
+      <text x="240" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">rendered output tree (lab result)</text>
+      <!-- React element tree -->
+      <text x="16" y="36" fill="white" font-family="monospace" font-size="8" opacity="0.6">React element tree</text>
+      <rect x="16" y="44" width="120" height="28" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="76" y="62" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">div (root)</text>
+      <line x1="56" y1="72" x2="40" y2="88" stroke="white" stroke-width="1"/>
+      <line x1="96" y1="72" x2="112" y2="88" stroke="white" stroke-width="1"/>
+      <rect x="8" y="88" width="64" height="28" fill="none" stroke="white" stroke-width="1"/>
+      <text x="40" y="106" fill="white" font-family="monospace" font-size="7" text-anchor="middle">h1</text>
+      <rect x="80" y="88" width="64" height="28" fill="none" stroke="white" stroke-width="1"/>
+      <text x="112" y="106" fill="white" font-family="monospace" font-size="7" text-anchor="middle">p</text>
+      <text x="40" y="128" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">"Hello World"</text>
+      <text x="112" y="128" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">4 or "Canada"</text>
+      <!-- arrow to DOM -->
+      <line x1="148" y1="90" x2="188" y2="90" stroke="white" stroke-width="1"/>
+      <polygon points="188,90 182,87 182,93" fill="white"/>
+      <text x="168" y="82" fill="white" font-family="monospace" font-size="7" text-anchor="middle">React</text>
+      <!-- DOM tree -->
+      <text x="200" y="36" fill="white" font-family="monospace" font-size="8" opacity="0.6">browser DOM</text>
+      <rect x="200" y="44" width="120" height="28" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="260" y="62" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">&lt;div&gt;</text>
+      <line x1="240" y1="72" x2="224" y2="88" stroke="white" stroke-width="1"/>
+      <line x1="280" y1="72" x2="296" y2="88" stroke="white" stroke-width="1"/>
+      <rect x="192" y="88" width="64" height="28" fill="none" stroke="white" stroke-width="1"/>
+      <text x="224" y="106" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;h1&gt;</text>
+      <rect x="264" y="88" width="64" height="28" fill="none" stroke="white" stroke-width="1"/>
+      <text x="296" y="106" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;p&gt;</text>
+      <!-- visible screen mock -->
+      <rect x="340" y="44" width="124" height="100" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="402" y="58" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">browser screen</text>
+      <text x="402" y="80" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Hello World</text>
+      <text x="402" y="100" fill="#ff5ca8" font-family="monospace" font-size="10" text-anchor="middle">4</text>
+      <text x="402" y="118" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">expression evaluated</text>
+      <text x="240" y="168" fill="white" font-family="monospace" font-size="8" text-anchor="middle">createElement objects → React reconciler → DOM nodes → pixels</text>
+      <text x="240" y="188" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Session 10: the return value comes from a named component function</text>
+    </svg>
+
+    <div class="alert alert-info">
+      <strong>Layer 1 connection:</strong> Session 04 taught arrow functions — every React component
+      is one. Session 06 taught imports — you will write
+      <code>import React from 'react'</code> (or rely on the modern JSX transform). JSX expressions
+      use the same variables and arithmetic you already know from Layer 1.
+    </div>
+
+    <h3>Common mistakes</h3>
+    <pre><code>// MISTAKE: class instead of className
+&lt;div class="container"&gt;  // syntax error or warning
+
+// MISTAKE: double braces confusion — outer = JSX expression, inner = object
+&lt;div style={{ marginTop: 10 }}&gt;  // correct (learn fully later)
+&lt;div style="{ marginTop: 10 }"&gt;   // wrong — string, not object
+
+// MISTAKE: forgetting braces — renders literal text
+&lt;p&gt;2 + 2&lt;/p&gt;           // screen shows: 2 + 2
+&lt;p&gt;{2 + 2}&lt;/p&gt;          // screen shows: 4
+
+// MISTAKE: two root siblings
+return (
+  &lt;h1&gt;Hi&lt;/h1&gt;
+  &lt;p&gt;Bye&lt;/p&gt;
+);  // syntax error — wrap in &lt;div&gt; or &lt;&gt;&lt;/&gt;</code></pre>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Update <code>src/App.jsx</code> to render "Hello World" as JSX
+      with at least one JavaScript expression embedded — e.g. <code>{2 + 2}</code> or a country name
+      from a variable.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Open <code>src/App.jsx</code></strong> from your Session 08 Vite project.</p>
+        <p>Confirm the dev server still runs: <code>npm run dev</code></p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Declare a variable above the return</strong></p>
+        <pre><code>const countryName = "Canada";
+const mathResult = 2 + 2;</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Replace the return with JSX — one root, expressions in braces</strong></p>
+        <pre><code>function App() {
+  const countryName = "Canada";
+  const mathResult = 2 + 2;
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Hello World&lt;/h1&gt;
+      &lt;p&gt;Country: {countryName}&lt;/p&gt;
+      &lt;p&gt;2 + 2 = {mathResult}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Verify in the browser</strong></p>
+        <p>You should see:</p>
+        <ul>
+          <li>A heading: <strong>Hello World</strong></li>
+          <li>A line showing the country name from the variable (not the literal text <code>{"{countryName}"}</code>)</li>
+          <li>A line showing <code>2 + 2 = 4</code> (the expression evaluated)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Optional — peek at compiled output</strong></p>
+        <p>
+          In DevTools → Sources, search the bundled file for <code>createElement</code>.
+          Find your <code>h1</code> and confirm Babel replaced your JSX with a function call.
+          You do not need to memorize the output — just recognize the pattern.
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/App.jsx</code></td><td>Updated</td><td>First JSX with embedded JavaScript expression on screen</td></tr>
+          <tr><td><code>docs/sessions/session-09/index.html</code></td><td>Created</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/App.jsx docs/sessions/session-09/index.html
+git commit -m "session-09: jsx hello world with embedded expression"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">My JSX has exactly one root element wrapping all siblings</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">I used <code>className</code> if I added a class — not <code>class</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">At least one <code>{"{expression}"}</code> evaluates JavaScript — not plain text</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">I can explain what <code>React.createElement</code> returns</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I can explain why <code>&lt;p&gt;2 + 2&lt;/p&gt;</code> differs from <code>&lt;p&gt;{"{2 + 2}"}&lt;/p&gt;</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c6"/><label for="c6">I read every line of <code>App.jsx</code> and understand what each part does</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>A function with no <code>return</code> statement returns:</p>
+        <label class="quiz-option" data-val="a"><code>null</code></label>
+        <label class="quiz-option" data-val="b"><code>undefined</code></label>
+        <label class="quiz-option" data-val="c"><code>0</code></label>
+        <label class="quiz-option" data-val="d">An empty string</label>
+        <div class="explanation">JavaScript functions without an explicit return always return <code>undefined</code>.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>JSX is best described as:</p>
+        <label class="quiz-option" data-val="a">A new programming language separate from JavaScript</label>
+        <label class="quiz-option" data-val="b">HTML that browsers understand natively</label>
+        <label class="quiz-option" data-val="c">Syntax sugar for <code>React.createElement</code> function calls</label>
+        <label class="quiz-option" data-val="d">A CSS framework for React</label>
+        <div class="explanation">JSX compiles to <code>React.createElement(...)</code> calls. It is not native HTML and not a separate language.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>What renders on screen for <code>&lt;span&gt;{"{countryName}"}&lt;/span&gt;</code> when <code>countryName = "Japan"</code>?</p>
+        <label class="quiz-option" data-val="a">The literal text <code>{"{countryName}"}</code></label>
+        <label class="quiz-option" data-val="b"><code>undefined</code></label>
+        <label class="quiz-option" data-val="c"><code>[object Object]</code></label>
+        <label class="quiz-option" data-val="d"><code>Japan</code></label>
+        <div class="explanation">Curly braces evaluate the expression. The variable's value is rendered, not its name.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Why must void elements like <code>&lt;img&gt;</code> be written as <code>&lt;img /&gt;</code> in JSX?</p>
+        <label class="quiz-option" data-val="a">JSX requires explicit self-closing syntax — unlike HTML5 optional closing</label>
+        <label class="quiz-option" data-val="b">Images cannot render without a closing tag anywhere</label>
+        <label class="quiz-option" data-val="c">React does not support image elements</label>
+        <label class="quiz-option" data-val="d">It is optional — both forms always work</label>
+        <div class="explanation">JSX follows XML-like rules. Every tag must be explicitly closed. <code>&lt;img&gt;</code> without <code>/&gt;</code> is a syntax error.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>If you remove the curly braces from <code>&lt;p&gt;{"{2 + 2}"}&lt;/p&gt;</code>, what appears on screen?</p>
+        <label class="quiz-option" data-val="a"><code>4</code></label>
+        <label class="quiz-option" data-val="b">The literal text <code>2 + 2</code></label>
+        <label class="quiz-option" data-val="c">Nothing — blank paragraph</label>
+        <label class="quiz-option" data-val="d">A syntax error at runtime</label>
+        <div class="explanation">Without braces, JSX treats content as a string literal. The characters "2 + 2" display as text; no math runs.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>Open your compiled bundle and find one <code>createElement</code> call from your <code>App.jsx</code>. Map each argument back to the JSX you wrote.</li>
+        <li>Why does React use <code>className</code> instead of <code>class</code>? What would happen if JSX allowed <code>class</code> as an attribute name in the props object?</li>
+        <li>Your component returns a tree of objects, not HTML strings. Why might that be faster or safer than setting <code>innerHTML</code>?</li>
+        <li>When Session 14 uses <code>.map()</code> inside JSX, which rule from today makes that possible?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Remove the root wrapper:</strong> Two sibling elements cause a compile error — the file will not build.</li>
+        <li><strong>Remove curly braces from expressions:</strong> Variables and math render as literal text. The UI looks "broken" even though the app runs.</li>
+        <li><strong>Use <code>class</code> instead of <code>className</code>:</strong> Styles silently fail or the build warns — elements lose their intended appearance.</li>
+        <li><strong>Session 10 onward:</strong> Every component returns JSX. Without today's rules, every new component file will hit the same syntax errors repeatedly.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>JavaScript concept reinforced:</strong> Function calls return values — JSX is the return value of a component, expressed readably.</p>
+      <p><strong>React concept learned:</strong> JSX syntax, <code>React.createElement</code>, JSX rules (one root, camelCase, <code>className</code>, <code>{"{expressions}"}</code>, self-closing tags), and the JSX-vs-HTML attribute differences.</p>
+      <p><strong>Project milestone:</strong> "Hello World" renders on screen with a live JavaScript expression — your first dynamic UI text.</p>
+      <p><strong>Next session:</strong> <a href="../session-10/index.html">Session 10 — Components Are Functions</a>. You will extract JSX into a named <code>CountryCard</code> component function — the pattern every React app is built from.</p>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  function setupQuiz(prefix) {
+    const container = document.getElementById(prefix + '-quiz');
+    if (!container) return;
+    const questions = container.querySelectorAll('.quiz-question');
+    const btn = container.querySelector('.submit-btn');
+    let answeredCount = 0;
+    let correct = 0;
+    questions.forEach(q => {
+      q.querySelectorAll('.quiz-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          if (q.dataset.answered) return;
+          q.dataset.answered = 'true';
+          answeredCount++;
+          const answer = q.dataset.answer;
+          q.querySelectorAll('.quiz-option').forEach(o => {
+            o.style.pointerEvents = 'none';
+            if (o.dataset.val === answer) o.classList.add('correct');
+          });
+          if (opt.dataset.val === answer) correct++;
+          else opt.classList.add('wrong');
+          const explanation = q.querySelector('.explanation');
+          if (explanation) explanation.style.display = 'block';
+          if (answeredCount === questions.length) btn.disabled = false;
+        });
+      });
+    });
+    btn.addEventListener('click', () => {
+      const result = document.getElementById(prefix + '-result');
+      const pct = Math.round((correct / questions.length) * 100);
+      result.style.display = 'block';
+      btn.disabled = true;
+      if (correct >= 4) {
+        result.className = 'quiz-result pass';
+        result.innerHTML = correct + '/5 correct (' + pct + '%) — Passed. ' +
+          (prefix === 'pre' ? 'You may proceed to the lab.' : 'Session complete. Make your commit.');
+      } else {
+        result.className = 'quiz-result fail';
+        result.innerHTML = correct + '/5 correct (' + pct + '%) — Below 80%. ' +
+          (prefix === 'pre' ? 'Read the concept section carefully, then retake.' :
+           'Re-read the concept section and redo the lab before committing.');
+      }
+    });
+  }
+  setupQuiz('pre');
+  setupQuiz('post');
+</script>
+</body>
+</html>
