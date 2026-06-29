@@ -6,6 +6,7 @@
   <title>Session 09 — JSX Deep Dive</title>
   <link rel="stylesheet" href="../../styles.css" />
   <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
   <style>
     .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
     .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
@@ -701,52 +702,12 @@ git commit -m "session-09: jsx hello world with embedded expression"</code></pre
   </div>
 </main>
 
+<script src="../../quiz.js" defer></script>
 <script>
-  function setupQuiz(prefix) {
-    const container = document.getElementById(prefix + '-quiz');
-    if (!container) return;
-    const questions = container.querySelectorAll('.quiz-question');
-    const btn = container.querySelector('.submit-btn');
-    let answeredCount = 0;
-    let correct = 0;
-    questions.forEach(q => {
-      q.querySelectorAll('.quiz-option').forEach(opt => {
-        opt.addEventListener('click', () => {
-          if (q.dataset.answered) return;
-          q.dataset.answered = 'true';
-          answeredCount++;
-          const answer = q.dataset.answer;
-          q.querySelectorAll('.quiz-option').forEach(o => {
-            o.style.pointerEvents = 'none';
-            if (o.dataset.val === answer) o.classList.add('correct');
-          });
-          if (opt.dataset.val === answer) correct++;
-          else opt.classList.add('wrong');
-          const explanation = q.querySelector('.explanation');
-          if (explanation) explanation.style.display = 'block';
-          if (answeredCount === questions.length) btn.disabled = false;
-        });
-      });
-    });
-    btn.addEventListener('click', () => {
-      const result = document.getElementById(prefix + '-result');
-      const pct = Math.round((correct / questions.length) * 100);
-      result.style.display = 'block';
-      btn.disabled = true;
-      if (correct >= 4) {
-        result.className = 'quiz-result pass';
-        result.innerHTML = correct + '/5 correct (' + pct + '%) — Passed. ' +
-          (prefix === 'pre' ? 'You may proceed to the lab.' : 'Session complete. Make your commit.');
-      } else {
-        result.className = 'quiz-result fail';
-        result.innerHTML = correct + '/5 correct (' + pct + '%) — Below 80%. ' +
-          (prefix === 'pre' ? 'Read the concept section carefully, then retake.' :
-           'Re-read the concept section and redo the lab before committing.');
-      }
-    });
-  }
-  setupQuiz('pre');
-  setupQuiz('post');
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
 </script>
 <script src="../../notes-widget.js" defer></script>
 

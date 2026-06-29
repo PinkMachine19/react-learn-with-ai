@@ -1,0 +1,96 @@
+/* Funny "read the explanation" quiz modal — scoped */
+
+.quiz-explain-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.6);
+  animation: quiz-explain-fade-in 0.2s ease;
+}
+
+.quiz-explain-overlay[hidden] {
+  display: none;
+}
+
+@keyframes quiz-explain-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.quiz-explain-modal {
+  width: 100%;
+  max-width: 420px;
+  border: 2px solid var(--yellow, #d29922);
+  border-radius: 12px;
+  background: var(--surface, #161b22);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.55);
+  animation: quiz-explain-pop 0.25s ease;
+}
+
+@keyframes quiz-explain-pop {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.quiz-explain-emoji {
+  font-size: 42px;
+  text-align: center;
+  padding: 20px 20px 0;
+  line-height: 1;
+}
+
+.quiz-explain-body {
+  padding: 12px 22px 8px;
+  text-align: center;
+}
+
+.quiz-explain-title {
+  margin: 0 0 10px;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--yellow, #d29922);
+}
+
+.quiz-explain-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text, #c9d1d9);
+}
+
+.quiz-explain-sub {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--text-muted, #8b949e);
+  font-style: italic;
+}
+
+.quiz-explain-actions {
+  padding: 16px 22px 22px;
+  display: flex;
+  justify-content: center;
+}
+
+.quiz-explain-btn {
+  padding: 11px 22px;
+  border: none;
+  border-radius: var(--radius, 6px);
+  background: var(--accent, #58a6ff);
+  color: #0d1117;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.quiz-explain-btn:hover {
+  filter: brightness(1.08);
+}
+
+.quiz-explain-btn:focus-visible {
+  outline: 2px solid var(--yellow, #d29922);
+  outline-offset: 2px;
+}

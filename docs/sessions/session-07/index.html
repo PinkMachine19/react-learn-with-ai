@@ -6,6 +6,7 @@
   <title>Session 07 — Promises, Async, and Await</title>
   <link rel="stylesheet" href="../../styles.css" />
   <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
   <style>
     .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
     .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
@@ -759,7 +760,7 @@ git commit -m "session-07: async country service, promise fundamentals — Layer
     <hr class="section-divider" />
 
     <h2>8. Post-Coding Quiz</h2>
-    <div id="post-quiz">
+    <div id="post-quiz" data-pass-post="Layer 1 complete. Take the Layer 1 Gate Quiz to unlock Layer 2.">
       <div class="quiz-question" data-question="0" data-answer="c">
         <div class="question-num">Question 1 of 5</div>
         <p>What are the three states a Promise can be in?</p>
@@ -861,52 +862,12 @@ console.log("C");</code></pre>
   </div>
 </main>
 
+<script src="../../quiz.js" defer></script>
 <script>
-  function setupQuiz(prefix) {
-    const container = document.getElementById(prefix + '-quiz');
-    if (!container) return;
-    const questions = container.querySelectorAll('.quiz-question');
-    const btn = container.querySelector('.submit-btn');
-    let answeredCount = 0;
-    let correct = 0;
-    questions.forEach(q => {
-      q.querySelectorAll('.quiz-option').forEach(opt => {
-        opt.addEventListener('click', () => {
-          if (q.dataset.answered) return;
-          q.dataset.answered = 'true';
-          answeredCount++;
-          const answer = q.dataset.answer;
-          q.querySelectorAll('.quiz-option').forEach(o => {
-            o.style.pointerEvents = 'none';
-            if (o.dataset.val === answer) o.classList.add('correct');
-          });
-          if (opt.dataset.val === answer) correct++;
-          else opt.classList.add('wrong');
-          const explanation = q.querySelector('.explanation');
-          if (explanation) explanation.style.display = 'block';
-          if (answeredCount === questions.length) btn.disabled = false;
-        });
-      });
-    });
-    btn.addEventListener('click', () => {
-      const result = document.getElementById(prefix + '-result');
-      const pct = Math.round((correct / questions.length) * 100);
-      result.style.display = 'block';
-      btn.disabled = true;
-      if (correct >= 4) {
-        result.className = 'quiz-result pass';
-        result.innerHTML = correct + '/5 correct (' + pct + '%) — Passed. ' +
-          (prefix === 'pre' ? 'You may proceed to the lab.' : 'Layer 1 complete. Take the Layer 1 Gate Quiz to unlock Layer 2.');
-      } else {
-        result.className = 'quiz-result fail';
-        result.innerHTML = correct + '/5 correct (' + pct + '%) — Below 80%. ' +
-          (prefix === 'pre' ? 'Read the concept section carefully, then retake.' :
-           'Re-read the concept section and redo the lab before committing.');
-      }
-    });
-  }
-  setupQuiz('pre');
-  setupQuiz('post');
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
 </script>
 <script src="../../notes-widget.js" defer></script>
 
