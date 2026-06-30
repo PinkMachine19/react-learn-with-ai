@@ -1,44 +1,16 @@
-# React Learning Environment
+# React + Vite
 
-A structured, documentation-first curriculum for engineers who want to understand React deeply — not just ship code.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## What this is
+Currently, two official plugins are available:
 
-40 sessions split across 7 layers, progressing from JavaScript fundamentals through real-world React. Every session has a pre-quiz, concept explanation, lab, commit checkpoint, and post-quiz. You must score 80% on quizzes to advance.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
 
-## Curriculum Layers
+## React Compiler
 
-| Layer | Topic | Sessions |
-|-------|-------|----------|
-| 1 | JavaScript Foundations | 01 – 07 |
-| 2 | React Fundamentals | 08 – 15 |
-| 3 | State | 16 – 22 |
-| 4 | Mock Data | 23 – 26 |
-| 5 | Testing | 27 – 31 |
-| 6 | Architecture | 32 – 36 |
-| 7 | Real World | 37 – 40 |
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Docs
+## Expanding the ESLint configuration
 
-All curriculum documentation lives in `/docs/` as static HTML. Serve it locally:
-
-```bash
-python -m http.server 6969 --directory docs
-```
-
-Then open `http://localhost:6969`.
-
-## Tech Stack
-
-- **Framework:** React via Vite
-- **Package manager:** npm
-- **Language:** Plain JavaScript (no TypeScript)
-- **Styling:** Plain CSS
-- **Testing:** Vitest + React Testing Library (Layer 5+)
-
-## Rules
-
-1. Never skip a session
-2. One session = one commit
-3. JavaScript concept always before the React concept
-4. Score below 80% on a quiz = repeat the session
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
