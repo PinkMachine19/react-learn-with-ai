@@ -6,8 +6,35 @@
   <title>Session 11 — Props — Passing Data Down</title>
   <link rel="stylesheet" href="../../styles.css" />
   <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+    @media(max-width:600px){.two-col{grid-template-columns:1fr;}}
+  </style>
 </head>
 <body>
+
 <nav>
   <div class="container">
     <a href="../../index.html" class="brand">⚛ React Learning</a>
@@ -21,27 +48,585 @@
     <a href="../../prompts/index.html">Prompts</a>
   </div>
 </nav>
+
 <main>
   <div class="container">
+
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
       <span class="badge badge-layer">Layer 2</span>
       <span class="badge badge-current">Session 11</span>
       <span style="color:var(--text-muted);font-size:13px;">React Fundamentals</span>
     </div>
     <h1>Props — Passing Data Down</h1>
-    <div class="alert alert-warning">
-      <strong>Outline page.</strong> The full lesson doc (quizzes, SVGs, lab, commit checkpoint) is not written yet.
-      Use the syllabus outline below until this session is hydrated.
-    </div>
+    <p class="subtitle">
+      Session 10 gave you a <code>CountryCard</code> component with hardcoded
+      <code>Canada</code> and <code>Americas</code>. Today you turn those values into
+      <strong>props</strong> — read-only inputs from the parent — so the same component
+      can show any country without rewriting its JSX structure.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <!-- SVG: session-11 concept map -->
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="340" y="20" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Session 11 — Props: Passing Data Down</text>
+
+      <!-- Panel 1: function args -->
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,93,110)"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="28" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+      <text x="93" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">JS arguments</text>
+      <rect x="24" y="60" width="138" height="44" fill="none" stroke="white" stroke-width="1"/>
+      <text x="93" y="76" fill="white" font-family="monospace" font-size="7" text-anchor="middle">function greet(name) {"{"}</text>
+      <text x="93" y="90" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">return "Hi " + name;</text>
+      <text x="93" y="118" fill="white" font-family="monospace" font-size="7" text-anchor="middle">caller supplies name</text>
+      <text x="93" y="132" fill="white" font-family="monospace" font-size="7" text-anchor="middle">function does not invent it</text>
+      <text x="93" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Session 04 — parameters</text>
+
+      <!-- Panel 2: props object -->
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,257,110)"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="192" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+      <text x="257" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">props object</text>
+      <rect x="190" y="60" width="130" height="52" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="255" y="76" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">function Card(props)</text>
+      <text x="255" y="90" fill="white" font-family="monospace" font-size="7" text-anchor="middle">props.name</text>
+      <text x="255" y="104" fill="white" font-family="monospace" font-size="7" text-anchor="middle">props.region</text>
+      <text x="257" y="130" fill="white" font-family="monospace" font-size="7" text-anchor="middle">one object, many fields</text>
+      <text x="257" y="144" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">Session 01 — objects</text>
+      <text x="257" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">props is always an object</text>
+
+      <!-- Panel 3: JSX attributes -->
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,421,110)"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="356" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+      <text x="421" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">JSX attributes</text>
+      <rect x="352" y="62" width="138" height="44" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="421" y="78" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">&lt;Card name="Canada"</text>
+      <text x="421" y="92" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">region="Americas" /&gt;</text>
+      <text x="421" y="120" fill="white" font-family="monospace" font-size="7" text-anchor="middle">looks like HTML attrs</text>
+      <text x="421" y="134" fill="white" font-family="monospace" font-size="7" text-anchor="middle">become props fields</text>
+      <text x="421" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">parent writes the values</text>
+
+      <!-- Panel 4: read-only -->
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,585,110)"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="520" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+      <text x="585" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">read-only</text>
+      <rect x="516" y="62" width="138" height="22" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="585" y="77" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">props.name = "X" ✗</text>
+      <rect x="516" y="92" width="138" height="22" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="585" y="107" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">use props.name ✓</text>
+      <text x="585" y="132" fill="white" font-family="monospace" font-size="7" text-anchor="middle">child receives data</text>
+      <text x="585" y="146" fill="white" font-family="monospace" font-size="7" text-anchor="middle">does not own it</text>
+      <text x="585" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">one-way data flow</text>
+
+      <!-- Panel 5: destructuring -->
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,278)"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="28" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+      <text x="93" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">destructure</text>
+      <rect x="24" y="230" width="138" height="44" fill="none" stroke="white" stroke-width="1"/>
+      <text x="93" y="246" fill="white" font-family="monospace" font-size="7" text-anchor="middle">({"{"} name, region {"}"})</text>
+      <text x="93" y="260" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">pull fields out of props</text>
+      <text x="93" y="288" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Session 05 pattern</text>
+      <text x="93" y="302" fill="white" font-family="monospace" font-size="7" text-anchor="middle">cleaner than props.name</text>
+      <text x="93" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">common React style</text>
+
+      <!-- Panel 6: parent → child -->
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,257,278)"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="192" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+      <text x="257" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">parent → child</text>
+      <rect x="190" y="232" width="130" height="28" fill="none" stroke="white" stroke-width="1"/>
+      <text x="255" y="250" fill="white" font-family="monospace" font-size="7" text-anchor="middle">App (parent)</text>
+      <line x1="255" y1="260" x2="255" y2="278" stroke="#3fb950" stroke-width="1.5"/>
+      <polygon points="255,278 251,272 259,272" fill="#3fb950"/>
+      <rect x="190" y="280" width="130" height="28" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="255" y="298" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">CountryCard (child)</text>
+      <text x="257" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">data flows downward</text>
+
+      <!-- Panel 7: reuse with different data -->
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,421,278)"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="356" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+      <text x="421" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">same UI, new data</text>
+      <rect x="352" y="232" width="138" height="52" fill="none" stroke="white" stroke-width="1"/>
+      <text x="421" y="248" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;Card name="Canada" /&gt;</text>
+      <text x="421" y="262" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;Card name="Japan" /&gt;</text>
+      <text x="421" y="276" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;Card name="Brazil" /&gt;</text>
+      <text x="421" y="302" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">one component · many countries</text>
+      <text x="421" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">why props exist</text>
+
+      <!-- Panel 8: session 12 preview -->
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="520" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+      <text x="585" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">next</text>
+      <rect x="516" y="232" width="138" height="44" fill="none" stroke="white" stroke-width="1"/>
+      <text x="585" y="248" fill="white" font-family="monospace" font-size="7" text-anchor="middle">CountryList nests</text>
+      <text x="585" y="262" fill="white" font-family="monospace" font-size="7" text-anchor="middle">many CountryCards</text>
+      <text x="585" y="288" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">Session 12 — composition</text>
+      <text x="585" y="302" fill="white" font-family="monospace" font-size="7" text-anchor="middle">props + nesting together</text>
+      <text x="585" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">build UIs from pieces</text>
+    </svg>
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
     <div class="card">
-      <h2>From the syllabus</h2>
-      <p><strong>Core concept:</strong> Props are function arguments; they are read-only</p>
-      <p><strong>Project milestone:</strong> Pass country name and region as props to CountryCard</p>
-      <p><strong>Status:</strong> <span class="badge badge-current">Available</span> — session page is open; complete prior sessions in order when doing the lab track.</p>
+      <ul>
+        <li>Explain that props are read-only inputs — like function arguments</li>
+        <li>Pass data from a parent with JSX attributes: <code>&lt;CountryCard name="Canada" /&gt;</code></li>
+        <li>Receive props as a single object parameter: <code>function CountryCard(props)</code></li>
+        <li>Read values with <code>props.name</code> and <code>props.region</code></li>
+        <li>Destructure props in the parameter list: <code>({ name, region })</code> (Session 05)</li>
+        <li>Render two or more <code>CountryCard</code> instances with different prop values</li>
+        <li>State the one-way data flow rule: parent owns data; child displays it</li>
+      </ul>
     </div>
-    <p style="margin-top:24px;"><a href="../session-10/index.html">← Session 10</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-12/index.html">Session 12 →</a></p>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="d">
+        <div class="question-num">Question 1 of 5</div>
+        <p>Props in React are most like which JavaScript idea?</p>
+        <label class="quiz-option" data-val="a">Global variables any file can change</label>
+        <label class="quiz-option" data-val="b">The return value of the component function</label>
+        <label class="quiz-option" data-val="c">CSS class names on HTML elements</label>
+        <label class="quiz-option" data-val="d">Function arguments — read-only inputs passed in from the caller</label>
+        <div class="explanation">The parent calls the child (via JSX). Props are the arguments. The child uses them; it does not invent or reassign them.</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Given <code>&lt;CountryCard name="Japan" region="Asia" /&gt;</code>, what is <code>props</code> inside <code>CountryCard</code>?</p>
+        <label class="quiz-option" data-val="a">The string <code>"Japan"</code></label>
+        <label class="quiz-option" data-val="b">An object: <code>{ name: "Japan", region: "Asia" }</code></label>
+        <label class="quiz-option" data-val="c">An array: <code>["Japan", "Asia"]</code></label>
+        <label class="quiz-option" data-val="d"><code>undefined</code> — props only work with HTML tags</label>
+        <div class="explanation">JSX attributes become fields on one props object. Session 01 objects are the foundation.</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Why must a child component treat props as read-only?</p>
+        <label class="quiz-option" data-val="a">The parent owns the data; mutating props breaks one-way data flow and confuses who is in charge</label>
+        <label class="quiz-option" data-val="b">JavaScript forbids reading object properties</label>
+        <label class="quiz-option" data-val="c">Props are always strings and cannot be changed</label>
+        <label class="quiz-option" data-val="d">React deletes props after the first render</label>
+        <div class="explanation">Data flows parent → child. If the child needs to change something, that is state (later sessions) — not mutating props.</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="c">
+        <div class="question-num">Question 4 of 5</div>
+        <p>What does this parameter list do? <code>function CountryCard({ name, region })</code></p>
+        <label class="quiz-option" data-val="a">Creates two separate components named name and region</label>
+        <label class="quiz-option" data-val="b">Ignores props and uses global variables</label>
+        <label class="quiz-option" data-val="c">Destructures the props object so you can write <code>name</code> instead of <code>props.name</code></label>
+        <label class="quiz-option" data-val="d">Makes name and region optional HTML attributes</label>
+        <div class="explanation">Session 05 destructuring applied to the props parameter — same idea as <code>const { name } = country</code>.</div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>In Session 10, <code>CountryCard</code> hardcoded <code>Canada</code>. What problem do props solve?</p>
+        <label class="quiz-option" data-val="a">They make the component run without a parent</label>
+        <label class="quiz-option" data-val="b">The same component UI can display different countries without rewriting the JSX structure</label>
+        <label class="quiz-option" data-val="c">They replace the need for <code>export default</code></label>
+        <label class="quiz-option" data-val="d">They convert JSX into CSS automatically</label>
+        <div class="explanation">Define the card layout once; pass different name/region values from App for each instance.</div>
+      </div>
+
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — JavaScript First, Then React</h2>
+
+    <h3>JavaScript: parameters are inputs from the caller</h3>
+    <p>
+      In Session 04 you passed arguments into functions. The function did not invent
+      those values — the caller supplied them.
+    </p>
+    <pre><code>function greet(name) {
+  return "Hello, " + name;
+}
+
+greet("Canada");  // "Hello, Canada"
+greet("Japan");   // "Hello, Japan"</code></pre>
+    <p>
+      Same function body. Different inputs. Different outputs.
+      That is the mental model for props.
+    </p>
+
+    <!-- SVG: args → function → result -->
+    <svg width="480" height="140" viewBox="0 0 480 140" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="140" fill="#111111"/>
+      <text x="240" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">caller supplies args → function uses them → return value</text>
+      <rect x="16" y="36" width="100" height="48" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="66" y="56" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">caller</text>
+      <text x="66" y="72" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">greet("Japan")</text>
+      <line x1="116" y1="60" x2="148" y2="60" stroke="#3fb950" stroke-width="1.5"/>
+      <polygon points="148,60 142,57 142,63" fill="#3fb950"/>
+      <rect x="150" y="36" width="120" height="48" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="210" y="56" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">greet(name)</text>
+      <text x="210" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">name is "Japan"</text>
+      <line x1="270" y1="60" x2="302" y2="60" stroke="white" stroke-width="1"/>
+      <polygon points="302,60 296,57 296,63" fill="white"/>
+      <rect x="304" y="36" width="160" height="48" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="384" y="56" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">"Hello, Japan"</text>
+      <text x="384" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">return value</text>
+      <text x="240" y="110" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">props work the same way — parent is the caller</text>
+      <text x="240" y="128" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">child receives inputs; does not invent them</text>
+    </svg>
+
+    <h3>React: JSX attributes become a props object</h3>
+    <p>
+      When App writes <code>&lt;CountryCard name="Canada" region="Americas" /&gt;</code>,
+      React calls your function with one argument — an object:
+    </p>
+    <pre><code>// What React effectively does:
+CountryCard({ name: "Canada", region: "Americas" });</code></pre>
+    <p>
+      Inside the component you read those fields and put them in JSX with curly braces
+      (Session 09 — expressions in JSX):
+    </p>
+    <pre><code>function CountryCard(props) {
+  return (
+    &lt;div className="country-card"&gt;
+      &lt;h2&gt;{props.name}&lt;/h2&gt;
+      &lt;p&gt;Region: {props.region}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+
+    <!-- SVG: parent attributes → props object → child UI -->
+    <svg width="520" height="160" viewBox="0 0 520 160" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="520" height="160" fill="#111111"/>
+      <text x="260" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">App attributes → props object → CountryCard UI</text>
+      <rect x="12" y="32" width="150" height="56" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="87" y="48" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">App.jsx</text>
+      <text x="87" y="64" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">&lt;CountryCard</text>
+      <text x="87" y="78" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">name="Canada" /&gt;</text>
+      <line x1="162" y1="60" x2="190" y2="60" stroke="#3fb950" stroke-width="1.5"/>
+      <polygon points="190,60 184,57 184,63" fill="#3fb950"/>
+      <rect x="192" y="36" width="130" height="48" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="257" y="54" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">props</text>
+      <text x="257" y="70" fill="white" font-family="monospace" font-size="7" text-anchor="middle">{ name: "Canada" }</text>
+      <line x1="322" y1="60" x2="350" y2="60" stroke="white" stroke-width="1"/>
+      <polygon points="350,60 344,57 344,63" fill="white"/>
+      <rect x="352" y="32" width="156" height="56" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="430" y="48" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">CountryCard</text>
+      <text x="430" y="64" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;h2&gt;{props.name}&lt;/h2&gt;</text>
+      <text x="430" y="78" fill="white" font-family="monospace" font-size="7" text-anchor="middle">shows Canada</text>
+      <text x="260" y="112" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">change the attribute in App → different country, same component file</text>
+      <text x="260" y="132" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">one-way: App owns the data; CountryCard displays it</text>
+      <text x="260" y="150" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">never write props.name = "…" inside the child</text>
+    </svg>
+
+    <h3>Destructuring props (Session 05)</h3>
+    <p>
+      Writing <code>props.name</code> everywhere works, but React code usually
+      destructures in the parameter list:
+    </p>
+    <div class="two-col">
+      <pre><code>// props object style
+function CountryCard(props) {
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;{props.name}&lt;/h2&gt;
+      &lt;p&gt;{props.region}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+      <pre><code>// destructured style (preferred)
+function CountryCard({ name, region }) {
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;{region}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+    </div>
+    <p>
+      Both receive the same object. Destructuring pulls fields out so the body reads
+      like plain variables. Same pattern as <code>const { name } = country</code> from Session 05.
+    </p>
+
+    <h3>Reuse: one component, many instances</h3>
+    <p>
+      Once props are in place, App can render multiple cards with different data:
+    </p>
+    <pre><code>&lt;CountryCard name="Canada" region="Americas" /&gt;
+&lt;CountryCard name="Japan" region="Asia" /&gt;
+&lt;CountryCard name="Brazil" region="Americas" /&gt;</code></pre>
+    <p>
+      Same <code>CountryCard.jsx</code> file. Three different prop objects.
+      Three cards on screen. That is why components exist.
+    </p>
+
+    <div class="alert alert-info">
+      <strong>Layer 1 → Layer 2 connection:</strong>
+      Session 01 (objects) +
+      Session 04 (function parameters) +
+      Session 05 (destructuring) +
+      Session 09 (JSX expressions) +
+      Session 10 (component function) =
+      Session 11 (props).
+    </div>
+
+    <h3>Common mistakes</h3>
+    <pre><code>// MISTAKE: mutating props
+function CountryCard(props) {
+  props.name = "X";  // never — parent owns this data
+}
+
+// MISTAKE: forgetting curly braces for dynamic values
+&lt;h2&gt;props.name&lt;/h2&gt;   // shows the text "props.name"
+&lt;h2&gt;{props.name}&lt;/h2&gt; // shows Canada
+
+// MISTAKE: treating props as separate parameters
+function CountryCard(name, region) { … }  // wrong — one object only
+
+// MISTAKE: hardcoding still, ignoring props
+function CountryCard({ name }) {
+  return &lt;h2&gt;Canada&lt;/h2&gt;;  // always Canada — props unused
+}</code></pre>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Update <code>CountryCard</code> to accept
+      <code>name</code> and <code>region</code> as props. Pass those values from
+      <code>App.jsx</code>. Render at least two cards with different countries.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Start from Session 10</strong></p>
+        <p>
+          You should already have <code>src/components/CountryCard.jsx</code> with
+          hardcoded Canada / Americas, and <code>App.jsx</code> rendering
+          <code>&lt;CountryCard /&gt;</code>.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Update <code>CountryCard.jsx</code> to receive props</strong></p>
+        <pre><code>function CountryCard({ name, region }) {
+  return (
+    &lt;div className="country-card"&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;Region: {region}&lt;/p&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default CountryCard;</code></pre>
+        <p>
+          Curly braces around <code>name</code> and <code>region</code> in JSX insert
+          the prop values. Without braces, you would see the literal text
+          <code>name</code>.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Pass props from <code>App.jsx</code></strong></p>
+        <pre><code>import CountryCard from './components/CountryCard';
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Countries&lt;/h1&gt;
+      &lt;CountryCard name="Canada" region="Americas" /&gt;
+      &lt;CountryCard name="Japan" region="Asia" /&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Run the dev server and verify</strong></p>
+        <pre><code>npm run dev</code></pre>
+        <p>Expected in the browser:</p>
+        <ul>
+          <li>Heading: <strong>Countries</strong></li>
+          <li>A card for <strong>Canada</strong> / Region: Americas</li>
+          <li>A card for <strong>Japan</strong> / Region: Asia</li>
+        </ul>
+        <p>
+          Change one prop in App (for example <code>name="Brazil"</code>) and confirm
+          only that card updates — without editing <code>CountryCard.jsx</code>.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Trace the data path out loud</strong></p>
+        <p>
+          App writes attributes → React builds a props object → CountryCard
+          destructures <code>name</code> and <code>region</code> → JSX expressions
+          insert those strings → browser shows two different cards.
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/components/CountryCard.jsx</code></td><td>Updated</td><td>Accepts <code>name</code> and <code>region</code> props; renders them instead of hardcoding</td></tr>
+          <tr><td><code>src/App.jsx</code></td><td>Updated</td><td>Passes props into each <code>&lt;CountryCard /&gt;</code>; renders at least two instances</td></tr>
+          <tr><td><code>docs/sessions/session-11/index.html</code></td><td>Updated</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/components/CountryCard.jsx src/App.jsx docs/sessions/session-11/index.html
+git commit -m "session-11: pass name and region props to CountryCard"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1"><code>CountryCard</code> accepts props (object or destructured <code>{ name, region }</code>)</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">JSX uses <code>{name}</code> and <code>{region}</code> — not hardcoded strings</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">App passes props: <code>&lt;CountryCard name="…" region="…" /&gt;</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">At least two <code>CountryCard</code> instances with different prop values</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">No <code>props.name = …</code> mutation inside the child</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c6"/><label for="c6">I can explain: what object does React pass when it sees JSX attributes?</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c7"/><label for="c7">I can explain: why props are read-only (one-way data flow)</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Proceed to Session 12 after committing.">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>After today’s lab, where do the strings <code>"Canada"</code> and <code>"Japan"</code> live?</p>
+        <label class="quiz-option" data-val="a">Only inside <code>CountryCard.jsx</code> as hardcoded text</label>
+        <label class="quiz-option" data-val="b">In <code>App.jsx</code> as prop attributes passed into each <code>CountryCard</code></label>
+        <label class="quiz-option" data-val="c">In a global variable both files share</label>
+        <label class="quiz-option" data-val="d">In CSS class names</label>
+        <div class="explanation">Parent owns the data. Child receives it through props and displays it.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="a">
+        <div class="question-num">Question 2 of 5</div>
+        <p>What is wrong with <code>function CountryCard(name, region)</code>?</p>
+        <label class="quiz-option" data-val="a">React always passes one props object — not separate parameters</label>
+        <label class="quiz-option" data-val="b">Components cannot have parameters</label>
+        <label class="quiz-option" data-val="c">You must use arrow functions only</label>
+        <label class="quiz-option" data-val="d">Nothing — this is the preferred style</label>
+        <div class="explanation">Use <code>(props)</code> or <code>({ name, region })</code>. Never two separate parameters for props.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="c">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Why write <code>&lt;h2&gt;{name}&lt;/h2&gt;</code> instead of <code>&lt;h2&gt;name&lt;/h2&gt;</code>?</p>
+        <label class="quiz-option" data-val="a">Curly braces are required for all HTML tags</label>
+        <label class="quiz-option" data-val="b">Without braces React crashes</label>
+        <label class="quiz-option" data-val="c">Curly braces insert a JavaScript expression; without them you get the literal text "name"</label>
+        <label class="quiz-option" data-val="d">Braces make the prop read-only</label>
+        <div class="explanation">Session 09: <code>{expression}</code> embeds JS values in JSX.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>You render three <code>CountryCard</code> components with different props. How many times does the <code>CountryCard</code> function run?</p>
+        <label class="quiz-option" data-val="a">Once — React caches the result</label>
+        <label class="quiz-option" data-val="b">Zero — components are not functions</label>
+        <label class="quiz-option" data-val="c">Only when the page first loads, never again</label>
+        <label class="quiz-option" data-val="d">Three times — once per instance, each with its own props object</label>
+        <div class="explanation">Each JSX tag is a separate call with its own props. Same function, different arguments.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="a">
+        <div class="question-num">Question 5 of 5</div>
+        <p>What will Session 12 build on top of props?</p>
+        <label class="quiz-option" data-val="a">Component composition — nesting components (for example CountryList containing many CountryCards)</label>
+        <label class="quiz-option" data-val="b">Deleting props entirely</label>
+        <label class="quiz-option" data-val="c">Replacing components with plain HTML files</label>
+        <label class="quiz-option" data-val="d">Making props writable from the child</label>
+        <div class="explanation">Composition = building UIs from nested components. Props are how parents configure each child.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>Trace one prop from the attribute in App.jsx to the text on screen. List every step.</li>
+        <li>How is <code>function CountryCard({ name })</code> similar to <code>function greet(name)</code> from Session 04?</li>
+        <li>What would happen if CountryCard still hardcoded <code>Canada</code> but App passed <code>name="Japan"</code>?</li>
+        <li>Why is mutating <code>props.name</code> inside the child a bad idea even if JavaScript allows it?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>No props on CountryCard:</strong> You are back to Session 10 — every card shows the same hardcoded country.</li>
+        <li><strong>No attributes in App:</strong> <code>name</code> and <code>region</code> are <code>undefined</code> — blank headings or "Region: undefined".</li>
+        <li><strong>No curly braces in JSX:</strong> Screen shows the literal words <code>name</code> and <code>region</code>.</li>
+        <li><strong>Mutating props:</strong> Parent and child disagree about the data; bugs become hard to track (React may warn in development).</li>
+        <li><strong>Only one CountryCard:</strong> Lab incomplete — you never proved reuse with different prop values.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: props pass read-only data from parent to child.</strong></p>
+      <p>You applied:</p>
+      <ul>
+        <li>Session 01 — objects (props is an object)</li>
+        <li>Session 04 — function parameters</li>
+        <li>Session 05 — destructuring</li>
+        <li>Session 09 — <code>{expressions}</code> in JSX</li>
+        <li>Session 10 — component functions</li>
+      </ul>
+      <p>
+        <strong>Next session:</strong>
+        <a href="../session-12/index.html">Session 12 — Component Composition</a>.
+        You will build a <code>CountryList</code> that contains multiple
+        <code>CountryCard</code> children — nesting components and passing props
+        through the tree.
+      </p>
+    </div>
+
   </div>
 </main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
 <script src="../../notes-widget.js" defer></script>
 
 </body>
