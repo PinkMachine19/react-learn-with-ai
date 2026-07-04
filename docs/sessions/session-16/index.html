@@ -6,8 +6,29 @@
   <title>Session 16 — What Is State?</title>
   <link rel="stylesheet" href="../../styles.css" />
   <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+  </style>
 </head>
 <body>
+
 <nav>
   <div class="container">
     <a href="../../index.html" class="brand">⚛ React Learning</a>
@@ -21,27 +42,281 @@
     <a href="../../prompts/index.html">Prompts</a>
   </div>
 </nav>
+
 <main>
   <div class="container">
+
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
       <span class="badge badge-layer">Layer 3</span>
       <span class="badge badge-current">Session 16</span>
       <span style="color:var(--text-muted);font-size:13px;">State</span>
     </div>
     <h1>What Is State?</h1>
-    <div class="alert alert-warning">
-      <strong>Outline page.</strong> The full lesson doc (quizzes, SVGs, lab, commit checkpoint) is not written yet.
-      Use the syllabus outline below until this session is hydrated.
-    </div>
+    <p class="subtitle">
+      Layer 2 built a static country list — props flow down, UI matches data at
+      render time, nothing changes after mount. Layer 3 asks: what happens when
+      the user clicks, types, or toggles something and the screen must update?
+      Today is <strong>concept only</strong> — no new app code. Session 17
+      introduces <code>useState</code>.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes · No coding lab today</div>
+
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
     <div class="card">
-      <h2>From the syllabus</h2>
-      <p><strong>Core concept:</strong> State vs props, why state triggers re-render, mental model</p>
-      <p><strong>Project milestone:</strong> Concept only — no code written yet</p>
-      <p><strong>Status:</strong> <span class="badge badge-current">Available</span> — session page is open; complete prior sessions in order when doing the lab track.</p>
+      <ul>
+        <li>Distinguish props (passed in, read-only) from state (owned internally, can change)</li>
+        <li>Explain that updating state triggers a re-render of that component</li>
+        <li>Connect JavaScript variables to why ordinary local variables are not enough in React</li>
+        <li>Describe where state will live in the country app (preview: counters, search, filters)</li>
+        <li>Complete pre/post quizzes ≥ 80% before writing useState code in Session 17</li>
+      </ul>
     </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>In CountryList today, each card's <code>name</code> and <code>region</code> come from the imported countries array and are passed as props. Who can change what displays on screen after the first render?</p>
+        <label class="quiz-option" data-val="a">CountryCard mutates props.name</label>
+        <label class="quiz-option" data-val="b">Nobody — without state or a parent re-render, the UI is fixed until full page reload</label>
+        <label class="quiz-option" data-val="c">The browser automatically refreshes JSX</label>
+        <label class="quiz-option" data-val="d">imported arrays mutate themselves</label>
+        <div class="explanation">Static render: data → JSX once. Interaction needs state (coming next sessions).</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Props are to state as which analogy?</p>
+        <label class="quiz-option" data-val="a">Global variables are to CSS</label>
+        <label class="quiz-option" data-val="b">HTML is to JSON</label>
+        <label class="quiz-option" data-val="c">Function arguments from the caller are to variables the function owns and may update</label>
+        <label class="quiz-option" data-val="d">Keys are to refs</label>
+        <div class="explanation">Props = external inputs. State = internal memory that can change over time.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Why does this not work for a click counter in React?</p>
+        <pre style="margin:8px 0;font-size:13px;">let count = 0;
+function handleClick() { count++; }</pre>
+        <label class="quiz-option" data-val="a">Changing a local variable does not tell React to re-render — the screen stays stale</label>
+        <label class="quiz-option" data-val="b">let is illegal in components</label>
+        <label class="quiz-option" data-val="c">count must be a string</label>
+        <label class="quiz-option" data-val="d">handleClick cannot be a function</label>
+        <div class="explanation">React re-renders when state (or parent props) change — not when arbitrary variables mutate.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>When state updates in a component, what runs again?</p>
+        <label class="quiz-option" data-val="a">Only CSS</label>
+        <label class="quiz-option" data-val="b">The entire npm process</label>
+        <label class="quiz-option" data-val="c">Only browser paint, not the component function</label>
+        <label class="quiz-option" data-val="d">That component's function (and typically its children) — a re-render</label>
+        <div class="explanation">Re-render = React calls your function again with current props and state.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 16 lab milestone says "concept only — no code." What happens in Session 17?</p>
+        <label class="quiz-option" data-val="a">Replace React with vanilla JS</label>
+        <label class="quiz-option" data-val="b">Add useState — first interactive state in the app</label>
+        <label class="quiz-option" data-val="c">Delete CountryList</label>
+        <label class="quiz-option" data-val="d">Add real API fetch</label>
+        <div class="explanation">useState is the first hook for local component state.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — JavaScript First, Then React</h2>
+
+    <h3>JavaScript: values that change over time</h3>
+    <pre><code>let clicks = 0;
+
+function onButtonPress() {
+  clicks = clicks + 1;
+  console.log(clicks);  // 1, 2, 3… in the console
+}</code></pre>
+    <p>
+      The variable updates in memory. But a plain web page won't redraw a label
+      unless something tells the DOM to update. React's state system connects
+      "value changed" to "call component again and refresh UI."
+    </p>
+
+    <h3>Props vs state</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Props</th><th>State</th></tr></thead>
+        <tbody>
+          <tr><td>Who sets it?</td><td>Parent component</td><td>The component itself (via setter)</td></tr>
+          <tr><td>Mutable by this component?</td><td>No — read-only</td><td>Yes — via declared setter (Session 17)</td></tr>
+          <tr><td>Changes trigger re-render?</td><td>When parent re-renders with new props</td><td>When this component updates its state</td></tr>
+          <tr><td>Example in country app</td><td><code>name</code>, <code>region</code> on CountryCard</td><td>Click count, search text, favorite toggle (later)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Re-render mental model</h3>
+    <ol>
+      <li>User clicks a button (Session 17 lab wires a simple <code>onClick</code> for the counter; Session 18 goes deeper on events).</li>
+      <li>The handler calls the state setter from <code>useState</code> (Session 17).</li>
+      <li>React schedules a re-render of that component.</li>
+      <li>The component function runs again — new JSX reflects new state.</li>
+      <li>React diffs against previous output (Session 15 reconciliation) and updates the DOM.</li>
+    </ol>
+    <p>
+      Same function, second call — different return value because state changed.
+      Props from parent may be the same; state values are not.
+    </p>
+
+    <h3>What we are not doing today</h3>
+    <ul>
+      <li>No <code>useState</code> import — Session 17</li>
+      <li>No event handlers — Session 18</li>
+      <li>No lifting state — Session 21</li>
+      <li>No mutating imported <code>countries</code> array — still treat data as read-only until patterns for updates are taught</li>
+    </ul>
+
+    <div class="alert alert-success">
+      <strong>Concept lab:</strong> On paper, draw CountryCard with a "Favorites" heart.
+      Label what would be props vs state. Trace one click through steps 1–5 above.
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab (Concept Only)</h2>
+    <div class="card">
+      <ol>
+        <li>Draw the component tree: App → CountryList → CountryCard.</li>
+        <li>Mark each value as prop, imported data, or (future) state.</li>
+        <li>Write three sentences: what changes when user types in a search box?</li>
+        <li>Explain why <code>let search = ""</code> plus assignment on keystroke would not update the input display in React.</li>
+        <li>Read Session 17 title and objectives in the syllabus — preview only.</li>
+      </ol>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>docs/sessions/session-16/index.html</code></td><td>Updated</td><td>This session document</td></tr>
+          <tr><td><code>docs/session-notes/index.html</code></td><td>Optional note</td><td>Your props vs state summary in session notes</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>No <code>src/</code> files change today.</p>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add docs/sessions/session-16/index.html
+git commit -m "session-16: state vs props concept — Layer 3 begins"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">I can explain props vs state without reading notes</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">I know why plain <code>let</code> variables fail for UI updates</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">I can describe what a re-render is</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">Pre-quiz and post-quiz both ≥ 80%</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I did not add useState early — waiting for Session 17</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Proceed to Session 17 (useState) after ≥ 80%.">
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>CountryCard receives <code>name="Japan"</code> from parent. User clicks to toggle favorite — should favorite status be props or state?</p>
+        <label class="quiz-option" data-val="a">Props — parent always owns favorites</label>
+        <label class="quiz-option" data-val="b">Neither — store in CSS</label>
+        <label class="quiz-option" data-val="c">State (or eventually lifted state) — it changes in response to user action on this interaction</label>
+        <label class="quiz-option" data-val="d">key prop</label>
+        <div class="explanation">User-driven changes local to interaction are state candidates; lifting comes when siblings need the same data.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="a">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Parent re-renders with <code>name="Brazil"</code> instead of <code>name="Japan"</code>. Is that a props change or state change?</p>
+        <label class="quiz-option" data-val="a">Props change — parent passed new arguments</label>
+        <label class="quiz-option" data-val="b">State change inside CountryCard</label>
+        <label class="quiz-option" data-val="c">Neither — automatic</label>
+        <label class="quiz-option" data-val="d">key change only</label>
+        <div class="explanation">Child receives new props when parent re-renders with different attributes.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="b">
+        <div class="question-num">Question 3 of 5</div>
+        <p>After state updates, why does React call your component function again?</p>
+        <label class="quiz-option" data-val="a">To reset props to defaults</label>
+        <label class="quiz-option" data-val="b">To produce fresh JSX that reflects the new state</label>
+        <label class="quiz-option" data-val="c">Because JavaScript requires it every second</label>
+        <label class="quiz-option" data-val="d">Only in StrictMode</label>
+        <div class="explanation">Render = run function → get UI description → diff → update DOM.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Should you mutate the imported countries array when user deletes a country?</p>
+        <label class="quiz-option" data-val="a">Yes — .push and .splice on the import</label>
+        <label class="quiz-option" data-val="b">Yes — props can fix it</label>
+        <label class="quiz-option" data-val="c">Delete the module file</label>
+        <label class="quiz-option" data-val="d">Not yet as a casual pattern — Session 02 warned about mutation; state updates will use proper patterns later</label>
+        <div class="explanation">Treat shared module data carefully; state patterns for lists come with useState and immutability habits.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 17 will add to CountryCard:</p>
+        <label class="quiz-option" data-val="a">A REST fetch</label>
+        <label class="quiz-option" data-val="b">React Router</label>
+        <label class="quiz-option" data-val="c">A click counter with useState</label>
+        <label class="quiz-option" data-val="d">TypeScript interfaces</label>
+        <div class="explanation">First hands-on state: useState + simple displayed count.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>Name one value in the country app that should stay props and one that should become state.</li>
+        <li>Why does React need a special state system instead of ordinary variables?</li>
+        <li>What is the difference between "data changed in memory" and "user sees updated UI"?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Concept Is Ignored?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Using only props for everything:</strong> Parent must re-render for every tiny interaction — awkward data flow.</li>
+        <li><strong>Using only local variables:</strong> Clicks and typing appear to do nothing on screen.</li>
+        <li><strong>Mutating props or shared imports:</strong> Breaks one-way flow; bugs hard to trace.</li>
+        <li><strong>Skipping this session and jumping to useState:</strong> Syntax without mental model — confusion on when to use state at all.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: state is component-owned data that changes over time and triggers re-renders — distinct from read-only props.</strong></p>
+      <p><strong>Next:</strong> <a href="../session-17/index.html">Session 17 — useState Hook</a> — first interactive code in Layer 3.</p>
+    </div>
+
     <p style="margin-top:24px;"><a href="../session-15/index.html">← Session 15</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-17/index.html">Session 17 →</a></p>
+
   </div>
 </main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
 <script src="../../notes-widget.js" defer></script>
 
 </body>

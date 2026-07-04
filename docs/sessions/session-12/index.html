@@ -6,8 +6,33 @@
   <title>Session 12 — Component Composition</title>
   <link rel="stylesheet" href="../../styles.css" />
   <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+  </style>
 </head>
 <body>
+
 <nav>
   <div class="container">
     <a href="../../index.html" class="brand">⚛ React Learning</a>
@@ -21,27 +46,354 @@
     <a href="../../prompts/index.html">Prompts</a>
   </div>
 </nav>
+
 <main>
   <div class="container">
+
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
       <span class="badge badge-layer">Layer 2</span>
       <span class="badge badge-current">Session 12</span>
       <span style="color:var(--text-muted);font-size:13px;">React Fundamentals</span>
     </div>
     <h1>Component Composition</h1>
-    <div class="alert alert-warning">
-      <strong>Outline page.</strong> The full lesson doc (quizzes, SVGs, lab, commit checkpoint) is not written yet.
-      Use the syllabus outline below until this session is hydrated.
-    </div>
+    <p class="subtitle">
+      Session 11 put multiple <code>CountryCard</code> instances directly in
+      <code>App.jsx</code>. Today you extract that list into a
+      <code>CountryList</code> component — nesting components inside components
+      to keep each file focused on one job.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
     <div class="card">
-      <h2>From the syllabus</h2>
-      <p><strong>Core concept:</strong> Building UIs from nested components</p>
-      <p><strong>Project milestone:</strong> Build CountryList that contains multiple CountryCard</p>
-      <p><strong>Status:</strong> <span class="badge badge-current">Available</span> — session page is open; complete prior sessions in order when doing the lab track.</p>
+      <ul>
+        <li>Explain composition: building UI by nesting components, not by one giant function</li>
+        <li>Create <code>CountryList</code> that renders multiple <code>CountryCard</code> children</li>
+        <li>Pass props from <code>CountryList</code> down to each <code>CountryCard</code></li>
+        <li>Simplify <code>App.jsx</code> so it composes high-level pieces only</li>
+        <li>Connect Session 06 imports to a new component file</li>
+      </ul>
     </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>Component composition means:</p>
+        <label class="quiz-option" data-val="a">Copy-pasting JSX into every file that needs it</label>
+        <label class="quiz-option" data-val="b">Building UI by nesting smaller components inside larger ones</label>
+        <label class="quiz-option" data-val="c">Inheriting from a parent class like in Java</label>
+        <label class="quiz-option" data-val="d">Combining all components into one file to reduce imports</label>
+        <div class="explanation">React favors composition (nesting) over class inheritance. You assemble UI from pieces.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>After Session 11, <code>App</code> renders two <code>CountryCard</code> tags. Who should pass <code>name</code> and <code>region</code> props to each card once you add <code>CountryList</code>?</p>
+        <label class="quiz-option" data-val="a"><code>CountryCard</code> passes props to itself</label>
+        <label class="quiz-option" data-val="b">The browser passes them automatically</label>
+        <label class="quiz-option" data-val="c"><code>CountryList</code> (the parent of each card) — still one-way flow downward</label>
+        <label class="quiz-option" data-val="d">Props stop at <code>App</code> and never reach nested children</label>
+        <div class="explanation">Props flow parent → child at every level. CountryList becomes the parent of CountryCard.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Why move cards out of <code>App.jsx</code> into <code>CountryList.jsx</code>?</p>
+        <label class="quiz-option" data-val="a">Each component has one clear responsibility; App stays a high-level layout shell</label>
+        <label class="quiz-option" data-val="b">React requires every card to live in a separate file from App</label>
+        <label class="quiz-option" data-val="c">Props only work one level deep</label>
+        <label class="quiz-option" data-val="d">To avoid using import/export</label>
+        <div class="explanation">Separation of concerns: App composes pages; CountryList owns the list layout; CountryCard owns one card's markup.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Which JSX is valid inside <code>CountryList</code>'s return?</p>
+        <label class="quiz-option" data-val="a"><code>return CountryCard();</code></label>
+        <label class="quiz-option" data-val="b"><code>return &lt;countrycard /&gt;;</code></label>
+        <label class="quiz-option" data-val="c"><code>return &lt;CountryCard&gt;Canada&lt;/CountryCard&gt;</code> with no props when props are required</label>
+        <label class="quiz-option" data-val="d"><code>return (&lt;section&gt;&lt;CountryCard name="Canada" region="Americas" /&gt;…&lt;/section&gt;);</code></label>
+        <div class="explanation">Use PascalCase component tags with props (Session 10–11). Wrap siblings in one parent element.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>How many component functions run when App renders one <code>CountryList</code> that contains <strong>one</strong> <code>CountryCard</code> tag?</p>
+        <label class="quiz-option" data-val="a">One — React merges them</label>
+        <label class="quiz-option" data-val="b">Three — App, CountryList, and CountryCard each run once</label>
+        <label class="quiz-option" data-val="c">Zero — JSX is not functions</label>
+        <label class="quiz-option" data-val="d">Two — App and CountryList only</label>
+        <div class="explanation">Each component in the tree runs its function. Two cards would be four calls (App + CountryList + two CountryCard instances).</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — JavaScript First, Then React</h2>
+
+    <h3>JavaScript: nesting structure</h3>
+    <p>
+      HTML nests tags: a <code>&lt;ul&gt;</code> contains many <code>&lt;li&gt;</code> elements.
+      JavaScript functions can call other functions and combine their results:
+    </p>
+    <pre><code>function listItem(label) {
+  return "&lt;li&gt;" + label + "&lt;/li&gt;";
+}
+
+function countryList() {
+  return "&lt;ul&gt;" +
+    listItem("Canada") +
+    listItem("Japan") +
+  "&lt;/ul&gt;";
+}</code></pre>
+    <p>
+      <code>countryList</code> does not rebuild what a list item looks like — it
+      <em>uses</em> <code>listItem</code>. That is composition at the function level.
+    </p>
+
+    <h3>React: components nest like HTML</h3>
+    <p>
+      A component's return value can include other components. React runs each
+      function and assembles the tree:
+    </p>
+    <pre><code>// App.jsx — high level
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Countries&lt;/h1&gt;
+      &lt;CountryList /&gt;
+    &lt;/div&gt;
+  );
+}
+
+// CountryList.jsx — owns the list
+import CountryCard from './CountryCard';
+
+function CountryList() {
+  return (
+    &lt;section className="country-list"&gt;
+      &lt;CountryCard name="Canada" region="Americas" /&gt;
+      &lt;CountryCard name="Japan" region="Asia" /&gt;
+      &lt;CountryCard name="Brazil" region="Americas" /&gt;
+    &lt;/section&gt;
+  );
+}
+
+export default CountryList;</code></pre>
+    <p>
+      <code>App</code> no longer knows how many countries exist or how cards are
+      laid out — it only knows "show the list." Props still flow
+      <code>CountryList → CountryCard</code>.
+    </p>
+
+    <div class="alert alert-info">
+      <strong>Folder note:</strong> The curriculum uses
+      <code>src/components/</code> (plural). If your Session 10 file lives in
+      <code>src/component/</code> (singular), move it to
+      <code>src/components/CountryCard.jsx</code> and update imports before this lab.
+    </div>
+
+    <h3>Common mistakes</h3>
+    <pre><code>// MISTAKE: lowercase tag — React treats it as an HTML element, not your component
+return &lt;countrycard name="Canada" /&gt;;
+
+// MISTAKE: forgetting import in CountryList.jsx
+return &lt;CountryCard /&gt;;  // ReferenceError — CountryCard not defined
+
+// MISTAKE: multiple root elements without a wrapper
+return (
+  &lt;CountryCard /&gt;
+  &lt;CountryCard /&gt;  // syntax error — need one parent (Session 09: div or &lt;&gt;&lt;/&gt;)
+);</code></pre>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Create <code>CountryList.jsx</code> with at
+      least three <code>CountryCard</code> children. Render
+      <code>&lt;CountryList /&gt;</code> from <code>App.jsx</code>.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Start from Session 11</strong></p>
+        <p><code>CountryCard</code> accepts <code>name</code> and <code>region</code> props. App currently renders cards directly — you will move that markup.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Create <code>src/components/CountryList.jsx</code></strong></p>
+        <pre><code>import CountryCard from './CountryCard';
+
+function CountryList() {
+  return (
+    &lt;section className="country-list"&gt;
+      &lt;CountryCard name="Canada" region="Americas" /&gt;
+      &lt;CountryCard name="Japan" region="Asia" /&gt;
+      &lt;CountryCard name="Brazil" region="Americas" /&gt;
+    &lt;/section&gt;
+  );
+}
+
+export default CountryList;</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Simplify <code>App.jsx</code></strong></p>
+        <pre><code>import CountryList from './components/CountryList';
+
+function App() {
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Countries&lt;/h1&gt;
+      &lt;CountryList /&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default App;</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Run and verify</strong></p>
+        <pre><code>npm run dev</code></pre>
+        <p>Browser shows three country cards inside the list section. App.jsx should not contain any <code>CountryCard</code> tags.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/components/CountryList.jsx</code></td><td>Created</td><td>New component that composes multiple CountryCards</td></tr>
+          <tr><td><code>src/App.jsx</code></td><td>Updated</td><td>Renders CountryList instead of individual cards</td></tr>
+          <tr><td><code>docs/sessions/session-12/index.html</code></td><td>Updated</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/components/CountryList.jsx src/App.jsx docs/sessions/session-12/index.html
+git commit -m "session-12: add CountryList composition component"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1"><code>CountryList.jsx</code> imports and renders at least three <code>CountryCard</code> instances with props</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2"><code>App.jsx</code> renders <code>&lt;CountryList /&gt;</code> — no direct <code>CountryCard</code> tags</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">Return has one root element wrapping all cards</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">Both files use <code>export default</code> / <code>import</code> correctly</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I can draw the component tree: App → CountryList → CountryCard (×3)</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Proceed to Session 13 after committing.">
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>Where do the strings <code>"Canada"</code> and <code>"Japan"</code> live after today's lab?</p>
+        <label class="quiz-option" data-val="a">Inside <code>CountryCard.jsx</code> as hardcoded defaults</label>
+        <label class="quiz-option" data-val="b">In CSS</label>
+        <label class="quiz-option" data-val="c">In <code>CountryList.jsx</code> as props passed to each <code>CountryCard</code></label>
+        <label class="quiz-option" data-val="d">In <code>App.jsx</code> still</label>
+        <div class="explanation">CountryList is now the parent that configures each card. App only mounts the list.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="a">
+        <div class="question-num">Question 2 of 5</div>
+        <p>What breaks if you remove the import in <code>CountryList.jsx</code>?</p>
+        <label class="quiz-option" data-val="a">Runtime or build error — <code>CountryCard</code> is not defined in that module</label>
+        <label class="quiz-option" data-val="b">Nothing — imports are optional in React</label>
+        <label class="quiz-option" data-val="c">Only styling breaks</label>
+        <label class="quiz-option" data-val="d">Props stop working</label>
+        <div class="explanation">Each file has its own scope. Session 06: you must import what you use.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="b">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Session 13 will add conditional UI ("No countries found"). Which component should own that logic?</p>
+        <label class="quiz-option" data-val="a"><code>CountryCard</code> — each card decides if the list is empty</label>
+        <label class="quiz-option" data-val="b"><code>CountryList</code> — it owns the collection; it knows when there is nothing to show</label>
+        <label class="quiz-option" data-val="c"><code>main.jsx</code></label>
+        <label class="quiz-option" data-val="d">CSS <code>:empty</code> pseudo-class only</label>
+        <div class="explanation">The component responsible for the list decides list-level messages.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Composition differs from duplication because:</p>
+        <label class="quiz-option" data-val="a">Composition uses fewer files</label>
+        <label class="quiz-option" data-val="b">Duplication is faster at runtime</label>
+        <label class="quiz-option" data-val="c">Composition removes the need for props</label>
+        <label class="quiz-option" data-val="d">You define each piece once and assemble it — change CountryCard once, every usage updates</label>
+        <div class="explanation">Reuse + nesting = maintainable UI trees.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="a">
+        <div class="question-num">Question 5 of 5</div>
+        <p>What will Session 14 add to CountryList?</p>
+        <label class="quiz-option" data-val="a"><code>.map()</code> over a countries array instead of hand-writing each card</label>
+        <label class="quiz-option" data-val="b"><code>useState</code> immediately</label>
+        <label class="quiz-option" data-val="c">A real REST API call</label>
+        <label class="quiz-option" data-val="d">TypeScript types</label>
+        <div class="explanation">Session 03 taught <code>.map()</code>; Session 14 applies it inside JSX.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>Draw the component tree on paper. Which node is parent to which?</li>
+        <li>If you change card styling in <code>CountryCard.jsx</code>, do you need to edit <code>CountryList.jsx</code>? Why?</li>
+        <li>What would <code>App.jsx</code> look like with ten different sections (header, list, footer)? Why is composition useful?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>No CountryList:</strong> App grows cluttered; list layout and card data mix with page chrome.</li>
+        <li><strong>No import in CountryList:</strong> <code>CountryCard</code> is undefined — blank screen or error overlay.</li>
+        <li><strong>No wrapper element:</strong> Syntax error — JSX return must have one root (or a Fragment).</li>
+        <li><strong>Cards stay in App:</strong> Lab incomplete — you did not practice composition.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: component composition — nesting components to build UI.</strong></p>
+      <p>You applied Session 06 (imports), Session 10 (component functions), and Session 11 (props) in a deeper tree.</p>
+      <p><strong>Next:</strong> <a href="../session-13/index.html">Session 13 — Conditional Rendering</a> — show "No countries found" when the list is empty.</p>
+    </div>
+
     <p style="margin-top:24px;"><a href="../session-11/index.html">← Session 11</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-13/index.html">Session 13 →</a></p>
+
   </div>
 </main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
 <script src="../../notes-widget.js" defer></script>
 
 </body>

@@ -6,8 +6,33 @@
   <title>Session 13 — Conditional Rendering</title>
   <link rel="stylesheet" href="../../styles.css" />
   <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+  </style>
 </head>
 <body>
+
 <nav>
   <div class="container">
     <a href="../../index.html" class="brand">⚛ React Learning</a>
@@ -21,27 +46,329 @@
     <a href="../../prompts/index.html">Prompts</a>
   </div>
 </nav>
+
 <main>
   <div class="container">
+
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
       <span class="badge badge-layer">Layer 2</span>
       <span class="badge badge-current">Session 13</span>
       <span style="color:var(--text-muted);font-size:13px;">React Fundamentals</span>
     </div>
     <h1>Conditional Rendering</h1>
-    <div class="alert alert-warning">
-      <strong>Outline page.</strong> The full lesson doc (quizzes, SVGs, lab, commit checkpoint) is not written yet.
-      Use the syllabus outline below until this session is hydrated.
-    </div>
+    <p class="subtitle">
+      Not every render shows the same UI. Today you learn three JavaScript patterns —
+      ternary, <code>&amp;&amp;</code> short-circuit, and early return — and apply them in
+      <code>CountryList</code> to show <strong>No countries found</strong> when the
+      list is empty.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
     <div class="card">
-      <h2>From the syllabus</h2>
-      <p><strong>Core concept:</strong> Ternary, &amp;&amp; short-circuit, early return patterns</p>
-      <p><strong>Project milestone:</strong> Show a "No countries found" message conditionally</p>
-      <p><strong>Status:</strong> <span class="badge badge-current">Available</span> — session page is open; complete prior sessions in order when doing the lab track.</p>
+      <ul>
+        <li>Use the ternary operator: <code>condition ? valueA : valueB</code></li>
+        <li>Use <code>&amp;&amp;</code> short-circuit: <code>condition &amp;&amp; value</code></li>
+        <li>Use early return before the main JSX when a whole branch differs</li>
+        <li>Explain why <code>if</code> <em>statements</em> cannot sit directly inside JSX</li>
+        <li>Show "No countries found" when a countries array has length 0</li>
+      </ul>
     </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>What does <code>countries.length === 0 ? "Empty" : "Has items"</code> evaluate to when <code>countries</code> is <code>[]</code>?</p>
+        <label class="quiz-option" data-val="a"><code>"Has items"</code></label>
+        <label class="quiz-option" data-val="b"><code>true</code></label>
+        <label class="quiz-option" data-val="c"><code>"Empty"</code></label>
+        <label class="quiz-option" data-val="d">It throws an error</label>
+        <div class="explanation">Ternary picks the first branch when the condition is true. Empty array has length 0.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>What does <code>showBanner &amp;&amp; &lt;p&gt;Sale!&lt;/p&gt;</code> render when <code>showBanner</code> is <code>false</code>?</p>
+        <label class="quiz-option" data-val="a">The text "false" on screen</label>
+        <label class="quiz-option" data-val="b">Nothing for that expression — <code>false</code> is not rendered by React</label>
+        <label class="quiz-option" data-val="c">A paragraph saying Sale!</label>
+        <label class="quiz-option" data-val="d">A syntax error</label>
+        <div class="explanation"><code>&amp;&amp;</code> returns the first falsy value or the last value. React skips rendering boolean null undefined.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Why is this invalid inside JSX? <code>&lt;div&gt;{ if (x) { return &lt;p&gt;Hi&lt;/p&gt; } }&lt;/div&gt;</code></p>
+        <label class="quiz-option" data-val="a">Curly braces in JSX only accept expressions, not statements — <code>if</code> is a statement</label>
+        <label class="quiz-option" data-val="b">HTML does not allow divs</label>
+        <label class="quiz-option" data-val="c">React requires ternary only, never if</label>
+        <label class="quiz-option" data-val="d">You must use class components for conditionals</label>
+        <div class="explanation">Session 09: <code>{expression}</code> not <code>{statement}</code>. Use ternary, &amp;&amp;, or if before the return.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>When is early return a good fit?</p>
+        <label class="quiz-option" data-val="a">When you need to mutate props</label>
+        <label class="quiz-option" data-val="b">When you want to avoid export default</label>
+        <label class="quiz-option" data-val="c">Only inside class components</label>
+        <label class="quiz-option" data-val="d">When the entire component output is different (e.g. only an empty message, no list at all)</label>
+        <div class="explanation">Early return keeps the main return uncluttered when one guard case dominates.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 03 taught that <code>.filter()</code> keeps items when the callback returns a truthy value. How does that relate to conditionals in UI?</p>
+        <label class="quiz-option" data-val="a">No relation</label>
+        <label class="quiz-option" data-val="b">Filter runs in JSX instead of map</label>
+        <label class="quiz-option" data-val="c">Both use boolean decisions — truthy/falsy picks what appears</label>
+        <label class="quiz-option" data-val="d">Filter replaces ternary</label>
+        <div class="explanation">Same boolean logic: decide yes/no, show/hide, include/exclude.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — JavaScript First, Then React</h2>
+
+    <h3>JavaScript: ternary operator</h3>
+    <p>An expression that picks one of two values:</p>
+    <pre><code>const label = countries.length === 0 ? "No countries" : "Browse countries";
+
+// same idea as:
+let label;
+if (countries.length === 0) {
+  label = "No countries";
+} else {
+  label = "Browse countries";
+}</code></pre>
+    <p>Ternary <em>returns a value</em> — that is why it works inside JSX curly braces.</p>
+
+    <h3>JavaScript: &amp;&amp; short-circuit</h3>
+    <pre><code>const isLoggedIn = true;
+isLoggedIn &amp;&amp; console.log("Welcome");  // runs log
+
+const count = 0;
+count &amp;&amp; console.log("Has items");  // does not log — 0 is falsy</code></pre>
+    <p>In JSX, use <code>&amp;&amp;</code> when you want "show this element or nothing":</p>
+    <pre><code>{countries.length &gt; 0 &amp;&amp; &lt;p&gt;Pick a country&lt;/p&gt;}</code></pre>
+    <div class="alert alert-warning">
+      <strong>Pitfall:</strong> <code>{count &amp;&amp; &lt;Badge /&gt;}</code> when <code>count</code> is
+      <code>0</code> renders the number <code>0</code> on screen (0 is falsy but React
+      renders numbers). Prefer <code>count &gt; 0 &amp;&amp; …</code> or ternary.
+    </div>
+
+    <h3>JavaScript: early return in a function</h3>
+    <pre><code>function CountryList() {
+  const countries = [];
+
+  if (countries.length === 0) {
+    return &lt;p&gt;No countries found&lt;/p&gt;;
+  }
+
+  return (
+    &lt;section&gt;
+      &lt;CountryCard name="Canada" region="Americas" /&gt;
+    &lt;/section&gt;
+  );
+}</code></pre>
+    <p>The <code>if</code> is a normal JavaScript statement in the function body — not inside JSX.</p>
+
+    <h3>React: three patterns in CountryList</h3>
+    <pre><code>// Pattern A — early return (recommended for empty list)
+if (countries.length === 0) {
+  return &lt;p className="empty-message"&gt;No countries found&lt;/p&gt;;
+}
+
+// Pattern B — ternary inside JSX (Fragment shorthand from Session 09)
+return (
+  &lt;section&gt;
+    {countries.length === 0
+      ? &lt;p&gt;No countries found&lt;/p&gt;
+      : (
+        &lt;div className="country-list"&gt;
+          &lt;CountryCard name="Canada" region="Americas" /&gt;
+          &lt;CountryCard name="Japan" region="Asia" /&gt;
+        &lt;/div&gt;
+      )}
+  &lt;/section&gt;
+);
+
+// Pattern C — &amp;&amp; for optional extras (not the main empty/list split)
+{countries.length &gt; 0 &amp;&amp; &lt;p&gt;{countries.length} countries&lt;/p&gt;}</code></pre>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Add a <code>countries</code> array to
+      <code>CountryList</code>. When it is empty, show <strong>No countries found</strong>.
+      When it has items, show cards (still written manually — map comes in Session 14).
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Add a local array at the top of <code>CountryList</code></strong></p>
+        <pre><code>const countries = [
+  { name: "Canada", region: "Americas" },
+  { name: "Japan", region: "Asia" },
+  { name: "Brazil", region: "Americas" },
+];</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Early return when empty</strong></p>
+        <pre><code>function CountryList() {
+  const countries = [ /* … */ ];
+
+  if (countries.length === 0) {
+    return &lt;p className="empty-message"&gt;No countries found&lt;/p&gt;;
+  }
+
+  return (
+    &lt;section className="country-list"&gt;
+      &lt;CountryCard name={countries[0].name} region={countries[0].region} /&gt;
+      &lt;CountryCard name={countries[1].name} region={countries[1].region} /&gt;
+      &lt;CountryCard name={countries[2].name} region={countries[2].region} /&gt;
+    &lt;/section&gt;
+  );
+}</code></pre>
+        <p>Indexing by hand is temporary — Session 14 replaces this with <code>.map()</code>. Keep exactly three entries in the array while using <code>countries[0]</code> through <code>countries[2]</code>.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Test the empty state</strong></p>
+        <p>Change to <code>const countries = [];</code>, reload — you should see only "No countries found". Restore the three items before committing.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/components/CountryList.jsx</code></td><td>Updated</td><td>Local countries array + conditional empty message</td></tr>
+          <tr><td><code>docs/sessions/session-13/index.html</code></td><td>Updated</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/components/CountryList.jsx docs/sessions/session-13/index.html
+git commit -m "session-13: conditional empty state in CountryList"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">Empty array shows "No countries found"</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">Non-empty array shows cards — no duplicate empty message</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">No <code>if</code> statement inside JSX curly braces</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">I tested both branches by changing the array length</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I can explain ternary vs &amp;&amp; vs early return</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Proceed to Session 14 after committing.">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>After testing with <code>const countries = []</code>, what should you commit?</p>
+        <label class="quiz-option" data-val="a">The empty array version</label>
+        <label class="quiz-option" data-val="b">The version with three countries — empty array was only for testing</label>
+        <label class="quiz-option" data-val="c">Both versions in one file</label>
+        <label class="quiz-option" data-val="d">Delete CountryList entirely</label>
+        <div class="explanation">Verify both branches work; ship the working list state.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p><code>{items.length &amp;&amp; &lt;List /&gt;}</code> when <code>items.length</code> is <code>0</code> may show "0" on screen. Fix?</p>
+        <label class="quiz-option" data-val="a">Use <code>if</code> inside JSX</label>
+        <label class="quiz-option" data-val="b">Cast length to string</label>
+        <label class="quiz-option" data-val="c">Use <code>items.length &gt; 0 &amp;&amp; &lt;List /&gt;</code></label>
+        <label class="quiz-option" data-val="d">Use CSS display:none only</label>
+        <div class="explanation">Compare to boolean so the left side of &amp;&amp; is true/false, not 0.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Why did we use <code>countries[0].name</code> temporarily instead of map?</p>
+        <label class="quiz-option" data-val="a">Session 14 teaches map in JSX — one concept per session</label>
+        <label class="quiz-option" data-val="b">map is forbidden in React</label>
+        <label class="quiz-option" data-val="c">Arrays cannot hold objects</label>
+        <label class="quiz-option" data-val="d">CountryCard does not accept props</label>
+        <div class="explanation">Curriculum unlocks map rendering in the next session.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Ternary vs early return — when might ternary be better inside the main return?</p>
+        <label class="quiz-option" data-val="a">Always — early return is deprecated</label>
+        <label class="quiz-option" data-val="b">When mutating state</label>
+        <label class="quiz-option" data-val="c">When fetching APIs</label>
+        <label class="quiz-option" data-val="d">When empty and full UIs share the same outer wrapper element</label>
+        <div class="explanation">Ternary keeps one return with shared layout; early return splits entirely different trees.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 14 will import countries from <code>src/data/countries.js</code>. Why not <code>src/mock/</code> yet?</p>
+        <label class="quiz-option" data-val="a">mock folder does not exist</label>
+        <label class="quiz-option" data-val="b">Layer 4 mock-data patterns unlock later — Session 06 data module is enough for now</label>
+        <label class="quiz-option" data-val="c">import is not allowed until Session 20</label>
+        <label class="quiz-option" data-val="d">countries.js is TypeScript only</label>
+        <div class="explanation">Use existing Layer 1 data module; dedicated mock layer comes in Session 23+.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>Write the same empty check three ways: early return, ternary, and &amp;&amp;. Which reads clearest to you?</li>
+        <li>What is the difference between a JavaScript statement and an expression? Give one example of each.</li>
+        <li>If App also needed "No countries found", would you duplicate the check? What does that suggest about where logic should live?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>No empty check:</strong> Empty array still tries to render <code>countries[0]</code> — undefined props or blank cards.</li>
+        <li><strong>if inside JSX:</strong> Build error — statements not allowed in expressions.</li>
+        <li><strong>Wrong &amp;&amp; condition:</strong> Accidental <code>0</code> rendered on screen.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: conditional rendering — show different UI based on data.</strong></p>
+      <p><strong>Next:</strong> <a href="../session-14/index.html">Session 14 — Rendering Lists with map()</a>.</p>
+    </div>
+
     <p style="margin-top:24px;"><a href="../session-12/index.html">← Session 12</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-14/index.html">Session 14 →</a></p>
+
   </div>
 </main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
 <script src="../../notes-widget.js" defer></script>
 
 </body>

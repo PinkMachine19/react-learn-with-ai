@@ -6,8 +6,33 @@
   <title>Session 15 — Keys — Why React Needs Them</title>
   <link rel="stylesheet" href="../../styles.css" />
   <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+  </style>
 </head>
 <body>
+
 <nav>
   <div class="container">
     <a href="../../index.html" class="brand">⚛ React Learning</a>
@@ -21,27 +46,281 @@
     <a href="../../prompts/index.html">Prompts</a>
   </div>
 </nav>
+
 <main>
   <div class="container">
+
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
       <span class="badge badge-layer">Layer 2</span>
-      <span class="badge badge-gate">Session 15</span>
+      <span class="badge badge-gate">Session 15 — Layer 2 Gate</span>
       <span style="color:var(--text-muted);font-size:13px;">React Fundamentals</span>
     </div>
     <h1>Keys — Why React Needs Them</h1>
+    <p class="subtitle">
+      When lists change order or length, React must know which item is which.
+      The <code>key</code> prop gives each list element a stable identity for
+      reconciliation. This session completes Layer 2 — score ≥ 80% on both quizzes
+      before starting Layer 3.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
     <div class="alert alert-warning">
-      <strong>Outline page.</strong> The full lesson doc (quizzes, SVGs, lab, commit checkpoint) is not written yet.
-      Use the syllabus outline below until this session is hydrated.
+      <strong>Layer 2 gate:</strong> Post-quiz ≥ 80% required. Review Sessions 08–14 if needed.
     </div>
+
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
     <div class="card">
-      <h2>From the syllabus</h2>
-      <p><strong>Core concept:</strong> Reconciliation, diffing algorithm, key as identity</p>
-      <p><strong>Project milestone:</strong> Add keys to all list items; see what breaks without them</p>
-      <p><strong>Status:</strong> <span class="badge badge-gate">Layer gate</span> — session page is open; complete prior sessions in order when doing the lab track.</p>
+      <ul>
+        <li>Explain that <code>key</code> is a special prop React uses internally — not passed to CountryCard</li>
+        <li>Add <code>key={country.id}</code> to each element returned from map</li>
+        <li>Describe reconciliation at a high level: compare old vs new element trees</li>
+        <li>Know why array index is a weak key when items reorder or delete</li>
+        <li>Observe the console warning when keys are missing</li>
+      </ul>
     </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>Why does React need a <code>key</code> on list items?</p>
+        <label class="quiz-option" data-val="a">For CSS styling only</label>
+        <label class="quiz-option" data-val="b">To make props read-only</label>
+        <label class="quiz-option" data-val="c">To match items between renders when the list changes</label>
+        <label class="quiz-option" data-val="d">To enable useState in child components</label>
+        <div class="explanation">Keys help React's diffing algorithm know which DOM nodes correspond to which data items.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Can you read <code>props.key</code> inside <code>CountryCard</code>?</p>
+        <label class="quiz-option" data-val="a">Yes — key is like name and region</label>
+        <label class="quiz-option" data-val="b">No — React reserves key; it is not passed to your component as a prop</label>
+        <label class="quiz-option" data-val="c">Only in class components</label>
+        <label class="quiz-option" data-val="d">Only if you rename it to id</label>
+        <div class="explanation">key and ref are special — React consumes them before your function runs.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Best key for our countries from Session 02/06?</p>
+        <label class="quiz-option" data-val="a"><code>country.id</code> — stable unique identifier on each object</label>
+        <label class="quiz-option" data-val="b"><code>Math.random()</code> each render</label>
+        <label class="quiz-option" data-val="c">The array index always — never use id</label>
+        <label class="quiz-option" data-val="d">Duplicate keys are fine if names differ</label>
+        <div class="explanation">Stable + unique across the list. Random keys change every render — worst option.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Two siblings in a list share <code>key={1}</code>. What is wrong?</p>
+        <label class="quiz-option" data-val="a">Nothing — keys can repeat</label>
+        <label class="quiz-option" data-val="b">Keys must be strings only</label>
+        <label class="quiz-option" data-val="c">Keys must equal array length</label>
+        <label class="quiz-option" data-val="d">Keys must be unique among siblings — duplicates confuse reconciliation</label>
+        <div class="explanation">Unique among siblings at that level in the tree.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Where must <code>key</code> be placed?</p>
+        <label class="quiz-option" data-val="a">On the parent <code>&lt;section&gt;</code></label>
+        <label class="quiz-option" data-val="b">Inside CountryCard's props object manually</label>
+        <label class="quiz-option" data-val="c">On the outermost element returned from map — the <code>CountryCard</code> tag</label>
+        <label class="quiz-option" data-val="d">In countries.js on each object as a HTML attribute</label>
+        <div class="explanation">key goes on the element in the array React is diffing — the direct child of the map.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — JavaScript First, Then React</h2>
+
+    <h3>JavaScript: identity in a list of objects</h3>
+    <p>Session 02: each country has an <code>id</code>. If you reorder the array, the object with <code>id: 2</code> is still Japan — its identity did not change, only its position did.</p>
+    <pre><code>const a = { id: 1, name: "Canada" };
+const b = { id: 2, name: "Japan" };
+// id identifies the record — index is just current position</code></pre>
+
+    <h3>React: reconciliation (simplified)</h3>
+    <p>On re-render, React builds a new element tree and compares it to the previous one. For lists, it asks: "Is this the same item as before, or a new one?"</p>
+    <ul>
+      <li><strong>With stable keys:</strong> React updates the correct card when data changes.</li>
+      <li><strong>Without keys:</strong> React guesses by position — can reuse wrong DOM/state when items shift.</li>
+      <li><strong>Index as key:</strong> Acceptable for static lists that never reorder. Risky when deleting or inserting at the start.</li>
+    </ul>
+
+    <h3>Adding keys to CountryList</h3>
+    <pre><code>{countries.map((country) =&gt; (
+  &lt;CountryCard
+    key={country.id}
+    name={country.name}
+    region={country.region}
+  /&gt;
+))}</code></pre>
+    <p>Remove all keys and read the browser console — React warns each child in a list should have a unique key prop.</p>
+
+    <div class="alert alert-info">
+      <strong>Not in scope yet:</strong> State inside list items (Session 17+) makes bad keys painfully visible — wrong row keeps old state. Today focus on the warning and the identity idea.
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Add <code>key={country.id}</code> to each
+      <code>CountryCard</code> in the map. Remove keys once, observe the warning,
+      then restore.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Add key prop</strong></p>
+        <pre><code>{countries.map((country) =&gt; (
+  &lt;CountryCard
+    key={country.id}
+    name={country.name}
+    region={country.region}
+  /&gt;
+))}</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Experiment</strong></p>
+        <p>Remove <code>key</code>, reload, open DevTools console — note the warning. Add keys back until the warning disappears.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Layer 2 review</strong></p>
+        <p>Skim Sessions 08–14 notes. You should explain: JSX, components, props, composition, conditionals, map, and keys without looking.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/components/CountryList.jsx</code></td><td>Updated</td><td>key={country.id} on each mapped CountryCard</td></tr>
+          <tr><td><code>docs/sessions/session-15/index.html</code></td><td>Updated</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/components/CountryList.jsx docs/sessions/session-15/index.html
+git commit -m "session-15: add stable keys to country list — Layer 2 complete"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">Every mapped <code>CountryCard</code> has <code>key={country.id}</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">No console key warning in dev tools</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">I saw the warning when keys were removed</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">I know key is not available as props.key inside CountryCard</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">Post-quiz score ≥ 80% — cleared for Layer 3</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Layer 2 complete — proceed to Session 16 (Layer 3) after ≥ 80%.">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p><code>key={index}</code> vs <code>key={country.id}</code> — when is index risky?</p>
+        <label class="quiz-option" data-val="a">Never risky</label>
+        <label class="quiz-option" data-val="b">When items are inserted, deleted, or reordered — index shifts but id stays with the item</label>
+        <label class="quiz-option" data-val="c">When list has fewer than 10 items</label>
+        <label class="quiz-option" data-val="d">When using map</label>
+        <div class="explanation">Index identifies position, not record. id identifies the record.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Does key appear in the DOM as an HTML attribute?</p>
+        <label class="quiz-option" data-val="a">Yes — as data-key</label>
+        <label class="quiz-option" data-val="b">Yes — as id</label>
+        <label class="quiz-option" data-val="c">No — React uses it internally; it is not rendered to the DOM</label>
+        <label class="quiz-option" data-val="d">Only in production builds</label>
+        <div class="explanation">Special React prop — not passed through to CountryCard or the DOM.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Layer 2 covered all of the following except:</p>
+        <label class="quiz-option" data-val="a">useState and event handlers</label>
+        <label class="quiz-option" data-val="b">JSX and components</label>
+        <label class="quiz-option" data-val="c">Props and composition</label>
+        <label class="quiz-option" data-val="d">Conditional rendering and map</label>
+        <div class="explanation">State and events start Layer 3 (Sessions 16–17+).</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Why not <code>key={country.name}</code> for our app today?</p>
+        <label class="quiz-option" data-val="a">Names are numbers</label>
+        <label class="quiz-option" data-val="b">React forbids string keys</label>
+        <label class="quiz-option" data-val="c">Names are always unique — id is redundant</label>
+        <label class="quiz-option" data-val="d">Names could duplicate in a real app; id is designed to be unique — use the field meant for identity</label>
+        <div class="explanation">id is the canonical unique field from Session 02. Names can collide in real data.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 16 introduces:</p>
+        <label class="quiz-option" data-val="a">useState implementation lab</label>
+        <label class="quiz-option" data-val="b">State vs props mental model — concept only, no new code</label>
+        <label class="quiz-option" data-val="c">React Router</label>
+        <label class="quiz-option" data-val="d">Vitest testing</label>
+        <div class="explanation">Session 16 is conceptual groundwork before useState in Session 17.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>In your own words, what problem does reconciliation solve?</li>
+        <li>Why is <code>key={Math.random()}</code> worse than no key?</li>
+        <li>Which Layer 2 topic was hardest? Which will you review before Session 17?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>No keys:</strong> Console warnings; subtle bugs when lists change (worse once state exists in items).</li>
+        <li><strong>Duplicate keys:</strong> React cannot distinguish siblings — unpredictable updates.</li>
+        <li><strong>Random keys:</strong> Every render looks like a new list — full remount, lost focus/state.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: keys give list items stable identity for React's diffing.</strong></p>
+      <p><strong>Layer 2 complete.</strong> Next: <a href="../session-16/index.html">Session 16 — What Is State?</a> (Layer 3 begins — concepts only).</p>
+    </div>
+
     <p style="margin-top:24px;"><a href="../session-14/index.html">← Session 14</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-16/index.html">Session 16 →</a></p>
+
   </div>
 </main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
 <script src="../../notes-widget.js" defer></script>
 
 </body>

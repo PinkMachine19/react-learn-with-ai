@@ -6,8 +6,33 @@
   <title>Session 14 — Rendering Lists with map()</title>
   <link rel="stylesheet" href="../../styles.css" />
   <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+  </style>
 </head>
 <body>
+
 <nav>
   <div class="container">
     <a href="../../index.html" class="brand">⚛ React Learning</a>
@@ -21,27 +46,322 @@
     <a href="../../prompts/index.html">Prompts</a>
   </div>
 </nav>
+
 <main>
   <div class="container">
+
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
       <span class="badge badge-layer">Layer 2</span>
       <span class="badge badge-current">Session 14</span>
       <span style="color:var(--text-muted);font-size:13px;">React Fundamentals</span>
     </div>
     <h1>Rendering Lists with map()</h1>
-    <div class="alert alert-warning">
-      <strong>Outline page.</strong> The full lesson doc (quizzes, SVGs, lab, commit checkpoint) is not written yet.
-      Use the syllabus outline below until this session is hydrated.
-    </div>
+    <p class="subtitle">
+      Session 13 indexed cards by hand. Today you use <code>.map()</code> (Session 03)
+      inside JSX to turn the countries array into a list of
+      <code>CountryCard</code> elements — and import data from
+      <code>src/data/countries.js</code> (Session 06).
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
     <div class="card">
-      <h2>From the syllabus</h2>
-      <p><strong>Core concept:</strong> Using .map() inside JSX to render arrays</p>
-      <p><strong>Project milestone:</strong> Render all mock countries from an array</p>
-      <p><strong>Status:</strong> <span class="badge badge-current">Available</span> — session page is open; complete prior sessions in order when doing the lab track.</p>
+      <ul>
+        <li>Recall that <code>.map()</code> returns a new array — same length as the source</li>
+        <li>Use <code>countries.map(country =&gt; …)</code> inside JSX curly braces</li>
+        <li>Return one React element per array item from the map callback</li>
+        <li>Import the shared countries array from <code>src/data/countries.js</code></li>
+        <li>Keep Session 13 empty-state check working with the real data length</li>
+      </ul>
     </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p><code>[1, 2, 3].map(n =&gt; n * 2)</code> returns:</p>
+        <label class="quiz-option" data-val="a"><code>6</code></label>
+        <label class="quiz-option" data-val="b"><code>[2, 4, 6]</code></label>
+        <label class="quiz-option" data-val="c"><code>undefined</code></label>
+        <label class="quiz-option" data-val="d">It mutates the original to <code>[2, 4, 6]</code></label>
+        <div class="explanation">map returns a new array. Original unchanged (Session 03 non-mutating methods).</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>What must the map callback return when building JSX list items?</p>
+        <label class="quiz-option" data-val="a">A string only</label>
+        <label class="quiz-option" data-val="b">Nothing — map auto-creates divs</label>
+        <label class="quiz-option" data-val="c">A React element (JSX) for each item</label>
+        <label class="quiz-option" data-val="d">The whole countries array</label>
+        <div class="explanation">Each iteration should return one element — e.g. &lt;CountryCard … /&gt;.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Why put <code>.map(...)</code> inside <code>{ }</code> in JSX?</p>
+        <label class="quiz-option" data-val="a">map is a JavaScript expression that produces an array of elements — expressions go in curly braces</label>
+        <label class="quiz-option" data-val="b">React requires all loops to use curly braces twice</label>
+        <label class="quiz-option" data-val="c">Without braces map runs on the server only</label>
+        <label class="quiz-option" data-val="d">Curly braces import the array automatically</label>
+        <div class="explanation">Session 09: JSX embeds JS expressions via { }.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Three countries in the array → how many <code>CountryCard</code> elements after map?</p>
+        <label class="quiz-option" data-val="a">One — map collapses them</label>
+        <label class="quiz-option" data-val="b">Zero — map is lazy</label>
+        <label class="quiz-option" data-val="c">Six — map duplicates</label>
+        <label class="quiz-option" data-val="d">Three — one per array item</label>
+        <div class="explanation">map preserves length; one callback run per item.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>What happens if the map callback has no <code>return</code>?</p>
+        <label class="quiz-option" data-val="a">React throws immediately</label>
+        <label class="quiz-option" data-val="b">Each item becomes <code>undefined</code> — nothing useful renders for those slots</label>
+        <label class="quiz-option" data-val="c">It returns the item unchanged</label>
+        <label class="quiz-option" data-val="d">It returns duplicate cards</label>
+        <div class="explanation">Arrow functions with { } need explicit return. Implicit return uses ( ) without braces.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — JavaScript First, Then React</h2>
+
+    <h3>JavaScript: map builds a new array</h3>
+    <pre><code>const countries = [
+  { id: 1, name: "Canada", region: "Americas" },
+  { id: 2, name: "Japan", region: "Asia" },
+];
+
+const names = countries.map(function (country) {
+  return country.name;
+});
+// names → ["Canada", "Japan"]</code></pre>
+    <p>Same length, transformed values. For React, the "transform" is JSX instead of strings.</p>
+
+    <h3>React: map inside JSX</h3>
+    <pre><code>import countries from '../data/countries';
+import CountryCard from './CountryCard';
+
+function CountryList() {
+  if (countries.length === 0) {
+    return &lt;p className="empty-message"&gt;No countries found&lt;/p&gt;;
+  }
+
+  return (
+    &lt;section className="country-list"&gt;
+      {countries.map(function (country) {
+        return (
+          &lt;CountryCard
+            name={country.name}
+            region={country.region}
+          /&gt;
+        );
+      })}
+    &lt;/section&gt;
+  );
+}</code></pre>
+    <p>
+      JSX can render an <strong>array of elements</strong>. React flattens them as
+      siblings inside the section. Keys come in Session 15 — omitting them works
+      for static lists but triggers warnings once lists change.
+    </p>
+
+    <h3>Arrow function implicit return</h3>
+    <pre><code>{countries.map(country =&gt; (
+  &lt;CountryCard name={country.name} region={country.region} /&gt;
+))}</code></pre>
+    <p>Parentheses after <code>=&gt;</code> mean implicit return. Curly braces without return give <code>undefined</code>.</p>
+
+    <h3>Common mistakes</h3>
+    <pre><code>// MISTAKE: for loop inside JSX — use map instead
+{ for (const c of countries) { … } }  // invalid
+
+// MISTAKE: missing return in block body
+countries.map(country =&gt; {
+  &lt;CountryCard name={country.name} /&gt;  // undefined each time
+})
+
+// MISTAKE: wrong import path
+import countries from './countries';  // file is in src/data/</code></pre>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Import countries from
+      <code>src/data/countries.js</code> and render all of them with
+      <code>.map()</code> in <code>CountryList</code>.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Import shared data (Session 06)</strong></p>
+        <pre><code>import countries from '../data/countries';
+import CountryCard from './CountryCard';</code></pre>
+        <p>Remove the local hardcoded array from Session 13.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Replace manual cards with map</strong></p>
+        <pre><code>function CountryList() {
+  if (countries.length === 0) {
+    return &lt;p className="empty-message"&gt;No countries found&lt;/p&gt;;
+  }
+
+  return (
+    &lt;section className="country-list"&gt;
+      {countries.map((country) =&gt; (
+        &lt;CountryCard
+          name={country.name}
+          region={country.region}
+        /&gt;
+      ))}
+    &lt;/section&gt;
+  );
+}
+
+export default CountryList;</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Verify</strong></p>
+        <p>Browser shows Canada, Japan, and India (three items in <code>countries.js</code> — India replaces the local Brazil from Session 13 because the shared data file is the source of truth). To re-test the empty state, temporarily change the default export in <code>countries.js</code> to <code>[]</code>, reload, then restore the three countries.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/components/CountryList.jsx</code></td><td>Updated</td><td>Import data module; map to CountryCard</td></tr>
+          <tr><td><code>docs/sessions/session-14/index.html</code></td><td>Updated</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/components/CountryList.jsx docs/sessions/session-14/index.html
+git commit -m "session-14: render country list with map"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1"><code>countries</code> imported from <code>../data/countries</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">map callback returns <code>&lt;CountryCard … /&gt;</code> with props from each <code>country</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">Empty-state check still works (Session 13)</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">No manual <code>countries[0]</code>, <code>countries[1]</code> indexing left</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I know what map returns if the callback forgets return</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Proceed to Session 15 (Layer 2 gate) after committing.">
+      <div class="quiz-question" data-question="0" data-answer="a">
+        <div class="question-num">Question 1 of 5</div>
+        <p>Why import from <code>src/data/countries.js</code> instead of duplicating the array in CountryList?</p>
+        <label class="quiz-option" data-val="a">Single source of truth — Session 06 module can be shared by multiple components</label>
+        <label class="quiz-option" data-val="b">React requires all arrays in /data</label>
+        <label class="quiz-option" data-val="c">map only works on imported arrays</label>
+        <label class="quiz-option" data-val="d">Props cannot use local variables</label>
+        <div class="explanation">DRY data + separation: list component consumes data, does not own the canonical copy.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Console shows a warning about keys. Is that expected today?</p>
+        <label class="quiz-option" data-val="a">No — you must fix it in Session 14</label>
+        <label class="quiz-option" data-val="b">Keys are optional forever</label>
+        <label class="quiz-option" data-val="c">Yes — Session 15 adds keys; warning previews why they matter</label>
+        <label class="quiz-option" data-val="d">It means map is wrong</label>
+        <div class="explanation">Keys are the next session's topic.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="b">
+        <div class="question-num">Question 3 of 5</div>
+        <p><code>countries.map(c =&gt; &lt;CountryCard name={c.name} /&gt;)</code> — what type is the whole expression inside <code>{ }</code>?</p>
+        <label class="quiz-option" data-val="a">A single object</label>
+        <label class="quiz-option" data-val="b">An array of React elements</label>
+        <label class="quiz-option" data-val="c">A string</label>
+        <label class="quiz-option" data-val="d">A Promise</label>
+        <div class="explanation">map always returns an array; JSX can render arrays of elements.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Adding a fourth country to <code>countries.js</code> requires how many edits in CountryList?</p>
+        <label class="quiz-option" data-val="a">Four — one CountryCard tag per country</label>
+        <label class="quiz-option" data-val="b">Two — import and export</label>
+        <label class="quiz-option" data-val="c">Zero — map reads files automatically</label>
+        <label class="quiz-option" data-val="d">Zero in CountryList — only update the data file</label>
+        <div class="explanation">That's the payoff of map + shared data.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="a">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 15 keys will most likely use:</p>
+        <label class="quiz-option" data-val="a"><code>country.id</code> — stable unique id from Session 02 objects</label>
+        <label class="quiz-option" data-val="b"><code>country.name</code> only — always safe</label>
+        <label class="quiz-option" data-val="c">Random numbers each render</label>
+        <label class="quiz-option" data-val="d">CSS class names</label>
+        <div class="explanation">Stable unique ids help React match items across re-renders.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>Compare manual cards vs map — which scales to 100 countries?</li>
+        <li>What is the difference between <code>map</code> and <code>forEach</code> for rendering lists?</li>
+        <li>Why does the map callback parameter name (<code>country</code>) not matter to React?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>No map:</strong> Manual indexing breaks when array length changes.</li>
+        <li><strong>No return in callback:</strong> Blank list — array of undefined.</li>
+        <li><strong>Wrong import path:</strong> Build failure or empty module.</li>
+        <li><strong>Removed empty check:</strong> If the data file is empty, map renders zero cards with no message (Session 13 regression).</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: render lists by mapping data to JSX elements.</strong></p>
+      <p><strong>Next:</strong> <a href="../session-15/index.html">Session 15 — Keys</a> (Layer 2 gate).</p>
+    </div>
+
     <p style="margin-top:24px;"><a href="../session-13/index.html">← Session 13</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-15/index.html">Session 15 →</a></p>
+
   </div>
 </main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
 <script src="../../notes-widget.js" defer></script>
 
 </body>
