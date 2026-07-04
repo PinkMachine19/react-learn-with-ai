@@ -4,7 +4,9 @@ function App() {
   return (
     <div>
       <h1>Countries</h1>
-      <CountryCard/>
+      <CountryCard name='Canada' region='Americas'/>
+      <CountryCard name='India' region='Asia'/>
+      <CountryCard name='Ghana' region='Africa'/>
     </div>
   );
 }
