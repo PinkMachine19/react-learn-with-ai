@@ -1,10 +1,12 @@
 /**
- * Shared session quiz logic + funny explanation reminder modal.
+ * Shared session quiz logic + explanation modal.
+ * Sessions 11+: modal shows the explanation inline ("Read this").
+ * Sessions 01–10: funny reminder to scroll to the explanation below.
  */
 (function () {
   'use strict';
 
-  var MESSAGES = [
+  var REMINDER_MESSAGES = [
     {
       title: 'Hold up, speedrunner!',
       text: 'You answered — cool. But the explanation below is where the actual learning lives. Your friend skips it. Don\'t be your friend.',
@@ -49,14 +51,31 @@
     }
   ];
 
+  var READ_THIS_INTROS = [
+    { title: 'Read this', sub: 'This is the part your friend skips. Don\'t be your friend.', emoji: '📖', btn: 'Got it' },
+    { title: 'Read this — seriously', sub: 'Right or wrong, the why matters more than the click.', emoji: '👀', btn: 'Ok, I read it' },
+    { title: 'Read this before you sprint away', sub: 'The explanation is the lesson. The option was just the quiz.', emoji: '🛑', btn: 'Understood' },
+    { title: 'Read this (boss fight)', sub: 'Defeat ignorance. Read the explanation in the box.', emoji: '🎮', btn: 'Next question' }
+  ];
+
   var modalBuilt = false;
   var overlay;
   var titleEl;
   var textEl;
   var subEl;
   var emojiEl;
+  var explainEl;
   var btnEl;
   var msgIndex = 0;
+
+  function getSessionNumber() {
+    var m = window.location.pathname.match(/session-(\d{2})/);
+    return m ? parseInt(m[1], 10) : 0;
+  }
+
+  function useInlineExplanationModal() {
+    return getSessionNumber() >= 11;
+  }
 
   function buildModal() {
     if (modalBuilt) return;
@@ -75,10 +94,11 @@
       '  <div class="quiz-explain-body">' +
       '    <h3 id="quiz-explain-title" class="quiz-explain-title"></h3>' +
       '    <p class="quiz-explain-text" id="quiz-explain-text"></p>' +
+      '    <div class="quiz-explain-explanation" id="quiz-explain-explanation" hidden></div>' +
       '    <p class="quiz-explain-sub" id="quiz-explain-sub"></p>' +
       '  </div>' +
       '  <div class="quiz-explain-actions">' +
-      '    <button type="button" class="quiz-explain-btn" id="quiz-explain-btn">Fine, I\'ll read it</button>' +
+      '    <button type="button" class="quiz-explain-btn" id="quiz-explain-btn">Got it</button>' +
       '  </div>' +
       '</div>';
 
@@ -88,6 +108,7 @@
     textEl = document.getElementById('quiz-explain-text');
     subEl = document.getElementById('quiz-explain-sub');
     emojiEl = document.getElementById('quiz-explain-emoji');
+    explainEl = document.getElementById('quiz-explain-explanation');
     btnEl = document.getElementById('quiz-explain-btn');
 
     btnEl.addEventListener('click', closeExplainModal);
@@ -102,16 +123,35 @@
     });
   }
 
-  function showExplainModal() {
+  function showExplainModal(explanationText) {
     buildModal();
-    var msg = MESSAGES[msgIndex % MESSAGES.length];
-    msgIndex += 1;
+    var inlineMode = useInlineExplanationModal() && explanationText;
 
-    emojiEl.textContent = msg.emoji;
-    titleEl.textContent = msg.title;
-    textEl.textContent = msg.text;
-    subEl.textContent = msg.sub;
-    btnEl.textContent = msg.btn;
+    if (inlineMode) {
+      var intro = READ_THIS_INTROS[msgIndex % READ_THIS_INTROS.length];
+      msgIndex += 1;
+
+      emojiEl.textContent = intro.emoji;
+      titleEl.textContent = intro.title;
+      textEl.textContent = '';
+      textEl.hidden = true;
+      explainEl.textContent = explanationText;
+      explainEl.hidden = false;
+      subEl.textContent = intro.sub;
+      btnEl.textContent = intro.btn;
+    } else {
+      var msg = REMINDER_MESSAGES[msgIndex % REMINDER_MESSAGES.length];
+      msgIndex += 1;
+
+      emojiEl.textContent = msg.emoji;
+      titleEl.textContent = msg.title;
+      textEl.textContent = msg.text;
+      textEl.hidden = false;
+      explainEl.textContent = '';
+      explainEl.hidden = true;
+      subEl.textContent = msg.sub;
+      btnEl.textContent = msg.btn;
+    }
 
     overlay.hidden = false;
     document.body.style.overflow = 'hidden';
@@ -157,7 +197,7 @@
           var explanation = q.querySelector('.explanation');
           if (explanation) explanation.style.display = 'block';
 
-          showExplainModal();
+          showExplainModal(explanation ? explanation.textContent.trim() : '');
 
           if (answeredCount === questions.length) btn.disabled = false;
         });

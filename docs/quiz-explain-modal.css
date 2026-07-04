@@ -23,7 +23,7 @@
 
 .quiz-explain-modal {
   width: 100%;
-  max-width: 420px;
+  max-width: 480px;
   border: 2px solid var(--yellow, #d29922);
   border-radius: 12px;
   background: var(--surface, #161b22);
@@ -60,6 +60,26 @@
   font-size: 15px;
   line-height: 1.55;
   color: var(--text, #c9d1d9);
+}
+
+.quiz-explain-text[hidden] {
+  display: none;
+}
+
+.quiz-explain-explanation {
+  margin: 12px 0 0;
+  padding: 14px 16px;
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: left;
+  color: var(--text, #c9d1d9);
+  background: var(--surface-2, #21262d);
+  border-radius: var(--radius, 6px);
+  border-left: 3px solid var(--accent, #58a6ff);
+}
+
+.quiz-explain-explanation[hidden] {
+  display: none;
 }
 
 .quiz-explain-sub {
