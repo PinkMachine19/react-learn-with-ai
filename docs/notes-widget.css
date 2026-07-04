@@ -193,7 +193,7 @@
 .notes-toast {
   position: fixed;
   right: 20px;
-  bottom: 76px;
+  bottom: 132px;
   z-index: 9002;
   padding: 10px 14px;
   border-radius: var(--radius, 6px);

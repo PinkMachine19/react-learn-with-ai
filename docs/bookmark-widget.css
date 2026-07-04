@@ -1,0 +1,107 @@
+/* Single lesson bookmark — scoped */
+
+.bookmark-target {
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.bookmark-target:hover {
+  background: rgba(88, 166, 255, 0.08);
+}
+
+.is-bookmarked {
+  box-shadow: inset 3px 0 0 var(--yellow, #d29922);
+  background: rgba(210, 153, 34, 0.1);
+}
+
+.bookmark-flash {
+  animation: bookmark-flash-pulse 1.6s ease;
+}
+
+@keyframes bookmark-flash-pulse {
+  0%, 100% { background: rgba(210, 153, 34, 0.1); }
+  25% { background: rgba(88, 166, 255, 0.22); }
+  50% { background: rgba(210, 153, 34, 0.16); }
+}
+
+.bookmark-fab {
+  position: fixed;
+  right: 20px;
+  bottom: 76px;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 16px;
+  border: 1px solid var(--border, #30363d);
+  border-radius: 999px;
+  background: var(--surface, #161b22);
+  color: var(--text, #c9d1d9);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  transition: border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+}
+
+.bookmark-fab:hover {
+  border-color: var(--yellow, #d29922);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+.bookmark-fab:focus-visible {
+  outline: 2px solid var(--yellow, #d29922);
+  outline-offset: 2px;
+}
+
+.bookmark-fab.has-bookmark {
+  border-color: var(--yellow, #d29922);
+}
+
+.bookmark-fab-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.bookmark-fab-label {
+  font-size: 13px;
+}
+
+.bookmark-toast {
+  position: fixed;
+  right: 20px;
+  bottom: 132px;
+  z-index: 9002;
+  max-width: min(320px, calc(100vw - 40px));
+  padding: 10px 14px;
+  border-radius: var(--radius, 6px);
+  background: var(--surface-2, #21262d);
+  border: 1px solid var(--yellow, #d29922);
+  color: var(--text, #c9d1d9);
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+
+.bookmark-toast.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+  .bookmark-fab-label {
+    display: none;
+  }
+
+  .bookmark-fab {
+    padding: 14px;
+    border-radius: 50%;
+  }
+}
