@@ -61,6 +61,90 @@
     </p>
     <div class="alert alert-info">Estimated time: 35–40 minutes · No coding lab today</div>
 
+    <!-- SVG: session-16 concept map -->
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="340" y="20" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Session 16 — What Is State?</text>
+
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,93,110)"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="28" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+      <text x="93" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">static now</text>
+      <text x="93" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Layer 2 list</text>
+      <text x="93" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">render once</text>
+      <text x="93" y="110" fill="white" font-family="monospace" font-size="7" text-anchor="middle">no clicks yet</text>
+      <text x="93" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">UI frozen until reload</text>
+      <text x="93" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">props + import only</text>
+
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,257,110)"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="192" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+      <text x="257" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">props</text>
+      <text x="257" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">from parent</text>
+      <text x="257" y="86" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">read-only</text>
+      <text x="257" y="110" fill="white" font-family="monospace" font-size="7" text-anchor="middle">name, region</text>
+      <text x="257" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Session 11</text>
+      <text x="257" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">external input</text>
+
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,421,110)"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="356" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+      <text x="421" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">state</text>
+      <text x="421" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">owned inside</text>
+      <text x="421" y="86" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">can change</text>
+      <text x="421" y="110" fill="white" font-family="monospace" font-size="7" text-anchor="middle">count, search,</text>
+      <text x="421" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">favorite toggle</text>
+      <text x="421" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">internal memory</text>
+
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,585,110)"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="520" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+      <text x="585" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">let fails</text>
+      <text x="585" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">let count = 0</text>
+      <text x="585" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">count++ on click</text>
+      <text x="585" y="110" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">UI stays stale</text>
+      <text x="585" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">no re-render signal</text>
+      <text x="585" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">JS var ≠ React state</text>
+
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,278)"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="28" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+      <text x="93" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">re-render</text>
+      <text x="93" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">state changes →</text>
+      <text x="93" y="254" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">function runs again</text>
+      <text x="93" y="278" fill="white" font-family="monospace" font-size="7" text-anchor="middle">new JSX → diff</text>
+      <text x="93" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Session 15 diff</text>
+
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,257,278)"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="192" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+      <text x="257" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">setter preview</text>
+      <text x="257" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">useState (17)</text>
+      <text x="257" y="254" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">setCount(n)</text>
+      <text x="257" y="278" fill="white" font-family="monospace" font-size="7" text-anchor="middle">triggers render</text>
+      <text x="257" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">not today</text>
+
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,421,278)"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="356" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+      <text x="421" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">concept lab</text>
+      <text x="421" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">draw tree</text>
+      <text x="421" y="254" fill="white" font-family="monospace" font-size="7" text-anchor="middle">label prop vs</text>
+      <text x="421" y="268" fill="white" font-family="monospace" font-size="7" text-anchor="middle">future state</text>
+      <text x="421" y="292" fill="white" font-family="monospace" font-size="7" text-anchor="middle">no src/ changes</text>
+      <text x="421" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">paper only</text>
+
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="520" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+      <text x="585" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">next</text>
+      <text x="585" y="240" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">useState hook</text>
+      <text x="585" y="254" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Session 17</text>
+      <text x="585" y="278" fill="white" font-family="monospace" font-size="7" text-anchor="middle">click counter</text>
+      <text x="585" y="292" fill="white" font-family="monospace" font-size="7" text-anchor="middle">first code</text>
+      <text x="585" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Layer 3 hands-on</text>
+    </svg>
+
     <hr class="section-divider" />
 
     <h2>1. Learning Objectives</h2>
@@ -158,6 +242,25 @@ function onButtonPress() {
         </tbody>
       </table>
     </div>
+
+    <!-- SVG: props vs state flow -->
+    <svg width="520" height="155" viewBox="0 0 520 155" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="520" height="155" fill="#111111"/>
+      <text x="260" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">props vs state — who owns the data?</text>
+      <rect x="16" y="32" width="230" height="105" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="131" y="50" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">PROPS</text>
+      <text x="131" y="68" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Parent sets → child reads</text>
+      <text x="131" y="82" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">child cannot mutate</text>
+      <text x="131" y="96" fill="white" font-family="monospace" font-size="7" text-anchor="middle">e.g. name="Japan"</text>
+      <text x="131" y="120" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.6">changes when parent re-renders</text>
+      <rect x="274" y="32" width="230" height="105" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="389" y="50" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">STATE</text>
+      <text x="389" y="68" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Component owns → setter updates</text>
+      <text x="389" y="82" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">triggers re-render</text>
+      <text x="389" y="96" fill="white" font-family="monospace" font-size="7" text-anchor="middle">e.g. click count, search text</text>
+      <text x="389" y="120" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.6">useState in Session 17</text>
+      <text x="260" y="148" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">let x = 0; x++ does NOT trigger the state path → screen unchanged</text>
+    </svg>
 
     <h3>Re-render mental model</h3>
     <ol>

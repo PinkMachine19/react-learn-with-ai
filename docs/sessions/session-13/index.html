@@ -64,6 +64,92 @@
     </p>
     <div class="alert alert-info">Estimated time: 35–40 minutes</div>
 
+    <!-- SVG: session-13 concept map -->
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="340" y="20" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Session 13 — Conditional Rendering</text>
+
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,93,110)"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="28" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+      <text x="93" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">ternary</text>
+      <text x="93" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">length === 0 ?</text>
+      <text x="93" y="86" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">"Empty" : "Has items"</text>
+      <text x="93" y="110" fill="white" font-family="monospace" font-size="7" text-anchor="middle">expression → value</text>
+      <text x="93" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">works in {"{ }"} JSX</text>
+      <text x="93" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">new JS today</text>
+
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,257,110)"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="192" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+      <text x="257" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">&amp;&amp; short-circuit</text>
+      <text x="257" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">show &amp;&amp; &lt;Banner /&gt;</text>
+      <text x="257" y="92" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">0 &amp;&amp; x → renders 0</text>
+      <text x="257" y="106" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">length &gt; 0 &amp;&amp; x ✓</text>
+      <text x="257" y="130" fill="white" font-family="monospace" font-size="7" text-anchor="middle">truthy → show</text>
+      <text x="257" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Session 03 truthy/falsy</text>
+
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,421,110)"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="356" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+      <text x="421" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">early return</text>
+      <text x="421" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">if (empty) {"{"}</text>
+      <text x="421" y="86" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">return &lt;p&gt;None&lt;/p&gt;;</text>
+      <text x="421" y="100" fill="white" font-family="monospace" font-size="7" text-anchor="middle">{"}"}</text>
+      <text x="421" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">if in function body</text>
+      <text x="421" y="138" fill="white" font-family="monospace" font-size="7" text-anchor="middle">not inside JSX</text>
+      <text x="421" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">guard clause</text>
+
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,585,110)"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="520" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+      <text x="585" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">expression only</text>
+      <rect x="516" y="62" width="138" height="22" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="585" y="77" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">{"{ if () { } }"} ✗</text>
+      <rect x="516" y="92" width="138" height="22" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="585" y="107" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">{"{ cond ? a : b }"} ✓</text>
+      <text x="585" y="132" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Session 09 JSX</text>
+      <text x="585" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">statements illegal in braces</text>
+
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,278)"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="28" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+      <text x="93" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">countries array</text>
+      <text x="93" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">const countries = [</text>
+      <text x="93" y="254" fill="white" font-family="monospace" font-size="7" text-anchor="middle">{"{ name, region },"}</text>
+      <text x="93" y="268" fill="white" font-family="monospace" font-size="7" text-anchor="middle">];</text>
+      <text x="93" y="292" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">length drives UI</text>
+      <text x="93" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Session 02 arrays</text>
+
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,257,278)"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="192" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+      <text x="257" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">empty branch</text>
+      <text x="257" y="240" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">No countries found</text>
+      <text x="257" y="260" fill="white" font-family="monospace" font-size="7" text-anchor="middle">length === 0</text>
+      <text x="257" y="284" fill="white" font-family="monospace" font-size="7" text-anchor="middle">no cards rendered</text>
+      <text x="257" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">list-level message</text>
+
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,421,278)"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="356" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+      <text x="421" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">manual index</text>
+      <text x="421" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">countries[0].name</text>
+      <text x="421" y="254" fill="white" font-family="monospace" font-size="7" text-anchor="middle">countries[1]…</text>
+      <text x="421" y="278" fill="white" font-family="monospace" font-size="7" text-anchor="middle">temporary until map</text>
+      <text x="421" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Session 14 replaces</text>
+
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="520" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+      <text x="585" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">next</text>
+      <text x="585" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">countries.map(</text>
+      <text x="585" y="254" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">c =&gt; &lt;Card /&gt;)</text>
+      <text x="585" y="278" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Session 14 — map</text>
+      <text x="585" y="292" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Session 03 .map()</text>
+      <text x="585" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">no more [0] [1] [2]</text>
+    </svg>
+
     <hr class="section-divider" />
 
     <h2>1. Learning Objectives</h2>
@@ -146,6 +232,28 @@ if (countries.length === 0) {
   label = "Browse countries";
 }</code></pre>
     <p>Ternary <em>returns a value</em> — that is why it works inside JSX curly braces.</p>
+
+    <!-- SVG: three conditional patterns -->
+    <svg width="520" height="165" viewBox="0 0 520 165" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="520" height="165" fill="#111111"/>
+      <text x="260" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">three patterns — same empty-list decision</text>
+      <rect x="12" y="32" width="155" height="115" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="90" y="48" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">early return</text>
+      <text x="90" y="66" fill="white" font-family="monospace" font-size="7" text-anchor="middle">if (empty) return</text>
+      <text x="90" y="80" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;p&gt;None&lt;/p&gt;;</text>
+      <text x="90" y="104" fill="white" font-family="monospace" font-size="7" text-anchor="middle">whole tree differs</text>
+      <text x="90" y="136" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.6">lab default ✓</text>
+      <rect x="182" y="32" width="155" height="115" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="260" y="48" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">ternary in JSX</text>
+      <text x="260" y="66" fill="white" font-family="monospace" font-size="7" text-anchor="middle">empty ? &lt;p/&gt; :</text>
+      <text x="260" y="80" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;div&gt;cards&lt;/div&gt;</text>
+      <text x="260" y="104" fill="white" font-family="monospace" font-size="7" text-anchor="middle">shared wrapper</text>
+      <rect x="352" y="32" width="155" height="115" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="430" y="48" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">&amp;&amp; extra</text>
+      <text x="430" y="66" fill="white" font-family="monospace" font-size="7" text-anchor="middle">len &gt; 0 &amp;&amp;</text>
+      <text x="430" y="80" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;p&gt;3 countries&lt;/p&gt;</text>
+      <text x="430" y="104" fill="white" font-family="monospace" font-size="7" text-anchor="middle">optional hint only</text>
+    </svg>
 
     <h3>JavaScript: &amp;&amp; short-circuit</h3>
     <pre><code>const isLoggedIn = true;

@@ -64,6 +64,91 @@
     </p>
     <div class="alert alert-info">Estimated time: 35–40 minutes</div>
 
+    <!-- SVG: session-14 concept map -->
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="340" y="20" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Session 14 — Rendering Lists with map()</text>
+
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,93,110)"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="28" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+      <text x="93" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">.map()</text>
+      <text x="93" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">[1,2,3].map(n=&gt;</text>
+      <text x="93" y="86" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">n * 2)</text>
+      <text x="93" y="110" fill="white" font-family="monospace" font-size="7" text-anchor="middle">→ [2,4,6]</text>
+      <text x="93" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">same length</text>
+      <text x="93" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Session 03</text>
+
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,257,110)"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="192" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+      <text x="257" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">transform</text>
+      <text x="257" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">country object</text>
+      <text x="257" y="90" fill="white" font-family="monospace" font-size="7" text-anchor="middle">↓ callback</text>
+      <text x="257" y="108" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">&lt;CountryCard /&gt;</text>
+      <text x="257" y="132" fill="white" font-family="monospace" font-size="7" text-anchor="middle">data → UI element</text>
+      <text x="257" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">one per item</text>
+
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,421,110)"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="356" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+      <text x="421" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">inside {"{ }"}</text>
+      <text x="421" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">&lt;section&gt;</text>
+      <text x="421" y="86" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">{"{countries.map…)}"}</text>
+      <text x="421" y="110" fill="white" font-family="monospace" font-size="7" text-anchor="middle">expression in JSX</text>
+      <text x="421" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Session 09</text>
+      <text x="421" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">not a for loop</text>
+
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,585,110)"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="520" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+      <text x="585" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">import data</text>
+      <text x="585" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">from '../data/</text>
+      <text x="585" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">countries'</text>
+      <text x="585" y="110" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">Session 06 module</text>
+      <text x="585" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">not src/mock yet</text>
+      <text x="585" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">shared source</text>
+
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,278)"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="28" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+      <text x="93" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">array of UI</text>
+      <text x="93" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">map → [</text>
+      <text x="93" y="254" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">&lt;Card/&gt;, &lt;Card/&gt;</text>
+      <text x="93" y="268" fill="white" font-family="monospace" font-size="7" text-anchor="middle">]</text>
+      <text x="93" y="292" fill="white" font-family="monospace" font-size="7" text-anchor="middle">React renders siblings</text>
+      <text x="93" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">valid JSX child</text>
+
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,257,278)"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="192" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+      <text x="257" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">arrow return</text>
+      <text x="257" y="240" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">c =&gt; ( &lt;Card /&gt; )</text>
+      <text x="257" y="260" fill="white" font-family="monospace" font-size="7" text-anchor="middle">( ) = implicit return</text>
+      <text x="257" y="280" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">{"{ }"} without return</text>
+      <text x="257" y="294" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">→ undefined</text>
+      <text x="257" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Session 04 arrows</text>
+
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,421,278)"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="356" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+      <text x="421" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">keep empty check</text>
+      <text x="421" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Session 13 guard</text>
+      <text x="421" y="254" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">if (length === 0)</text>
+      <text x="421" y="278" fill="white" font-family="monospace" font-size="7" text-anchor="middle">before map runs</text>
+      <text x="421" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">no blank list</text>
+
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="520" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+      <text x="585" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">next</text>
+      <text x="585" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">key={country.id}</text>
+      <text x="585" y="260" fill="white" font-family="monospace" font-size="7" text-anchor="middle">console warning</text>
+      <text x="585" y="278" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">Session 15 — keys</text>
+      <text x="585" y="292" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Layer 2 gate</text>
+      <text x="585" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">identity for diff</text>
+    </svg>
+
     <hr class="section-divider" />
 
     <h2>1. Learning Objectives</h2>
@@ -145,6 +230,31 @@ const names = countries.map(function (country) {
 });
 // names → ["Canada", "Japan"]</code></pre>
     <p>Same length, transformed values. For React, the "transform" is JSX instead of strings.</p>
+
+    <!-- SVG: array → map → cards -->
+    <svg width="520" height="140" viewBox="0 0 520 140" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="520" height="140" fill="#111111"/>
+      <text x="260" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">countries array → .map() → CountryCard elements</text>
+      <rect x="16" y="36" width="120" height="70" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="76" y="54" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">data[]</text>
+      <text x="76" y="70" fill="white" font-family="monospace" font-size="7" text-anchor="middle">{ id, name }</text>
+      <text x="76" y="84" fill="white" font-family="monospace" font-size="7" text-anchor="middle">{ id, name }</text>
+      <text x="76" y="98" fill="white" font-family="monospace" font-size="7" text-anchor="middle">{ id, name }</text>
+      <line x1="136" y1="71" x2="168" y2="71" stroke="#ff5ca8" stroke-width="1.5"/>
+      <polygon points="168,71 162,68 162,74" fill="#ff5ca8"/>
+      <text x="152" y="62" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">.map</text>
+      <rect x="170" y="36" width="120" height="70" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="230" y="54" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">callback</text>
+      <text x="230" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">return &lt;Card</text>
+      <text x="230" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">name={…} /&gt;</text>
+      <line x1="290" y1="71" x2="322" y2="71" stroke="#3fb950" stroke-width="1.5"/>
+      <polygon points="322,71 316,68 316,74" fill="#3fb950"/>
+      <rect x="324" y="36" width="180" height="70" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="414" y="54" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">UI on screen</text>
+      <text x="414" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Canada · Japan · India</text>
+      <text x="414" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">3 cards from 3 items</text>
+      <text x="260" y="124" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">add 4th country in data file → 4th card with zero CountryList edits</text>
+    </svg>
 
     <h3>React: map inside JSX</h3>
     <pre><code>import countries from '../data/countries';
