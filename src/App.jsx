@@ -1,12 +1,10 @@
-import CountryCard from "./component/CountryCard";
+import CountryList from "./component/CountryList";
 
 function App() {
   return (
     <div>
       <h1>Countries</h1>
-      <CountryCard name='Canada' region='Americas'/>
-      <CountryCard name='India' region='Asia'/>
-      <CountryCard name='Ghana' region='Africa'/>
+      <CountryList/>
     </div>
   );
 }
