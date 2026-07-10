@@ -49,7 +49,10 @@ function CountryList() {
   return (
     <section className='country-list'> 
      {countries.map(c => (
-      <CountryCard name={c.name} region={c.region}/>
+      <CountryCard
+      key={c.id} 
+      name={c.name} 
+      region={c.region}/>
      ))}
     </section>
   )
