@@ -7,8 +7,33 @@
   <link rel="stylesheet" href="../../styles.css" />
   <link rel="stylesheet" href="../../notes-widget.css" />
   <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+  </style>
 </head>
 <body>
+
 <nav>
   <div class="container">
     <a href="../../index.html" class="brand">⚛ React Learning</a>
@@ -22,27 +47,431 @@
     <a href="../../prompts/index.html">Prompts</a>
   </div>
 </nav>
+
 <main>
   <div class="container">
+
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
       <span class="badge badge-layer">Layer 3</span>
       <span class="badge badge-current">Session 17</span>
       <span style="color:var(--text-muted);font-size:13px;">State</span>
     </div>
     <h1>useState Hook</h1>
-    <div class="alert alert-warning">
-      <strong>Outline page.</strong> The full lesson doc (quizzes, SVGs, lab, commit checkpoint) is not written yet.
-      Use the syllabus outline below until this session is hydrated.
-    </div>
+    <p class="subtitle">
+      Session 16 explained why an ordinary <code>let count = 0</code> cannot
+      update the screen. Today we write the fix: the <code>useState</code>
+      hook. <code>CountryCard</code> gets its first piece of real memory — a
+      click counter that survives across renders and triggers a UI update
+      every time it changes.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <!-- SVG: session-17 concept map -->
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="340" y="20" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Session 17 — useState Hook</text>
+
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,93,110)"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="28" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+      <text x="93" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">recap: let fails</text>
+      <text x="93" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">let count = 0</text>
+      <text x="93" y="86" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">count++ → no re-render</text>
+      <text x="93" y="110" fill="white" font-family="monospace" font-size="7" text-anchor="middle">screen stays stale</text>
+      <text x="93" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Session 16</text>
+      <text x="93" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">the problem</text>
+
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,257,110)"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="192" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+      <text x="257" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">import hook</text>
+      <text x="257" y="72" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">import { useState }</text>
+      <text x="257" y="86" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">from 'react'</text>
+      <text x="257" y="110" fill="white" font-family="monospace" font-size="7" text-anchor="middle">a function React gives you</text>
+      <text x="257" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">the fix</text>
+
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,421,110)"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="356" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+      <text x="421" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">array destructure</text>
+      <text x="421" y="72" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">const [count, setCount]</text>
+      <text x="421" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">= useState(0)</text>
+      <text x="421" y="110" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Session 05 destructuring</text>
+      <text x="421" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">position, not name, matters</text>
+
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,585,110)"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="520" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+      <text x="585" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">initial value</text>
+      <text x="585" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">useState(0)</text>
+      <text x="585" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">used on first render only</text>
+      <text x="585" y="110" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">ignored on later renders</text>
+      <text x="585" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">seed value</text>
+
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,278)"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="28" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+      <text x="93" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">setter call</text>
+      <text x="93" y="240" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">setCount(count + 1)</text>
+      <text x="93" y="260" fill="white" font-family="monospace" font-size="7" text-anchor="middle">tells React:</text>
+      <text x="93" y="274" fill="white" font-family="monospace" font-size="7" text-anchor="middle">"value changed"</text>
+      <text x="93" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">the trigger</text>
+
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,257,278)"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="192" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+      <text x="257" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">re-render</text>
+      <text x="257" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">CountryCard function</text>
+      <text x="257" y="254" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">runs again</text>
+      <text x="257" y="278" fill="white" font-family="monospace" font-size="7" text-anchor="middle">count now reads new value</text>
+      <text x="257" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Session 16 preview, now real</text>
+
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,421,278)"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="356" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+      <text x="421" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">closure snapshot</text>
+      <text x="421" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">each render's count</text>
+      <text x="421" y="254" fill="white" font-family="monospace" font-size="7" text-anchor="middle">is its own constant</text>
+      <text x="421" y="278" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">not shared mutable state</text>
+      <text x="421" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">function scope, Session 04</text>
+
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="520" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+      <text x="585" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">next</text>
+      <text x="585" y="240" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">Session 18</text>
+      <text x="585" y="254" fill="white" font-family="monospace" font-size="7" text-anchor="middle">event handlers deep dive</text>
+      <text x="585" y="278" fill="white" font-family="monospace" font-size="7" text-anchor="middle">named functions, event object</text>
+      <text x="585" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">today's onClick is a preview</text>
+    </svg>
+
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
     <div class="card">
-      <h2>From the syllabus</h2>
-      <p><strong>Core concept:</strong> Hook syntax, initial value, setter function, closure capture</p>
-      <p><strong>Project milestone:</strong> Add a click counter to CountryCard</p>
-      <p><strong>Status:</strong> <span class="badge badge-current">Available</span> — session page is open; complete prior sessions in order when doing the lab track.</p>
+      <ul>
+        <li>Import and call <code>useState</code> to declare a piece of component state</li>
+        <li>Explain why <code>useState</code> returns an array of exactly two items — a value and a setter</li>
+        <li>Know that the argument to <code>useState(0)</code> is only used on the very first render</li>
+        <li>Call the setter to update state and understand this schedules a re-render</li>
+        <li>Describe what "closure capture" means for the <code>count</code> variable inside one render</li>
+      </ul>
     </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>What does <code>useState(0)</code> return?</p>
+        <label class="quiz-option" data-val="a">Just the number <code>0</code></label>
+        <label class="quiz-option" data-val="b">An array with two items: the current value and a setter function</label>
+        <label class="quiz-option" data-val="c">An object with a <code>.value</code> property</label>
+        <label class="quiz-option" data-val="d">A Promise that resolves to <code>0</code></label>
+        <div class="explanation">useState always returns a two-item array: [currentValue, setterFunction]. Array destructuring names them.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Why does <code>const [count, setCount] = useState(0)</code> work no matter what you name the variables?</p>
+        <label class="quiz-option" data-val="a">React reads your variable names to decide behavior</label>
+        <label class="quiz-option" data-val="b">It doesn't — the names must be exactly count and setCount</label>
+        <label class="quiz-option" data-val="c">Array destructuring assigns by position, not by name — item 0 and item 1</label>
+        <label class="quiz-option" data-val="d">useState guesses the name from the component</label>
+        <div class="explanation">Session 05: array destructuring unpacks by position. Object destructuring would unpack by name — useState deliberately returns an array so you can name the pair anything.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>CountryCard re-renders three times after mount. How many times does <code>useState(0)</code>'s argument actually get used to set the value?</p>
+        <label class="quiz-option" data-val="a">Four times — once per render</label>
+        <label class="quiz-option" data-val="b">Zero — the argument is ignored entirely</label>
+        <label class="quiz-option" data-val="c">Three times — every render except the first</label>
+        <label class="quiz-option" data-val="d">Once — only on the very first render (initial mount); later renders keep the current state</label>
+        <div class="explanation">The initial value seeds state on mount only. After that, React remembers the current value across renders regardless of what argument you write in the source.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>What does calling <code>setCount(count + 1)</code> actually do?</p>
+        <label class="quiz-option" data-val="a">Schedules a re-render of this component with the new state value</label>
+        <label class="quiz-option" data-val="b">Immediately mutates the count variable in place</label>
+        <label class="quiz-option" data-val="c">Only updates the value — the screen updates on next page reload</label>
+        <label class="quiz-option" data-val="d">Runs a network request</label>
+        <div class="explanation">The setter is the signal Session 16 said was missing from plain let variables — it tells React "re-run this component, something changed."</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>If a click handler could somehow run twice before the component re-renders, what value of <code>count</code> would each call see?</p>
+        <label class="quiz-option" data-val="a">A live reference that updates itself instantly on the first call</label>
+        <label class="quiz-option" data-val="b">undefined on the second call</label>
+        <label class="quiz-option" data-val="c">The same snapshot value from that render — count is a constant captured by closure until the next render happens</label>
+        <label class="quiz-option" data-val="d">React throws an error</label>
+        <div class="explanation">count is declared with const inside the function body — each render's count is frozen for that render (closure capture, Session 04's function scope idea extended).</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — JavaScript First, Then React</h2>
+
+    <h3>JavaScript: a function that returns a pair</h3>
+    <p>Nothing magic is happening syntactically — <code>useState</code> is just a function call whose return value happens to be a two-item array, unpacked with the array destructuring from Session 05:</p>
+    <pre><code>function makePair() {
+  return [1, function increment() { /* ... */ }];
+}
+
+const [value, bump] = makePair();
+// value → 1
+// bump  → the function</code></pre>
+    <p><code>useState</code> works the same way — it just also plugs into React's internal bookkeeping so the "current value" it hands back is whatever was last set, not always the initial argument.</p>
+
+    <!-- SVG: useState as a pair-returning function -->
+    <svg width="520" height="140" viewBox="0 0 520 140" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="520" height="140" fill="#111111"/>
+      <text x="260" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">useState(0) → [value, setter] → destructured by position</text>
+      <rect x="16" y="34" width="140" height="80" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="86" y="52" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">useState(0)</text>
+      <text x="86" y="70" fill="white" font-family="monospace" font-size="7" text-anchor="middle">called once per</text>
+      <text x="86" y="84" fill="white" font-family="monospace" font-size="7" text-anchor="middle">render</text>
+      <line x1="156" y1="74" x2="196" y2="74" stroke="#ff5ca8" stroke-width="1.5"/>
+      <polygon points="196,74 190,71 190,77" fill="#ff5ca8"/>
+      <rect x="198" y="34" width="140" height="80" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="268" y="52" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">[0, setCount]</text>
+      <text x="268" y="70" fill="white" font-family="monospace" font-size="7" text-anchor="middle">index 0: current value</text>
+      <text x="268" y="84" fill="white" font-family="monospace" font-size="7" text-anchor="middle">index 1: setter fn</text>
+      <line x1="338" y1="74" x2="378" y2="74" stroke="#3fb950" stroke-width="1.5"/>
+      <polygon points="378,74 372,71 372,77" fill="#3fb950"/>
+      <rect x="380" y="34" width="124" height="80" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="442" y="52" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">const [count,</text>
+      <text x="442" y="66" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">setCount]</text>
+      <text x="442" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">your names</text>
+      <text x="260" y="128" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">position matters, not the words count/setCount themselves</text>
+    </svg>
+
+    <h3>React: declaring state inside a component</h3>
+    <pre><code>import { useState } from 'react';
+
+function CountryCard({ name, region }) {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;div className="country-card"&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;Region:{region}&lt;/p&gt;
+      &lt;p&gt;Clicked {count} times&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Click me&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+    <p>
+      Every <code>CountryCard</code> that gets rendered has its <strong>own</strong>
+      independent <code>count</code>. Four cards on screen means four separate
+      calls to <code>useState(0)</code>, each with its own memory. Clicking one
+      card's button never changes another card's count — this is the same
+      per-instance isolation you'd expect from four separate function calls.
+    </p>
+
+    <div class="alert alert-info">
+      <strong>Not fully explained yet:</strong> the <code>onClick={() =&gt; setCount(count + 1)}</code>
+      line uses an inline arrow function as an event handler. That is enough
+      JSX to make the counter work today. Session 18 slows down and explains
+      exactly what <code>onClick</code> is, what the event object contains,
+      and why you often extract handlers into named functions.
+    </div>
+
+    <h3>Common mistakes</h3>
+    <pre><code>// MISTAKE: calling the setter during render, not inside a handler — infinite loop
+function CountryCard() {
+  const [count, setCount] = useState(0);
+  setCount(count + 1); // runs every render → re-renders forever
+  ...
+}
+
+// MISTAKE: mutating instead of using the setter — no re-render happens
+let count = 0;
+count = count + 1; // React never finds out
+
+// MISTAKE: forgetting the initial value's type stays consistent
+const [count, setCount] = useState(0);
+setCount("5"); // works but now count is a string — comparisons downstream break</code></pre>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Add <code>useState</code> to
+      <code>CountryCard</code> so each card tracks and displays its own click
+      count.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Import the hook</strong></p>
+        <pre><code>import { useState } from 'react';</code></pre>
+        <p>Add this to the top of <code>src/component/CountryCard.jsx</code>, above the component function.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Declare the state</strong></p>
+        <pre><code>function CountryCard({ name, region }) {
+  const [count, setCount] = useState(0);
+  ...
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Display the count and wire the button</strong></p>
+        <pre><code>function CountryCard({ name, region }) {
+  const [count, setCount] = useState(0);
+
+  return (
+    &lt;div className="country-card"&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;Region:{region}&lt;/p&gt;
+      &lt;p&gt;Clicked {count} times&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + 1)}&gt;Click me&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+export default CountryCard;</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Verify</strong></p>
+        <p>Reload the browser. Each of the four country cards from <code>countries.js</code> should show its own "Clicked 0 times" and a button. Click one card's button several times — only that card's count changes. Reload the page — every count resets to 0, because state lives in memory only, not in <code>countries.js</code>.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/component/CountryCard.jsx</code></td><td>Updated</td><td>Add useState click counter and button</td></tr>
+          <tr><td><code>docs/sessions/session-17/index.html</code></td><td>Updated</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/component/CountryCard.jsx docs/sessions/session-17/index.html
+git commit -m "session-17: add useState click counter to CountryCard"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1"><code>useState</code> imported from <code>react</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2"><code>const [count, setCount] = useState(0)</code> declared inside CountryCard</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">Button click increments the count and the screen updates immediately</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">Each rendered card has an independent count — clicking one does not change another</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I can explain why <code>let count = 0; count++</code> would not have worked here (Session 16)</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Proceed to Session 18 (Event Handlers) after ≥ 80%.">
+      <div class="quiz-question" data-question="0" data-answer="d">
+        <div class="question-num">Question 1 of 5</div>
+        <p>Four CountryCard components are on screen. How many times was <code>useState(0)</code> called in total, right after mount?</p>
+        <label class="quiz-option" data-val="a">Once — state is shared across all cards</label>
+        <label class="quiz-option" data-val="b">Zero — useState only runs on click</label>
+        <label class="quiz-option" data-val="c">Eight — twice per card</label>
+        <label class="quiz-option" data-val="d">Four — once per component instance, each with its own state</label>
+        <div class="explanation">Each rendered instance of a component owns its own state. Four cards means four independent count values.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>After clicking a card's button once, why does the paragraph showing "Clicked N times" actually change on screen?</p>
+        <label class="quiz-option" data-val="a">The DOM node polls state every second</label>
+        <label class="quiz-option" data-val="b">setCount scheduled a re-render; CountryCard ran again and returned new JSX with the updated count</label>
+        <label class="quiz-option" data-val="c">The button element mutates its own text directly</label>
+        <label class="quiz-option" data-val="d">The page silently reloads</label>
+        <div class="explanation">This is the re-render loop from Session 16, now wired up for real: state change → setter call → re-render → new JSX → diff → DOM update.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="c">
+        <div class="question-num">Question 3 of 5</div>
+        <p>You reload the page after clicking a card three times. What does the count show?</p>
+        <label class="quiz-option" data-val="a">3 — state persists in countries.js</label>
+        <label class="quiz-option" data-val="b">3 — the browser caches state automatically</label>
+        <label class="quiz-option" data-val="c">0 — state only lives in memory for the current component instance; a reload remounts everything fresh</label>
+        <label class="quiz-option" data-val="d">An error, because useState cannot reset</label>
+        <div class="explanation">useState is in-memory only. No persistence layer exists yet — that is a much later topic (localStorage, backend, etc.), not something this session covers.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>What would happen if you wrote <code>useState(0)</code> as <code>useState(Math.random())</code>?</p>
+        <label class="quiz-option" data-val="a">Only the first render's count would be a random number — later re-renders still use whatever setCount last set, unaffected by re-evaluating that argument</label>
+        <label class="quiz-option" data-val="b">count would become a new random number on every render</label>
+        <label class="quiz-option" data-val="c">React would throw an error — only literals are allowed</label>
+        <label class="quiz-option" data-val="d">setCount would stop working</label>
+        <div class="explanation">The initial-value argument is only consulted on mount, matching what Question 3 of the pre-quiz covered.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 18 will focus on:</p>
+        <label class="quiz-option" data-val="a">Fetching countries from a real API</label>
+        <label class="quiz-option" data-val="b">Adding a second useState for search text</label>
+        <label class="quiz-option" data-val="c">What onClick and the event object actually are — extracting named handler functions</label>
+        <label class="quiz-option" data-val="d">Testing CountryCard with Vitest</label>
+        <div class="explanation">Today's inline onClick was a functional shortcut. Session 18 unpacks it properly.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>In your own words, why does <code>useState</code> need to return a setter function instead of just letting you reassign a variable?</li>
+        <li>What would you expect to see on screen if two different CountryCard instances somehow shared one <code>count</code> variable? Why doesn't that happen here?</li>
+        <li>Why is the initial value argument to <code>useState</code> only meaningful on the first render?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Remove <code>useState</code> import:</strong> Build error — <code>useState is not defined</code>.</li>
+        <li><strong>Remove the setter call, keep a plain variable:</strong> Clicking the button does nothing visible — this is the exact Session 16 failure mode, now reproducible on purpose.</li>
+        <li><strong>Call <code>setCount</code> directly in the component body (not inside the handler):</strong> Infinite re-render loop — the browser tab will hang or crash.</li>
+        <li><strong>Remove the button:</strong> Count is declared but nothing ever changes it — dead state.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: useState gives a component its own memory that changes over time and triggers a re-render when updated.</strong></p>
+      <p><strong>Next:</strong> <a href="../session-18/index.html">Session 18 — Event Handlers</a> — understand what onClick actually is.</p>
+    </div>
+
     <p style="margin-top:24px;"><a href="../session-16/index.html">← Session 16</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-18/index.html">Session 18 →</a></p>
+
   </div>
 </main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
 <script src="../../notes-widget.js" defer></script>
 <script src="../../bookmark-widget.js" defer></script>
 
