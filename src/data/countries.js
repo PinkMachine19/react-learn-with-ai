@@ -16,4 +16,8 @@ const countries = [
     {id:4, name:'Ghana', region:'Africa', population: 36000000}
 ];
 
+
 export default countries
+
+
+
