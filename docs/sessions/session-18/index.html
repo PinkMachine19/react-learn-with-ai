@@ -7,8 +7,33 @@
   <link rel="stylesheet" href="../../styles.css" />
   <link rel="stylesheet" href="../../notes-widget.css" />
   <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+  </style>
 </head>
 <body>
+
 <nav>
   <div class="container">
     <a href="../../index.html" class="brand">⚛ React Learning</a>
@@ -22,27 +47,444 @@
     <a href="../../prompts/index.html">Prompts</a>
   </div>
 </nav>
+
 <main>
   <div class="container">
+
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
       <span class="badge badge-layer">Layer 3</span>
       <span class="badge badge-current">Session 18</span>
       <span style="color:var(--text-muted);font-size:13px;">State</span>
     </div>
     <h1>Event Handlers</h1>
-    <div class="alert alert-warning">
-      <strong>Outline page.</strong> The full lesson doc (quizzes, SVGs, lab, commit checkpoint) is not written yet.
-      Use the syllabus outline below until this session is hydrated.
-    </div>
+    <p class="subtitle">
+      Session 17 wrote <code>onClick={() =&gt; setCount(count + 1)}</code> and
+      moved on — it worked, but we skipped what <code>onClick</code> actually
+      is. Today we slow down: extract a named handler function, inspect the
+      event object React hands it, and add a second handler (a reset button)
+      so <code>CountryCard</code> has more than one thing a user can do.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <!-- SVG: session-18 concept map -->
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="340" y="20" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Session 18 — Event Handlers</text>
+
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,93,110)"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="28" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+      <text x="93" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">recap: inline</text>
+      <text x="93" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">onClick={() =&gt;</text>
+      <text x="93" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">setCount(count+1)}</text>
+      <text x="93" y="110" fill="white" font-family="monospace" font-size="7" text-anchor="middle">worked, unexplained</text>
+      <text x="93" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Session 17</text>
+      <text x="93" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">where we left off</text>
+
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,257,110)"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="192" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+      <text x="257" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">named handler</text>
+      <text x="257" y="72" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">function handleClick</text>
+      <text x="257" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">(event) { ... }</text>
+      <text x="257" y="110" fill="white" font-family="monospace" font-size="7" text-anchor="middle">plain JS function</text>
+      <text x="257" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Session 04 functions</text>
+
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,421,110)"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="356" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+      <text x="421" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">reference, not call</text>
+      <rect x="352" y="62" width="138" height="20" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="421" y="76" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">onClick={handleClick()} ✗</text>
+      <rect x="352" y="90" width="138" height="20" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="421" y="104" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">onClick={handleClick} ✓</text>
+      <text x="421" y="126" fill="white" font-family="monospace" font-size="7" text-anchor="middle">() calls it now, not on click</text>
+      <text x="421" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">the #1 beginner bug</text>
+
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,585,110)"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="520" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+      <text x="585" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">event object</text>
+      <text x="585" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">React passes it in</text>
+      <text x="585" y="86" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">event.type</text>
+      <text x="585" y="100" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">event.target</text>
+      <text x="585" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">SyntheticEvent wrapper</text>
+
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,278)"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="28" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+      <text x="93" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">synthetic</text>
+      <text x="93" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">React wraps the</text>
+      <text x="93" y="254" fill="white" font-family="monospace" font-size="7" text-anchor="middle">real browser event</text>
+      <text x="93" y="278" fill="white" font-family="monospace" font-size="7" text-anchor="middle">works the same everywhere</text>
+      <text x="93" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">cross-browser consistency</text>
+
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,257,278)"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="192" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+      <text x="257" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">second handler</text>
+      <text x="257" y="240" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">handleReset</text>
+      <text x="257" y="254" fill="white" font-family="monospace" font-size="7" text-anchor="middle">setCount(0)</text>
+      <text x="257" y="278" fill="white" font-family="monospace" font-size="7" text-anchor="middle">two buttons, two fns</text>
+      <text x="257" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">one job per handler</text>
+
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,421,278)"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="356" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+      <text x="421" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">onChange preview</text>
+      <text x="421" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">same pattern</text>
+      <text x="421" y="254" fill="white" font-family="monospace" font-size="7" text-anchor="middle">fires on input</text>
+      <text x="421" y="278" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">not wired up today</text>
+      <text x="421" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Session 20 controlled inputs</text>
+
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="520" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+      <text x="585" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">next</text>
+      <text x="585" y="240" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">Session 19</text>
+      <text x="585" y="254" fill="white" font-family="monospace" font-size="7" text-anchor="middle">re-rendering deep dive</text>
+      <text x="585" y="278" fill="white" font-family="monospace" font-size="7" text-anchor="middle">console.log proof</text>
+      <text x="585" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">what triggers, what doesn't</text>
+    </svg>
+
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
     <div class="card">
-      <h2>From the syllabus</h2>
-      <p><strong>Core concept:</strong> Synthetic events, onClick, onChange, the event object</p>
-      <p><strong>Project milestone:</strong> Handle a button click on a country card</p>
-      <p><strong>Status:</strong> <span class="badge badge-current">Available</span> — session page is open; complete prior sessions in order when doing the lab track.</p>
+      <ul>
+        <li>Explain the difference between <code>onClick={handleClick}</code> and <code>onClick={handleClick()}</code></li>
+        <li>Extract an inline arrow-function handler into a named function</li>
+        <li>Read properties off the event object React passes to a handler — <code>event.type</code>, <code>event.target</code></li>
+        <li>Explain what a "synthetic event" is and why React wraps the native browser event</li>
+        <li>Attach a second, independent event handler to a new button</li>
+      </ul>
     </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>What is the difference between <code>onClick={handleClick}</code> and <code>onClick={handleClick()}</code>?</p>
+        <label class="quiz-option" data-val="a">No difference — both work identically</label>
+        <label class="quiz-option" data-val="b">The second is faster</label>
+        <label class="quiz-option" data-val="c"><code>handleClick</code> passes the function itself for React to call later on click; <code>handleClick()</code> calls it immediately during render and passes its return value instead</label>
+        <label class="quiz-option" data-val="d">The first only works with arrow functions</label>
+        <div class="explanation">This is the single most common event-handler bug for beginners. Parentheses invoke the function right now, not on click.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="a">
+        <div class="question-num">Question 2 of 5</div>
+        <p>When React calls your click handler, what does it pass as the argument?</p>
+        <label class="quiz-option" data-val="a">A SyntheticEvent object describing the click</label>
+        <label class="quiz-option" data-val="b">Nothing — handlers take no arguments</label>
+        <label class="quiz-option" data-val="c">The component's props</label>
+        <label class="quiz-option" data-val="d">The current state value directly</label>
+        <div class="explanation">Every DOM event handler in React receives an event object as its first argument, whether or not you choose to use it.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Why does React use a "synthetic" event instead of handing you the raw browser event directly?</p>
+        <label class="quiz-option" data-val="a">Synthetic events are faster to type</label>
+        <label class="quiz-option" data-val="b">Raw browser events don't exist</label>
+        <label class="quiz-option" data-val="c">It's required by JSX syntax</label>
+        <label class="quiz-option" data-val="d">It gives a consistent event interface across different browsers, wrapping whatever the browser's native event actually looks like</label>
+        <div class="explanation">Different browsers can have slightly different native event objects; React's SyntheticEvent normalizes that so your handler code doesn't need per-browser checks.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="b">
+        <div class="question-num">Question 4 of 5</div>
+        <p>You want a "Reset" button that sets the count back to 0, separate from the "Click me" button that increments it. What's the right approach?</p>
+        <label class="quiz-option" data-val="a">Reuse the same handleClick function for both buttons</label>
+        <label class="quiz-option" data-val="b">Write a second function, e.g. handleReset, and attach it to the reset button's onClick</label>
+        <label class="quiz-option" data-val="c">Buttons can only have one onClick per component</label>
+        <label class="quiz-option" data-val="d">Use onChange instead of onClick for the reset button</label>
+        <div class="explanation">Each button gets its own handler function doing one clear job — the same "one job per function" idea from Session 04.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="a">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Extracting <code>() =&gt; setCount(count + 1)</code> into a named <code>function handleClick() { setCount(count + 1); }</code> changes what, functionally?</p>
+        <label class="quiz-option" data-val="a">Nothing about behavior — it's a readability/organization change; the click still increments count the same way</label>
+        <label class="quiz-option" data-val="b">It makes the counter increment by 2 instead of 1</label>
+        <label class="quiz-option" data-val="c">It breaks useState</label>
+        <label class="quiz-option" data-val="d">It removes the need for the button element</label>
+        <div class="explanation">Naming a handler doesn't change what it does — it's the same logic, easier to read and reuse.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — JavaScript First, Then React</h2>
+
+    <h3>JavaScript: passing a function vs calling a function</h3>
+    <pre><code>function sayHi() {
+  console.log("hi");
+}
+
+setTimeout(sayHi, 1000);   // passes the function — runs once, after 1s
+setTimeout(sayHi(), 1000); // calls sayHi() immediately, passes undefined to setTimeout</code></pre>
+    <p>
+      This is plain JavaScript, nothing React-specific: a function name with no
+      parentheses is a <em>reference</em> to the function. Add parentheses and
+      you're invoking it right now, using whatever it returns instead.
+      <code>onClick</code> works exactly the same way.
+    </p>
+
+    <!-- SVG: reference vs call -->
+    <svg width="520" height="140" viewBox="0 0 520 140" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="520" height="140" fill="#111111"/>
+      <text x="260" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">handleClick vs handleClick() inside onClick={ }</text>
+      <rect x="16" y="34" width="230" height="90" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="131" y="52" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">onClick={handleClick}</text>
+      <text x="131" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">passes the function itself</text>
+      <text x="131" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">React calls it later, on click</text>
+      <text x="131" y="104" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">correct ✓</text>
+      <rect x="274" y="34" width="230" height="90" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="389" y="52" fill="#f85149" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">onClick={handleClick()}</text>
+      <text x="389" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">runs handleClick during render</text>
+      <text x="389" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">passes its return value (often undefined)</text>
+      <text x="389" y="104" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">bug — fires immediately, not on click</text>
+    </svg>
+
+    <h3>React: extracting a named handler</h3>
+    <pre><code>import { useState } from 'react';
+
+function CountryCard({ name, region }) {
+  const [count, setCount] = useState(0);
+
+  function handleClick(event) {
+    console.log(event.type, event.target);
+    setCount(count + 1);
+  }
+
+  function handleReset() {
+    setCount(0);
+  }
+
+  return (
+    &lt;div className="country-card"&gt;
+      &lt;h2&gt;{name}&lt;/h2&gt;
+      &lt;p&gt;Region:{region}&lt;/p&gt;
+      &lt;p&gt;Clicked {count} times&lt;/p&gt;
+      &lt;button onClick={handleClick}&gt;Click me&lt;/button&gt;
+      &lt;button onClick={handleReset}&gt;Reset&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+    <p>
+      <code>handleClick</code> receives the SyntheticEvent as its first
+      parameter automatically — React always passes it, whether or not the
+      function declares a parameter to catch it. <code>handleReset</code>
+      doesn't need the event at all, so it simply doesn't declare a parameter
+      for it — that's allowed; JavaScript doesn't force you to use every
+      argument.
+    </p>
+
+    <h3>What's actually on the event object</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Property</th><th>What it holds</th></tr></thead>
+        <tbody>
+          <tr><td><code>event.type</code></td><td>The kind of event, e.g. <code>"click"</code></td></tr>
+          <tr><td><code>event.target</code></td><td>The actual DOM element that was interacted with — here, the <code>&lt;button&gt;</code></td></tr>
+          <tr><td><code>event.preventDefault()</code></td><td>A method to stop a browser's default behavior (not needed for a plain button, but essential later for form submissions)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-info">
+      <strong>Not in scope yet:</strong> typing in an input fires an
+      <code>onChange</code> event using this exact same pattern — a handler
+      function receiving an event object. We are not wiring up an input today;
+      that's Session 20 (Controlled Inputs). Today is strictly about
+      understanding the click path we already built in Session 17.
+    </div>
+
+    <h3>Common mistakes</h3>
+    <pre><code>// MISTAKE: calling the handler instead of passing it
+&lt;button onClick={handleClick()}&gt;Click me&lt;/button&gt;  // fires on every render, not on click
+
+// MISTAKE: forgetting handleReset needs no arguments from the click
+&lt;button onClick={handleReset(0)}&gt;Reset&lt;/button&gt;  // calls it immediately with argument 0, ignored
+
+// MISTAKE: expecting event to exist in a handler that isn't attached to a DOM event
+function randomFunction() {
+  console.log(event.target); // event is undefined here — only handlers React invokes receive it</code></pre>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Refactor the inline click handler from
+      Session 17 into a named <code>handleClick</code> function that logs the
+      event, and add a <code>handleReset</code> function wired to a new
+      Reset button.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Extract the click handler</strong></p>
+        <pre><code>function CountryCard({ name, region }) {
+  const [count, setCount] = useState(0);
+
+  function handleClick(event) {
+    console.log(event.type, event.target);
+    setCount(count + 1);
+  }
+
+  ...
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Add the reset handler</strong></p>
+        <pre><code>function handleReset() {
+  setCount(0);
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Wire both buttons by reference — no parentheses</strong></p>
+        <pre><code>&lt;p&gt;Clicked {count} times&lt;/p&gt;
+&lt;button onClick={handleClick}&gt;Click me&lt;/button&gt;
+&lt;button onClick={handleReset}&gt;Reset&lt;/button&gt;</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Verify</strong></p>
+        <p>Open DevTools console. Click "Click me" a few times — each click logs <code>click &lt;button&gt;</code> and the count increases. Click "Reset" — count returns to 0, and nothing is logged (handleReset never used the event, so it never logged anything). Confirm each card's counter and reset button only affect that card.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/component/CountryCard.jsx</code></td><td>Updated</td><td>Extract named handleClick, add handleReset and Reset button</td></tr>
+          <tr><td><code>docs/sessions/session-18/index.html</code></td><td>Updated</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/component/CountryCard.jsx docs/sessions/session-18/index.html
+git commit -m "session-18: extract named event handlers, add reset button"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">handleClick and handleReset are named functions declared inside CountryCard</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">Both buttons use <code>onClick={handleX}</code> — no parentheses, no inline calls</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">handleClick logs <code>event.type</code> and <code>event.target</code> to the console</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">Reset button sets count back to 0 without needing the event object</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I can explain why <code>onClick={handleClick()}</code> would have been a bug</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Proceed to Session 19 (Re-rendering Deep Dive) after ≥ 80%.">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>If you accidentally wrote <code>onClick={handleReset()}</code> instead of <code>onClick={handleReset}</code>, when would count reset to 0?</p>
+        <label class="quiz-option" data-val="a">Only when the Reset button is clicked, as intended</label>
+        <label class="quiz-option" data-val="b">Immediately during render — before any click happens, and every re-render after that</label>
+        <label class="quiz-option" data-val="c">Never — it would throw an error</label>
+        <label class="quiz-option" data-val="d">Only after the first click on any button on the page</label>
+        <div class="explanation">The parentheses invoke handleReset while React is building the JSX, not in response to a user click.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p><code>handleReset</code> is declared as <code>function handleReset()</code> with no parameters, yet React still calls it with a SyntheticEvent argument when the button is clicked. What happens to that argument?</p>
+        <label class="quiz-option" data-val="a">React throws an error because handleReset doesn't accept it</label>
+        <label class="quiz-option" data-val="b">The click doesn't register at all</label>
+        <label class="quiz-option" data-val="c">It's passed but simply unused — JavaScript doesn't require a function to declare a parameter for every argument it's called with</label>
+        <label class="quiz-option" data-val="d">It gets stored in count automatically</label>
+        <div class="explanation">Extra arguments a function doesn't declare parameters for are just ignored — ordinary JavaScript function-call behavior.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Why does <code>event.target</code> inside handleClick refer to the <code>&lt;button&gt;</code> element specifically?</p>
+        <label class="quiz-option" data-val="a">target always means the whole document</label>
+        <label class="quiz-option" data-val="b">target is set manually in our code</label>
+        <label class="quiz-option" data-val="c">target refers to CountryCard, the component</label>
+        <label class="quiz-option" data-val="d">target is the actual DOM element the event originated from — the button that was clicked</label>
+        <div class="explanation">event.target always points to the specific element the interaction happened on.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Why is React's event a "SyntheticEvent" rather than the browser's raw native event object?</p>
+        <label class="quiz-option" data-val="a">It's a consistent wrapper so the same event-handling code works the same way regardless of browser quirks</label>
+        <label class="quiz-option" data-val="b">Because JSX cannot understand real browser events</label>
+        <label class="quiz-option" data-val="c">Because click events don't exist natively in browsers</label>
+        <label class="quiz-option" data-val="d">Purely a naming convention with no functional purpose</label>
+        <div class="explanation">Matches the pre-quiz explanation: normalized cross-browser behavior is the actual reason it exists.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 19 will focus on:</p>
+        <label class="quiz-option" data-val="a">Adding onChange to a new search input</label>
+        <label class="quiz-option" data-val="b">Proving exactly what causes a re-render and what doesn't, using console.log and a render counter</label>
+        <label class="quiz-option" data-val="c">Moving state up to App</label>
+        <label class="quiz-option" data-val="d">Writing the first Vitest test</label>
+        <div class="explanation">Session 19 goes deeper on the re-render mechanics that Sessions 16-18 have been building toward.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>Why is <code>onClick={handleClick}</code> (no parentheses) the correct pattern, in your own words?</li>
+        <li>What is one piece of information on the event object that could be useful later, and why?</li>
+        <li>Why does it make sense for handleClick and handleReset to be two separate functions instead of one function with an "if reset" flag?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Parentheses added back to onClick:</strong> Handler fires immediately during render instead of on click — often causes an infinite re-render loop when combined with a state setter.</li>
+        <li><strong>Remove the event parameter from handleClick:</strong> The click still works (setCount still runs), but the console.log line breaks because event is undefined.</li>
+        <li><strong>Remove handleReset and its button:</strong> No way to zero the counter without reloading the page.</li>
+        <li><strong>Reuse handleClick for the Reset button:</strong> Clicking Reset would increment count instead of zeroing it — wrong behavior from sharing a handler that does the wrong job.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: event handlers are plain functions passed by reference to props like onClick, and React calls them with a normalized SyntheticEvent object.</strong></p>
+      <p><strong>Next:</strong> <a href="../session-19/index.html">Session 19 — Re-rendering Deep Dive</a>.</p>
+    </div>
+
     <p style="margin-top:24px;"><a href="../session-17/index.html">← Session 17</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-19/index.html">Session 19 →</a></p>
+
   </div>
 </main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
 <script src="../../notes-widget.js" defer></script>
 <script src="../../bookmark-widget.js" defer></script>
 
