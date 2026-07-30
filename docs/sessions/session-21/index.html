@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 21 — Lifting State Up</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+
+    /* Comic-panel concept grid — image teaches first, caption only reinforces */
+    .concept-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0;}
+    @media (max-width:760px){.concept-grid{grid-template-columns:repeat(2,1fr);}}
+    .concept-card{background:#111111;border:1px solid #2a2a2a;border-radius:8px;padding:8px 8px 10px;}
+    .concept-card svg{display:block;width:100%;height:auto;}
+    .concept-card figcaption{margin-top:6px;font-family:monospace;font-size:10.5px;line-height:1.3;color:#c9c9c9;text-align:center;}
+    .concept-card figcaption b{color:#ff5ca8;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 3</span>
+      <span class="badge badge-current">Session 21</span>
+      <span style="color:var(--text-muted);font-size:13px;">State</span>
+    </div>
+    <h1>Lifting State Up</h1>
+    <p class="subtitle">
+      Session 20 gave <code>CountryList</code> a working search box that
+      nothing else could see. Today <code>searchTerm</code> moves to
+      <code>App</code> — the nearest component that can see both the input
+      and the list — and <code>App</code> does the filtering, passing only
+      the matching countries down to <code>CountryList</code> as a prop.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <!-- Comic-panel concept grid: image teaches first, caption only reinforces -->
+    <div class="concept-grid">
+
+      <!-- 1. The problem: state trapped in CountryList, App blocked by a wall -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="18" y="20" width="50" height="34" rx="4" fill="none" stroke="#666" stroke-width="1.8"/>
+          <text x="43" y="41" fill="#666" font-family="monospace" font-size="8" text-anchor="middle">App</text>
+          <line x1="80" y1="14" x2="80" y2="110" stroke="#f85149" stroke-width="2.2" stroke-dasharray="4,3"/>
+          <rect x="92" y="20" width="52" height="34" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2"/>
+          <text x="118" y="41" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">CountryList</text>
+          <line x1="30" y1="60" x2="45" y2="75" stroke="#f85149" stroke-width="2.2" stroke-linecap="round"/>
+          <line x1="45" y1="60" x2="30" y2="75" stroke="#f85149" stroke-width="2.2" stroke-linecap="round"/>
+          <text x="80" y="130" fill="white" font-family="monospace" font-size="9" text-anchor="middle">App can't reach it</text>
+        </svg>
+        <figcaption>state trapped in <b>CountryList</b></figcaption>
+      </figure>
+
+      <!-- 2. Nearest common ancestor: App as the meeting point -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="80" cy="34" r="20" fill="none" stroke="#ff5ca8" stroke-width="2.2"/>
+          <text x="80" y="39" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle">App</text>
+          <path d="M80,54 L45,100" stroke="white" stroke-width="1.8" marker-end="url(#a1)"/>
+          <path d="M80,54 L115,100" stroke="white" stroke-width="1.8" marker-end="url(#a1)"/>
+          <defs><marker id="a1" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="white"/></marker></defs>
+          <rect x="20" y="104" width="50" height="26" rx="4" fill="none" stroke="#3fb950" stroke-width="1.8"/>
+          <text x="45" y="121" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">input</text>
+          <rect x="90" y="104" width="50" height="26" rx="4" fill="none" stroke="#3fb950" stroke-width="1.8"/>
+          <text x="115" y="121" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">list</text>
+        </svg>
+        <figcaption>App sees <b>both</b> sides</figcaption>
+      </figure>
+
+      <!-- 3. Move up: box migrating from child to parent -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="55" y="94" width="50" height="30" rx="4" fill="none" stroke="#666" stroke-width="1.6" stroke-dasharray="3,3"/>
+          <text x="80" y="113" fill="#666" font-family="monospace" font-size="8" text-anchor="middle">state</text>
+          <path d="M80,90 V40" stroke="#ff5ca8" stroke-width="2.2" marker-end="url(#a2)"/>
+          <defs><marker id="a2" markerWidth="9" markerHeight="9" refX="4" refY="4" orient="auto"><polygon points="0,0 9,4 0,9" fill="#ff5ca8"/></marker></defs>
+          <rect x="55" y="10" width="50" height="30" rx="4" fill="none" stroke="#3fb950" stroke-width="2.2"/>
+          <text x="80" y="29" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">state</text>
+          <text x="80" y="140" fill="white" font-family="monospace" font-size="9" text-anchor="middle">child → parent</text>
+        </svg>
+        <figcaption>useState <b>moves</b> to App</figcaption>
+      </figure>
+
+      <!-- 4. Filter in App: funnel narrowing list -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="20" width="24" height="16" fill="none" stroke="white" stroke-width="1.5"/>
+          <rect x="50" y="20" width="24" height="16" fill="none" stroke="white" stroke-width="1.5"/>
+          <rect x="80" y="20" width="24" height="16" fill="none" stroke="white" stroke-width="1.5"/>
+          <rect x="110" y="20" width="24" height="16" fill="none" stroke="white" stroke-width="1.5"/>
+          <path d="M20,44 L134,44 L90,84 L64,84 Z" fill="none" stroke="#ff5ca8" stroke-width="2"/>
+          <text x="77" y="70" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">.filter()</text>
+          <rect x="60" y="94" width="34" height="20" rx="3" fill="none" stroke="#3fb950" stroke-width="2"/>
+          <text x="80" y="136" fill="white" font-family="monospace" font-size="9" text-anchor="middle">match only</text>
+        </svg>
+        <figcaption>App <b>filters</b> the list</figcaption>
+      </figure>
+
+      <!-- 5. Pass down as a prop -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="55" y="16" width="50" height="30" rx="4" fill="none" stroke="#3fb950" stroke-width="2"/>
+          <text x="80" y="35" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">App</text>
+          <path d="M80,46 V90" stroke="#ff5ca8" stroke-width="2.2" marker-end="url(#a3)"/>
+          <defs><marker id="a3" markerWidth="9" markerHeight="9" refX="4" refY="4" orient="auto"><polygon points="0,0 9,4 0,9" fill="#ff5ca8"/></marker></defs>
+          <text x="98" y="72" fill="#ff5ca8" font-family="monospace" font-size="7">prop</text>
+          <rect x="45" y="94" width="70" height="30" rx="4" fill="none" stroke="white" stroke-width="1.8"/>
+          <text x="80" y="113" fill="white" font-family="monospace" font-size="8" text-anchor="middle">CountryList</text>
+        </svg>
+        <figcaption>filtered list <b>down</b></figcaption>
+      </figure>
+
+      <!-- 6. CountryList becomes dumb: empty box, no gears -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="35" y="45" width="90" height="40" rx="4" fill="none" stroke="white" stroke-width="1.8"/>
+          <text x="80" y="70" fill="white" font-family="monospace" font-size="8" text-anchor="middle">CountryList</text>
+          <circle cx="30" cy="30" r="9" fill="none" stroke="#666" stroke-width="1.6"/>
+          <line x1="23" y1="37" x2="14" y2="46" stroke="#f85149" stroke-width="2" stroke-linecap="round"/>
+          <line x1="14" y1="37" x2="23" y2="46" stroke="#f85149" stroke-width="2" stroke-linecap="round"/>
+          <text x="80" y="112" fill="white" font-family="monospace" font-size="9" text-anchor="middle">no logic, no state</text>
+        </svg>
+        <figcaption>"<b>presentational</b>" only</figcaption>
+      </figure>
+
+      <!-- 7. One source of truth -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="80" cy="50" r="18" fill="none" stroke="#ff5ca8" stroke-width="2.2"/>
+          <text x="80" y="55" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">1x</text>
+          <path d="M80,68 L45,104" stroke="white" stroke-width="1.6" marker-end="url(#a4)"/>
+          <path d="M80,68 L115,104" stroke="white" stroke-width="1.6" marker-end="url(#a4)"/>
+          <defs><marker id="a4" markerWidth="7" markerHeight="7" refX="3" refY="3" orient="auto"><polygon points="0,0 7,3 0,7" fill="white"/></marker></defs>
+          <text x="80" y="136" fill="white" font-family="monospace" font-size="9" text-anchor="middle">never drifts apart</text>
+        </svg>
+        <figcaption>one <b>searchTerm</b>, always</figcaption>
+      </figure>
+
+      <!-- 8. Next session -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="14" y="58" width="46" height="34" rx="4" fill="none" stroke="#666" stroke-width="1.8" transform="rotate(-2,37,75)"/>
+          <text x="37" y="79" fill="#666" font-family="monospace" font-size="10" text-anchor="middle">21</text>
+          <path d="M64,75 H108" stroke="#ff5ca8" stroke-width="2.5" stroke-dasharray="5,4" marker-end="url(#a5)"/>
+          <defs><marker id="a5" markerWidth="9" markerHeight="9" refX="4" refY="4" orient="auto"><polygon points="0,0 9,4 0,9" fill="#ff5ca8"/></marker></defs>
+          <rect x="112" y="52" width="42" height="46" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2.2" transform="rotate(2,133,75)"/>
+          <text x="133" y="80" fill="#ff5ca8" font-family="monospace" font-size="14" text-anchor="middle" font-weight="bold">22</text>
+          <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">derived, not stored</text>
+        </svg>
+        <figcaption>next: derived state</figcaption>
+      </figure>
+
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
+    <div class="card">
+      <ul>
+        <li>Identify the "nearest common ancestor" of two components that both need access to the same state</li>
+        <li>Move state (and the input that controls it) from a child component up to that ancestor</li>
+        <li>Filter a list using <code>Array.prototype.filter()</code> against a search term</li>
+        <li>Pass the filtered result down as a prop to a now-simpler, "presentational" child component</li>
+        <li>Explain why this move prevents the input and the list from ever disagreeing about the current search term</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>Why can't App read CountryList's local searchTerm state directly, before today's change?</p>
+        <label class="quiz-option" data-val="a">App can't import CountryList</label>
+        <label class="quiz-option" data-val="b">searchTerm is misspelled somewhere</label>
+        <label class="quiz-option" data-val="c">State belongs only to the component that created it</label>
+        <label class="quiz-option" data-val="d">Only one useState call per app</label>
+        <div class="explanation">This is the actual architectural constraint driving the whole session: state is private to the component that owns it, full stop.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="a">
+        <div class="question-num">Question 2 of 5</div>
+        <p>What does "lift state up" mean, precisely?</p>
+        <label class="quiz-option" data-val="a">Move useState to the parent to share it</label>
+        <label class="quiz-option" data-val="b">Increase a state variable's value</label>
+        <label class="quiz-option" data-val="c">Move state into a global variable</label>
+        <label class="quiz-option" data-val="d">Swap useEffect for useState</label>
+        <div class="explanation">"Lifting" is literal — the useState call physically moves from the child's function body to the parent's.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>After lifting state up, what does CountryList's function signature look like?</p>
+        <label class="quiz-option" data-val="a">CountryList() — unchanged, still local</label>
+        <label class="quiz-option" data-val="b">CountryList(searchTerm) — raw term</label>
+        <label class="quiz-option" data-val="c">CountryList(props, state) — both</label>
+        <label class="quiz-option" data-val="d">CountryList({ countries }) — a prop</label>
+        <div class="explanation">CountryList doesn't need to know about searchTerm at all anymore — it just renders whatever countries array it's handed, exactly like CountryCard only knows its own name and region.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="b">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Which array method correctly keeps only the countries whose name contains the search term?</p>
+        <label class="quiz-option" data-val="a">.map(c => name.includes(term))</label>
+        <label class="quiz-option" data-val="b">.filter(c => name.includes(term))</label>
+        <label class="quiz-option" data-val="c">.find(c => name.includes(term))</label>
+        <label class="quiz-option" data-val="d">.reduce(c => name.includes(term))</label>
+        <div class="explanation">filter() keeps every item for which the callback returns true and discards the rest, returning a new array — exactly what "narrow the list down" needs. map() would transform every item into a boolean instead of removing anything.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Where does the &lt;input&gt; element itself live after today's change?</p>
+        <label class="quiz-option" data-val="a">Stays in CountryList, alone</label>
+        <label class="quiz-option" data-val="b">Duplicated in App and CountryList</label>
+        <label class="quiz-option" data-val="c">Moves to App with its state</label>
+        <label class="quiz-option" data-val="d">Moves into CountryCard</label>
+        <div class="explanation">The input, its value, and its onChange all move together to wherever the state that controls it lives — App.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — Finding the Nearest Common Ancestor</h2>
+
+    <h3>The problem Session 20 left us with</h3>
+    <p>
+      <code>searchTerm</code> lives inside <code>CountryList</code>, created
+      by <code>CountryList</code>'s own <code>useState</code> call. State
+      created this way belongs entirely to that component — nothing outside
+      it, including its own parent <code>App</code>, can read or write it
+      directly. There's no way for <code>App</code> to filter anything using
+      a value it fundamentally cannot see.
+    </p>
+
+    <h3>The rule: state moves to the nearest shared ancestor</h3>
+    <p>
+      When two components both need the same piece of state, the fix is
+      always the same: move the state up the tree until it lives in a
+      component that is an ancestor of everything that needs it — here,
+      that's <code>App</code>, since <code>App</code> renders
+      <code>CountryList</code> directly.
+    </p>
+
+    <!-- Comic-panel: before/after tree, lightweight -->
+    <div class="concept-grid" style="grid-template-columns:repeat(2,1fr);max-width:420px;">
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 140" xmlns="http://www.w3.org/2000/svg">
+          <rect x="45" y="14" width="70" height="24" rx="4" fill="none" stroke="#666" stroke-width="1.6"/>
+          <text x="80" y="30" fill="#666" font-family="monospace" font-size="8" text-anchor="middle">App</text>
+          <path d="M80,38 V56" stroke="#8b949e" stroke-width="1.5"/>
+          <rect x="25" y="58" width="110" height="46" rx="4" fill="none" stroke="#f85149" stroke-width="1.8"/>
+          <text x="80" y="76" fill="#f85149" font-family="monospace" font-size="8" text-anchor="middle">CountryList</text>
+          <text x="80" y="92" fill="white" font-family="monospace" font-size="7" text-anchor="middle">state + input here</text>
+          <text x="80" y="124" fill="white" font-family="monospace" font-size="9" text-anchor="middle">before</text>
+        </svg>
+        <figcaption>state stuck in the <b>child</b></figcaption>
+      </figure>
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 140" xmlns="http://www.w3.org/2000/svg">
+          <rect x="35" y="10" width="90" height="40" rx="4" fill="none" stroke="#3fb950" stroke-width="1.8"/>
+          <text x="80" y="27" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">App</text>
+          <text x="80" y="41" fill="white" font-family="monospace" font-size="7" text-anchor="middle">state + input + filter</text>
+          <path d="M80,50 V70" stroke="#58a6ff" stroke-width="1.8" marker-end="url(#ba1)"/>
+          <defs><marker id="ba1" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#58a6ff"/></marker></defs>
+          <rect x="45" y="74" width="70" height="26" rx="4" fill="none" stroke="white" stroke-width="1.6"/>
+          <text x="80" y="91" fill="white" font-family="monospace" font-size="7" text-anchor="middle">CountryList</text>
+          <text x="80" y="124" fill="white" font-family="monospace" font-size="9" text-anchor="middle">after</text>
+        </svg>
+        <figcaption>state lives in the <b>parent</b></figcaption>
+      </figure>
+    </div>
+
+    <h3>App: state, handler, filter, and the input</h3>
+    <pre><code>import { useState } from "react";
+import CountryList from "./component/CountryList";
+import countries from "./data/countries";
+
+function App() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  function handleSearchChange(event) {
+    setSearchTerm(event.target.value);
+  }
+
+  const filteredCountries = countries.filter(c =>
+    c.name.includes(searchTerm)
+  );
+
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Countries&lt;/h1&gt;
+      &lt;input
+        type="text"
+        value={searchTerm}
+        onChange={handleSearchChange}
+        placeholder="Search countries..."
+      /&gt;
+      &lt;CountryList countries={filteredCountries} /&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+    <p>
+      Notice this is <em>exactly</em> the controlled-input code from Session
+      20 — value tied to state, onChange tied to a setter — just relocated.
+      The only genuinely new line is the <code>.filter()</code> call, which
+      builds a new array containing only the countries whose name includes
+      the current search term.
+    </p>
+
+    <h3>CountryList: simplified down to props in, JSX out</h3>
+    <pre><code>import CountryCard from './CountryCard';
+
+function CountryList({ countries }) {
+  if (countries.length === 0) {
+    return &lt;p className='empty-message'&gt;No countries found&lt;/p&gt;
+  }
+
+  return (
+    &lt;section className='country-list'&gt;
+      {countries.map(c => (
+        &lt;CountryCard key={c.id} name={c.name} region={c.region}/&gt;
+      ))}
+    &lt;/section&gt;
+  )
+}</code></pre>
+    <p>
+      <code>CountryList</code> no longer imports the <code>countries</code>
+      module, no longer calls <code>useState</code>, and no longer knows
+      anything about searching. It receives a <code>countries</code> prop —
+      already filtered or not, it can't tell the difference — and renders
+      it. This kind of component, that only receives data and renders it
+      without owning any logic, is often called "presentational."
+    </p>
+
+    <div class="alert alert-info">
+      <strong>Why this matters:</strong> before today, it would have been
+      possible for the input to show one search term while the list somehow
+      displayed something inconsistent with it, if a second copy of the
+      state existed anywhere. After today, there is exactly one
+      <code>searchTerm</code> in the entire app, and both the input and the
+      filtering logic that feeds <code>CountryList</code> read from that
+      single value.
+    </p>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Move <code>searchTerm</code>, its
+      handler, and the <code>&lt;input&gt;</code> from <code>CountryList</code>
+      to <code>App</code>. Filter <code>countries</code> in <code>App</code>
+      and pass the result down as a <code>countries</code> prop.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Move the state and handler into App</strong></p>
+        <pre><code>import { useState } from "react";
+import CountryList from "./component/CountryList";
+import countries from "./data/countries";
+
+function App() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  function handleSearchChange(event) {
+    setSearchTerm(event.target.value);
+  }
+  // ...
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Filter countries in App</strong></p>
+        <pre><code>const filteredCountries = countries.filter(c =>
+  c.name.includes(searchTerm)
+);</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Move the &lt;input&gt; into App's JSX and pass the filtered list down</strong></p>
+        <pre><code>return (
+  &lt;div&gt;
+    &lt;h1&gt;Countries&lt;/h1&gt;
+    &lt;input
+      type="text"
+      value={searchTerm}
+      onChange={handleSearchChange}
+      placeholder="Search countries..."
+    /&gt;
+    &lt;CountryList countries={filteredCountries} /&gt;
+  &lt;/div&gt;
+);</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Simplify CountryList to a presentational component</strong></p>
+        <p>Remove its <code>useState</code> import, its <code>countries</code> module import, its own <code>searchTerm</code>/handler/input. Change its signature to receive <code>{ countries }</code> as a prop and render that instead.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Verify</strong></p>
+        <p>Type "ja" into the search box. The list should now actually narrow down to just Japan. Clear the box — all four countries return. Type something matching nothing, e.g. "zzz" — confirm you see "No countries found" from CountryList's empty-state check.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/App.jsx</code></td><td>Updated</td><td>Owns searchTerm, the input, and the filtering logic</td></tr>
+          <tr><td><code>src/component/CountryList.jsx</code></td><td>Updated</td><td>Simplified to a presentational component receiving countries as a prop</td></tr>
+          <tr><td><code>docs/sessions/session-21/index.html</code></td><td>Updated</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/App.jsx src/component/CountryList.jsx docs/sessions/session-21/index.html
+git commit -m "session-21: lift search state up to App and pass filtered countries down"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">App owns searchTerm via useState, not CountryList</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">App computes filteredCountries with Array.filter() before rendering CountryList</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">CountryList's function signature is CountryList({ countries }) — no more local state or countries import</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">Typing in the search box visibly narrows the rendered list</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">Searching for something that matches nothing shows the "No countries found" message</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Proceed to Session 22 (Derived State) after ≥ 80%.">
+      <div class="quiz-question" data-question="0" data-answer="d">
+        <div class="question-num">Question 1 of 5</div>
+        <p>If CountryCard also needed to know the current searchTerm for some reason, where would you look to find it?</p>
+        <label class="quiz-option" data-val="a">CountryCard's own useState copy</label>
+        <label class="quiz-option" data-val="b">Impossible — only two can share</label>
+        <label class="quiz-option" data-val="c">Inside CountryList, its parent</label>
+        <label class="quiz-option" data-val="d">Passed down App → List → Card</label>
+        <div class="explanation">This previews "prop drilling" — passing a value down through a component that doesn't itself use it, just to reach a deeper child. Not something this session needs to solve, just recognise as the natural extension of the pattern.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Why is CountryList now called a "presentational" or "dumb" component?</p>
+        <label class="quiz-option" data-val="a">Fewer lines of code than App</label>
+        <label class="quiz-option" data-val="b">Owns no state, just renders props</label>
+        <label class="quiz-option" data-val="c">No longer has a key prop</label>
+        <label class="quiz-option" data-val="d">It doesn't import React</label>
+        <div class="explanation">"Dumb" here isn't a quality judgment — it just means the component has no independent logic, making it easy to reuse and reason about in isolation.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="c">
+        <div class="question-num">Question 3 of 5</div>
+        <p>What would happen if CountryList still had its OWN leftover useState('') for searchTerm, in addition to receiving the filtered countries prop from App?</p>
+        <label class="quiz-option" data-val="a">Nothing — it's harmless</label>
+        <label class="quiz-option" data-val="b">Auto-syncs with App's copy</label>
+        <label class="quiz-option" data-val="c">A stray, disconnected copy</label>
+        <label class="quiz-option" data-val="d">React throws a state error</label>
+        <div class="explanation">This is why the lab explicitly says to remove CountryList's own useState, not just add the new prop alongside it.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Array.filter(callback) returns what, if zero items match the callback?</p>
+        <label class="quiz-option" data-val="a">An empty array, []</label>
+        <label class="quiz-option" data-val="b">The value null</label>
+        <label class="quiz-option" data-val="c">undefined itself</label>
+        <label class="quiz-option" data-val="d">It throws an error</label>
+        <div class="explanation">filter() always returns an array, even an empty one — which is exactly what makes CountryList's existing countries.length === 0 check work correctly with zero results.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 22 (the Layer 3 gate) will focus on:</p>
+        <label class="quiz-option" data-val="a">Fetching countries from an API</label>
+        <label class="quiz-option" data-val="b">Computing values instead of storing</label>
+        <label class="quiz-option" data-val="c">Adding a second region filter</label>
+        <label class="quiz-option" data-val="d">Testing App with Vitest suite</label>
+        <div class="explanation">Session 22 formalizes the derived-state principle that App.jsx already follows today — filteredCountries is computed, not stored.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>In your own words, what does "nearest common ancestor" mean, and why is it the right place for shared state to live?</li>
+        <li>Why did moving searchTerm to App also mean moving the &lt;input&gt; element itself, not just the variable?</li>
+        <li>What would you have had to do differently if CountryCard (not just CountryList) also needed searchTerm?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>CountryList keeps importing countries directly instead of receiving the prop:</strong> The list would always show all 4 countries regardless of the search box — the input and the list would be completely disconnected again.</li>
+        <li><strong>App forgets to pass countries={filteredCountries}:</strong> CountryList receives undefined for countries, and its <code>countries.length</code> check throws, since you can't read .length off undefined.</li>
+        <li><strong>Filter logic uses .map() instead of .filter():</strong> Every country would still render, just each one replaced by a true/false value instead of being included or excluded — the list would break entirely.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: when two components need the same state, it moves up to their nearest common ancestor, which owns it and passes derived results down as props — turning children into simpler, presentational components.</strong></p>
+      <p><strong>Next:</strong> <a href="../session-22/index.html">Session 22 — Derived State</a>.</p>
+    </div>
+
+    <p style="margin-top:24px;"><a href="../session-20/index.html">← Session 20</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-22/index.html">Session 22 →</a></p>
+
+  </div>
+</main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
+<script src="../../notes-widget.js" defer></script>
+<script src="../../bookmark-widget.js" defer></script>
+
+</body>
+</html>

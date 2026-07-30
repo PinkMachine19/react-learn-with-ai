@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 06 — Imports and Exports</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+    @media(max-width:600px){.two-col{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 1</span>
+      <span class="badge badge-current">Session 06</span>
+      <span style="color:var(--text-muted);font-size:13px;">JavaScript Foundations</span>
+    </div>
+    <h1>Imports and Exports</h1>
+    <p class="subtitle">
+      React applications are split across many files. Each component lives in its own file.
+      Data lives in its own file. Services live in their own files. ES modules — imports and
+      exports — are how all these files talk to each other. Without this session, you cannot
+      understand how a React app is assembled.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <!-- SVG: session-06 concept map -->
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="340" y="20" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Session 06 — Imports &amp; Exports</text>
+
+      <!-- Panel 1: file scope (x=16,y=36,w=154,h=148) -->
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,93,110)"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="28" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+      <text x="93" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">file scope</text>
+      <rect x="24" y="58" width="58" height="36" fill="none" stroke="white" stroke-width="1"/>
+      <text x="53" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">math.js</text>
+      <text x="53" y="84" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">own scope</text>
+      <rect x="104" y="58" width="58" height="36" fill="none" stroke="white" stroke-width="1"/>
+      <text x="133" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">main.js</text>
+      <text x="133" y="84" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">own scope</text>
+      <text x="93" y="108" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">no global collision</text>
+      <line x1="53" y1="94" x2="93" y2="118" stroke="white" stroke-width="1" stroke-dasharray="3,2"/>
+      <line x1="133" y1="94" x2="93" y2="118" stroke="white" stroke-width="1" stroke-dasharray="3,2"/>
+      <rect x="44" y="120" width="98" height="22" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="93" y="135" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">explicit export/import</text>
+      <text x="93" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">each file is isolated</text>
+
+      <!-- Panel 2: named export -->
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,257,110)"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="192" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+      <text x="257" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">named export</text>
+      <rect x="192" y="60" width="130" height="52" fill="none" stroke="white" stroke-width="1"/>
+      <text x="257" y="74" fill="white" font-family="monospace" font-size="7" text-anchor="middle">export const PI = 3.14;</text>
+      <text x="257" y="88" fill="white" font-family="monospace" font-size="7" text-anchor="middle">export function add() {"{}"}</text>
+      <text x="257" y="102" fill="white" font-family="monospace" font-size="7" text-anchor="middle">export const multiply = …</text>
+      <line x1="257" y1="112" x2="257" y2="128" stroke="#ff5ca8" stroke-width="1"/>
+      <polygon points="257,128 253,122 261,122" fill="#ff5ca8"/>
+      <text x="257" y="142" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">name must match on import</text>
+      <text x="257" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">many per file allowed</text>
+
+      <!-- Panel 3: named import -->
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,421,110)"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="356" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+      <text x="421" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">named import</text>
+      <rect x="356" y="62" width="130" height="28" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="421" y="80" fill="#ff5ca8" font-family="monospace" font-size="7.5" text-anchor="middle">import {"{ PI, add }"} from './math'</text>
+      <text x="421" y="106" fill="white" font-family="monospace" font-size="8" text-anchor="middle">curly braces required</text>
+      <rect x="368" y="112" width="46" height="18" fill="none" stroke="white" stroke-width="1"/>
+      <text x="391" y="125" fill="white" font-family="monospace" font-size="7" text-anchor="middle">PI</text>
+      <rect x="428" y="112" width="46" height="18" fill="none" stroke="white" stroke-width="1"/>
+      <text x="451" y="125" fill="white" font-family="monospace" font-size="7" text-anchor="middle">add</text>
+      <text x="421" y="148" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">import PI from './math' ✗</text>
+      <text x="421" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">exact name or alias</text>
+
+      <!-- Panel 4: default export -->
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,585,110)"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="520" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+      <text x="585" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">default export</text>
+      <rect x="520" y="60" width="130" height="36" fill="none" stroke="white" stroke-width="1"/>
+      <text x="585" y="74" fill="white" font-family="monospace" font-size="7" text-anchor="middle">const countries = […];</text>
+      <text x="585" y="88" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">export default countries;</text>
+      <text x="585" y="112" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">ONE per file only</text>
+      <rect x="536" y="118" width="98" height="18" fill="none" stroke="#f85149" stroke-width="1"/>
+      <text x="585" y="131" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">2nd default = syntax error</text>
+      <text x="585" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">the primary thing the file provides</text>
+
+      <!-- Panel 5: default import -->
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,278)"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="28" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+      <text x="93" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">default import</text>
+      <rect x="24" y="230" width="138" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="93" y="245" fill="#ff5ca8" font-family="monospace" font-size="7.5" text-anchor="middle">import countries from './data/countries'</text>
+      <text x="93" y="268" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">NO curly braces</text>
+      <text x="93" y="284" fill="white" font-family="monospace" font-size="7" text-anchor="middle">import allCountries from './data/countries'</text>
+      <text x="93" y="298" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">also valid — name is local</text>
+      <text x="93" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">importer picks the variable name</text>
+
+      <!-- Panel 6: multiple named -->
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,257,278)"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="192" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+      <text x="257" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">multiple named</text>
+      <rect x="190" y="232" width="130" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="255" y="247" fill="white" font-family="monospace" font-size="7" text-anchor="middle">export const x = 1;</text>
+      <rect x="190" y="258" width="130" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="255" y="273" fill="white" font-family="monospace" font-size="7" text-anchor="middle">export const y = 2;</text>
+      <line x1="255" y1="284" x2="255" y2="298" stroke="#ff5ca8" stroke-width="1"/>
+      <polygon points="255,298 251,292 259,292" fill="#ff5ca8"/>
+      <rect x="190" y="300" width="130" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="255" y="315" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">import {"{ x, y }"} from './file'</text>
+      <text x="257" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">one import line · comma-separated</text>
+
+      <!-- Panel 7: mix import -->
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,421,278)"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="356" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+      <text x="421" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">mix import</text>
+      <rect x="352" y="232" width="138" height="44" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="421" y="246" fill="#ff5ca8" font-family="monospace" font-size="6.5" text-anchor="middle">import countries,</text>
+      <text x="421" y="258" fill="#ff5ca8" font-family="monospace" font-size="6.5" text-anchor="middle">{"{ REGIONS, findById }"}</text>
+      <text x="421" y="270" fill="#ff5ca8" font-family="monospace" font-size="6.5" text-anchor="middle">from './countries';</text>
+      <text x="421" y="292" fill="white" font-family="monospace" font-size="7" text-anchor="middle">default first · named in {"{}"}</text>
+      <rect x="368" y="298" width="52" height="16" fill="none" stroke="white" stroke-width="1"/>
+      <text x="394" y="309" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">countries</text>
+      <rect x="428" y="298" width="52" height="16" fill="none" stroke="white" stroke-width="1"/>
+      <text x="454" y="309" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">REGIONS…</text>
+      <text x="421" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">both types from one file</text>
+
+      <!-- Panel 8: alias -->
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="520" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+      <text x="585" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">alias</text>
+      <rect x="516" y="232" width="138" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="585" y="247" fill="white" font-family="monospace" font-size="7" text-anchor="middle">export const PI = 3.14;</text>
+      <line x1="585" y1="254" x2="585" y2="268" stroke="white" stroke-width="1"/>
+      <polygon points="585,268 581,262 589,262" fill="white"/>
+      <rect x="516" y="270" width="138" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="585" y="285" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">import {"{ PI as pi }"} from './math'</text>
+      <text x="585" y="308" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">use: pi ✓</text>
+      <text x="585" y="322" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">PI ✗ not available</text>
+      <text x="585" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">avoids name collisions</text>
+    </svg>
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objective</h2>
+    <div class="card">
+      <ul>
+        <li>Explain the difference between named exports and default exports</li>
+        <li>Write a named export and import it correctly (with curly braces)</li>
+        <li>Write a default export and import it (without curly braces)</li>
+        <li>Import multiple named exports in one statement</li>
+        <li>Explain why a file can only have one default export</li>
+        <li>Move the countries array into its own module and import it</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>
+          File A has: <code>export const PI = 3.14;</code><br/>
+          How does File B import it?
+        </p>
+        <label class="quiz-option" data-val="a"><code>import PI from './fileA';</code></label>
+        <label class="quiz-option" data-val="b"><code>import { PI } from './fileA';</code></label>
+        <label class="quiz-option" data-val="c"><code>import * PI from './fileA';</code></label>
+        <label class="quiz-option" data-val="d"><code>require('./fileA').PI;</code></label>
+        <div class="explanation">Named exports are imported with curly braces. The name inside the braces must match the exported name exactly. No curly braces is for default exports.</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>
+          File A has: <code>export default function greet() { return "hi"; }</code><br/>
+          How does File B import it?
+        </p>
+        <label class="quiz-option" data-val="a"><code>import { greet } from './fileA';</code></label>
+        <label class="quiz-option" data-val="b"><code>import { default } from './fileA';</code></label>
+        <label class="quiz-option" data-val="c"><code>import greet from './fileA';</code></label>
+        <label class="quiz-option" data-val="d"><code>import greet() from './fileA';</code></label>
+        <div class="explanation">Default exports are imported without curly braces. You can name them anything you like — <code>import myGreet from './fileA'</code> would also work.</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>How many default exports can a single file have?</p>
+        <label class="quiz-option" data-val="a">Unlimited — that's the point of default</label>
+        <label class="quiz-option" data-val="b">Two — one function, one value</label>
+        <label class="quiz-option" data-val="c">It depends on file size</label>
+        <label class="quiz-option" data-val="d">Exactly one — multiple defaults cause a syntax error</label>
+        <div class="explanation">A file can have exactly one default export. It represents the primary thing the file provides. You can have as many named exports as you want alongside it.</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>
+          File A exports: <code>export const x = 1; export const y = 2;</code><br/>
+          How do you import both in one line?
+        </p>
+        <label class="quiz-option" data-val="a"><code>import { x, y } from './fileA';</code></label>
+        <label class="quiz-option" data-val="b"><code>import x, y from './fileA';</code></label>
+        <label class="quiz-option" data-val="c"><code>import { x } and { y } from './fileA';</code></label>
+        <label class="quiz-option" data-val="d"><code>import x from './fileA'; import y from './fileA';</code></label>
+        <div class="explanation">Multiple named exports are imported together in one set of curly braces, comma-separated.</div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          You import a named export as a different name: <code>import { PI as pi } from './math';</code><br/>
+          What is the local variable name you can use?
+        </p>
+        <label class="quiz-option" data-val="a">PI — the original name always takes precedence</label>
+        <label class="quiz-option" data-val="b">pi — the alias after <code>as</code> is the local name</label>
+        <label class="quiz-option" data-val="c">Both PI and pi are available</label>
+        <label class="quiz-option" data-val="d">An error — you cannot alias imports</label>
+        <div class="explanation">The <code>as</code> keyword creates an alias. <code>PI</code> is no longer available — only <code>pi</code> is. This is useful when two modules export something with the same name.</div>
+      </div>
+
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — ES Modules</h2>
+
+    <h3>Why modules exist</h3>
+    <p>
+      Without modules, every JavaScript file shares the same global scope. Variables collide,
+      dependencies are unclear, and files cannot be tested in isolation. ES modules solve this:
+      each file has its own scope, and you explicitly declare what you share.
+    </p>
+
+    <!-- SVG: global scope vs module isolation -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <text x="120" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold" opacity="0.6">WITHOUT modules</text>
+      <text x="360" y="18" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">WITH modules</text>
+      <!-- left: global chaos -->
+      <rect x="16" y="26" width="208" height="120" fill="none" stroke="#f85149" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="120" y="42" fill="#f85149" font-family="monospace" font-size="8" text-anchor="middle">global scope (shared)</text>
+      <rect x="28" y="50" width="80" height="28" fill="none" stroke="white" stroke-width="1"/>
+      <text x="68" y="62" fill="white" font-family="monospace" font-size="7" text-anchor="middle">fileA.js</text>
+      <text x="68" y="74" fill="white" font-family="monospace" font-size="7" text-anchor="middle">var x = 1</text>
+      <rect x="132" y="50" width="80" height="28" fill="none" stroke="white" stroke-width="1"/>
+      <text x="172" y="62" fill="white" font-family="monospace" font-size="7" text-anchor="middle">fileB.js</text>
+      <text x="172" y="74" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">var x = 2 ← clash!</text>
+      <text x="120" y="100" fill="#f85149" font-family="monospace" font-size="7.5" text-anchor="middle">who owns x?</text>
+      <text x="120" y="114" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">dependencies hidden</text>
+      <text x="120" y="128" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.5">hard to test in isolation</text>
+      <!-- divider -->
+      <line x1="240" y1="24" x2="240" y2="150" stroke="white" stroke-width="1" opacity="0.3"/>
+      <!-- right: isolated modules -->
+      <rect x="256" y="26" width="96" height="56" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="304" y="40" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">math.js</text>
+      <text x="304" y="52" fill="white" font-family="monospace" font-size="7" text-anchor="middle">private scope</text>
+      <text x="304" y="64" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">export const PI</text>
+      <text x="304" y="76" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">export function add</text>
+      <rect x="368" y="26" width="96" height="56" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="416" y="40" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">main.js</text>
+      <text x="416" y="52" fill="white" font-family="monospace" font-size="7" text-anchor="middle">private scope</text>
+      <text x="416" y="64" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">import {"{ PI, add }"}</text>
+      <text x="416" y="76" fill="white" font-family="monospace" font-size="7" text-anchor="middle">from './math'</text>
+      <!-- arrow between files -->
+      <line x1="352" y1="54" x2="368" y2="54" stroke="#3fb950" stroke-width="1.5"/>
+      <polygon points="368,54 362,51 362,57" fill="#3fb950"/>
+      <text x="360" y="92" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">explicit link</text>
+      <text x="360" y="106" fill="white" font-family="monospace" font-size="7" text-anchor="middle">only exported names cross files</text>
+      <text x="360" y="120" fill="white" font-family="monospace" font-size="7" text-anchor="middle">each file testable alone</text>
+      <text x="240" y="162" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">modules = private scope + explicit public API (exports)</text>
+    </svg>
+
+    <h3>Named exports</h3>
+    <div class="two-col">
+      <div>
+        <p><strong>Exporting (math.js)</strong></p>
+        <pre><code>export const PI = 3.14159;
+
+export function add(a, b) {
+  return a + b;
+}
+
+export const multiply = (a, b) => a * b;</code></pre>
+      </div>
+      <div>
+        <p><strong>Importing</strong></p>
+        <pre><code>import { PI, add, multiply } from './math';
+
+console.log(PI);           // 3.14159
+console.log(add(2, 3));    // 5
+console.log(multiply(4,5)); // 20</code></pre>
+      </div>
+    </div>
+
+    <p>Rules for named exports:</p>
+    <ul>
+      <li>Must use curly braces when importing</li>
+      <li>The name must match exactly (or use <code>as</code> to alias)</li>
+      <li>A file can have as many named exports as needed</li>
+    </ul>
+
+    <h3>Default exports</h3>
+    <div class="two-col">
+      <div>
+        <p><strong>Exporting (CountryCard.jsx)</strong></p>
+        <pre><code>function CountryCard({ name }) {
+  return name;
+}
+
+export default CountryCard;</code></pre>
+      </div>
+      <div>
+        <p><strong>Importing</strong></p>
+        <pre><code>// Name can be anything
+import CountryCard from './CountryCard';
+import Card from './CountryCard'; // also valid</code></pre>
+      </div>
+    </div>
+
+    <p>Rules for default exports:</p>
+    <ul>
+      <li>No curly braces when importing</li>
+      <li>The importer can choose any local name</li>
+      <li>Only one default export per file</li>
+    </ul>
+
+    <div class="alert alert-info">
+      <strong>React convention:</strong> Each component file has one default export — the component itself.
+      Helper functions or constants in the same file use named exports. When you see
+      <code>import React from 'react'</code> or <code>import CountryCard from './CountryCard'</code>,
+      those are default imports.
+    </div>
+
+    <h3>Mixing named and default in one file</h3>
+    <pre><code>// countries.js
+export const REGIONS = ["Americas", "Asia", "Europe", "Africa"];
+
+export function findById(countries, id) {
+  return countries.find(c => c.id === id);
+}
+
+const countries = [
+  { id: 1, name: "Canada",  region: "Americas", population: 38000000 },
+  { id: 2, name: "Japan",   region: "Asia",      population: 125000000 },
+  { id: 3, name: "Brazil",  region: "Americas",  population: 215000000 }
+];
+
+export default countries;</code></pre>
+
+    <pre><code>// main.js — import both types from one file
+import countries, { REGIONS, findById } from './countries';
+
+console.log(countries.length);  // 3
+console.log(REGIONS);           // ["Americas", "Asia", ...]
+console.log(findById(countries, 2).name); // "Japan"</code></pre>
+
+    <h3>Import paths</h3>
+    <pre><code>// Relative path — file in same or nearby directory
+import countries from './countries';        // same folder
+import countries from '../data/countries';  // up one, then into data/
+
+// Package import — from node_modules (no ./ prefix)
+import React from 'react';
+import { useState } from 'react';</code></pre>
+
+    <div class="alert alert-warning">
+      In plain Node.js you may need <code>.js</code> extension. In Vite (our React setup, starting Session 08),
+      extensions can be omitted for <code>.js</code> and <code>.jsx</code> files.
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Move the countries array into <code>src/data/countries.js</code>
+      as a default export. Add named exports for helper data and functions. Import and use them from a separate file.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Create the data directory and new file</strong></p>
+        <p>Create <code>src/data/countries.js</code> (new directory, new file).</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Add named exports and a default export</strong></p>
+        <pre><code>// src/data/countries.js
+
+export const REGIONS = ["Americas", "Asia", "Europe", "Africa", "Oceania"];
+
+export function findById(countries, id) {
+  return countries.find(c => c.id === id);
+}
+
+export function filterByRegion(countries, region) {
+  return countries.filter(c => c.region === region);
+}
+
+const countries = [
+  { id: 1, name: "Canada",  region: "Americas", population: 38000000 },
+  { id: 2, name: "Japan",   region: "Asia",      population: 125000000 },
+  { id: 3, name: "Brazil",  region: "Americas",  population: 215000000 }
+];
+
+export default countries;</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Create <code>src/main.js</code> to import and use it</strong></p>
+        <pre><code>// src/main.js
+import countries, { REGIONS, findById, filterByRegion } from './data/countries';
+
+console.log("Countries:", countries.length);
+console.log("Regions:", REGIONS);
+console.log("Find id 2:", findById(countries, 2).name);
+console.log("Americas:", filterByRegion(countries, "Americas").map(c => c.name));</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Run it</strong></p>
+        <p>In your terminal, from the <code>src/</code> folder (or using Node directly):</p>
+        <pre><code>node src/main.js</code></pre>
+        <p>
+          If you get a module error, add <code>"type": "module"</code> to a <code>package.json</code>
+          in the root, or rename to <code>.mjs</code>. In Session 08 this will be handled automatically by Vite.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Try importing the default under a different name</strong></p>
+        <pre><code>// This is valid — default exports can be named anything
+import allCountries from './data/countries';
+console.log(allCountries === countries); // true if same import — same module instance</code></pre>
+        <p>This shows that the name of a default import is local — it's just a variable.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/data/countries.js</code></td><td>Created</td><td>Country data moved to its own module with named and default exports</td></tr>
+          <tr><td><code>src/main.js</code></td><td>Created</td><td>Demonstrates importing from the module</td></tr>
+          <tr><td><code>docs/sessions/session-06/index.html</code></td><td>Created</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="alert alert-warning">
+      <code>src/countries.js</code> (from earlier sessions) stays as-is for reference. The new canonical data file is <code>src/data/countries.js</code>. From Session 08 onward, components will import from <code>src/data/countries.js</code>.
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/data/countries.js src/main.js docs/sessions/session-06/index.html
+git commit -m "session-06: move country data to module, named and default exports"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1"><code>src/data/countries.js</code> has a default export (the array) and named exports (REGIONS, helpers)</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">Default import in main.js has no curly braces</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">Named imports in main.js use curly braces</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">All four imports used and logged successfully</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I can explain without looking: why does the default import not need curly braces?</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c6"/><label for="c6">I can explain: what would break if I wrote <code>import { countries } from './data/countries'</code> (curly braces around the default)?</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>File A: <code>export const PI = 3.14;</code> — how does File B import it?</p>
+        <label class="quiz-option" data-val="a"><code>import PI from './fileA';</code></label>
+        <label class="quiz-option" data-val="b"><code>import { PI } from './fileA';</code></label>
+        <label class="quiz-option" data-val="c"><code>import * PI from './fileA';</code></label>
+        <label class="quiz-option" data-val="d"><code>require('./fileA').PI;</code></label>
+        <div class="explanation">Named exports use curly braces when importing.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>File A: <code>export default function greet() {}</code> — how does File B import it?</p>
+        <label class="quiz-option" data-val="a"><code>import { greet } from './fileA';</code></label>
+        <label class="quiz-option" data-val="b"><code>import { default } from './fileA';</code></label>
+        <label class="quiz-option" data-val="c"><code>import greet from './fileA';</code></label>
+        <label class="quiz-option" data-val="d"><code>import greet() from './fileA';</code></label>
+        <div class="explanation">Default exports import without curly braces. The name is chosen by the importer.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>How many default exports can a single file have?</p>
+        <label class="quiz-option" data-val="a">Unlimited</label>
+        <label class="quiz-option" data-val="b">Two</label>
+        <label class="quiz-option" data-val="c">Depends on file size</label>
+        <label class="quiz-option" data-val="d">Exactly one</label>
+        <div class="explanation">One default export per file. Syntax error otherwise.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>File A exports <code>x</code> and <code>y</code> as named exports. Import both in one line?</p>
+        <label class="quiz-option" data-val="a"><code>import { x, y } from './fileA';</code></label>
+        <label class="quiz-option" data-val="b"><code>import x, y from './fileA';</code></label>
+        <label class="quiz-option" data-val="c"><code>import { x } and { y } from './fileA';</code></label>
+        <label class="quiz-option" data-val="d">Two separate import statements required</label>
+        <div class="explanation">Multiple named exports in one set of curly braces, comma-separated.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p><code>import { PI as pi } from './math';</code> — what is the local variable name?</p>
+        <label class="quiz-option" data-val="a">PI</label>
+        <label class="quiz-option" data-val="b">pi</label>
+        <label class="quiz-option" data-val="c">Both</label>
+        <label class="quiz-option" data-val="d">Error</label>
+        <div class="explanation">The alias after <code>as</code> is the local name. PI is not accessible.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>A React component file typically has one default export (the component) and sometimes named exports (helper functions). Why do you think that convention exists?</li>
+        <li>When you write <code>import { useState } from 'react'</code>, is <code>useState</code> a named or default export from the React package?</li>
+        <li>If two different modules you're importing both export a function named <code>format</code>, how would you handle the collision?</li>
+        <li>Predict the folder structure of a React app after Session 10. How many files will there be and what will each export?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Knowledge Is Missing?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Session 08 onward:</strong> Every React file uses imports. Without understanding named vs default, you will see <code>import</code> errors constantly and not know why.</li>
+        <li><strong>The curly brace mistake:</strong> Trying to import a default export with curly braces (<code>import { CountryCard }</code>) gives <code>undefined</code> or an error. This is the most common import mistake.</li>
+        <li><strong>Session 28 (Testing):</strong> Tests import the component under test. Understanding default imports is required.</li>
+      </ul>
+    </div>
+
+    <h2>11. What We Learned</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>JavaScript concept mastered:</strong> ES modules — named exports, default exports, import syntax, aliases, relative paths.</p>
+      <p><strong>React concept unlocked:</strong> Every React component file uses this. <code>import React from 'react'</code>, <code>import { useState } from 'react'</code>, <code>export default CountryCard</code> — all of this makes sense now.</p>
+      <p><strong>Next session:</strong> <a href="../session-07/index.html">Session 07 — Promises, Async, and Await</a>. The last JavaScript foundation before we touch React. After this, Layer 2 unlocks.</p>
+    </div>
+
+  </div>
+</main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
+<script src="../../notes-widget.js" defer></script>
+<script src="../../bookmark-widget.js" defer></script>
+
+</body>
+</html>

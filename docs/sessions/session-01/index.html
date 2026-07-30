@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 01 — Objects in JavaScript</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option {
+      display: block;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: border-color 0.15s, background 0.15s;
+      user-select: none;
+    }
+    .quiz-option:hover { border-color: var(--accent); background: var(--surface); }
+    .quiz-option.selected { border-color: var(--accent); background: rgba(88,166,255,0.1); }
+    .quiz-option.correct  { border-color: var(--green);  background: rgba(63,185,80,0.1); }
+    .quiz-option.wrong    { border-color: var(--red);    background: rgba(248,81,73,0.1); }
+
+    .quiz-question { margin-bottom: 28px; }
+    .quiz-question p { font-weight: 600; margin-bottom: 10px; font-size: 15px; }
+    .quiz-question .question-num { color: var(--text-muted); font-size: 12px; font-weight: 400; margin-bottom: 4px; }
+
+    .quiz-result {
+      display: none;
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      margin-top: 16px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .quiz-result.pass { background: rgba(63,185,80,0.12); border: 1px solid var(--green); color: var(--green); }
+    .quiz-result.fail { background: rgba(248,81,73,0.12); border: 1px solid var(--red);   color: var(--red); }
+
+    .explanation {
+      display: none;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      padding: 8px 12px;
+      background: var(--surface-2);
+      border-radius: var(--radius);
+      border-left: 2px solid var(--border);
+    }
+
+    .submit-btn {
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: var(--radius);
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.15s;
+    }
+    .submit-btn:hover { opacity: 0.85; }
+    .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #0d1117;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .step-body { flex: 1; }
+    .step-body p { margin-bottom: 6px; }
+
+    .section-divider {
+      border: none;
+      border-top: 2px solid var(--border);
+      margin: 40px 0;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .checklist-item input[type="checkbox"] {
+      margin-top: 3px;
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <!-- Header -->
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 1</span>
+      <span class="badge badge-current">Session 01</span>
+      <span style="color:var(--text-muted); font-size:13px;">JavaScript Foundations</span>
+    </div>
+    <h1>Objects in JavaScript</h1>
+    <p class="subtitle">
+      Before we can understand React props, component data, or state — we must deeply understand
+      JavaScript objects. Everything in React passes data as objects.
+    </p>
+
+    <!-- Time estimate -->
+    <div class="alert alert-info">
+      Estimated time: 35–40 minutes &nbsp;·&nbsp;
+      Pre-quiz → Concept → Lab → Commit → Post-quiz
+    </div>
+
+    <!-- ── SECTION 1: LEARNING OBJECTIVE ──────────────────────── -->
+    <h2>1. Learning Objective</h2>
+    <div class="card">
+      <p>By the end of this session you will be able to:</p>
+      <ul>
+        <li>Create a JavaScript object using object literal syntax</li>
+        <li>Read properties using dot notation and bracket notation</li>
+        <li>Add, update, and understand why direct mutation is a concern</li>
+        <li>Explain the difference between a primitive value and an object reference</li>
+        <li>Describe why React props are objects</li>
+      </ul>
+    </div>
+
+    <!-- ── SECTION 2: PRE-CODING QUIZ ─────────────────────────── -->
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>
+      Answer these <strong>before</strong> reading the concept explanation or writing any code.
+      It is fine to get these wrong — that is the point. We are measuring your starting position.
+      Score your answers honestly. You need 4/5 to proceed to the lab.
+    </p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>You have this code: <code>const country = { name: "Canada", region: "Americas" };</code><br/>
+        What does <code>country.region</code> return?</p>
+        <label class="quiz-option" data-val="a">"Canada"</label>
+        <label class="quiz-option" data-val="b">"Americas"</label>
+        <label class="quiz-option" data-val="c">undefined</label>
+        <label class="quiz-option" data-val="d">An error — you need bracket notation to read properties</label>
+        <div class="explanation">Dot notation reads a property by name. <code>country.region</code> is the same as <code>country["region"]</code>. Both return "Americas".</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>
+          You write <code>const a = { x: 1 };</code> then <code>const b = a;</code> then <code>b.x = 99;</code><br/>
+          What is the value of <code>a.x</code> after this?
+        </p>
+        <label class="quiz-option" data-val="a">1 — because <code>const</code> protects it from changes</label>
+        <label class="quiz-option" data-val="b">1 — because <code>b</code> is a copy of <code>a</code></label>
+        <label class="quiz-option" data-val="c">99 — because <code>b</code> and <code>a</code> point to the same object in memory</label>
+        <label class="quiz-option" data-val="d">An error — you cannot reassign a property on a const</label>
+        <div class="explanation">
+          Objects are reference types. <code>const b = a</code> does not copy the object — it copies the
+          memory address. Both <code>a</code> and <code>b</code> now point to the exact same object,
+          so changing <code>b.x</code> changes <code>a.x</code> too. <code>const</code> prevents
+          reassigning the variable itself, but not mutating what it points to.
+        </div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>
+          A property key is stored in a variable: <code>const key = "population";</code><br/>
+          Which syntax correctly reads that property from <code>country</code>?
+        </p>
+        <label class="quiz-option" data-val="a"><code>country[key]</code></label>
+        <label class="quiz-option" data-val="b"><code>country.key</code></label>
+        <label class="quiz-option" data-val="c"><code>country[population]</code></label>
+        <label class="quiz-option" data-val="d">Both a and b work identically</label>
+        <div class="explanation">
+          <code>country.key</code> looks for a property literally named "key" — it does not
+          evaluate the variable. Bracket notation <code>country[key]</code> evaluates the expression
+          inside the brackets first, so it looks up the property named "population". Use bracket
+          notation whenever the property name is dynamic (stored in a variable).
+        </div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>
+          You call a function and pass it an object: <code>printCountry(country)</code>.<br/>
+          Inside <code>printCountry</code>, the parameter is also called <code>country</code>.<br/>
+          The function adds a new property: <code>country.capital = "Ottawa"</code>.<br/>
+          After the function returns, does the original object have a <code>capital</code> property?
+        </p>
+        <label class="quiz-option" data-val="a">No — function parameters are always copies</label>
+        <label class="quiz-option" data-val="b">No — the function's scope is isolated</label>
+        <label class="quiz-option" data-val="c">Only if the function uses <code>return</code></label>
+        <label class="quiz-option" data-val="d">Yes — the function received the same reference, so it mutated the original</label>
+        <div class="explanation">
+          When you pass an object to a function, you pass the reference, not a copy.
+          The parameter inside the function points to the same object in memory.
+          Any mutations inside the function — adding, changing, or deleting properties —
+          affect the original. This is why React makes props read-only: if child components
+          could mutate them, data would change unpredictably from anywhere.
+        </div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          Which of these is a valid way to create an object with a property that does not exist yet,
+          then add it afterward?
+        </p>
+        <label class="quiz-option" data-val="a"><code>const c = {}; c = { flag: "🇨🇦" };</code></label>
+        <label class="quiz-option" data-val="b"><code>const c = {}; c.flag = "🇨🇦";</code></label>
+        <label class="quiz-option" data-val="c"><code>const c; c.flag = "🇨🇦";</code></label>
+        <label class="quiz-option" data-val="d">You cannot add properties to an object after it is created</label>
+        <div class="explanation">
+          Option A reassigns the variable itself (<code>c = ...</code>), which is illegal with
+          <code>const</code>. Option C declares without initializing, causing an error when
+          you try to access <code>.flag</code> on <code>undefined</code>. Option B is correct:
+          <code>const</code> prevents reassigning the variable, but you can still mutate
+          the object it points to by adding properties with dot notation.
+        </div>
+      </div>
+
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 3: CONCEPT EXPLANATION ─────────────────────── -->
+    <h2>3. The Concept — JavaScript Objects</h2>
+
+    <h3>What is an object?</h3>
+    <p>
+      An object is a container that groups related data together under one name.
+      Instead of having three separate variables for a country's data, you have one object
+      that holds all of them.
+    </p>
+
+    <pre><code>// Without objects — three unrelated variables
+const countryName = "Canada";
+const countryRegion = "Americas";
+const countryPopulation = 38000000;
+
+// With an object — one container, logically grouped
+const country = {
+  name: "Canada",
+  region: "Americas",
+  population: 38000000
+};</code></pre>
+
+    <!-- SVG: Object as a grouped container -->
+    <svg width="480" height="170" viewBox="0 0 480 170" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="170" fill="#111111"/>
+      <text x="14" y="16" font-family="monospace" font-size="9" fill="white" opacity="0.5">3 separate variables</text>
+      <rect x="10" y="22" width="138" height="22" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-1,79,33)"/>
+      <text x="16" y="37" font-family="monospace" font-size="9" fill="white">countryName = "Canada"</text>
+      <rect x="18" y="52" width="138" height="22" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.7,87,63)"/>
+      <text x="24" y="67" font-family="monospace" font-size="9" fill="white">countryRegion = "Am."</text>
+      <rect x="6" y="82" width="138" height="22" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,75,93)"/>
+      <text x="12" y="97" font-family="monospace" font-size="9" fill="white">countryPop = 38000000</text>
+      <path d="M155,66 L188,66" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="185,63 189,66 185,69" fill="white"/>
+      <text x="196" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">one object container</text>
+      <rect x="192" y="22" width="275" height="110" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(-0.4,329,77)"/>
+      <text x="202" y="43" font-family="monospace" font-size="10" fill="white">name: "Canada"</text>
+      <line x1="192" y1="49" x2="467" y2="48" stroke="white" stroke-width="0.5" opacity="0.25"/>
+      <text x="202" y="68" font-family="monospace" font-size="10" fill="white">region: "Americas"</text>
+      <line x1="192" y1="74" x2="467" y2="73" stroke="white" stroke-width="0.5" opacity="0.25"/>
+      <text x="202" y="93" font-family="monospace" font-size="10" fill="white">population: 38000000</text>
+      <line x1="192" y1="99" x2="467" y2="98" stroke="white" stroke-width="0.5" opacity="0.25"/>
+      <text x="202" y="118" font-family="monospace" font-size="10" fill="#ff5ca8">key : value</text>
+      <text x="302" y="118" font-family="monospace" font-size="9" fill="white">← pair</text>
+    </svg>
+
+    <p>
+      The thing on the left of the colon is called a <strong>key</strong> (or property name).
+      The thing on the right is the <strong>value</strong>. Together they are a <strong>key-value pair</strong>.
+      You can have as many as you need.
+    </p>
+
+    <h3>Reading properties — dot notation vs bracket notation</h3>
+    <p>There are two ways to read a property from an object:</p>
+
+    <pre><code>const country = { name: "Canada", region: "Americas" };
+
+// Dot notation — use this when you know the property name upfront
+console.log(country.name);    // "Canada"
+console.log(country.region);  // "Americas"
+
+// Bracket notation — use this when the property name is dynamic
+const key = "name";
+console.log(country[key]);    // "Canada" — evaluates the variable first
+
+// Bracket notation is also required for property names with spaces or special chars
+const weird = { "my country": "Canada" };
+console.log(weird["my country"]); // "Canada"</code></pre>
+
+    <!-- SVG: Dot notation vs bracket notation -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <rect x="150" y="10" width="180" height="52" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.3,240,36)"/>
+      <text x="160" y="30" font-family="monospace" font-size="9" fill="white">name: "Canada"</text>
+      <line x1="150" y1="36" x2="330" y2="35" stroke="white" stroke-width="0.5" opacity="0.25"/>
+      <text x="160" y="52" font-family="monospace" font-size="9" fill="white">population: 38000000</text>
+      <line x1="200" y1="62" x2="120" y2="96" stroke="#ff5ca8" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="118,93 121,98 124,94" fill="#ff5ca8"/>
+      <text x="14" y="98" font-family="monospace" font-size="10" fill="#ff5ca8">country.name</text>
+      <text x="14" y="114" font-family="monospace" font-size="9" fill="white">know key upfront</text>
+      <text x="14" y="132" font-family="monospace" font-size="10" fill="white">→ "Canada"</text>
+      <line x1="290" y1="62" x2="358" y2="96" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="355,93 359,97 362,93" fill="white"/>
+      <text x="340" y="90" font-family="monospace" font-size="9" fill="white">country[key]</text>
+      <text x="326" y="106" font-family="monospace" font-size="9" fill="#ff5ca8">key = "population"</text>
+      <text x="326" y="121" font-family="monospace" font-size="8" fill="white">evaluates variable first</text>
+      <text x="340" y="138" font-family="monospace" font-size="10" fill="white">→ 38000000</text>
+      <text x="182" y="160" font-family="monospace" font-size="9" fill="#ff5ca8">use bracket when key is dynamic</text>
+    </svg>
+
+    <h3>Objects are reference types — this is critical</h3>
+    <p>
+      In JavaScript there are two categories of values: <strong>primitives</strong> and <strong>objects</strong>.
+    </p>
+    <p>
+      Primitives (<code>string</code>, <code>number</code>, <code>boolean</code>, <code>null</code>, <code>undefined</code>)
+      are copied when assigned. Objects are <em>not</em> copied — only the memory address (reference) is copied.
+    </p>
+
+    <pre><code>// Primitives — a copy is made
+let x = 5;
+let y = x;
+y = 99;
+console.log(x); // still 5 — x and y are independent
+
+// Objects — reference is shared, NOT copied
+const a = { score: 5 };
+const b = a;        // b now points to the SAME object as a
+b.score = 99;
+console.log(a.score); // 99 — because a and b are the same object in memory</code></pre>
+
+    <!-- SVG: Primitives copy vs Objects share reference -->
+    <svg width="480" height="185" viewBox="0 0 480 185" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="185" fill="#111111"/>
+      <text x="20" y="16" font-family="monospace" font-size="10" fill="white">primitives</text>
+      <text x="100" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">— copy made</text>
+      <rect x="14" y="24" width="65" height="26" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,46,37)"/>
+      <text x="21" y="41" font-family="monospace" font-size="10" fill="white">x = 5</text>
+      <rect x="14" y="68" width="65" height="26" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.4,46,81)"/>
+      <text x="21" y="85" font-family="monospace" font-size="10" fill="white">y = 5</text>
+      <line x1="82" y1="37" x2="110" y2="37" stroke="white" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,2" opacity="0.5"/>
+      <line x1="82" y1="81" x2="110" y2="81" stroke="white" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,2" opacity="0.5"/>
+      <text x="114" y="41" font-family="monospace" font-size="8" fill="white">independent</text>
+      <text x="114" y="85" font-family="monospace" font-size="8" fill="white">independent</text>
+      <line x1="215" y1="10" x2="215" y2="165" stroke="white" stroke-width="0.5" stroke-dasharray="4,3" opacity="0.2"/>
+      <text x="228" y="16" font-family="monospace" font-size="10" fill="white">objects</text>
+      <text x="296" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">— reference shared</text>
+      <text x="228" y="42" font-family="monospace" font-size="10" fill="white">a</text>
+      <path d="M242,38 L318,62" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="315,59 319,63 315,66" fill="white"/>
+      <text x="228" y="82" font-family="monospace" font-size="10" fill="white">b</text>
+      <path d="M242,78 L318,72" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="315,69 319,73 315,76" fill="white"/>
+      <rect x="326" y="50" width="138" height="36" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.4,395,68)"/>
+      <text x="334" y="65" font-family="monospace" font-size="9" fill="white">{ score: 5 }</text>
+      <text x="334" y="80" font-family="monospace" font-size="8" fill="white">heap memory</text>
+      <rect x="326" y="116" width="120" height="18" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.3,386,125)"/>
+      <text x="332" y="129" font-family="monospace" font-size="9" fill="#ff5ca8">same memory address</text>
+    </svg>
+
+    <div class="alert alert-warning">
+      <strong>Why this matters for React:</strong> React components receive their data as an object
+      called <code>props</code>. React makes props read-only on purpose — if child components could
+      mutate the object, then parent components would have their data changed from unpredictable places.
+      Understanding references is why this rule exists.
+    </div>
+
+    <h3>Adding and updating properties</h3>
+    <pre><code>const country = { name: "Canada" };
+
+// Add a new property
+country.capital = "Ottawa";
+console.log(country); // { name: "Canada", capital: "Ottawa" }
+
+// Update an existing property
+country.name = "Canada (updated)";
+console.log(country.name); // "Canada (updated)"
+
+// Delete a property
+delete country.capital;
+console.log(country); // { name: "Canada (updated)" }</code></pre>
+
+    <!-- SVG: Adding and updating properties (mutation timeline) -->
+    <svg width="480" height="160" viewBox="0 0 480 160" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="160" fill="#111111"/>
+      <text x="18" y="16" font-family="monospace" font-size="9" fill="white" opacity="0.5">initial</text>
+      <rect x="12" y="22" width="110" height="28" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,67,36)"/>
+      <text x="20" y="40" font-family="monospace" font-size="10" fill="white">name: "Canada"</text>
+      <path d="M126,36 L165,36" stroke="#ff5ca8" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="162,33 166,36 162,39" fill="#ff5ca8"/>
+      <text x="128" y="28" font-family="monospace" font-size="8" fill="#ff5ca8">.capital = "Ottawa"</text>
+      <text x="174" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">after add</text>
+      <rect x="170" y="22" width="126" height="50" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(0.4,233,47)"/>
+      <text x="178" y="40" font-family="monospace" font-size="10" fill="white">name: "Canada"</text>
+      <line x1="170" y1="46" x2="296" y2="45" stroke="white" stroke-width="0.5" opacity="0.25"/>
+      <text x="178" y="62" font-family="monospace" font-size="10" fill="#ff5ca8">capital: "Ottawa"</text>
+      <path d="M300,47 L338,47" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="335,44 339,47 335,50" fill="white"/>
+      <text x="302" y="38" font-family="monospace" font-size="8" fill="white">.name = "updated"</text>
+      <text x="346" y="16" font-family="monospace" font-size="9" fill="white" opacity="0.5">after update</text>
+      <rect x="344" y="22" width="124" height="50" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.4,406,47)"/>
+      <text x="352" y="40" font-family="monospace" font-size="10" fill="#ff5ca8">name: "updated"</text>
+      <line x1="344" y1="46" x2="468" y2="45" stroke="white" stroke-width="0.5" opacity="0.25"/>
+      <text x="352" y="62" font-family="monospace" font-size="10" fill="white">capital: "Ottawa"</text>
+      <rect x="150" y="106" width="180" height="18" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.3,240,115)"/>
+      <text x="156" y="119" font-family="monospace" font-size="9" fill="#ff5ca8">mutation — same reference</text>
+    </svg>
+
+    <h3>Nested objects</h3>
+    <p>Property values can themselves be objects:</p>
+    <pre><code>const country = {
+  name: "Canada",
+  location: {
+    continent: "North America",
+    coordinates: { lat: 56.1304, lng: -106.3468 }
+  }
+};
+
+console.log(country.location.continent);          // "North America"
+console.log(country.location.coordinates.lat);   // 56.1304</code></pre>
+
+    <!-- SVG: Nested objects as nested containers -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <rect x="10" y="10" width="340" height="152" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.3,180,86)"/>
+      <text x="18" y="28" font-family="monospace" font-size="9" fill="white">country {</text>
+      <text x="28" y="46" font-family="monospace" font-size="9" fill="white">  name: "Canada"</text>
+      <rect x="26" y="54" width="308" height="100" fill="none" stroke="#ff5ca8" stroke-width="1" rx="1" transform="rotate(0.3,180,104)"/>
+      <text x="36" y="70" font-family="monospace" font-size="9" fill="#ff5ca8">  location {</text>
+      <text x="46" y="86" font-family="monospace" font-size="9" fill="white">    continent: "N.America"</text>
+      <rect x="44" y="94" width="272" height="50" fill="none" stroke="white" stroke-width="1" rx="1" opacity="0.5" transform="rotate(-0.4,180,119)"/>
+      <text x="54" y="110" font-family="monospace" font-size="9" fill="white">    coordinates {</text>
+      <text x="64" y="128" font-family="monospace" font-size="9" fill="#ff5ca8">      lat: 56.13  lng: -106.3</text>
+      <text x="360" y="60" font-family="monospace" font-size="9" fill="white">deep access:</text>
+      <text x="360" y="78" font-family="monospace" font-size="8" fill="#ff5ca8">country</text>
+      <text x="360" y="94" font-family="monospace" font-size="8" fill="white">  .location</text>
+      <text x="360" y="110" font-family="monospace" font-size="8" fill="white">    .coordinates</text>
+      <text x="360" y="126" font-family="monospace" font-size="8" fill="#ff5ca8">      .lat</text>
+      <text x="360" y="148" font-family="monospace" font-size="8" fill="white">→ 56.1304</text>
+    </svg>
+
+    <h3>Objects in React — the connection</h3>
+    <p>
+      Every React component receives exactly one argument: an object called <code>props</code>.
+      When you later write <code>&lt;CountryCard name="Canada" region="Americas" /&gt;</code>,
+      React collects those attributes into one object and passes it to your component function:
+    </p>
+    <pre><code>// What React actually passes to your component:
+props = {
+  name: "Canada",
+  region: "Americas"
+}
+
+// Your component reads it exactly like reading from any object:
+function CountryCard(props) {
+  return props.name; // "Canada"
+}</code></pre>
+
+    <!-- SVG: JSX attributes → props object → component reads it -->
+    <svg width="480" height="165" viewBox="0 0 480 165" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="165" fill="#111111"/>
+      <text x="14" y="16" font-family="monospace" font-size="9" fill="white" opacity="0.5">JSX</text>
+      <rect x="10" y="22" width="116" height="56" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,68,50)"/>
+      <text x="16" y="40" font-family="monospace" font-size="9" fill="white">&lt;CountryCard</text>
+      <text x="18" y="56" font-family="monospace" font-size="9" fill="#ff5ca8">  name="Canada"</text>
+      <text x="18" y="71" font-family="monospace" font-size="9" fill="#ff5ca8">  region="Am."</text>
+      <path d="M130,50 L168,50" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="165,47 169,50 165,53" fill="white"/>
+      <text x="130" y="42" font-family="monospace" font-size="7" fill="white">React bundles</text>
+      <text x="178" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">props {}</text>
+      <rect x="174" y="22" width="148" height="56" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(0.4,248,50)"/>
+      <text x="182" y="42" font-family="monospace" font-size="9" fill="white">name: "Canada"</text>
+      <line x1="174" y1="48" x2="322" y2="47" stroke="white" stroke-width="0.5" opacity="0.25"/>
+      <text x="182" y="65" font-family="monospace" font-size="9" fill="white">region: "Americas"</text>
+      <path d="M326,50 L364,50" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="361,47 365,50 361,53" fill="white"/>
+      <text x="328" y="42" font-family="monospace" font-size="7" fill="white">passed to</text>
+      <text x="374" y="16" font-family="monospace" font-size="9" fill="white" opacity="0.5">function</text>
+      <rect x="370" y="22" width="100" height="56" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.4,420,50)"/>
+      <text x="376" y="40" font-family="monospace" font-size="8" fill="white">CountryCard(props)</text>
+      <text x="378" y="58" font-family="monospace" font-size="9" fill="#ff5ca8">props.name</text>
+      <text x="378" y="73" font-family="monospace" font-size="9" fill="#ff5ca8">props.region</text>
+      <text x="148" y="110" font-family="monospace" font-size="9" fill="white">JSX attributes become object properties</text>
+      <text x="148" y="126" font-family="monospace" font-size="9" fill="#ff5ca8">you already know how to read these</text>
+    </svg>
+
+    <p>
+      We are not writing React yet. But when we do, in Session 10, you will immediately recognise
+      this pattern because you already understand it.
+    </p>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 4: LAB ──────────────────────────────────────── -->
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Create a single JavaScript file that defines one country
+      as an object, reads its properties two different ways, and logs the results to the console.
+      No React. No HTML. Just a plain <code>.js</code> file run in the browser console or Node.
+    </div>
+
+    <h3>What you will build</h3>
+    <p>
+      A file called <code>src/country.js</code> that demonstrates every object concept from this session.
+      Nothing more.
+    </p>
+
+    <h3>Step-by-step instructions</h3>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Create the file</strong></p>
+        <p>Create a new file at <code>src/country.js</code>. It does not exist yet.</p>
+        <pre><code>// src/country.js</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Define your country object</strong></p>
+        <p>
+          Write a <code>const</code> called <code>country</code>. Give it at least 5 properties.
+          Use real values — pick any country you like.
+        </p>
+        <pre><code>const country = {
+  name: "Canada",
+  capital: "Ottawa",
+  region: "Americas",
+  population: 38000000,
+  independent: true
+};</code></pre>
+        <p>
+          Before continuing: look at each property. What type is the value?
+          (<code>name</code> is a string, <code>population</code> is a number, <code>independent</code>
+          is a boolean.) Objects can hold any type as a value.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Read properties using dot notation</strong></p>
+        <pre><code>console.log("Name (dot):", country.name);
+console.log("Capital (dot):", country.capital);
+console.log("Region (dot):", country.region);</code></pre>
+        <p>Run the file. You should see three lines in the console.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Read a property using bracket notation with a variable</strong></p>
+        <pre><code>const propertyToRead = "population";
+console.log("Population (bracket):", country[propertyToRead]);</code></pre>
+        <p>
+          Stop and think: what would happen if you wrote <code>country.propertyToRead</code>
+          instead? Try it. Confirm you get <code>undefined</code> and understand why.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Prove the reference behaviour</strong></p>
+        <pre><code>const original = { name: "Canada", score: 0 };
+const copy = original;       // This is NOT a copy
+copy.score = 99;
+
+console.log("original.score:", original.score); // What do you expect?
+console.log("copy.score:", copy.score);</code></pre>
+        <p>
+          Before running: write down what you think <code>original.score</code> will be.
+          Then run it. If you were wrong, re-read the "Objects are reference types" section above.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <p><strong>Add a property after creation</strong></p>
+        <pre><code>console.log("Before:", country.flag);  // undefined
+country.flag = "🇨🇦";
+console.log("After:", country.flag);   // 🇨🇦</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <p><strong>Add a nested object</strong></p>
+        <pre><code>country.languages = {
+  official: ["English", "French"],
+  total: 2
+};
+
+console.log("Official languages:", country.languages.official);
+console.log("First language:", country.languages.official[0]);</code></pre>
+        <p>
+          Notice: <code>official</code> is an array, and we access its first item with <code>[0]</code>.
+          Arrays are also objects — we will cover them in Session 02.
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 5: EXPECTED FILES CHANGED ──────────────────── -->
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>File</th><th>Action</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>src/country.js</code></td>
+            <td>Created</td>
+            <td>The only file for this session. Plain JavaScript, no imports, no React.</td>
+          </tr>
+          <tr>
+            <td><code>docs/sessions/session-01/index.html</code></td>
+            <td>Created</td>
+            <td>This session document.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert alert-warning">
+      If you find yourself editing any other file, stop. This session touches exactly two files.
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 6: COMMIT CHECKPOINT ───────────────────────── -->
+    <h2>6. Commit Checkpoint</h2>
+    <p>Once the lab is complete and you can explain every line, make this exact commit:</p>
+    <pre><code>git add src/country.js docs/sessions/session-01/index.html
+git commit -m "session-01: define country as a JS object, explore properties and references"</code></pre>
+
+    <div class="alert alert-info">
+      Do not commit until you can answer out loud: "What is the difference between dot notation
+      and bracket notation, and when would I use each?"
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 7: CODE REVIEW CHECKLIST ───────────────────── -->
+    <h2>7. Code Review Checklist</h2>
+    <p>Go through <code>src/country.js</code> line by line and check each item:</p>
+
+    <div class="card">
+      <div class="checklist-item">
+        <input type="checkbox" id="c1" />
+        <label for="c1">The object is declared with <code>const</code>, not <code>var</code> or <code>let</code></label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c2" />
+        <label for="c2">Every key-value pair is separated by a comma (trailing comma on last item is fine)</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c3" />
+        <label for="c3">String values are wrapped in quotes; number and boolean values are not</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c4" />
+        <label for="c4">Dot notation example is present and logged to console</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c5" />
+        <label for="c5">Bracket notation with a variable is present and logged</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c6" />
+        <label for="c6">Reference behaviour is demonstrated (two variables, one object, mutation proof)</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c7" />
+        <label for="c7">A nested object is present and a deeply nested value is accessed</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c8" />
+        <label for="c8">I can explain every line without looking at the concept section</label>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 8: POST-CODING QUIZ ────────────────────────── -->
+    <h2>8. Post-Coding Quiz</h2>
+    <p>
+      Same 5 questions. Take it again now that you have written and run the code.
+      You need 4/5 to mark this session complete. If you score below 4, re-read the
+      concept section and redo the lab before committing.
+    </p>
+
+    <div id="post-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>You have this code: <code>const country = { name: "Canada", region: "Americas" };</code><br/>
+        What does <code>country.region</code> return?</p>
+        <label class="quiz-option" data-val="a">"Canada"</label>
+        <label class="quiz-option" data-val="b">"Americas"</label>
+        <label class="quiz-option" data-val="c">undefined</label>
+        <label class="quiz-option" data-val="d">An error — you need bracket notation to read properties</label>
+        <div class="explanation">Dot notation reads a property by name. <code>country.region</code> returns "Americas".</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>
+          You write <code>const a = { x: 1 };</code> then <code>const b = a;</code> then <code>b.x = 99;</code><br/>
+          What is the value of <code>a.x</code> after this?
+        </p>
+        <label class="quiz-option" data-val="a">1 — because <code>const</code> protects it from changes</label>
+        <label class="quiz-option" data-val="b">1 — because <code>b</code> is a copy of <code>a</code></label>
+        <label class="quiz-option" data-val="c">99 — because <code>b</code> and <code>a</code> point to the same object in memory</label>
+        <label class="quiz-option" data-val="d">An error — you cannot reassign a property on a const</label>
+        <div class="explanation">Objects are reference types. <code>b = a</code> copies the reference, not the object. Both variables point to the same memory.</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>
+          A property key is stored in a variable: <code>const key = "population";</code><br/>
+          Which syntax correctly reads that property from <code>country</code>?
+        </p>
+        <label class="quiz-option" data-val="a"><code>country[key]</code></label>
+        <label class="quiz-option" data-val="b"><code>country.key</code></label>
+        <label class="quiz-option" data-val="c"><code>country[population]</code></label>
+        <label class="quiz-option" data-val="d">Both a and b work identically</label>
+        <div class="explanation"><code>country.key</code> looks for a property literally named "key". Bracket notation evaluates the variable first.</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>
+          You pass an object to a function. Inside the function you add a new property to it.
+          After the function returns, does the original object have that new property?
+        </p>
+        <label class="quiz-option" data-val="a">No — function parameters are always copies</label>
+        <label class="quiz-option" data-val="b">No — the function's scope is isolated</label>
+        <label class="quiz-option" data-val="c">Only if the function uses <code>return</code></label>
+        <label class="quiz-option" data-val="d">Yes — the function received the same reference and mutated the original</label>
+        <div class="explanation">Passing an object to a function passes the reference. Mutations inside the function affect the original object.</div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          Which of these is a valid way to create an empty object and then add a property?
+        </p>
+        <label class="quiz-option" data-val="a"><code>const c = {}; c = { flag: "🇨🇦" };</code></label>
+        <label class="quiz-option" data-val="b"><code>const c = {}; c.flag = "🇨🇦";</code></label>
+        <label class="quiz-option" data-val="c"><code>const c; c.flag = "🇨🇦";</code></label>
+        <label class="quiz-option" data-val="d">You cannot add properties to an object after it is created</label>
+        <div class="explanation">Option B is correct. <code>const</code> prevents reassigning the variable, but allows mutating the object's properties.</div>
+      </div>
+
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 9: REFLECTION ───────────────────────────────── -->
+    <h2>9. Reflection Questions</h2>
+    <p>Think through these after the post-quiz. No right answer — they are for discussion.</p>
+    <div class="card">
+      <ol>
+        <li>You've used objects before in other languages or frameworks. What was different or surprising about JavaScript's reference behaviour?</li>
+        <li>If objects are passed by reference and React makes props read-only — how do you think React enforces that rule? (Guess — we'll find out in Session 11.)</li>
+        <li>In Step 4 of the lab, you confirmed that <code>country.propertyToRead</code> returns <code>undefined</code> instead of an error. Why doesn't JavaScript throw an error for a missing property?</li>
+        <li>When would you actually need bracket notation in real code? Can you think of a realistic example beyond the lab?</li>
+      </ol>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 10: WHAT BREAKS ─────────────────────────────── -->
+    <h2>10. What Breaks If This Knowledge Is Missing?</h2>
+    <div class="card">
+      <ul>
+        <li>
+          <strong>React props bugs:</strong> If you believe objects are copied when passed, you will
+          be confused when a child component's mutation affects the parent's data. React cannot fully
+          prevent this in plain objects — it relies on you not mutating.
+        </li>
+        <li>
+          <strong>State update bugs (Layer 3):</strong> In Session 17, you will learn that React
+          state must be replaced, not mutated. If you mutate state directly (e.g., <code>state.count = 5</code>
+          instead of <code>setState({ count: 5 })</code>), React will not re-render because the
+          reference did not change. This is the single most common React bug for beginners.
+        </li>
+        <li>
+          <strong>Bracket notation:</strong> In Session 14, you will use <code>.map()</code> to render
+          lists. The callback receives an object, and you will need to access properties dynamically.
+          Missing bracket notation means you cannot do this.
+        </li>
+      </ul>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 11: WHAT WE LEARNED ────────────────────────── -->
+    <h2>11. What We Learned</h2>
+    <div class="card" style="border-color: var(--green);">
+      <p><strong>JavaScript concept mastered:</strong> Objects — key-value containers, dot vs bracket notation, reference semantics, mutation, nesting.</p>
+      <p><strong>React concept unlocked:</strong> You now understand the data structure that React uses for <code>props</code>. When we reach Session 11, the object knowledge from today is the entire foundation.</p>
+      <p><strong>Next session:</strong> <a href="../../sessions/index.html">Session 02 — Arrays and Iteration</a>. We will store multiple countries in an array and iterate over them — the JavaScript pattern that <code>.map()</code> in JSX directly builds on.</p>
+    </div>
+
+  </div>
+</main>
+
+<!-- Quiz logic -->
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
+
+<script src="../../notes-widget.js" defer></script>
+<script src="../../bookmark-widget.js" defer></script>
+
+</body>
+</html>

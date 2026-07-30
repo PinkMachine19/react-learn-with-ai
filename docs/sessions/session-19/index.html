@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 19 — Re-rendering Deep Dive</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+
+    /* Comic-panel concept grid — image teaches first, caption only reinforces */
+    .concept-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0;}
+    @media (max-width:760px){.concept-grid{grid-template-columns:repeat(2,1fr);}}
+    .concept-card{background:#111111;border:1px solid #2a2a2a;border-radius:8px;padding:8px 8px 10px;}
+    .concept-card svg{display:block;width:100%;height:auto;}
+    .concept-card figcaption{margin-top:6px;font-family:monospace;font-size:10.5px;line-height:1.3;color:#c9c9c9;text-align:center;}
+    .concept-card figcaption b{color:#ff5ca8;}
+    .anchor{color:#ff5ca8;font-weight:700;}
+    .objectives-list{list-style:none;padding-left:0;}
+    .objectives-list li{display:flex;gap:12px;align-items:baseline;margin-bottom:12px;font-size:15px;}
+    .obj-num{flex-shrink:0;min-width:34px;color:#ff5ca8;font-family:monospace;font-weight:700;font-size:12px;background:rgba(255,92,168,.1);border:1px solid rgba(255,92,168,.4);border-radius:10px;padding:2px 6px;text-align:center;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 3</span>
+      <span class="badge badge-current">Session 19</span>
+      <span style="color:var(--text-muted);font-size:13px;">State</span>
+    </div>
+    <h1>Re-rendering Deep Dive</h1>
+    <p class="subtitle">
+      Session 17 and 18 built a click counter and named its handlers, but we
+      never actually looked at what "re-render" means or when it happens.
+      Today: a render counter that proves exactly when <code>CountryCard</code>
+      re-runs, and a hands-on experiment with React's automatic batching that
+      exposes a very common state-update bug before you ever write it yourself.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <!-- Comic-panel concept grid: image teaches first, caption only reinforces -->
+    <div class="concept-grid">
+
+      <!-- 1. Re-render: circular arrow re-running the function, big X over reload -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <g transform="rotate(-0.6,80,75)">
+            <path d="M50,42 A28,28 0 1 1 44,66" fill="none" stroke="#ff5ca8" stroke-width="3" stroke-linecap="round"/>
+            <polygon points="44,66 34,60 48,54" fill="#ff5ca8"/>
+            <rect x="46" y="52" width="36" height="28" rx="4" fill="none" stroke="white" stroke-width="2"/>
+            <text x="64" y="70" fill="white" font-family="monospace" font-size="10" text-anchor="middle">f()</text>
+          </g>
+          <g transform="translate(112,20)">
+            <rect x="0" y="0" width="30" height="22" rx="2" fill="none" stroke="#666" stroke-width="1.5"/>
+            <line x1="0" y1="7" x2="30" y2="7" stroke="#666" stroke-width="1.5"/>
+            <path d="M8,15 a5,5 0 1 1 9,-3" fill="none" stroke="#666" stroke-width="1.3"/>
+            <line x1="-4" y1="-4" x2="34" y2="26" stroke="#f85149" stroke-width="2.5"/>
+            <line x1="34" y1="-4" x2="-4" y2="26" stroke="#f85149" stroke-width="2.5"/>
+          </g>
+          <text x="80" y="118" fill="white" font-family="monospace" font-size="9" text-anchor="middle">React calls the</text>
+          <text x="80" y="132" fill="white" font-family="monospace" font-size="9" text-anchor="middle">function again</text>
+        </svg>
+        <figcaption><b>re-render</b> ≠ page reload</figcaption>
+      </figure>
+
+      <!-- 2. setState triggers render: button -> setState -> React -> redrawn UI -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="34" width="34" height="22" rx="5" fill="none" stroke="white" stroke-width="2" transform="rotate(-2,21,45)"/>
+          <text x="21" y="49" fill="white" font-family="monospace" font-size="8" text-anchor="middle">click</text>
+          <path d="M40,45 H62" stroke="#ff5ca8" stroke-width="2.5" marker-end="url(#arr1)"/>
+          <rect x="66" y="32" width="52" height="26" rx="13" fill="none" stroke="#ff5ca8" stroke-width="2"/>
+          <text x="92" y="49" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">setState</text>
+          <path d="M92,58 V80" stroke="#ff5ca8" stroke-width="2.5" marker-end="url(#arr1)"/>
+          <circle cx="92" cy="98" r="14" fill="none" stroke="white" stroke-width="2"/>
+          <ellipse cx="92" cy="98" rx="14" ry="5" fill="none" stroke="white" stroke-width="1.3" transform="rotate(60,92,98)"/>
+          <ellipse cx="92" cy="98" rx="14" ry="5" fill="none" stroke="white" stroke-width="1.3" transform="rotate(-60,92,98)"/>
+          <path d="M78,98 H30" stroke="#3fb950" stroke-width="2.5" marker-end="url(#arr2)"/>
+          <rect x="4" y="86" width="26" height="24" rx="3" fill="none" stroke="#3fb950" stroke-width="2"/>
+          <path d="M9,98 l4,4 8,-9" fill="none" stroke="#3fb950" stroke-width="2" stroke-linecap="round"/>
+          <defs>
+            <marker id="arr1" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#ff5ca8"/></marker>
+            <marker id="arr2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#3fb950"/></marker>
+          </defs>
+          <text x="80" y="132" fill="white" font-family="monospace" font-size="9" text-anchor="middle">click → set → redraw</text>
+        </svg>
+        <figcaption><b>setState</b> is what schedules it</figcaption>
+      </figure>
+
+      <!-- 3. Plain variable: sticky note 5->6, React walks past not noticing -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="46" y="24" width="54" height="50" fill="#2a2a2a" stroke="#555" stroke-width="1.5" transform="rotate(-4,73,49)"/>
+          <text x="73" y="46" fill="#f85149" font-family="monospace" font-size="15" text-anchor="middle" text-decoration="line-through" transform="rotate(-4,73,49)">5</text>
+          <text x="73" y="64" fill="#3fb950" font-family="monospace" font-size="15" text-anchor="middle" font-weight="bold" transform="rotate(-4,73,49)">6</text>
+          <g transform="translate(24,96)">
+            <circle cx="0" cy="0" r="9" fill="none" stroke="white" stroke-width="1.8"/>
+            <line x1="-4" y1="-2" x2="-1" y2="-2" stroke="white" stroke-width="1.4"/>
+            <line x1="1" y1="-2" x2="4" y2="-2" stroke="white" stroke-width="1.4"/>
+            <line x1="0" y1="9" x2="0" y2="28" stroke="white" stroke-width="1.8"/>
+            <line x1="0" y1="14" x2="-9" y2="20" stroke="white" stroke-width="1.8"/>
+            <line x1="0" y1="14" x2="9" y2="20" stroke="white" stroke-width="1.8"/>
+            <line x1="0" y1="28" x2="-7" y2="42" stroke="white" stroke-width="1.8"/>
+            <line x1="0" y1="28" x2="7" y2="42" stroke="white" stroke-width="1.8"/>
+          </g>
+          <path d="M36,100 H120" stroke="#666" stroke-width="1.5" stroke-dasharray="3,3"/>
+          <text x="126" y="104" fill="#666" font-family="monospace" font-size="14">?</text>
+          <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">React never looks</text>
+        </svg>
+        <figcaption>mutated <b>var</b> — invisible to React</figcaption>
+      </figure>
+
+      <!-- 4. Render counter: mechanical odometer, debug-only tag -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <g transform="rotate(1,80,60)">
+            <rect x="34" y="30" width="92" height="46" rx="5" fill="none" stroke="white" stroke-width="2"/>
+            <line x1="65" y1="30" x2="65" y2="76" stroke="white" stroke-width="1.3"/>
+            <line x1="95" y1="30" x2="95" y2="76" stroke="white" stroke-width="1.3"/>
+            <text x="49" y="62" fill="#3fb950" font-family="monospace" font-size="20" text-anchor="middle" font-weight="bold">0</text>
+            <text x="80" y="62" fill="#3fb950" font-family="monospace" font-size="20" text-anchor="middle" font-weight="bold">0</text>
+            <text x="111" y="62" fill="#ff5ca8" font-family="monospace" font-size="20" text-anchor="middle" font-weight="bold">3</text>
+          </g>
+          <path d="M111,24 v-8" stroke="#ff5ca8" stroke-width="2" marker-end="url(#arr3)"/>
+          <defs><marker id="arr3" markerWidth="8" markerHeight="8" refX="4" refY="1" orient="auto"><polygon points="0,8 4,0 8,8" fill="#ff5ca8"/></marker></defs>
+          <g transform="translate(10,96) rotate(-3,20,10)">
+            <rect x="0" y="0" width="66" height="20" rx="10" fill="none" stroke="#f85149" stroke-width="1.6"/>
+            <text x="33" y="14" fill="#f85149" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">DEBUG ONLY</text>
+          </g>
+          <text x="80" y="134" fill="white" font-family="monospace" font-size="9" text-anchor="middle">clicks up, screen doesn't</text>
+        </svg>
+        <figcaption>counts renders, changes nothing</figcaption>
+      </figure>
+
+      <!-- 5. Batching: 3 arrows merge into 1 before render -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8,26 L58,58" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M8,58 L58,58" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M8,90 L58,58" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+          <text x="18" y="20" fill="white" font-family="monospace" font-size="9">set</text>
+          <text x="18" y="70" fill="white" font-family="monospace" font-size="9">set</text>
+          <text x="18" y="102" fill="white" font-family="monospace" font-size="9">set</text>
+          <path d="M60,58 H100" stroke="#ff5ca8" stroke-width="4" stroke-linecap="round" marker-end="url(#arr4)"/>
+          <defs><marker id="arr4" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><polygon points="0,0 10,5 0,10" fill="#ff5ca8"/></marker></defs>
+          <rect x="108" y="40" width="40" height="36" rx="4" fill="none" stroke="#3fb950" stroke-width="2"/>
+          <text x="128" y="63" fill="#3fb950" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">1x</text>
+          <text x="80" y="120" fill="white" font-family="monospace" font-size="10" text-anchor="middle" font-weight="bold">3 updates → 1 render</text>
+        </svg>
+        <figcaption>React batches them for you</figcaption>
+      </figure>
+
+      <!-- 6. Stale closure: two workers read same 5, both write 6 -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="58" y="10" width="44" height="24" rx="3" fill="none" stroke="white" stroke-width="2"/>
+          <text x="80" y="27" fill="white" font-family="monospace" font-size="13" text-anchor="middle" font-weight="bold">5</text>
+          <g transform="translate(24,70)">
+            <circle cx="0" cy="0" r="8" fill="none" stroke="#ff5ca8" stroke-width="1.7"/>
+            <line x1="0" y1="8" x2="0" y2="26" stroke="#ff5ca8" stroke-width="1.7"/>
+            <line x1="0" y1="13" x2="-8" y2="19" stroke="#ff5ca8" stroke-width="1.7"/>
+            <line x1="0" y1="13" x2="8" y2="19" stroke="#ff5ca8" stroke-width="1.7"/>
+            <line x1="0" y1="26" x2="-6" y2="38" stroke="#ff5ca8" stroke-width="1.7"/>
+            <line x1="0" y1="26" x2="6" y2="38" stroke="#ff5ca8" stroke-width="1.7"/>
+          </g>
+          <g transform="translate(136,70)">
+            <circle cx="0" cy="0" r="8" fill="none" stroke="#ff5ca8" stroke-width="1.7"/>
+            <line x1="0" y1="8" x2="0" y2="26" stroke="#ff5ca8" stroke-width="1.7"/>
+            <line x1="0" y1="13" x2="-8" y2="19" stroke="#ff5ca8" stroke-width="1.7"/>
+            <line x1="0" y1="13" x2="8" y2="19" stroke="#ff5ca8" stroke-width="1.7"/>
+            <line x1="0" y1="26" x2="-6" y2="38" stroke="#ff5ca8" stroke-width="1.7"/>
+            <line x1="0" y1="26" x2="6" y2="38" stroke="#ff5ca8" stroke-width="1.7"/>
+          </g>
+          <path d="M32,60 L64,32" stroke="#666" stroke-width="1.2" stroke-dasharray="2,2"/>
+          <path d="M128,60 L96,32" stroke="#666" stroke-width="1.2" stroke-dasharray="2,2"/>
+          <text x="24" y="122" fill="white" font-family="monospace" font-size="9" text-anchor="middle">writes 6</text>
+          <text x="136" y="122" fill="white" font-family="monospace" font-size="9" text-anchor="middle">writes 6</text>
+          <text x="80" y="140" fill="#f85149" font-family="monospace" font-size="10" text-anchor="middle" font-weight="bold">result: 6, not 7</text>
+        </svg>
+        <figcaption>both read the <b>same</b> stale 5</figcaption>
+      </figure>
+
+      <!-- 7. Functional update: worker 2 waits, reads latest, then writes -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="58" y="10" width="44" height="24" rx="3" fill="none" stroke="white" stroke-width="2"/>
+          <text x="80" y="27" fill="white" font-family="monospace" font-size="13" text-anchor="middle" font-weight="bold">6</text>
+          <g transform="translate(24,70)">
+            <circle cx="0" cy="0" r="8" fill="none" stroke="#3fb950" stroke-width="1.7"/>
+            <line x1="0" y1="8" x2="0" y2="26" stroke="#3fb950" stroke-width="1.7"/>
+            <line x1="0" y1="13" x2="-8" y2="19" stroke="#3fb950" stroke-width="1.7"/>
+            <line x1="0" y1="13" x2="8" y2="19" stroke="#3fb950" stroke-width="1.7"/>
+            <line x1="0" y1="26" x2="-6" y2="38" stroke="#3fb950" stroke-width="1.7"/>
+            <line x1="0" y1="26" x2="6" y2="38" stroke="#3fb950" stroke-width="1.7"/>
+          </g>
+          <g transform="translate(136,70)">
+            <circle cx="0" cy="0" r="8" fill="none" stroke="#3fb950" stroke-width="1.7"/>
+            <line x1="0" y1="8" x2="0" y2="26" stroke="#3fb950" stroke-width="1.7"/>
+            <line x1="0" y1="13" x2="-8" y2="19" stroke="#3fb950" stroke-width="1.7"/>
+            <line x1="0" y1="13" x2="8" y2="19" stroke="#3fb950" stroke-width="1.7"/>
+            <line x1="0" y1="26" x2="-6" y2="38" stroke="#3fb950" stroke-width="1.7"/>
+            <line x1="0" y1="26" x2="6" y2="38" stroke="#3fb950" stroke-width="1.7"/>
+          </g>
+          <circle cx="150" cy="56" r="8" fill="none" stroke="#ff5ca8" stroke-width="1.6"/>
+          <line x1="150" y1="56" x2="150" y2="50" stroke="#ff5ca8" stroke-width="1.4"/>
+          <line x1="150" y1="56" x2="154" y2="58" stroke="#ff5ca8" stroke-width="1.4"/>
+          <text x="24" y="122" fill="white" font-family="monospace" font-size="9" text-anchor="middle">writes 7</text>
+          <text x="136" y="122" fill="white" font-family="monospace" font-size="9" text-anchor="middle">waits, writes 8</text>
+          <text x="80" y="140" fill="#3fb950" font-family="monospace" font-size="10" text-anchor="middle" font-weight="bold">result: +2, correct</text>
+        </svg>
+        <figcaption><b>c ⇒ c+1</b> reads the latest</figcaption>
+      </figure>
+
+      <!-- 8. Next session -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="14" y="58" width="46" height="34" rx="4" fill="none" stroke="#666" stroke-width="1.8" transform="rotate(-2,37,75)"/>
+          <text x="37" y="79" fill="#666" font-family="monospace" font-size="10" text-anchor="middle">19</text>
+          <path d="M64,75 H108" stroke="#ff5ca8" stroke-width="2.5" stroke-dasharray="5,4" marker-end="url(#arr5)"/>
+          <defs><marker id="arr5" markerWidth="9" markerHeight="9" refX="4" refY="4" orient="auto"><polygon points="0,0 9,4 0,9" fill="#ff5ca8"/></marker></defs>
+          <rect x="112" y="52" width="42" height="46" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2.2" transform="rotate(2,133,75)"/>
+          <text x="133" y="80" fill="#ff5ca8" font-family="monospace" font-size="14" text-anchor="middle" font-weight="bold">20</text>
+          <line x1="120" y1="105" x2="146" y2="105" stroke="white" stroke-width="1.6"/>
+          <line x1="140" y1="101" x2="146" y2="105" stroke="white" stroke-width="1.6"/>
+          <line x1="140" y1="109" x2="146" y2="105" stroke="white" stroke-width="1.6"/>
+          <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">an input that types</text>
+        </svg>
+        <figcaption>next: controlled inputs</figcaption>
+      </figure>
+
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
+    <div class="card">
+      <ol class="objectives-list">
+        <li><span class="obj-num">1/5</span><span>Define <span class="anchor">re-render</span> precisely: React calling the <span class="anchor">function again</span>, not a <span class="anchor">page reload</span></span></li>
+        <li><span class="obj-num">2/5</span><span>Identify what <span class="anchor">triggers</span> a re-render (a <span class="anchor">state update</span>) and what doesn't (a <span class="anchor">plain variable</span>)</span></li>
+        <li><span class="obj-num">3/5</span><span>Add a <span class="anchor">render counter</span> that proves <span class="anchor">how often</span> <code>CountryCard</code> <span class="anchor">re-runs</span></span></li>
+        <li><span class="obj-num">4/5</span><span>Explain React's automatic <span class="anchor">batching</span>: updates in <span class="anchor">one handler</span> produce a <span class="anchor">single re-render</span></span></li>
+        <li><span class="obj-num">5/5</span><span>Predict, then observe, the <span class="anchor">stale closure</span> bug from calling setCount <span class="anchor">twice</span> in the <span class="anchor">same handler</span></span></li>
+      </ol>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>What does "CountryCard re-renders" actually mean?</p>
+        <label class="quiz-option" data-val="a">The browser reloads the whole page</label>
+        <label class="quiz-option" data-val="b">React calls the CountryCard function again</label>
+        <label class="quiz-option" data-val="c">The CSS file is re-downloaded</label>
+        <label class="quiz-option" data-val="d">The DOM node is deleted and rebuilt empty</label>
+        <div class="explanation">A re-render is React re-invoking your function component. It's a JavaScript function call, not a network request or a full remount.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Which of these actually causes a re-render?</p>
+        <label class="quiz-option" data-val="a">Reading a prop without changing it</label>
+        <label class="quiz-option" data-val="b">Reassigning a plain <code>let</code> variable</label>
+        <label class="quiz-option" data-val="c">Calling a state setter like <code>setCount()</code></label>
+        <label class="quiz-option" data-val="d">Adding a <code>console.log</code> statement</label>
+        <div class="explanation">React only knows to re-render when you call a state setter function. Plain variable reassignment is invisible to it.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Inside <code>handleClick</code>, you call <code>setCount(count + 1)</code> twice in a row. How many times does <code>count</code> actually increase?</p>
+        <label class="quiz-option" data-val="a">By 1 — both calls read the same stale count</label>
+        <label class="quiz-option" data-val="b">By 2, matching the two calls exactly</label>
+        <label class="quiz-option" data-val="c">By 0 — the calls cancel out</label>
+        <label class="quiz-option" data-val="d">It throws an error calling setState twice</label>
+        <div class="explanation">count is a constant captured at render time. Both setCount(count + 1) calls compute the exact same new value from the exact same stale count.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>If a module-level variable <code>let renderCount = 0</code> is incremented at the top of CountryCard's function body, does incrementing it cause a re-render?</p>
+        <label class="quiz-option" data-val="a">Yes, exactly like calling a state setter</label>
+        <label class="quiz-option" data-val="b">Only during the very first render</label>
+        <label class="quiz-option" data-val="c">Only once the variable is exported</label>
+        <label class="quiz-option" data-val="d">No — it's a plain variable, not tracked state</label>
+        <div class="explanation">This is why renderCount works as a proof tool: it's an ordinary variable that just happens to get incremented every time this function runs, for whatever reason it ran.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Two <code>CountryCard</code> instances are rendered by <code>CountryList</code>. You click the button on card A. Does card B re-render too?</p>
+        <label class="quiz-option" data-val="a">Yes, every card on the page re-renders together</label>
+        <label class="quiz-option" data-val="b">No — only card A's own state changed</label>
+        <label class="quiz-option" data-val="c">Only if both cards share a key prop</label>
+        <label class="quiz-option" data-val="d">Card B re-renders, but card A does not</label>
+        <div class="explanation">Each CountryCard instance has its own useState call and its own independent count — updating one instance's state has no effect on a sibling instance.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — What Actually Triggers a Re-render</h2>
+
+    <h3>A re-render is just React calling your function again</h3>
+    <p>
+      Nothing mystical happens. React keeps a reference to your component
+      function and, when it decides a re-render is needed, it calls that
+      function again — the same way any JavaScript function gets called
+      again. The new JSX it returns gets diffed against what's currently on
+      screen, and only the actual differences get applied to the real DOM.
+    </p>
+
+    <h3>What triggers it: a state update, every time</h3>
+    <pre><code>function handleClick(event) {
+  console.log(event.type, event.target)
+  setCount(count + 1)   // <- this line is the ONLY thing that schedules a re-render
+}</code></pre>
+    <p>
+      Calling a state setter — <code>setCount</code>, in our case — is what
+      schedules a re-render. It doesn't matter what value you pass it; even
+      <code>setCount(count)</code> (the exact same value) schedules a
+      re-render, because React can't cheaply know in advance whether the
+      value actually changed without first re-rendering to check.
+    </p>
+
+    <h3>What does NOT trigger it: mutating a plain variable</h3>
+    <pre><code>function CountryCard({ name, region }) {
+  let localCounter = 0;   // a plain variable, not state
+
+  function handleClick() {
+    localCounter = localCounter + 1;  // React has no idea this happened
+    console.log(localCounter);         // this prints correctly...
+    // ...but the screen never updates, because nothing told React to re-render
+  }
+}</code></pre>
+
+    <!-- setCount vs a plain mutation, side by side -->
+    <div class="concept-grid" style="grid-template-columns:repeat(2,1fr);max-width:420px;">
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="8" width="120" height="10" rx="5" fill="none" stroke="#3fb950" stroke-width="2"/>
+          <text x="80" y="16" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">setCount(...)</text>
+          <path d="M80,20 V44" stroke="#3fb950" stroke-width="2" marker-end="url(#arrA)"/>
+          <defs><marker id="arrA" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#3fb950"/></marker></defs>
+          <rect x="40" y="48" width="80" height="50" rx="4" fill="none" stroke="white" stroke-width="2"/>
+          <path d="M56,73 l10,10 22,-24" fill="none" stroke="#3fb950" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <figcaption>screen updates</figcaption>
+      </figure>
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="8" width="120" height="10" rx="5" fill="none" stroke="#f85149" stroke-width="2"/>
+          <text x="80" y="16" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">localCounter++</text>
+          <path d="M80,20 V44" stroke="#666" stroke-width="2" stroke-dasharray="3,3"/>
+          <text x="94" y="34" fill="#666" font-family="monospace" font-size="12">?</text>
+          <rect x="40" y="48" width="80" height="50" rx="4" fill="none" stroke="white" stroke-width="2"/>
+          <line x1="56" y1="63" x2="104" y2="83" stroke="#f85149" stroke-width="3" stroke-linecap="round"/>
+          <line x1="104" y1="63" x2="56" y2="83" stroke="#f85149" stroke-width="3" stroke-linecap="round"/>
+        </svg>
+        <figcaption>screen stays stale</figcaption>
+      </figure>
+    </div>
+
+    <h3>Automatic batching</h3>
+    <p>
+      In React 18 and 19, multiple state updates inside the same event
+      handler are <em>batched</em> — grouped into a single re-render instead
+      of one re-render per <code>setCount</code> call. This isn't just an
+      optimization detail; it changes how you have to reason about calling a
+      setter more than once in a row.
+    </p>
+    <pre><code>function handleClick() {
+  setCount(count + 1);
+  setCount(count + 1);
+  // Even though setCount is called twice, React batches this into
+  // ONE re-render — and both calls read the exact same "count" from
+  // this render's closure, so the net effect is +1, not +2.
+}</code></pre>
+
+    <h3>The stale-closure trap</h3>
+    <p>
+      Every time <code>CountryCard</code> renders, <code>count</code> is a
+      brand new <code>const</code> captured for that render — it never
+      changes for the lifetime of that particular render's <code>handleClick</code>
+      closure. Both <code>setCount(count + 1)</code> calls above read the
+      <em>same</em> <code>count</code>, compute the <em>same</em> new value,
+      and hand React the same instruction twice. React doesn't add them
+      together; the second call just overwrites the first with an identical
+      result.
+    </p>
+
+    <div class="alert alert-warning">
+      <strong>The fix, previewed but not required today:</strong> a
+      "functional update" — <code>setCount(c =&gt; c + 1)</code> — passes a
+      function instead of a value. React calls that function with whatever
+      the latest pending state actually is, so calling it twice really does
+      add up to +2. We are not refactoring to this pattern in today's lab;
+      the goal today is understanding <em>why</em> the plain version behaves
+      the way it does.
+    </div>
+
+    <h3>The render counter as a proof tool</h3>
+    <pre><code>// Module-level — declared OUTSIDE the component function, once
+let renderCount = 0;
+
+function CountryCard({ name, region }) {
+  const [count, setCount] = useState(0);
+
+  renderCount++;
+  console.log(`CountryCard render #${renderCount} — ${name}, count is now ${count}`);
+
+  // ...
+}</code></pre>
+    <p>
+      <code>renderCount</code> lives outside the component, at module scope,
+      so it survives across every render without being reset — and
+      incrementing it is exactly the kind of plain mutation from Section 3
+      that does <em>not</em> itself trigger anything. It's a passive
+      instrument, not a feature: it only tells you how many times React has
+      already decided to call this function.
+    </p>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Add a module-level render counter to
+      <code>CountryCard</code>, verify it counts real re-renders, then run a
+      predict-then-observe experiment with a doubled <code>setCount</code>
+      call to see batching and the stale closure in action.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Add the render counter</strong></p>
+        <pre><code>import { useState } from "react";
+
+let renderCount = 0;
+
+function CountryCard({ name, region }) {
+  const [count, setCount] = useState(0);
+
+  renderCount++;
+  console.log(`CountryCard render #${renderCount} — ${name}, count is now ${count}`);
+
+  // ...handleClick, handleReset, JSX unchanged
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Verify: click and watch the count climb by exactly one per click</strong></p>
+        <p>Open DevTools console. Click "Click me" on one card three times. You should see three log lines, render numbers climbing by one each time, <code>count</code> going 1, 2, 3. Click the other card — its own log lines start from wherever the shared <code>renderCount</code> currently is (it's shared across every card), but that card's own <code>count</code> starts fresh at 1.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Predict, then experiment: double the setCount call</strong></p>
+        <p>Before editing anything: write down what you think will happen to <code>count</code> per click if <code>handleClick</code> calls <code>setCount(count + 1)</code> twice.</p>
+        <pre><code>function handleClick(event) {
+  console.log(`Action:${event.type},\n Target attr:`, event.target)
+  setCount(count + 1)
+  setCount(count + 1)   // temporarily added for this experiment
+}</code></pre>
+        <p>Save, click the button once, and read the log. Was your prediction right? <code>count</code> should have gone up by exactly 1, not 2.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Revert the experiment</strong></p>
+        <p>Remove the duplicated <code>setCount(count + 1)</code> line so <code>handleClick</code> is back to calling it once. Keep the render counter — that part is permanent for this session.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/component/CountryCard.jsx</code></td><td>Updated</td><td>Add module-level renderCount and a log line proving each render</td></tr>
+          <tr><td><code>docs/sessions/session-19/index.html</code></td><td>Updated</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/component/CountryCard.jsx docs/sessions/session-19/index.html
+git commit -m "session-19: add a render counter and prove batching/stale-closure behavior"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">renderCount is declared at module level, outside CountryCard</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">renderCount is incremented and logged on every render, before the JSX return</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">handleClick calls setCount exactly once (the doubled experiment was reverted)</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">I clicked a button, watched the console, and confirmed count increases by exactly 1 per click</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I can explain out loud why two setCount(count + 1) calls in one handler only add 1, not 2</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Proceed to Session 20 (Controlled Inputs) after ≥ 80%.">
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>You add <code>let clickCount = 0</code> inside <code>handleClick</code> (not at module level) and increment it on every click, but never render it. Does the screen show anything different?</p>
+        <label class="quiz-option" data-val="a">Yes, it appears automatically in DevTools</label>
+        <label class="quiz-option" data-val="b">Yes, any variable named "count" becomes state</label>
+        <label class="quiz-option" data-val="c">No — it resets on every call and is never shown</label>
+        <label class="quiz-option" data-val="d">It causes an infinite render loop</label>
+        <div class="explanation">A variable declared inside a function is recreated fresh every call — the opposite of the module-level renderCount pattern from this lab.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="a">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Why did the doubled setCount(count + 1) experiment only increase count by 1 instead of 2?</p>
+        <label class="quiz-option" data-val="a">Both calls read the same stale count value</label>
+        <label class="quiz-option" data-val="b">React ignores a function's second call in a row</label>
+        <label class="quiz-option" data-val="c">setCount can only run once per component, ever</label>
+        <label class="quiz-option" data-val="d">JavaScript blocks calling one function twice in a line</label>
+        <div class="explanation">This is the exact mechanism from the concept section: count is a const for the whole render, unaffected by calling setCount earlier in the same handler.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>What would <code>setCount(c =&gt; c + 1)</code> called twice actually do, in contrast to <code>setCount(count + 1)</code> called twice?</p>
+        <label class="quiz-option" data-val="a">The exact same result — no real difference</label>
+        <label class="quiz-option" data-val="b">It throws an error — arrows aren't allowed there</label>
+        <label class="quiz-option" data-val="c">It decreases count instead of increasing it</label>
+        <label class="quiz-option" data-val="d">It correctly adds 2, using the latest value</label>
+        <div class="explanation">This was previewed as the fix, without being required in this session's lab — a real difference worth understanding even before you use it.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="b">
+        <div class="question-num">Question 4 of 5</div>
+        <p>If CountryList renders 4 CountryCard instances and you click the button on the third one, how many CountryCard function calls happen as a direct result?</p>
+        <label class="quiz-option" data-val="a">4 — every sibling card re-renders together</label>
+        <label class="quiz-option" data-val="b">1 — only the card whose state changed</label>
+        <label class="quiz-option" data-val="c">0 — clicking never causes a re-render</label>
+        <label class="quiz-option" data-val="d">It depends on which region is shown</label>
+        <div class="explanation">Each CountryCard's useState is independent. Updating one instance's state does not re-run sibling instances that didn't change.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 20 will focus on:</p>
+        <label class="quiz-option" data-val="a">Writing the very first Vitest test</label>
+        <label class="quiz-option" data-val="b">Fetching real country data from an API</label>
+        <label class="quiz-option" data-val="c">Wiring an input's value to state</label>
+        <label class="quiz-option" data-val="d">Moving search state up into App</label>
+        <div class="explanation">Session 20 introduces controlled inputs on their own, before Session 21 lifts that state up to App.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>Before running the doubled-setCount experiment, did you correctly predict count would only go up by 1? What was your reasoning beforehand?</li>
+        <li>Why does React batch multiple state updates instead of re-rendering once per setState call?</li>
+        <li>Can you think of a real bug you might write later that this exact stale-closure behavior would explain?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Remove the render counter:</strong> No functional change to the app — it's a diagnostic tool, not a feature. But you lose visibility into when and how often re-renders actually happen.</li>
+        <li><strong>Leave the doubled setCount(count + 1) in place:</strong> Not a crash, just a silent bug — the button would appear to only work "half as well" as intended, incrementing by 1 when a developer might have expected 2, for a reason that isn't obvious without today's session.</li>
+        <li><strong>Move renderCount inside the component function:</strong> It would reset to 0 on every single render, making it useless as a running counter — the same mistake as Question 1 of the post-quiz.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: a re-render is React re-invoking your component function, only state updates trigger it, multiple updates in one handler are batched into one re-render, and each render's state values are captured in a closure that stays constant for that render.</strong></p>
+      <p><strong>Next:</strong> <a href="../session-20/index.html">Session 20 — Controlled Inputs</a>.</p>
+    </div>
+
+    <p style="margin-top:24px;"><a href="../session-18-5/index.html">← Session 18.5</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-20/index.html">Session 20 →</a></p>
+
+  </div>
+</main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
+<script src="../../notes-widget.js" defer></script>
+<script src="../../bookmark-widget.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 22 — Derived State</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+
+    /* Comic-panel concept grid — image teaches first, caption only reinforces */
+    .concept-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0;}
+    @media (max-width:760px){.concept-grid{grid-template-columns:repeat(2,1fr);}}
+    .concept-card{background:#111111;border:1px solid #2a2a2a;border-radius:8px;padding:8px 8px 10px;}
+    .concept-card svg{display:block;width:100%;height:auto;}
+    .concept-card figcaption{margin-top:6px;font-family:monospace;font-size:10.5px;line-height:1.3;color:#c9c9c9;text-align:center;}
+    .concept-card figcaption b{color:#ff5ca8;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 3</span>
+      <span class="badge badge-gate">Session 22 — Layer 3 Gate</span>
+      <span style="color:var(--text-muted);font-size:13px;">State</span>
+    </div>
+    <h1>Derived State</h1>
+    <p class="subtitle">
+      App.jsx already computes <code>filteredCountries</code> fresh on every
+      render instead of storing it in its own <code>useState</code> — you
+      did this "correctly" back in Session 21 without it being named yet.
+      Today we name it, prove why the alternative is a real bug waiting to
+      happen, and formalize the rule: if a value can be calculated from
+      state you already have, it should be, not stored again.
+    </p>
+    <div class="alert alert-warning">
+      <strong>Layer 3 gate:</strong> Post-quiz ≥ 80% required. Review Sessions 16–21 if needed.
+    </div>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <!-- Comic-panel concept grid: image teaches first, caption only reinforces -->
+    <div class="concept-grid">
+
+      <!-- 1. The anti-pattern: two useState boxes tangled together -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="16" y="30" width="56" height="30" rx="4" fill="none" stroke="#f85149" stroke-width="2"/>
+          <text x="44" y="49" fill="#f85149" font-family="monospace" font-size="8" text-anchor="middle">state A</text>
+          <rect x="88" y="30" width="56" height="30" rx="4" fill="none" stroke="#f85149" stroke-width="2"/>
+          <text x="116" y="49" fill="#f85149" font-family="monospace" font-size="8" text-anchor="middle">state B</text>
+          <path d="M44,60 Q80,88 116,60" fill="none" stroke="#f85149" stroke-width="1.6" stroke-dasharray="3,3"/>
+          <text x="80" y="100" fill="white" font-family="monospace" font-size="9" text-anchor="middle" text-decoration="line-through">must stay in sync</text>
+          <text x="80" y="130" fill="white" font-family="monospace" font-size="9" text-anchor="middle">two things to update</text>
+        </svg>
+        <figcaption>the <b>anti-pattern</b>: two useStates</figcaption>
+      </figure>
+
+      <!-- 2. How it drifts: forgot one update, mismatch -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="16" y="40" width="56" height="30" rx="4" fill="none" stroke="#3fb950" stroke-width="2"/>
+          <text x="44" y="59" fill="#3fb950" font-family="monospace" font-size="9" text-anchor="middle">"ja"</text>
+          <rect x="88" y="40" width="56" height="30" rx="4" fill="none" stroke="#f85149" stroke-width="2"/>
+          <text x="116" y="59" fill="#f85149" font-family="monospace" font-size="9" text-anchor="middle">"" old</text>
+          <text x="80" y="30" fill="white" font-family="monospace" font-size="8" text-anchor="middle">?</text>
+          <line x1="70" y1="90" x2="90" y2="110" stroke="#f85149" stroke-width="2.5"/>
+          <line x1="90" y1="90" x2="70" y2="110" stroke="#f85149" stroke-width="2.5"/>
+          <text x="80" y="132" fill="white" font-family="monospace" font-size="9" text-anchor="middle">forgot to update B</text>
+        </svg>
+        <figcaption>one <b>missed</b> update = drift</figcaption>
+      </figure>
+
+      <!-- 3. The rule: if you can calculate it, don't store it -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="45" y="20" width="70" height="28" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2"/>
+          <text x="80" y="38" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">searchTerm</text>
+          <path d="M80,48 V70" stroke="white" stroke-width="1.8" marker-end="url(#r1)"/>
+          <defs><marker id="r1" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="white"/></marker></defs>
+          <path d="M56,96 l8,8 14,-16" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="90" y="106" fill="white" font-family="monospace" font-size="9">calculate</text>
+          <text x="80" y="136" fill="white" font-family="monospace" font-size="9" text-anchor="middle">don't store it</text>
+        </svg>
+        <figcaption>if you <b>can</b> calculate it...</figcaption>
+      </figure>
+
+      <!-- 4. What App already does: const, fresh every render -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="40" width="100" height="30" rx="4" fill="none" stroke="#3fb950" stroke-width="2"/>
+          <text x="80" y="59" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">const filtered =</text>
+          <path d="M40,100 A40,40 0 1 1 120,100" fill="none" stroke="#58a6ff" stroke-width="1.8" stroke-dasharray="3,3"/>
+          <text x="80" y="128" fill="#8b949e" font-family="monospace" font-size="7" text-anchor="middle">recomputed every render</text>
+        </svg>
+        <figcaption>already <b>correct</b> since S21</figcaption>
+      </figure>
+
+      <!-- 5. Case-sensitivity bug: Kenya vs kenya -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <text x="80" y="45" fill="white" font-family="monospace" font-size="12" text-anchor="middle">Kenya</text>
+          <text x="80" y="70" fill="#666" font-family="monospace" font-size="10" text-anchor="middle">vs</text>
+          <text x="80" y="95" fill="#f85149" font-family="monospace" font-size="12" text-anchor="middle">kenya</text>
+          <line x1="55" y1="30" x2="105" y2="105" stroke="#f85149" stroke-width="2"/>
+          <text x="80" y="130" fill="white" font-family="monospace" font-size="9" text-anchor="middle">case mismatch → no match</text>
+        </svg>
+        <figcaption>real bug: <b>case</b> sensitivity</figcaption>
+      </figure>
+
+      <!-- 6. resultCount derived from filteredCountries -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="24" width="100" height="28" rx="4" fill="none" stroke="#3fb950" stroke-width="1.8"/>
+          <text x="80" y="42" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">filteredCountries</text>
+          <path d="M80,52 V78" stroke="#ff5ca8" stroke-width="1.8" marker-end="url(#r2)"/>
+          <defs><marker id="r2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#ff5ca8"/></marker></defs>
+          <rect x="50" y="82" width="60" height="26" rx="4" fill="none" stroke="#ff5ca8" stroke-width="1.8"/>
+          <text x="80" y="99" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">.length</text>
+          <text x="80" y="134" fill="white" font-family="monospace" font-size="9" text-anchor="middle">derived from derived</text>
+        </svg>
+        <figcaption>resultCount = <b>.length</b></figcaption>
+      </figure>
+
+      <!-- 7. What IS real state: only searchTerm, a lone star -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="80" cy="55" r="24" fill="none" stroke="#ff5ca8" stroke-width="2.4"/>
+          <text x="80" y="60" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle">term</text>
+          <circle cx="30" cy="110" r="8" fill="none" stroke="#666" stroke-width="1.6"/>
+          <circle cx="80" cy="120" r="8" fill="none" stroke="#666" stroke-width="1.6"/>
+          <circle cx="130" cy="110" r="8" fill="none" stroke="#666" stroke-width="1.6"/>
+          <text x="80" y="140" fill="white" font-family="monospace" font-size="9" text-anchor="middle">everything else derives</text>
+        </svg>
+        <figcaption>only <b>searchTerm</b> is real</figcaption>
+      </figure>
+
+      <!-- 8. Next: Layer 4 gate cleared -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <path d="M55,90 l16,16 34,-40" fill="none" stroke="#3fb950" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="80" cy="70" r="40" fill="none" stroke="#3fb950" stroke-width="2"/>
+          <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">Layer 3 gate cleared</text>
+        </svg>
+        <figcaption>next: <b>Layer 4</b>, mock data</figcaption>
+      </figure>
+
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
+    <div class="card">
+      <ul>
+        <li>Define "derived state": a value computed from existing state during render, instead of stored in its own state</li>
+        <li>Explain why storing a computable value in its own useState creates a real risk of it drifting out of sync</li>
+        <li>Recognise that App.jsx's <code>filteredCountries</code> has been a derived value since Session 21, without the term being used yet</li>
+        <li>Fix a genuine bug in the current filter (case sensitivity) while keeping it derived, not stateful</li>
+        <li>Add a second derived value — a result count — computed from the first derived value</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed (Layer gate — this quiz counts toward your Layer 3 score).</p>
+
+    <div id="pre-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>What does "derived state" mean?</p>
+        <label class="quiz-option" data-val="a">State passed down via props</label>
+        <label class="quiz-option" data-val="b">Calculated from state during render</label>
+        <label class="quiz-option" data-val="c">State that outlives unmounting</label>
+        <label class="quiz-option" data-val="d">Any component return value</label>
+        <div class="explanation">A derived value is computed fresh each render from state that already exists — it has no useState of its own.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="a">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Since Session 21, App.jsx has had this line: <code>const filteredCountries = countries.filter(c =&gt; c.name.includes(searchTerm));</code>. Is filteredCountries state?</p>
+        <label class="quiz-option" data-val="a">No — plain const, not useState</label>
+        <label class="quiz-option" data-val="b">Yes, it changes over time</label>
+        <label class="quiz-option" data-val="c">Yes, it's used inside JSX</label>
+        <label class="quiz-option" data-val="d">Depends on country count</label>
+        <div class="explanation">Changing over time isn't what makes something state — being created and updated via useState is. filteredCountries just gets recalculated, from scratch, on every render.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="c">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Suppose, instead, App had written <code>const [filteredCountries, setFilteredCountries] = useState(countries)</code> and updated it manually inside handleSearchChange alongside searchTerm. What real risk does this introduce that the derived version doesn't have?</p>
+        <label class="quiz-option" data-val="a">No risk — identical behavior</label>
+        <label class="quiz-option" data-val="b">It would run faster overall</label>
+        <label class="quiz-option" data-val="c">A missed update leaves them out of sync</label>
+        <label class="quiz-option" data-val="d">React refuses to compile it</label>
+        <div class="explanation">This is the entire motivating risk: two independent pieces of state that are supposed to represent related information can drift apart the moment one update site is missed.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Searching "kenya" (lowercase) currently returns no results even though "Kenya" exists in the data. Why?</p>
+        <label class="quiz-option" data-val="a">"Kenya" isn't in the array</label>
+        <label class="quiz-option" data-val="b">filter() can't be changed at all</label>
+        <label class="quiz-option" data-val="c">searchTerm is stored uppercase</label>
+        <label class="quiz-option" data-val="d">includes() is case-sensitive</label>
+        <div class="explanation">This is a real, fixable bug in the current filter — the fix is still a derived calculation, just with .toLowerCase() applied to both sides of the comparison.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="a">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Which value is genuinely real state in App — something that cannot be calculated from anything else?</p>
+        <label class="quiz-option" data-val="a">searchTerm, from user input</label>
+        <label class="quiz-option" data-val="b">filteredCountries value</label>
+        <label class="quiz-option" data-val="c">resultCount number</label>
+        <label class="quiz-option" data-val="d">countries imported array</label>
+        <div class="explanation">searchTerm is the one true independent value — everything else in this session (filteredCountries, resultCount) can be recalculated from it plus the imported countries array.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — Compute It, Don't Store It</h2>
+
+    <h3>The anti-pattern, for contrast (not what App.jsx does)</h3>
+    <pre><code>// RISKY — do not do this. Shown only to name the risk clearly.
+const [searchTerm, setSearchTerm] = useState('');
+const [filteredCountries, setFilteredCountries] = useState(countries);
+
+function handleSearchChange(event) {
+  const value = event.target.value;
+  setSearchTerm(value);
+  setFilteredCountries(countries.filter(c => c.name.includes(value)));
+  // Two update calls, in two places, that must ALWAYS be kept in lockstep.
+  // Add a second place that updates searchTerm later, forget to update
+  // filteredCountries there too, and the two silently disagree.
+}</code></pre>
+    <p>
+      This isn't hypothetical laziness — it's a genuinely tempting thing to
+      write, especially coming from other UI frameworks. It even
+      <em>works</em>, today, with exactly one update site. The risk is
+      entirely about the future: every additional place that needs to
+      change <code>searchTerm</code> now also has to remember to update
+      <code>filteredCountries</code> in lockstep, forever.
+    </p>
+
+    <h3>What App.jsx has actually been doing since Session 21</h3>
+    <pre><code>function App() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  function handleSearchChange(event) {
+    setSearchTerm(event.target.value);   // ONE update site, ONE piece of real state
+  }
+
+  const filteredCountries = countries.filter(c =>
+    c.name.includes(searchTerm)
+  );
+  // Recalculated from scratch, every single render.
+  // There is nothing to keep "in sync" — it's freshly correct every time.
+}</code></pre>
+    <p>
+      There is no second <code>useState</code>, and there is nothing to
+      forget to update. <code>filteredCountries</code> cannot become stale,
+      because it is never stored anywhere between renders — it's rebuilt
+      from <code>searchTerm</code> and <code>countries</code> every time
+      <code>App</code> runs.
+    </p>
+
+    <!-- Comic-panel: stored vs derived, lightweight -->
+    <div class="concept-grid" style="grid-template-columns:repeat(2,1fr);max-width:420px;">
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 130" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="16" width="100" height="30" rx="4" fill="none" stroke="#f85149" stroke-width="2"/>
+          <text x="80" y="35" fill="#f85149" font-family="monospace" font-size="8" text-anchor="middle">useState</text>
+          <line x1="55" y1="70" x2="105" y2="100" stroke="#f85149" stroke-width="2.5"/>
+          <line x1="105" y1="70" x2="55" y2="100" stroke="#f85149" stroke-width="2.5"/>
+          <text x="80" y="122" fill="white" font-family="monospace" font-size="9" text-anchor="middle">can go stale</text>
+        </svg>
+        <figcaption>stored — <b>risky</b></figcaption>
+      </figure>
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 130" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="16" width="100" height="30" rx="4" fill="none" stroke="#3fb950" stroke-width="2"/>
+          <text x="80" y="35" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">const ...</text>
+          <path d="M60,90 l10,10 24,-26" fill="none" stroke="#3fb950" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="80" y="122" fill="white" font-family="monospace" font-size="9" text-anchor="middle">always correct</text>
+        </svg>
+        <figcaption>derived — <b>safe</b></figcaption>
+      </figure>
+    </div>
+
+    <h3>A real bug in today's filter: case sensitivity</h3>
+    <p>
+      <code>String.prototype.includes()</code> is case-sensitive.
+      <code>"Kenya".includes("kenya")</code> is <code>false</code>, because
+      the lowercase "k" doesn't match the uppercase "K" character for
+      character. Fixing this is still a purely derived calculation — no
+      state is needed, just a more careful comparison:
+    </p>
+    <pre><code>const filteredCountries = countries.filter(c =>
+  c.name.toLowerCase().includes(searchTerm.toLowerCase())
+);</code></pre>
+
+    <h3>Deriving a value from a derived value</h3>
+    <p>
+      Nothing stops a derived value from being built on top of another
+      derived value. <code>resultCount</code> doesn't need its own state
+      either — it's just the length of the array we already computed:
+    </p>
+    <pre><code>const resultCount = filteredCountries.length;
+
+return (
+  &lt;div&gt;
+    &lt;h1&gt;Countries&lt;/h1&gt;
+    &lt;input value={searchTerm} onChange={handleSearchChange} /&gt;
+    &lt;p&gt;{resultCount} {resultCount === 1 ? 'result' : 'results'}&lt;/p&gt;
+    &lt;CountryList countries={filteredCountries} /&gt;
+  &lt;/div&gt;
+);</code></pre>
+
+    <div class="alert alert-info">
+      <strong>The actual test to apply:</strong> before reaching for
+      <code>useState</code>, ask "can I calculate this from state I already
+      have?" If yes, it's derived — write it as a plain <code>const</code>
+      during render. Reach for <code>useState</code> only for the genuinely
+      independent piece of information that nothing else can produce —
+      here, that's only ever <code>searchTerm</code>.
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Fix the case-sensitivity bug in
+      App's filter and add a derived <code>resultCount</code> display —
+      both computed inline, with zero new <code>useState</code> calls.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Make the filter case-insensitive</strong></p>
+        <pre><code>const filteredCountries = countries.filter(c =>
+  c.name.toLowerCase().includes(searchTerm.toLowerCase())
+);</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Add a derived resultCount</strong></p>
+        <pre><code>const resultCount = filteredCountries.length;</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Display it above the list</strong></p>
+        <pre><code>&lt;p&gt;{resultCount} {resultCount === 1 ? 'result' : 'results'}&lt;/p&gt;
+&lt;CountryList countries={filteredCountries} /&gt;</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Verify</strong></p>
+        <p>Type "kenya" in lowercase — Ghana, Japan, India, Canada from the sample data won't match, but confirm the count and list agree with each other for every search you try. Clear the box — resultCount should read "4 results" (all countries), never stuck at a stale number.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/App.jsx</code></td><td>Updated</td><td>Case-insensitive filter and a derived resultCount, no new useState</td></tr>
+          <tr><td><code>docs/sessions/session-22/index.html</code></td><td>Updated</td><td>This session document — Layer 3 gate</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/App.jsx docs/sessions/session-22/index.html
+git commit -m "session-22: derive a case-insensitive filter and result count, no extra state"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">The filter compares toLowerCase() on both the country name and searchTerm</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">resultCount is a plain const, not a useState</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">No new useState calls were added anywhere in this session</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">resultCount and the rendered list always agree, for every search tried</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I can explain, out loud, why searchTerm is the only genuinely independent state left in App</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Layer 3 gate cleared — proceed to Session 23 (Why Mock Data Matters) after ≥ 80%.">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>If you added <code>const [resultCount, setResultCount] = useState(0)</code> and manually called setResultCount inside handleSearchChange, what mistake would this repeat?</p>
+        <label class="quiz-option" data-val="a">No mistake — a fine alternative</label>
+        <label class="quiz-option" data-val="b">The same anti-pattern as Section 3</label>
+        <label class="quiz-option" data-val="c">It would run more efficiently</label>
+        <label class="quiz-option" data-val="d">An infinite render loop occurs</label>
+        <div class="explanation">Exactly the same risk as storing filteredCountries separately — now there's a third value that could theoretically drift out of sync.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>"Kenya".toLowerCase() returns what?</p>
+        <label class="quiz-option" data-val="a">"KENYA" uppercased</label>
+        <label class="quiz-option" data-val="b">"Kenya" unchanged still</label>
+        <label class="quiz-option" data-val="c">"kenya" lowercased</label>
+        <label class="quiz-option" data-val="d">undefined, literals excluded</label>
+        <div class="explanation">toLowerCase() is a plain string method, usable on any string value including literals — it returns a new all-lowercase string.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>How many useState calls does App have after today's session, total?</p>
+        <label class="quiz-option" data-val="a">3 — term, filtered, count</label>
+        <label class="quiz-option" data-val="b">2 — term and filtered only</label>
+        <label class="quiz-option" data-val="c">0 — all fully derived now</label>
+        <label class="quiz-option" data-val="d">1 — only searchTerm remains</label>
+        <div class="explanation">searchTerm remains the single genuine piece of state. Both filteredCountries and resultCount are computed from it plus the imported countries array.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Why can't filteredCountries and resultCount ever disagree with each other, the way a stored/derived pair could?</p>
+        <label class="quiz-option" data-val="a">count reads .length off filtered directly</label>
+        <label class="quiz-option" data-val="b">React auto-syncs all state vars</label>
+        <label class="quiz-option" data-val="c">Same variable under the hood</label>
+        <label class="quiz-option" data-val="d">They can disagree, briefly</label>
+        <div class="explanation">Since resultCount reads directly from filteredCountries in the same function call, there's no window in which they could show different, inconsistent information.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="d">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Layer 4 (starting Session 23) will focus on:</p>
+        <label class="quiz-option" data-val="a">Testing App with Vitest</label>
+        <label class="quiz-option" data-val="b">useEffect and side effects</label>
+        <label class="quiz-option" data-val="c">Writing custom hooks</label>
+        <label class="quiz-option" data-val="d">Why mock data matters first</label>
+        <div class="explanation">Session 23 opens Layer 4 — Mock Data, the next major phase of the curriculum after State is complete.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>Before this session, had you noticed that filteredCountries was already "derived state" without the term being used? What tipped you off, or what would have made it click sooner?</li>
+        <li>Can you think of a value from an earlier session (Sessions 16-21) that was, or could have been, treated as derived state instead of its own useState?</li>
+        <li>Why does "can I calculate this from state I already have?" work as a simple, reliable test for deciding whether something needs useState?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Revert to case-sensitive matching:</strong> Searching "kenya" (or any lowercase-typed name) fails to find "Kenya" — a real, user-facing bug, not just a style issue.</li>
+        <li><strong>Remove resultCount entirely:</strong> No functional loss — it's a display convenience. The list itself still filters correctly without it.</li>
+        <li><strong>Store filteredCountries or resultCount in their own useState:</strong> Reintroduces exactly the sync-drift risk this whole session exists to prevent — code that works today but is one missed update site away from silently showing the wrong thing.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: a value that can be calculated from existing state should be computed fresh during render as a plain const, not stored in its own useState — this guarantees it can never drift out of sync with the state it's derived from.</strong></p>
+      <p><strong>Layer 3 complete.</strong> <strong>Next:</strong> <a href="../session-23/index.html">Session 23 — Why Mock Data Matters</a> (Layer 4 begins).</p>
+    </div>
+
+    <p style="margin-top:24px;"><a href="../session-21/index.html">← Session 21</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-23/index.html">Session 23 →</a></p>
+
+  </div>
+</main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
+<script src="../../notes-widget.js" defer></script>
+<script src="../../bookmark-widget.js" defer></script>
+
+</body>
+</html>

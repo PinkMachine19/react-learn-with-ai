@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 20 — Controlled Inputs</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+
+    /* Comic-panel concept grid — image teaches first, caption only reinforces */
+    .concept-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0;}
+    @media (max-width:760px){.concept-grid{grid-template-columns:repeat(2,1fr);}}
+    .concept-card{background:#111111;border:1px solid #2a2a2a;border-radius:8px;padding:8px 8px 10px;}
+    .concept-card svg{display:block;width:100%;height:auto;}
+    .concept-card figcaption{margin-top:6px;font-family:monospace;font-size:10.5px;line-height:1.3;color:#c9c9c9;text-align:center;}
+    .concept-card figcaption b{color:#ff5ca8;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 3</span>
+      <span class="badge badge-current">Session 20</span>
+      <span style="color:var(--text-muted);font-size:13px;">State</span>
+    </div>
+    <h1>Controlled Inputs</h1>
+    <p class="subtitle">
+      Every input we've touched so far has been a button — click in, click
+      out, nothing typed. Today <code>CountryList</code> gets a real text
+      input, and we learn the one pattern that makes React "own" what's
+      typed into it: <code>value</code> tied to state, <code>onChange</code>
+      tied to a setter. We are not filtering anything yet — that's next.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <!-- Comic-panel concept grid: image teaches first, caption only reinforces -->
+    <div class="concept-grid">
+
+      <!-- 1. Uncontrolled: DOM owns it, React is blind -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="56" width="100" height="26" rx="4" fill="none" stroke="#f85149" stroke-width="2"/>
+          <text x="80" y="73" fill="white" font-family="monospace" font-size="10" text-anchor="middle">k e n . .</text>
+          <circle cx="80" cy="24" r="14" fill="none" stroke="white" stroke-width="1.8"/>
+          <text x="80" y="29" fill="white" font-family="monospace" font-size="13" text-anchor="middle">?</text>
+          <path d="M80,38 V54" stroke="#666" stroke-width="1.6" stroke-dasharray="3,3"/>
+          <line x1="105" y1="98" x2="55" y2="118" stroke="#f85149" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="55" y1="98" x2="105" y2="118" stroke="#f85149" stroke-width="2.5" stroke-linecap="round"/>
+          <text x="80" y="136" fill="white" font-family="monospace" font-size="9" text-anchor="middle">DOM owns it, not React</text>
+        </svg>
+        <figcaption>plain <b>&lt;input /&gt;</b></figcaption>
+      </figure>
+
+      <!-- 2. Controlled: value down, onChange up, two-way wire -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="20" width="100" height="26" rx="4" fill="none" stroke="#3fb950" stroke-width="2"/>
+          <text x="80" y="37" fill="white" font-family="monospace" font-size="9" text-anchor="middle">ken</text>
+          <rect x="45" y="94" width="70" height="30" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2"/>
+          <text x="80" y="113" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle">state</text>
+          <path d="M65,94 V50" stroke="#3fb950" stroke-width="2" marker-end="url(#u1)"/>
+          <path d="M95,50 V94" stroke="#ff5ca8" stroke-width="2" marker-end="url(#u2)"/>
+          <defs>
+            <marker id="u1" markerWidth="8" markerHeight="8" refX="4" refY="0" orient="auto"><polygon points="0,8 4,0 8,8" fill="#3fb950"/></marker>
+            <marker id="u2" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#ff5ca8"/></marker>
+          </defs>
+          <text x="46" y="70" fill="#3fb950" font-family="monospace" font-size="7">value</text>
+          <text x="98" y="70" fill="#ff5ca8" font-family="monospace" font-size="7">onChange</text>
+          <text x="80" y="140" fill="white" font-family="monospace" font-size="9" text-anchor="middle">React owns it</text>
+        </svg>
+        <figcaption>state <b>drives</b> the input</figcaption>
+      </figure>
+
+      <!-- 3. onChange fires: keypress -> event -> target.value -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="30" width="26" height="26" rx="4" fill="none" stroke="white" stroke-width="1.8"/>
+          <text x="23" y="48" fill="white" font-family="monospace" font-size="12" text-anchor="middle">k</text>
+          <path d="M40,43 H70" stroke="#ff5ca8" stroke-width="2.2" marker-end="url(#u3)"/>
+          <defs><marker id="u3" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#ff5ca8"/></marker></defs>
+          <circle cx="96" cy="43" r="26" fill="none" stroke="#ff5ca8" stroke-width="1.8"/>
+          <text x="96" y="40" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">on</text>
+          <text x="96" y="52" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">Change</text>
+          <path d="M96,70 V96" stroke="white" stroke-width="1.8" marker-end="url(#u4)"/>
+          <defs><marker id="u4" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="white"/></marker></defs>
+          <rect x="46" y="100" width="100" height="24" rx="4" fill="none" stroke="white" stroke-width="1.6"/>
+          <text x="96" y="116" fill="white" font-family="monospace" font-size="9" text-anchor="middle">target.value</text>
+          <text x="80" y="140" fill="white" font-family="monospace" font-size="9" text-anchor="middle">fires every keystroke</text>
+        </svg>
+        <figcaption>event → <b>target.value</b></figcaption>
+      </figure>
+
+      <!-- 4. The loop: type -> setState -> render -> value, cyclical -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <path d="M100,30 A45,45 0 1 1 42,52" fill="none" stroke="#58a6ff" stroke-width="2.5"/>
+          <polygon points="42,52 30,48 41,38" fill="#58a6ff"/>
+          <circle cx="100" cy="30" r="5" fill="#ff5ca8"/>
+          <text x="112" y="26" fill="white" font-family="monospace" font-size="7">type</text>
+          <circle cx="138" cy="75" r="5" fill="white"/>
+          <text x="146" y="79" fill="white" font-family="monospace" font-size="7">set</text>
+          <circle cx="100" cy="120" r="5" fill="white"/>
+          <text x="100" y="136" fill="white" font-family="monospace" font-size="7" text-anchor="middle">render</text>
+          <circle cx="45" cy="90" r="5" fill="white"/>
+          <text x="30" y="105" fill="white" font-family="monospace" font-size="7">value</text>
+        </svg>
+        <figcaption>one loop, <b>every</b> keystroke</figcaption>
+      </figure>
+
+      <!-- 5. Why bother: React can validate/reset, magnifying glass -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="46" y="50" width="68" height="30" rx="4" fill="none" stroke="white" stroke-width="1.8"/>
+          <text x="80" y="69" fill="white" font-family="monospace" font-size="9" text-anchor="middle">ken</text>
+          <circle cx="110" cy="45" r="16" fill="none" stroke="#ff5ca8" stroke-width="2.2"/>
+          <line x1="121" y1="56" x2="132" y2="67" stroke="#ff5ca8" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M56,96 l8,8 14,-16" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="90" y="106" fill="white" font-family="monospace" font-size="9">validate / reset</text>
+          <text x="80" y="136" fill="white" font-family="monospace" font-size="9" text-anchor="middle">React always knows it</text>
+        </svg>
+        <figcaption>full <b>control</b>, not a guess</figcaption>
+      </figure>
+
+      <!-- 6. Not filtering yet: search box, crossed arrow to unchanged list -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="16" width="100" height="24" rx="4" fill="none" stroke="#3fb950" stroke-width="2"/>
+          <text x="80" y="32" fill="white" font-family="monospace" font-size="9" text-anchor="middle">ja</text>
+          <path d="M80,42 V60" stroke="#666" stroke-width="2" stroke-dasharray="3,3"/>
+          <line x1="70" y1="50" x2="90" y2="70" stroke="#f85149" stroke-width="2.5"/>
+          <line x1="90" y1="50" x2="70" y2="70" stroke="#f85149" stroke-width="2.5"/>
+          <rect x="30" y="82" width="30" height="22" rx="3" fill="none" stroke="white" stroke-width="1.5"/>
+          <rect x="65" y="82" width="30" height="22" rx="3" fill="none" stroke="white" stroke-width="1.5"/>
+          <rect x="100" y="82" width="30" height="22" rx="3" fill="none" stroke="white" stroke-width="1.5"/>
+          <text x="80" y="126" fill="white" font-family="monospace" font-size="9" text-anchor="middle">all 4 cards stay put</text>
+        </svg>
+        <figcaption>value only — <b>no filter</b> yet</figcaption>
+      </figure>
+
+      <!-- 7. Where it lives: state trapped inside CountryList, wall to App -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="18" y="20" width="50" height="34" rx="4" fill="none" stroke="#666" stroke-width="1.8"/>
+          <text x="43" y="41" fill="#666" font-family="monospace" font-size="8" text-anchor="middle">App</text>
+          <line x1="80" y1="14" x2="80" y2="136" stroke="#f85149" stroke-width="2" stroke-dasharray="4,3"/>
+          <rect x="92" y="20" width="52" height="34" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2"/>
+          <text x="118" y="41" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">CountryList</text>
+          <rect x="100" y="66" width="36" height="20" rx="10" fill="none" stroke="#ff5ca8" stroke-width="1.6"/>
+          <text x="118" y="80" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">state</text>
+          <text x="80" y="136" fill="white" font-family="monospace" font-size="9" text-anchor="middle" transform="translate(0,10)">App can't see it</text>
+        </svg>
+        <figcaption>trapped in <b>CountryList</b> — for now</figcaption>
+      </figure>
+
+      <!-- 8. Next session -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="14" y="58" width="46" height="34" rx="4" fill="none" stroke="#666" stroke-width="1.8" transform="rotate(-2,37,75)"/>
+          <text x="37" y="79" fill="#666" font-family="monospace" font-size="10" text-anchor="middle">20</text>
+          <path d="M64,75 H108" stroke="#ff5ca8" stroke-width="2.5" stroke-dasharray="5,4" marker-end="url(#u5)"/>
+          <defs><marker id="u5" markerWidth="9" markerHeight="9" refX="4" refY="4" orient="auto"><polygon points="0,0 9,4 0,9" fill="#ff5ca8"/></marker></defs>
+          <rect x="112" y="52" width="42" height="46" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2.2" transform="rotate(2,133,75)"/>
+          <text x="133" y="80" fill="#ff5ca8" font-family="monospace" font-size="14" text-anchor="middle" font-weight="bold">21</text>
+          <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">state moves to App</text>
+        </svg>
+        <figcaption>next: lifting state up</figcaption>
+      </figure>
+
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
+    <div class="card">
+      <ul>
+        <li>Explain the difference between an uncontrolled and a controlled input</li>
+        <li>Wire an input's <code>value</code> prop to a piece of state</li>
+        <li>Wire that same input's <code>onChange</code> to a setter that reads <code>event.target.value</code></li>
+        <li>Trace the full loop: keystroke → onChange → setState → re-render → value prop reflects the new state</li>
+        <li>Recognise why searchTerm living inside CountryList is a temporary, soon-to-be-wrong location for it</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>What makes an input "controlled" in React?</p>
+        <label class="quiz-option" data-val="a">Its onClick fires on hover</label>
+        <label class="quiz-option" data-val="b">It ships disabled by default</label>
+        <label class="quiz-option" data-val="c">Its value comes from state, not the DOM</label>
+        <label class="quiz-option" data-val="d">It syncs itself via useEffect</label>
+        <div class="explanation">The defining trait is the value prop being driven by state. Without it, the browser's own DOM tracks the typed text and React has no visibility into it.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="a">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Given <code>&lt;input value={searchTerm} onChange={handleSearchChange} /&gt;</code>, what fires handleSearchChange?</p>
+        <label class="quiz-option" data-val="a">Every text-changing keystroke</label>
+        <label class="quiz-option" data-val="b">Only losing focus (blur)</label>
+        <label class="quiz-option" data-val="c">Only the form submit event</label>
+        <label class="quiz-option" data-val="d">Once, on initial mount only</label>
+        <div class="explanation">onChange on a text input fires on every value-changing keystroke, not just on blur or submit — this is different from some other frameworks' "change" event.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Inside the onChange handler, how do you read the new text the user just typed?</p>
+        <label class="quiz-option" data-val="a">searchTerm, already updated</label>
+        <label class="quiz-option" data-val="b">document.querySelector value</label>
+        <label class="quiz-option" data-val="c">the event's type property</label>
+        <label class="quiz-option" data-val="d">event.target.value property</label>
+        <div class="explanation">Same event object pattern from Session 18, applied to a new property: target.value holds the input's current text at the moment the event fired.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="b">
+        <div class="question-num">Question 4 of 5</div>
+        <p>If you set <code>value={searchTerm}</code> on an input but never call a setState function in onChange, what happens when you try to type?</p>
+        <label class="quiz-option" data-val="a">It types normally, no issue</label>
+        <label class="quiz-option" data-val="b">The input appears frozen stuck</label>
+        <label class="quiz-option" data-val="c">React throws a compile error</label>
+        <label class="quiz-option" data-val="d">Works for one character only</label>
+        <div class="explanation">Once value is tied to state, that state is the ONLY thing that can change what's displayed. A controlled input with no updating setState is a classic "frozen input" bug.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>After today's lab, does typing in the search box change which countries are shown in the list?</p>
+        <label class="quiz-option" data-val="a">Yes, it filters right away</label>
+        <label class="quiz-option" data-val="b">Yes, but only after Enter</label>
+        <label class="quiz-option" data-val="c">No, nothing filters it yet</label>
+        <label class="quiz-option" data-val="d">No, the input is disabled</label>
+        <div class="explanation">Today's milestone is strictly the controlled-input mechanics. Filtering needs searchTerm to live somewhere both the input AND the list can reach — that's Session 21.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — Who Owns the Value?</h2>
+
+    <h3>Uncontrolled: the DOM owns it</h3>
+    <pre><code>&lt;input type="text" placeholder="Search countries..." /&gt;</code></pre>
+    <p>
+      This is a perfectly valid input, and plain HTML has always worked this
+      way — the browser tracks what's typed internally, and if you want to
+      read it from JavaScript you'd have to reach into the DOM directly
+      (<code>document.querySelector</code> or a ref, which we haven't
+      covered). React has no idea what's in this box at any given moment.
+    </p>
+
+    <h3>Controlled: React state owns it</h3>
+    <pre><code>import { useState } from 'react';
+
+function CountryList() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  function handleSearchChange(event) {
+    setSearchTerm(event.target.value);
+  }
+
+  return (
+    &lt;input
+      type="text"
+      value={searchTerm}
+      onChange={handleSearchChange}
+      placeholder="Search countries..."
+    /&gt;
+  );
+}</code></pre>
+    <p>
+      Two props make this input "controlled": <code>value</code>, which
+      tells the input exactly what to display (driven by state, not by
+      whatever the user last typed), and <code>onChange</code>, which is how
+      React finds out the user tried to change it. Miss either half and the
+      pattern breaks.
+    </p>
+
+    <!-- Comic-panel: the controlled input loop, lightweight -->
+    <div class="concept-grid" style="grid-template-columns:repeat(4,1fr);">
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+          <rect x="55" y="40" width="50" height="40" rx="4" fill="none" stroke="white" stroke-width="1.8"/>
+          <text x="80" y="65" fill="white" font-family="monospace" font-size="14" text-anchor="middle">k</text>
+          <text x="80" y="100" fill="white" font-family="monospace" font-size="9" text-anchor="middle">type</text>
+        </svg>
+        <figcaption><b>1.</b> type</figcaption>
+      </figure>
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="80" cy="55" r="26" fill="none" stroke="#3fb950" stroke-width="2"/>
+          <text x="80" y="52" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">on</text>
+          <text x="80" y="64" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">Change</text>
+          <text x="80" y="100" fill="white" font-family="monospace" font-size="9" text-anchor="middle">fires</text>
+        </svg>
+        <figcaption><b>2.</b> onChange fires</figcaption>
+      </figure>
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+          <rect x="45" y="38" width="70" height="34" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2"/>
+          <text x="80" y="59" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle">setState</text>
+          <text x="80" y="100" fill="white" font-family="monospace" font-size="9" text-anchor="middle">state updates</text>
+        </svg>
+        <figcaption><b>3.</b> setSearchTerm</figcaption>
+      </figure>
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+          <rect x="55" y="40" width="50" height="30" rx="4" fill="none" stroke="white" stroke-width="1.8"/>
+          <text x="80" y="60" fill="white" font-family="monospace" font-size="10" text-anchor="middle">"k"</text>
+          <path d="M40,90 A40,40 0 1 1 120,90" fill="none" stroke="#58a6ff" stroke-width="1.8" stroke-dasharray="3,3"/>
+          <text x="80" y="102" fill="#8b949e" font-family="monospace" font-size="7" text-anchor="middle">repeats</text>
+        </svg>
+        <figcaption><b>4.</b> re-render shows it</figcaption>
+      </figure>
+    </div>
+
+    <h3>Why not just use the uncontrolled version and read it later?</h3>
+    <p>
+      You could — for a single simple field, uncontrolled inputs are
+      genuinely fine. But once React owns the value, you get things for
+      free that are hard to bolt on afterward: you can validate or
+      transform text as it's typed, clear the field programmatically by
+      setting state, and — the reason we're doing it today — share that
+      value with other parts of the component tree, which Session 21 needs.
+    </p>
+
+    <div class="alert alert-warning">
+      <strong>A subtle bug to watch for:</strong> if you set
+      <code>value={searchTerm}</code> but forget the <code>onChange</code>
+      handler entirely, React logs a console warning and the input will
+      appear "stuck" — every keystroke gets immediately overwritten back to
+      the current state, because nothing is telling React the state should
+      change.
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Add a controlled search <code>&lt;input&gt;</code>
+      to <code>CountryList</code> with its own <code>searchTerm</code> state.
+      The list still renders every country — we are not filtering yet.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Import useState and add searchTerm state</strong></p>
+        <pre><code>import { useState } from 'react';
+import countries from '../data/countries';
+import CountryCard from './CountryCard';
+
+function CountryList() {
+  const [searchTerm, setSearchTerm] = useState('');
+  // ...
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Add the change handler</strong></p>
+        <pre><code>function handleSearchChange(event) {
+  setSearchTerm(event.target.value);
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Render the controlled input above the list</strong></p>
+        <pre><code>return (
+  &lt;section className='country-list'&gt;
+    &lt;input
+      type="text"
+      value={searchTerm}
+      onChange={handleSearchChange}
+      placeholder="Search countries..."
+    /&gt;
+    {countries.map(c => (
+      &lt;CountryCard key={c.id} name={c.name} region={c.region}/&gt;
+    ))}
+  &lt;/section&gt;
+);</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Verify</strong></p>
+        <p>Type into the box. The text should appear normally and behave like any input — because React is re-rendering the whole input on every keystroke and handing back the exact text you just typed as its new <code>value</code>. Confirm the country list below is completely unaffected by what you type — that's expected today.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/component/CountryList.jsx</code></td><td>Updated</td><td>Add controlled search input with its own searchTerm state</td></tr>
+          <tr><td><code>docs/sessions/session-20/index.html</code></td><td>Updated</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/component/CountryList.jsx docs/sessions/session-20/index.html
+git commit -m "session-20: add a controlled search input to CountryList"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">searchTerm is created with useState('') inside CountryList</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">The input has both value={searchTerm} and onChange={handleSearchChange}</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">handleSearchChange calls setSearchTerm(event.target.value)</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">Typing in the box updates visibly and does not feel "stuck"</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">The rendered country list is unchanged by typing — no filtering was added today</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Proceed to Session 21 (Lifting State Up) after ≥ 80%.">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>You accidentally wrote <code>value={"searchTerm"}</code> (a hardcoded string, not the variable) instead of <code>value={searchTerm}</code>. What happens when you type?</p>
+        <label class="quiz-option" data-val="a">Works exactly the same way</label>
+        <label class="quiz-option" data-val="b">Frozen showing "searchTerm" text</label>
+        <label class="quiz-option" data-val="c">React throws a build error</label>
+        <label class="quiz-option" data-val="d">onChange stops firing at all</label>
+        <div class="explanation">Quotes around searchTerm inside {} would make it a string literal, not a reference to the state variable — a classic curly-brace/quote mixup.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="d">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Why does every single keystroke cause a re-render of CountryList, given what Session 19 taught about what triggers re-renders?</p>
+        <label class="quiz-option" data-val="a">It doesn't — only clicks do</label>
+        <label class="quiz-option" data-val="b">onChange skips render rules</label>
+        <label class="quiz-option" data-val="c">Inputs always re-render page</label>
+        <label class="quiz-option" data-val="d">Each keystroke triggers setState</label>
+        <div class="explanation">This directly connects back to last session: onChange itself doesn't cause anything; it's the setState call inside the handler that does.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>What is the actual type of event.target.value inside handleSearchChange?</p>
+        <label class="quiz-option" data-val="a">A string, always, even digits</label>
+        <label class="quiz-option" data-val="b">A number type</label>
+        <label class="quiz-option" data-val="c">The whole event object itself</label>
+        <label class="quiz-option" data-val="d">Undefined until form submits</label>
+        <div class="explanation">Text input values are always strings, regardless of what characters were typed — the same "everything from an input is text" idea applies here as anywhere else in JavaScript.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="c">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Why can't Session 21's filtering logic simply live inside CountryList, reading its own local searchTerm?</p>
+        <label class="quiz-option" data-val="a">It can — that's the plan</label>
+        <label class="quiz-option" data-val="b">useState can't be used twice</label>
+        <label class="quiz-option" data-val="c">App will need searchTerm too, and it's trapped</label>
+        <label class="quiz-option" data-val="d">Filtering needs useEffect first</label>
+        <div class="explanation">Filtering purely within CountryList would technically work for today's app, but the syllabus is deliberately building toward lifting state up in Session 21 so state can be shared — the real motivating problem, not a hard technical blocker yet.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="a">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 21 will focus on:</p>
+        <label class="quiz-option" data-val="a">Moving searchTerm up to App</label>
+        <label class="quiz-option" data-val="b">Writing the first Vitest test</label>
+        <label class="quiz-option" data-val="c">Adding a second search input</label>
+        <label class="quiz-option" data-val="d">Swapping useState for useReducer</label>
+        <div class="explanation">Session 21 is "Lifting State Up" — moving the state and its input from CountryList to App, its parent.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>In your own words, what are the two props that make an input "controlled"?</li>
+        <li>Why does a controlled input with value but no onChange feel "stuck" instead of just not working at all?</li>
+        <li>Can you predict, before Session 21, roughly what will need to move and where it will need to go?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Remove onChange, keep value:</strong> The input becomes visibly frozen — every keystroke is instantly reverted, since nothing updates the state that value is bound to.</li>
+        <li><strong>Remove value, keep onChange:</strong> The input becomes uncontrolled again — it will type normally by itself, but searchTerm state silently drifts out of sync with what's actually displayed, since nothing ever reads it back into the DOM.</li>
+        <li><strong>Remove useState('') entirely:</strong> searchTerm is undefined, and React will warn about switching an input from uncontrolled to controlled (or vice versa) as its value prop flips between defined and undefined across renders.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: a controlled input ties its value to state and its onChange to a setter, making React — not the DOM — the single source of truth for what's displayed.</strong></p>
+      <p><strong>Next:</strong> <a href="../session-21/index.html">Session 21 — Lifting State Up</a>.</p>
+    </div>
+
+    <p style="margin-top:24px;"><a href="../session-19/index.html">← Session 19</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-21/index.html">Session 21 →</a></p>
+
+  </div>
+</main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
+<script src="../../notes-widget.js" defer></script>
+<script src="../../bookmark-widget.js" defer></script>
+
+</body>
+</html>

@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 05 — Destructuring and Spread</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 1</span>
+      <span class="badge badge-current">Session 05</span>
+      <span style="color:var(--text-muted);font-size:13px;">JavaScript Foundations</span>
+    </div>
+    <h1>Destructuring and Spread</h1>
+    <p class="subtitle">
+      These two features are how React codebases handle props and state every single day.
+      Destructuring lets you pull values out of objects cleanly.
+      Spread lets you copy or merge objects without mutation.
+      Together they are the foundation of immutable state updates.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+    <!-- SVG: session-05 concept map -->
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="340" y="20" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Session 05 — Destructuring &amp; Spread</text>
+
+      <!-- Panel 1: destructure (x=16,y=36,w=154,h=148) -->
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,93,110)"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="28" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+      <text x="93" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">destructure</text>
+      <!-- object box -->
+      <rect x="28" y="58" width="130" height="36" fill="none" stroke="white" stroke-width="1"/>
+      <text x="93" y="70" fill="white" font-family="monospace" font-size="7" text-anchor="middle">{ name:"Canada",</text>
+      <text x="93" y="82" fill="white" font-family="monospace" font-size="7" text-anchor="middle">region:"Am." }</text>
+      <!-- arrows down -->
+      <line x1="60" y1="94" x2="44" y2="112" stroke="white" stroke-width="1"/>
+      <polygon points="44,112 40,104 50,107" fill="white"/>
+      <line x1="118" y1="94" x2="128" y2="112" stroke="white" stroke-width="1"/>
+      <polygon points="128,112 122,105 132,107" fill="white"/>
+      <!-- output boxes -->
+      <rect x="24" y="114" width="46" height="20" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+      <text x="47" y="128" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">name</text>
+      <rect x="100" y="114" width="48" height="20" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+      <text x="124" y="128" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">region</text>
+      <!-- caption -->
+      <text x="93" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">extract by property name</text>
+
+      <!-- Panel 2: param destruct (x=180,y=36,w=154,h=148) -->
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,257,110)"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="192" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+      <text x="257" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">param destruct</text>
+      <!-- faded old way -->
+      <text x="257" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.4">(country) =&gt;</text>
+      <text x="257" y="84" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.4">country.name</text>
+      <line x1="200" y1="90" x2="310" y2="90" stroke="white" stroke-width="0.5" opacity="0.3"/>
+      <!-- new way pink -->
+      <text x="257" y="106" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">({ name }) =&gt;</text>
+      <text x="257" y="118" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">name</text>
+      <rect x="192" y="96" width="130" height="28" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+      <!-- caption -->
+      <text x="257" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">how React receives props</text>
+
+      <!-- Panel 3: rename (x=344,y=36,w=154,h=148) -->
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,421,110)"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="356" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+      <text x="421" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">rename</text>
+      <!-- pattern display -->
+      <rect x="356" y="60" width="130" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="421" y="75" fill="white" font-family="monospace" font-size="8" text-anchor="middle">{ name: alias }</text>
+      <!-- arrow -->
+      <line x1="384" y1="82" x2="370" y2="100" stroke="white" stroke-width="1"/>
+      <polygon points="370,100 366,92 376,95" fill="white"/>
+      <line x1="460" y1="82" x2="470" y2="100" stroke="white" stroke-width="1"/>
+      <polygon points="470,100 464,93 474,95" fill="white"/>
+      <!-- labels -->
+      <rect x="352" y="102" width="46" height="20" fill="none" stroke="white" stroke-width="1"/>
+      <text x="375" y="116" fill="white" font-family="monospace" font-size="7" text-anchor="middle">name</text>
+      <text x="421" y="112" fill="white" font-family="monospace" font-size="8" text-anchor="middle">→</text>
+      <rect x="440" y="102" width="46" height="20" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+      <text x="463" y="116" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">alias</text>
+      <!-- caption -->
+      <text x="421" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">{"{ prop: newName }"}</text>
+
+      <!-- Panel 4: defaults (x=508,y=36,w=154,h=148) -->
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,585,110)"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="520" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+      <text x="585" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">defaults</text>
+      <!-- pattern -->
+      <rect x="520" y="60" width="130" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="585" y="75" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">{"{ capital = \"Unknown\" }"}</text>
+      <!-- two branches -->
+      <text x="553" y="98" fill="white" font-family="monospace" font-size="7" text-anchor="middle">missing →</text>
+      <rect x="520" y="102" width="66" height="18" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+      <text x="553" y="115" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">"Unknown"</text>
+      <text x="619" y="98" fill="white" font-family="monospace" font-size="7" text-anchor="middle">present →</text>
+      <rect x="593" y="102" width="60" height="18" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="623" y="115" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">actual val</text>
+      <!-- caption -->
+      <text x="585" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">fallback when undefined</text>
+
+      <!-- Panel 5: spread copy (x=16,y=204,w=154,h=148) -->
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,278)"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="28" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+      <text x="93" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">spread copy</text>
+      <!-- original box -->
+      <rect x="24" y="228" width="60" height="28" fill="none" stroke="white" stroke-width="1"/>
+      <text x="54" y="239" fill="white" font-family="monospace" font-size="7" text-anchor="middle">original</text>
+      <text x="54" y="250" fill="white" font-family="monospace" font-size="6.5" text-anchor="middle">{name:"CA"}</text>
+      <!-- new box pink -->
+      <rect x="106" y="228" width="56" height="28" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="134" y="239" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">{...orig}</text>
+      <text x="134" y="250" fill="#ff5ca8" font-family="monospace" font-size="6.5" text-anchor="middle">{name:"CA"}</text>
+      <!-- arrow between -->
+      <line x1="84" y1="242" x2="106" y2="242" stroke="white" stroke-width="1" stroke-dasharray="3,2"/>
+      <polygon points="106,242 100,239 100,245" fill="white"/>
+      <!-- new ref label -->
+      <text x="93" y="270" fill="white" font-family="monospace" font-size="7" text-anchor="middle">new reference</text>
+      <!-- caption -->
+      <text x="93" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">new reference · same data</text>
+
+      <!-- Panel 6: spread update (x=180,y=204,w=154,h=148) -->
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,257,278)"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="192" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+      <text x="257" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">spread update</text>
+      <!-- formula -->
+      <text x="257" y="234" fill="white" font-family="monospace" font-size="7" text-anchor="middle">{...country, pop: 40M}</text>
+      <!-- original props -->
+      <rect x="190" y="240" width="130" height="16" fill="none" stroke="white" stroke-width="1"/>
+      <text x="257" y="251" fill="white" font-family="monospace" font-size="7" text-anchor="middle">name · region · pop:38M</text>
+      <!-- override arrow -->
+      <line x1="257" y1="256" x2="257" y2="270" stroke="#ff5ca8" stroke-width="1"/>
+      <polygon points="257,270 253,264 261,264" fill="#ff5ca8"/>
+      <!-- result -->
+      <rect x="190" y="272" width="130" height="16" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="257" y="283" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">name · region · pop:40M</text>
+      <!-- caption -->
+      <text x="257" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">later keys override · React state</text>
+
+      <!-- Panel 7: spread arrays (x=344,y=204,w=154,h=148) -->
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,421,278)"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="356" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+      <text x="421" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">spread arrays</text>
+      <!-- original array -->
+      <rect x="352" y="228" width="130" height="18" fill="none" stroke="white" stroke-width="1"/>
+      <text x="421" y="240" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">[1, 2, 3]</text>
+      <!-- arrow down -->
+      <line x1="421" y1="246" x2="421" y2="258" stroke="white" stroke-width="1"/>
+      <polygon points="421,258 417,252 425,252" fill="white"/>
+      <!-- syntax -->
+      <text x="421" y="270" fill="white" font-family="monospace" font-size="7" text-anchor="middle">[...arr, 4]</text>
+      <!-- arrow down -->
+      <line x1="421" y1="274" x2="421" y2="284" stroke="#ff5ca8" stroke-width="1"/>
+      <polygon points="421,284 417,278 425,278" fill="#ff5ca8"/>
+      <!-- new array pink -->
+      <rect x="352" y="286" width="130" height="18" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="421" y="298" fill="#ff5ca8" font-family="monospace" font-size="7.5" text-anchor="middle">[1, 2, 3, 4]</text>
+      <!-- caption -->
+      <text x="421" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">add without .push()</text>
+
+      <!-- Panel 8: shallow copy (x=508,y=204,w=154,h=148) -->
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="520" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+      <text x="585" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">shallow copy</text>
+      <!-- outer box a -->
+      <rect x="516" y="228" width="54" height="22" fill="none" stroke="white" stroke-width="1"/>
+      <text x="543" y="237" fill="white" font-family="monospace" font-size="7" text-anchor="middle">a: outer</text>
+      <text x="543" y="247" fill="white" font-family="monospace" font-size="6" text-anchor="middle">(new ref)</text>
+      <!-- outer box b -->
+      <rect x="594" y="228" width="54" height="22" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+      <text x="621" y="237" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">b: outer</text>
+      <text x="621" y="247" fill="#ff5ca8" font-family="monospace" font-size="6" text-anchor="middle">(new ref)</text>
+      <!-- shared nested box -->
+      <rect x="543" y="284" width="84" height="22" fill="none" stroke="#f85149" stroke-width="1.5"/>
+      <text x="585" y="295" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">nested: SHARED</text>
+      <text x="585" y="304" fill="#f85149" font-family="monospace" font-size="6" text-anchor="middle">(same reference)</text>
+      <!-- arrows from a and b to nested -->
+      <line x1="543" y1="250" x2="565" y2="284" stroke="white" stroke-width="1"/>
+      <polygon points="565,284 559,277 568,278" fill="white"/>
+      <line x1="621" y1="250" x2="604" y2="284" stroke="#ff5ca8" stroke-width="1"/>
+      <polygon points="604,284 600,277 609,278" fill="#ff5ca8"/>
+      <!-- caption -->
+      <text x="585" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">nested objects still shared</text>
+    </svg>
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objective</h2>
+    <div class="card">
+      <ul>
+        <li>Destructure properties from an object into local variables</li>
+        <li>Destructure function parameters directly in the parameter list</li>
+        <li>Use the spread operator to copy an object</li>
+        <li>Use spread to create a new object with one property changed</li>
+        <li>Use spread to merge two objects</li>
+        <li>Explain why spread creates a shallow copy and what that means</li>
+        <li>Connect these patterns directly to how React props and state updates work</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>
+          <code>const country = { name: "Canada", region: "Americas" };</code><br/>
+          <code>const { name, region } = country;</code><br/>
+          What is the value of <code>name</code>?
+        </p>
+        <label class="quiz-option" data-val="a">The entire <code>country</code> object</label>
+        <label class="quiz-option" data-val="b">"Canada"</label>
+        <label class="quiz-option" data-val="c">undefined — name is a reserved word</label>
+        <label class="quiz-option" data-val="d">An error</label>
+        <div class="explanation">Destructuring extracts properties by name. <code>const { name } = country</code> is exactly the same as <code>const name = country.name</code>, just shorter.</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>
+          <code>const original = { x: 1, y: 2 };</code><br/>
+          <code>const copy = { ...original };</code><br/>
+          <code>copy.x = 99;</code><br/>
+          What is <code>original.x</code>?
+        </p>
+        <label class="quiz-option" data-val="a">99 — spread doesn't copy, it references</label>
+        <label class="quiz-option" data-val="b">An error — you can't spread into a new object</label>
+        <label class="quiz-option" data-val="c">1 — spread created a new object, so mutating copy doesn't affect original</label>
+        <label class="quiz-option" data-val="d">undefined</label>
+        <div class="explanation">Spread creates a new object with the same top-level properties copied. Mutating a property on the copy does not affect the original — unlike <code>const copy = original</code> which shares the reference.</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>
+          You want to create a new object that is identical to <code>country</code> but with a different <code>name</code>.
+          Which is correct?
+        </p>
+        <label class="quiz-option" data-val="a"><code>const updated = country; updated.name = "Japan";</code></label>
+        <label class="quiz-option" data-val="b"><code>const updated = Object.copy(country); updated.name = "Japan";</code></label>
+        <label class="quiz-option" data-val="c"><code>const updated = spread(country, { name: "Japan" });</code></label>
+        <label class="quiz-option" data-val="d"><code>const updated = { ...country, name: "Japan" };</code></label>
+        <div class="explanation">Option A mutates the original (same reference). Option B: Object.copy doesn't exist. Option C: not valid syntax. Option D is the correct React pattern: spread all existing properties, then override specific ones. Later properties win when keys conflict.</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>
+          You have a function <code>function show(country) { console.log(country.name); }</code><br/>
+          Which is the destructured parameter equivalent?
+        </p>
+        <label class="quiz-option" data-val="a"><code>function show({ name }) { console.log(name); }</code></label>
+        <label class="quiz-option" data-val="b"><code>function show(name) { console.log(name); }</code></label>
+        <label class="quiz-option" data-val="c"><code>function show([name]) { console.log(name); }</code></label>
+        <label class="quiz-option" data-val="d"><code>function show(country.name) { console.log(name); }</code></label>
+        <div class="explanation">You can destructure directly in the parameter list. <code>({ name })</code> receives the same object but immediately extracts <code>name</code>. This is exactly how React components receive props: <code>const CountryCard = ({ name, region }) => ...</code></div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          <code>const a = { x: 1, nested: { y: 2 } };</code><br/>
+          <code>const b = { ...a };</code><br/>
+          <code>b.nested.y = 99;</code><br/>
+          What is <code>a.nested.y</code>?
+        </p>
+        <label class="quiz-option" data-val="a">2 — spread copies everything including nested objects</label>
+        <label class="quiz-option" data-val="b">99 — spread is shallow; nested objects are still shared by reference</label>
+        <label class="quiz-option" data-val="c">undefined</label>
+        <label class="quiz-option" data-val="d">An error</label>
+        <div class="explanation">Spread creates a shallow copy. Top-level primitive values are copied. But nested objects are still shared — only the reference to the nested object is copied, not the nested object itself. This is the shallow vs deep copy distinction.</div>
+      </div>
+
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — Destructuring and Spread</h2>
+
+    <h3>Object destructuring</h3>
+    <pre><code>const country = { name: "Canada", region: "Americas", population: 38000000 };
+
+// Without destructuring
+const name       = country.name;
+const region     = country.region;
+const population = country.population;
+
+// With destructuring — same result, less repetition
+const { name, region, population } = country;</code></pre>
+
+    <!-- SVG: object destructuring -->
+    <svg width="480" height="145" viewBox="0 0 480 145" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="145" fill="#111111"/>
+      <!-- source object -->
+      <rect x="16" y="20" width="180" height="70" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="106" y="36" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">country</text>
+      <text x="106" y="52" fill="white" font-family="monospace" font-size="8.5" text-anchor="middle">name: "Canada"</text>
+      <text x="106" y="66" fill="white" font-family="monospace" font-size="8.5" text-anchor="middle">region: "Americas"</text>
+      <text x="106" y="80" fill="white" font-family="monospace" font-size="8.5" text-anchor="middle">population: 38000000</text>
+      <!-- label -->
+      <text x="106" y="106" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">const {"{ name, region, population }"} = country</text>
+      <!-- arrows -->
+      <line x1="196" y1="42" x2="292" y2="30" stroke="white" stroke-width="1"/>
+      <polygon points="292,30 284,28 286,36" fill="white"/>
+      <line x1="196" y1="55" x2="292" y2="65" stroke="white" stroke-width="1"/>
+      <polygon points="292,65 284,61 285,69" fill="white"/>
+      <line x1="196" y1="68" x2="292" y2="100" stroke="white" stroke-width="1"/>
+      <polygon points="292,100 283,97 285,105" fill="white"/>
+      <!-- extracted variable boxes -->
+      <rect x="294" y="18" width="80" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="334" y="33" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle">name</text>
+      <rect x="294" y="54" width="80" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="334" y="69" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle">region</text>
+      <rect x="294" y="90" width="80" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="334" y="105" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">population</text>
+      <!-- values -->
+      <text x="385" y="33" fill="white" font-family="monospace" font-size="8" text-anchor="start">= "Canada"</text>
+      <text x="385" y="69" fill="white" font-family="monospace" font-size="8" text-anchor="start">= "Americas"</text>
+      <text x="385" y="105" fill="white" font-family="monospace" font-size="7.5" text-anchor="start">= 38000000</text>
+      <!-- title -->
+      <text x="240" y="135" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.6">one object → three separate variables, all in one line</text>
+    </svg>
+
+    <h3>Rename while destructuring</h3>
+    <pre><code>const { name: countryName, region: countryRegion } = country;
+console.log(countryName);   // "Canada"
+console.log(countryRegion); // "Americas"</code></pre>
+
+    <h3>Default values</h3>
+    <pre><code>const { name, capital = "Unknown" } = country;
+console.log(capital); // "Unknown" — property didn't exist, default used</code></pre>
+
+    <h3>Destructuring function parameters — the React pattern</h3>
+    <pre><code>// Regular parameter
+const showCountry = (country) => {
+  console.log(country.name, country.region);
+};
+
+// Destructured parameter — this is how React components receive props
+const showCountry = ({ name, region }) => {
+  console.log(name, region);
+};
+
+showCountry({ name: "Canada", region: "Americas" }); // same result</code></pre>
+
+    <!-- SVG: destructure function parameters -->
+    <svg width="480" height="165" viewBox="0 0 480 165" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="165" fill="#111111"/>
+      <!-- input object -->
+      <rect x="16" y="28" width="120" height="38" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="76" y="41" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle" font-weight="bold">argument object</text>
+      <text x="76" y="54" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">{"{ name, region }"}</text>
+      <!-- TOP path: whole object -->
+      <line x1="136" y1="38" x2="178" y2="38" stroke="white" stroke-width="1" opacity="0.5"/>
+      <polygon points="178,38 172,35 172,41" fill="white" opacity="0.5"/>
+      <rect x="180" y="22" width="140" height="30" fill="none" stroke="white" stroke-width="1" opacity="0.5"/>
+      <text x="250" y="34" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle" opacity="0.5">(country) =&gt; {"{"}</text>
+      <text x="250" y="46" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle" opacity="0.5">country.name, country.region</text>
+      <!-- arrow to output top -->
+      <line x1="320" y1="37" x2="362" y2="37" stroke="white" stroke-width="1" opacity="0.5"/>
+      <polygon points="362,37 356,34 356,40" fill="white" opacity="0.5"/>
+      <rect x="364" y="24" width="100" height="22" fill="none" stroke="white" stroke-width="1" opacity="0.5"/>
+      <text x="414" y="39" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">same output</text>
+      <!-- BOTTOM path: destructured -->
+      <line x1="136" y1="58" x2="178" y2="100" stroke="#ff5ca8" stroke-width="1.5"/>
+      <polygon points="178,100 169,94 176,103" fill="#ff5ca8"/>
+      <rect x="180" y="88" width="140" height="30" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="250" y="100" fill="#ff5ca8" font-family="monospace" font-size="7.5" text-anchor="middle">{"({ name, region })"} =&gt; {"{"}</text>
+      <text x="250" y="112" fill="#ff5ca8" font-family="monospace" font-size="7.5" text-anchor="middle">name, region</text>
+      <!-- arrow to output bottom -->
+      <line x1="320" y1="103" x2="362" y2="103" stroke="#ff5ca8" stroke-width="1.5"/>
+      <polygon points="362,103 356,100 356,106" fill="#ff5ca8"/>
+      <rect x="364" y="90" width="100" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="414" y="105" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">same output</text>
+      <!-- label -->
+      <text x="250" y="140" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.6">same call · same result · pink form = how React components receive props</text>
+      <!-- divider label -->
+      <text x="76" y="80" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.4">passes one object</text>
+    </svg>
+
+    <div class="alert alert-info">
+      <strong>React connection:</strong> When you write a component like
+      <code>const CountryCard = ({ name, region }) => ...</code>,
+      you are destructuring the props object in the parameter. React passes one object;
+      you pull out the specific properties you need.
+    </div>
+
+    <h3>Spread operator — copying objects</h3>
+    <pre><code>const original = { name: "Canada", region: "Americas" };
+
+// Spread: copies all key-value pairs into a new object
+const copy = { ...original };
+
+copy.name = "Japan";          // mutate the copy
+console.log(original.name);  // "Canada" — original untouched
+console.log(copy.name);      // "Japan"</code></pre>
+
+    <!-- SVG: spread copy creates new reference -->
+    <svg width="480" height="160" viewBox="0 0 480 160" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="160" fill="#111111"/>
+      <!-- original variable -->
+      <text x="30" y="36" fill="white" font-family="monospace" font-size="8.5" text-anchor="middle">original</text>
+      <line x1="30" y1="40" x2="30" y2="54" stroke="white" stroke-width="1"/>
+      <polygon points="30,54 26,47 34,47" fill="white"/>
+      <!-- original memory box -->
+      <rect x="16" y="56" width="120" height="30" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="76" y="70" fill="white" font-family="monospace" font-size="8" text-anchor="middle">memory A</text>
+      <text x="76" y="82" fill="white" font-family="monospace" font-size="8" text-anchor="middle">{"{"}name:"Canada"{"}"}</text>
+      <!-- spread syntax label -->
+      <text x="240" y="36" fill="white" font-family="monospace" font-size="8" text-anchor="middle">const copy = {"{ ...original }"};</text>
+      <!-- copy variable -->
+      <text x="390" y="36" fill="#ff5ca8" font-family="monospace" font-size="8.5" text-anchor="middle">copy</text>
+      <line x1="390" y1="40" x2="390" y2="54" stroke="#ff5ca8" stroke-width="1"/>
+      <polygon points="390,54 386,47 394,47" fill="#ff5ca8"/>
+      <!-- copy memory box (pink = new) -->
+      <rect x="334" y="56" width="120" height="30" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="394" y="70" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">memory B (NEW)</text>
+      <text x="394" y="82" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">{"{"}name:"Canada"{"}"}</text>
+      <!-- mutation arrow -->
+      <text x="394" y="104" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">copy.name = "Japan"</text>
+      <line x1="394" y1="108" x2="394" y2="116" stroke="#ff5ca8" stroke-width="1.5"/>
+      <polygon points="394,116 390,110 398,110" fill="#ff5ca8"/>
+      <!-- changed value -->
+      <rect x="334" y="118" width="120" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="394" y="133" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">{"{"}name:"Japan"{"}"}</text>
+      <!-- original unchanged label -->
+      <text x="76" y="108" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">original.name still</text>
+      <text x="76" y="120" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">"Canada" — untouched</text>
+      <!-- not connected indicator -->
+      <text x="240" y="80" fill="white" font-family="monospace" font-size="9" text-anchor="middle" opacity="0.4">≠ shared</text>
+      <!-- footer -->
+      <text x="240" y="150" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">spread = new object · changing copy does NOT affect original</text>
+    </svg>
+
+    <h3>Spread to update one property — the React state pattern</h3>
+    <pre><code>const country = { name: "Canada", region: "Americas", population: 38000000 };
+
+// Create a new object with updated population — original unchanged
+const updated = { ...country, population: 40000000 };
+
+console.log(country.population); // 38000000 — unchanged
+console.log(updated.population); // 40000000
+
+// Later properties override earlier ones when keys conflict
+const renamed = { ...country, name: "New Canada", region: "North" };
+console.log(renamed);
+// { name: "New Canada", region: "North", population: 38000000 }</code></pre>
+
+    <!-- SVG: spread update one property -->
+    <svg width="480" height="155" viewBox="0 0 480 155" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="155" fill="#111111"/>
+      <!-- country source box -->
+      <rect x="16" y="20" width="130" height="70" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="81" y="34" fill="white" font-family="monospace" font-size="8.5" text-anchor="middle" font-weight="bold">country</text>
+      <text x="81" y="48" fill="white" font-family="monospace" font-size="8" text-anchor="middle">name: "Canada"</text>
+      <text x="81" y="62" fill="white" font-family="monospace" font-size="8" text-anchor="middle">region: "Americas"</text>
+      <text x="81" y="76" fill="white" font-family="monospace" font-size="8" text-anchor="middle">population: <tspan fill="#f85149" text-decoration="line-through">38M</tspan></text>
+      <!-- operator label -->
+      <text x="200" y="52" fill="white" font-family="monospace" font-size="9" text-anchor="middle">{...country,</text>
+      <text x="200" y="66" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle">population: 40M}</text>
+      <!-- arrow -->
+      <line x1="146" y1="55" x2="172" y2="55" stroke="white" stroke-width="1"/>
+      <polygon points="172,55 166,52 166,58" fill="white"/>
+      <line x1="234" y1="55" x2="260" y2="55" stroke="white" stroke-width="1"/>
+      <polygon points="260,55 254,52 254,58" fill="white"/>
+      <!-- result box -->
+      <rect x="262" y="20" width="130" height="70" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="327" y="34" fill="#ff5ca8" font-family="monospace" font-size="8.5" text-anchor="middle" font-weight="bold">updated</text>
+      <text x="327" y="48" fill="white" font-family="monospace" font-size="8" text-anchor="middle">name: "Canada"</text>
+      <text x="327" y="62" fill="white" font-family="monospace" font-size="8" text-anchor="middle">region: "Americas"</text>
+      <text x="327" y="76" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">population: 40M ✓</text>
+      <!-- rule label -->
+      <text x="240" y="106" fill="white" font-family="monospace" font-size="8" text-anchor="middle">all keys spread from country</text>
+      <text x="240" y="120" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">later key (population) overrides the spread value</text>
+      <!-- footer -->
+      <text x="240" y="144" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">original country object is NOT changed · this creates a new object</text>
+    </svg>
+
+    <div class="alert alert-warning">
+      <strong>Why this matters for React state:</strong> In Layer 3 you will update state like this:<br/>
+      <code>setCountry({ ...country, population: 40000000 })</code><br/>
+      This creates a new object (new reference) so React detects the change and re-renders.
+      If you wrote <code>country.population = 40000000</code> instead, the reference wouldn't change
+      and React would not re-render.
+    </div>
+
+    <h3>Spread arrays</h3>
+    <pre><code>const arr = [1, 2, 3];
+const copy = [...arr];          // new array, same contents
+const appended = [...arr, 4];   // new array with 4 added at end
+const prepended = [0, ...arr];  // new array with 0 at start
+
+console.log(arr);        // [1, 2, 3] — all unchanged
+console.log(appended);   // [1, 2, 3, 4]
+console.log(prepended);  // [0, 1, 2, 3]</code></pre>
+
+    <!-- SVG: spread arrays -->
+    <svg width="480" height="145" viewBox="0 0 480 145" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="145" fill="#111111"/>
+      <!-- original array -->
+      <rect x="16" y="24" width="110" height="26" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="71" y="35" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">arr = [1, 2, 3]</text>
+      <text x="71" y="46" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">unchanged</text>
+      <!-- appended branch -->
+      <line x1="126" y1="34" x2="158" y2="34" stroke="white" stroke-width="1"/>
+      <polygon points="158,34 152,31 152,37" fill="white"/>
+      <text x="218" y="26" fill="white" font-family="monospace" font-size="8" text-anchor="middle">[...arr, 4]</text>
+      <rect x="160" y="30" width="120" height="24" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="220" y="46" fill="#ff5ca8" font-family="monospace" font-size="8.5" text-anchor="middle">[1, 2, 3, 4]</text>
+      <!-- appended label -->
+      <text x="310" y="34" fill="#3fb950" font-family="monospace" font-size="7.5" text-anchor="start">← appended</text>
+      <!-- prepended branch -->
+      <line x1="126" y1="40" x2="158" y2="80" stroke="white" stroke-width="1"/>
+      <polygon points="158,80 150,74 158,72" fill="white"/>
+      <text x="218" y="72" fill="white" font-family="monospace" font-size="8" text-anchor="middle">[0, ...arr]</text>
+      <rect x="160" y="76" width="120" height="24" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="220" y="92" fill="#ff5ca8" font-family="monospace" font-size="8.5" text-anchor="middle">[0, 1, 2, 3]</text>
+      <!-- prepended label -->
+      <text x="310" y="88" fill="#3fb950" font-family="monospace" font-size="7.5" text-anchor="start">← prepended</text>
+      <!-- original unchanged note -->
+      <rect x="16" y="60" width="110" height="22" fill="none" stroke="#3fb950" stroke-width="1"/>
+      <text x="71" y="70" fill="#3fb950" font-family="monospace" font-size="7.5" text-anchor="middle">arr still</text>
+      <text x="71" y="80" fill="#3fb950" font-family="monospace" font-size="7.5" text-anchor="middle">[1, 2, 3]</text>
+      <!-- footer -->
+      <text x="240" y="128" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">spread creates new arrays · original never mutated · safe for React state</text>
+    </svg>
+
+    <p>
+      This is the correct way to add an item to a React state array — instead of <code>.push()</code>.
+    </p>
+
+    <h3>Shallow copy — the limitation</h3>
+    <pre><code>const a = { x: 1, nested: { y: 2 } };
+const b = { ...a };
+
+// Top-level: copied correctly
+b.x = 99;
+console.log(a.x); // 1 — safe
+
+// Nested: still shared!
+b.nested.y = 99;
+console.log(a.nested.y); // 99 — a.nested was not copied, only the reference to it</code></pre>
+
+    <!-- SVG: shallow copy limitation -->
+    <svg width="480" height="155" viewBox="0 0 480 155" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="155" fill="#111111"/>
+      <!-- a outer box -->
+      <rect x="16" y="20" width="110" height="50" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="71" y="34" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">a (outer)</text>
+      <text x="71" y="48" fill="white" font-family="monospace" font-size="8" text-anchor="middle">x: 1 (copied)</text>
+      <text x="71" y="62" fill="white" font-family="monospace" font-size="8" text-anchor="middle">nested: →</text>
+      <!-- b outer box -->
+      <rect x="16" y="84" width="110" height="50" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+      <text x="71" y="98" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">b = {"{ ...a }"} (outer)</text>
+      <text x="71" y="112" fill="white" font-family="monospace" font-size="8" text-anchor="middle">x: 1 (copied)</text>
+      <text x="71" y="126" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">nested: →</text>
+      <!-- arrows from a.nested and b.nested to shared box -->
+      <line x1="126" y1="62" x2="290" y2="62" stroke="white" stroke-width="1.5"/>
+      <polygon points="290,62 283,59 283,65" fill="white"/>
+      <line x1="126" y1="126" x2="280" y2="80" stroke="#ff5ca8" stroke-width="1.5"/>
+      <polygon points="280,80 272,81 276,74" fill="#ff5ca8"/>
+      <!-- shared nested box -->
+      <rect x="292" y="44" width="156" height="50" fill="none" stroke="#f85149" stroke-width="2"/>
+      <text x="370" y="58" fill="#f85149" font-family="monospace" font-size="8.5" text-anchor="middle" font-weight="bold">SAME nested object</text>
+      <text x="370" y="72" fill="white" font-family="monospace" font-size="8" text-anchor="middle">{"{ y: 2 }"}</text>
+      <text x="370" y="86" fill="#f85149" font-family="monospace" font-size="8" text-anchor="middle">b.nested.y = 99</text>
+      <!-- consequence -->
+      <text x="370" y="108" fill="white" font-family="monospace" font-size="7.5" text-anchor="middle">→ a.nested.y is also 99</text>
+      <text x="370" y="120" fill="#f85149" font-family="monospace" font-size="7.5" text-anchor="middle">both share the reference!</text>
+      <!-- footer -->
+      <text x="240" y="146" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">spread only copies the top level · nested objects stay shared by reference</text>
+    </svg>
+
+    <p>
+      Spread is <em>shallow</em>. Only the top level is copied. Nested objects share the same reference.
+      For the country data we're working with (flat objects), this is fine.
+    </p>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Add destructuring and spread patterns to <code>src/countries.js</code>.
+      Rewrite arrow function parameters to destructure. Create modified copies of countries with spread.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Destructure a country</strong></p>
+        <pre><code>const { name, region, population } = countries[0];
+console.log(name, "—", region, "—", population.toLocaleString());</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Rewrite map callback to destructure the parameter</strong></p>
+        <pre><code>// Before
+const names = countries.map(c => c.name);
+
+// After — destructure in the parameter
+const names = countries.map(({ name }) => name);
+
+console.log(names); // same result</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>More complex destructured callback</strong></p>
+        <pre><code>const summaries = countries.map(({ name, region, population }) =>
+  name + " (" + region + ") — " + population.toLocaleString() + " people"
+);
+console.log(summaries);</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Copy a country with spread</strong></p>
+        <pre><code>const canada = countries[0];
+const canadaCopy = { ...canada };
+
+canadaCopy.name = "New Canada";
+console.log("Original:", canada.name);   // "Canada"
+console.log("Copy:", canadaCopy.name);   // "New Canada"</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Update one property with spread — the React state pattern</strong></p>
+        <pre><code>const updatedCanada = { ...canada, population: 40000000 };
+console.log("Original population:", canada.population);   // 38000000
+console.log("Updated population:", updatedCanada.population); // 40000000</code></pre>
+        <p>This is exactly how you will update state in Session 17.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <p><strong>Spread arrays — simulate adding a country without mutation</strong></p>
+        <pre><code>const france = { id: 4, name: "France", region: "Europe", population: 68000000 };
+
+// Add without push (non-mutating)
+const expanded = [...countries, france];
+console.log("Original:", countries.length);  // 3
+console.log("Expanded:", expanded.length);   // 4</code></pre>
+        <p>This is how you add an item to a React state array correctly.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <p><strong>Prove shallow copy limitation</strong></p>
+        <pre><code>const withLang = { ...canada, languages: { official: ["English", "French"] } };
+const copy2 = { ...withLang };
+
+copy2.languages.official.push("Spanish");
+console.log("Original languages:", withLang.languages.official);
+// ["English", "French", "Spanish"] — the nested object was shared!</code></pre>
+        <p>You don't need to solve this. Just observe it and understand why it happens.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/countries.js</code></td><td>Updated</td><td>Destructuring and spread patterns added</td></tr>
+          <tr><td><code>docs/sessions/session-05/index.html</code></td><td>Created</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/countries.js docs/sessions/session-05/index.html
+git commit -m "session-05: destructuring and spread, immutable update pattern"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">Object destructuring shown — <code>const { name, region } = country</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">Destructured function parameter shown — <code>({ name }) =></code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">Spread copy shown — <code>const copy = { ...original }</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">Spread update shown — <code>{ ...country, population: X }</code> — original unchanged</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">Array spread shown — <code>[...countries, newItem]</code> — original array unchanged</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c6"/><label for="c6">Shallow copy limitation demonstrated</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c7"/><label for="c7">I can explain: why does <code>{ ...country, name: "X" }</code> matter for React state updates?</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p><code>const { name, region } = country;</code> — value of <code>name</code>?</p>
+        <label class="quiz-option" data-val="a">The whole country object</label>
+        <label class="quiz-option" data-val="b">"Canada"</label>
+        <label class="quiz-option" data-val="c">undefined</label>
+        <label class="quiz-option" data-val="d">Error</label>
+        <div class="explanation">Destructuring extracts by property name. name = country.name = "Canada".</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p><code>const copy = { ...original }; copy.x = 99;</code> — what is <code>original.x</code>?</p>
+        <label class="quiz-option" data-val="a">99</label>
+        <label class="quiz-option" data-val="b">Error</label>
+        <label class="quiz-option" data-val="c">1 — spread created a new object</label>
+        <label class="quiz-option" data-val="d">undefined</label>
+        <div class="explanation">Spread creates a new object. Mutating copy doesn't affect original.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Copy <code>country</code> but change its <code>name</code>. Which is correct?</p>
+        <label class="quiz-option" data-val="a"><code>const updated = country; updated.name = "Japan";</code></label>
+        <label class="quiz-option" data-val="b"><code>const updated = Object.copy(country); updated.name = "Japan";</code></label>
+        <label class="quiz-option" data-val="c"><code>const updated = spread(country, { name: "Japan" });</code></label>
+        <label class="quiz-option" data-val="d"><code>const updated = { ...country, name: "Japan" };</code></label>
+        <div class="explanation">Spread all existing properties, then override the specific key. Later keys win.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Destructured parameter equivalent of <code>function show(country) { console.log(country.name); }</code>?</p>
+        <label class="quiz-option" data-val="a"><code>function show({ name }) { console.log(name); }</code></label>
+        <label class="quiz-option" data-val="b"><code>function show(name) { console.log(name); }</code></label>
+        <label class="quiz-option" data-val="c"><code>function show([name]) { console.log(name); }</code></label>
+        <label class="quiz-option" data-val="d"><code>function show(country.name) { console.log(name); }</code></label>
+        <div class="explanation">Destructure the object in the parameter list with curly brace syntax.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p><code>const b = { ...a }; b.nested.y = 99;</code> — what is <code>a.nested.y</code>?</p>
+        <label class="quiz-option" data-val="a">2 — spread copies everything</label>
+        <label class="quiz-option" data-val="b">99 — spread is shallow; nested objects share reference</label>
+        <label class="quiz-option" data-val="c">undefined</label>
+        <label class="quiz-option" data-val="d">Error</label>
+        <div class="explanation">Spread is shallow. Nested objects are not copied — their references are.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>You've now seen two ways to "copy" an object: <code>const b = a</code> and <code>const b = { ...a }</code>. Explain the difference in one sentence each.</li>
+        <li>In Step 6, you used <code>[...countries, france]</code> to add a country. How would you remove a country without mutation? Guess the approach — we'll implement it in Session 21.</li>
+        <li>In Step 7, you proved shallow copy. What would you have to do to properly deep-copy the nested <code>languages</code> object?</li>
+        <li>When React sees <code>setCountry({ ...country, population: 40000000 })</code>, what specifically does it compare to decide whether to re-render?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Knowledge Is Missing?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Session 11 (Props):</strong> React destructures props constantly. Without this session, the syntax <code>const CountryCard = ({ name, region }) =&gt; ...</code> will be confusing.</li>
+        <li><strong>Session 17 (useState):</strong> Every state update that modifies an object or array uses spread. Without spread, you will mutate state directly, and React will silently not re-render.</li>
+        <li><strong>Session 21 (Lifting State):</strong> The entire pattern of updating shared state uses spread to create new objects.</li>
+      </ul>
+    </div>
+
+    <h2>11. What We Learned</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>JavaScript concepts mastered:</strong> Object destructuring, parameter destructuring, spread operator for objects and arrays, shallow copy behaviour, immutable update pattern.</p>
+      <p><strong>React concepts unlocked:</strong> How props are received (<code>({ name, region })</code>), how state updates create new objects (<code>{ ...state, key: newValue }</code>), how items are added to state arrays (<code>[...arr, newItem]</code>).</p>
+      <p><strong>Next session:</strong> <a href="../session-06/index.html">Session 06 — Imports and Exports</a>. Moving your country data into its own module — the foundation of React's component file structure.</p>
+    </div>
+
+  </div>
+</main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
+<script src="../../notes-widget.js" defer></script>
+<script src="../../bookmark-widget.js" defer></script>
+
+</body>
+</html>

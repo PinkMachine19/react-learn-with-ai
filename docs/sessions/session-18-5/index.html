@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 18.5 — JavaScript Closures</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+
+    /* Comic-panel concept grid — image teaches first, caption only reinforces */
+    .concept-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0;}
+    @media (max-width:760px){.concept-grid{grid-template-columns:repeat(2,1fr);}}
+    .concept-card{background:#111111;border:1px solid #2a2a2a;border-radius:8px;padding:8px 8px 10px;}
+    .concept-card svg{display:block;width:100%;height:auto;}
+    .concept-card figcaption{margin-top:6px;font-family:monospace;font-size:10.5px;line-height:1.3;color:#c9c9c9;text-align:center;}
+    .concept-card figcaption b{color:#ff5ca8;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 3</span>
+      <span class="badge badge-current">Session 18.5</span>
+      <span style="color:var(--text-muted);font-size:13px;">JavaScript Prerequisite</span>
+    </div>
+    <h1>JavaScript Closures: The Missing Piece Before React Re-rendering</h1>
+    <p class="subtitle">
+      Session 18 named your event handlers. Session 19 is about to show you
+      that every render creates <em>brand new</em> versions of those
+      handlers, each one frozen with its own copy of <code>count</code>. That
+      sentence only makes sense if you already know what a closure is — and
+      until now, we've never actually stopped to explain it. This short
+      detour is pure JavaScript, no React required, and it's the one idea
+      that makes everything in Session 19 click instead of feeling like
+      memorized trivia.
+    </p>
+    <div class="alert alert-info">Estimated time: 25–30 minutes</div>
+
+    <!-- Comic-panel concept grid: image teaches first, caption only reinforces -->
+    <div class="concept-grid">
+
+      <!-- 1. Function calls: same fn, two separate fresh runs -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="55" y="10" width="50" height="26" rx="4" fill="none" stroke="white" stroke-width="2"/>
+          <text x="80" y="28" fill="white" font-family="monospace" font-size="9" text-anchor="middle">f()</text>
+          <path d="M65,36 L35,64" stroke="#ff5ca8" stroke-width="1.8" marker-end="url(#c1)"/>
+          <path d="M95,36 L125,64" stroke="#ff5ca8" stroke-width="1.8" marker-end="url(#c1)"/>
+          <defs><marker id="c1" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#ff5ca8"/></marker></defs>
+          <rect x="10" y="68" width="50" height="30" rx="4" fill="none" stroke="#3fb950" stroke-width="1.8"/>
+          <text x="35" y="87" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">fresh locals</text>
+          <rect x="100" y="68" width="50" height="30" rx="4" fill="none" stroke="#3fb950" stroke-width="1.8"/>
+          <text x="125" y="87" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">fresh locals</text>
+          <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">every call starts over</text>
+        </svg>
+        <figcaption>each call = a <b>new</b> run</figcaption>
+      </figure>
+
+      <!-- 2. Execution context: call -> locals -> runs -> ends -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="50" y="6" width="60" height="20" rx="3" fill="none" stroke="white" stroke-width="1.6"/>
+          <text x="80" y="20" fill="white" font-family="monospace" font-size="7" text-anchor="middle">call</text>
+          <path d="M80,26 V38" stroke="#666" stroke-width="1.5" marker-end="url(#c2)"/>
+          <rect x="40" y="40" width="80" height="20" rx="3" fill="none" stroke="#ff5ca8" stroke-width="1.6"/>
+          <text x="80" y="54" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">new locals</text>
+          <path d="M80,60 V72" stroke="#666" stroke-width="1.5" marker-end="url(#c2)"/>
+          <defs><marker id="c2" markerWidth="7" markerHeight="7" refX="3" refY="3" orient="auto"><polygon points="0,0 7,3 0,7" fill="#666"/></marker></defs>
+          <rect x="50" y="74" width="60" height="20" rx="3" fill="none" stroke="white" stroke-width="1.6"/>
+          <text x="80" y="88" fill="white" font-family="monospace" font-size="7" text-anchor="middle">runs</text>
+          <path d="M80,94 V106" stroke="#666" stroke-width="1.5" marker-end="url(#c2)"/>
+          <rect x="45" y="108" width="70" height="20" rx="3" fill="none" stroke="#666" stroke-width="1.6"/>
+          <text x="80" y="122" fill="#666" font-family="monospace" font-size="7" text-anchor="middle">ends, gone</text>
+        </svg>
+        <figcaption>the <b>execution context</b></figcaption>
+      </figure>
+
+      <!-- 3. Lexical scope: inner box nested in outer, seeing outward -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="14" y="14" width="132" height="110" rx="4" fill="none" stroke="white" stroke-width="1.8"/>
+          <text x="80" y="30" fill="white" font-family="monospace" font-size="8" text-anchor="middle">outer()</text>
+          <text x="80" y="44" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">let name = "Ken"</text>
+          <rect x="32" y="54" width="96" height="60" rx="4" fill="none" stroke="#ff5ca8" stroke-width="1.8"/>
+          <text x="80" y="70" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">inner()</text>
+          <path d="M80,76 Q80,42 60,42" fill="none" stroke="#ff5ca8" stroke-width="1.4" stroke-dasharray="3,3" marker-end="url(#c3)"/>
+          <defs><marker id="c3" markerWidth="7" markerHeight="7" refX="3" refY="3" orient="auto"><polygon points="0,0 7,3 0,7" fill="#ff5ca8"/></marker></defs>
+          <text x="80" y="100" fill="white" font-family="monospace" font-size="7" text-anchor="middle">sees "Ken"</text>
+          <text x="80" y="140" fill="white" font-family="monospace" font-size="9" text-anchor="middle">inner can reach out</text>
+        </svg>
+        <figcaption>lexical <b>scope</b></figcaption>
+      </figure>
+
+      <!-- 4. Closure: function carrying a backpack with a captured variable -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="55" y="24" width="50" height="34" rx="4" fill="none" stroke="white" stroke-width="2"/>
+          <text x="80" y="45" fill="white" font-family="monospace" font-size="9" text-anchor="middle">fn</text>
+          <path d="M55,44 h-12 a8,8 0 0 0 -8,8 v14 a8,8 0 0 0 8,8 h12" fill="none" stroke="#ff5ca8" stroke-width="1.8"/>
+          <rect x="14" y="52" width="26" height="24" rx="3" fill="none" stroke="#ff5ca8" stroke-width="1.8"/>
+          <text x="27" y="68" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle">x</text>
+          <text x="80" y="100" fill="white" font-family="monospace" font-size="9" text-anchor="middle">"closes over" x</text>
+          <text x="80" y="132" fill="white" font-family="monospace" font-size="9" text-anchor="middle">remembers it forever</text>
+        </svg>
+        <figcaption>the <b>closure</b> backpack</figcaption>
+      </figure>
+
+      <!-- 5. Multiple closures: outer() called twice, two independent backpacks -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="20" width="46" height="28" rx="4" fill="none" stroke="white" stroke-width="1.8"/>
+          <text x="33" y="39" fill="white" font-family="monospace" font-size="7" text-anchor="middle">fn A</text>
+          <rect x="10" y="52" width="22" height="20" rx="3" fill="none" stroke="#3fb950" stroke-width="1.6"/>
+          <text x="21" y="66" fill="#3fb950" font-family="monospace" font-size="9" text-anchor="middle">1</text>
+          <rect x="104" y="20" width="46" height="28" rx="4" fill="none" stroke="white" stroke-width="1.8"/>
+          <text x="127" y="39" fill="white" font-family="monospace" font-size="7" text-anchor="middle">fn B</text>
+          <rect x="128" y="52" width="22" height="20" rx="3" fill="none" stroke="#ff5ca8" stroke-width="1.6"/>
+          <text x="139" y="66" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle">1</text>
+          <line x1="66" y1="35" x2="94" y2="35" stroke="#666" stroke-width="1.5" stroke-dasharray="2,2"/>
+          <text x="80" y="30" fill="#666" font-family="monospace" font-size="12" text-anchor="middle">≠</text>
+          <text x="80" y="100" fill="white" font-family="monospace" font-size="9" text-anchor="middle">two separate calls</text>
+          <text x="80" y="132" fill="white" font-family="monospace" font-size="9" text-anchor="middle">two independent x's</text>
+        </svg>
+        <figcaption>closure A ≠ <b>closure B</b></figcaption>
+      </figure>
+
+      <!-- 6. Event handler remembering a variable through a closure -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="18" y="30" width="40" height="24" rx="5" fill="none" stroke="white" stroke-width="2" transform="rotate(-2,38,42)"/>
+          <text x="38" y="46" fill="white" font-family="monospace" font-size="7" text-anchor="middle">click</text>
+          <path d="M60,42 H88" stroke="#ff5ca8" stroke-width="2.2" marker-end="url(#c4)"/>
+          <defs><marker id="c4" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#ff5ca8"/></marker></defs>
+          <rect x="92" y="26" width="48" height="32" rx="4" fill="none" stroke="#ff5ca8" stroke-width="1.8"/>
+          <text x="116" y="46" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">handler</text>
+          <rect x="98" y="66" width="34" height="20" rx="3" fill="none" stroke="#3fb950" stroke-width="1.6"/>
+          <text x="115" y="80" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">msg</text>
+          <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">no special syntax needed</text>
+        </svg>
+        <figcaption>handlers <b>remember</b> too</figcaption>
+      </figure>
+
+      <!-- 7. React preview: render 1 -> handler+state, render 2 -> new handler+state -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="14" y="14" width="60" height="40" rx="4" fill="none" stroke="#666" stroke-width="1.8"/>
+          <text x="44" y="30" fill="#666" font-family="monospace" font-size="7" text-anchor="middle">render 1</text>
+          <text x="44" y="44" fill="#666" font-family="monospace" font-size="7" text-anchor="middle">handler(old)</text>
+          <rect x="86" y="14" width="60" height="40" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2"/>
+          <text x="116" y="30" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">render 2</text>
+          <text x="116" y="44" fill="#ff5ca8" font-family="monospace" font-size="7" text-anchor="middle">handler(new)</text>
+          <path d="M74,34 H86" stroke="white" stroke-width="1.6" marker-end="url(#c5)"/>
+          <defs><marker id="c5" markerWidth="7" markerHeight="7" refX="3" refY="3" orient="auto"><polygon points="0,0 7,3 0,7" fill="white"/></marker></defs>
+          <text x="80" y="100" fill="white" font-family="monospace" font-size="9" text-anchor="middle">React just re-calls f()</text>
+          <text x="80" y="132" fill="white" font-family="monospace" font-size="9" text-anchor="middle">new closure every time</text>
+        </svg>
+        <figcaption>React's <b>real</b> secret: none</figcaption>
+      </figure>
+
+      <!-- 8. Next session -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="58" width="52" height="34" rx="4" fill="none" stroke="#666" stroke-width="1.8" transform="rotate(-2,36,75)"/>
+          <text x="36" y="79" fill="#666" font-family="monospace" font-size="9" text-anchor="middle">18.5</text>
+          <path d="M66,75 H108" stroke="#ff5ca8" stroke-width="2.5" stroke-dasharray="5,4" marker-end="url(#c6)"/>
+          <defs><marker id="c6" markerWidth="9" markerHeight="9" refX="4" refY="4" orient="auto"><polygon points="0,0 9,4 0,9" fill="#ff5ca8"/></marker></defs>
+          <rect x="112" y="52" width="42" height="46" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2.2" transform="rotate(2,133,75)"/>
+          <text x="133" y="80" fill="#ff5ca8" font-family="monospace" font-size="14" text-anchor="middle" font-weight="bold">19</text>
+          <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">this, applied to renders</text>
+        </svg>
+        <figcaption>next: re-rendering deep dive</figcaption>
+      </figure>
+
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
+    <div class="card">
+      <ul>
+        <li>Explain what happens every time JavaScript calls a function — a brand new execution context with its own local variables</li>
+        <li>Describe lexical scope: how an inner function can read variables from the outer function it was written inside</li>
+        <li>Define a closure in plain English and use the phrase "this function closes over this variable" correctly</li>
+        <li>Prove that calling the same outer function twice creates two completely independent closures, not one shared one</li>
+        <li>Connect closures to event handlers, and preview why every React render creates brand new closures of its own</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p><code>function outer() { let x = 0; return function() { x++; return x; }; }</code> — you call <code>outer()</code> once and store the returned function in <code>fn</code>. What does <code>fn()</code> return the first two times you call it?</p>
+        <label class="quiz-option" data-val="a">0, then 0 again</label>
+        <label class="quiz-option" data-val="b">1, then 2</label>
+        <label class="quiz-option" data-val="c">undefined both times</label>
+        <label class="quiz-option" data-val="d">1, then 1 again</label>
+        <div class="explanation">The returned function keeps a live reference to x, not a snapshot — each call increments the same remembered variable.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Same <code>outer()</code> from above. You call it a second time and store the result in <code>fn2</code>. You then call <code>fn()</code> three more times and <code>fn2()</code> once. What does <code>fn2()</code> return?</p>
+        <label class="quiz-option" data-val="a">5, because they share one x</label>
+        <label class="quiz-option" data-val="b">4, one behind fn</label>
+        <label class="quiz-option" data-val="c">1 — fn2 has its own x</label>
+        <label class="quiz-option" data-val="d">undefined, it was overwritten</label>
+        <div class="explanation">Each call to outer() creates a brand new x. fn and fn2 are two totally separate closures over two totally separate variables.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>A local variable declared inside a function normally disappears the moment the function returns. What keeps it alive when a closure is involved?</p>
+        <label class="quiz-option" data-val="a">An inner function still references it, so it can't be thrown away</label>
+        <label class="quiz-option" data-val="b">JavaScript keeps all variables forever by default</label>
+        <label class="quiz-option" data-val="c">The variable must be declared with var, not let</label>
+        <label class="quiz-option" data-val="d">Nothing — it's a common myth, it always disappears</label>
+        <div class="explanation">Something being reachable is what keeps it alive. A closure is exactly that: a live reference held by an inner function.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>A button's onClick handler reads a variable from the function it was defined inside. That outer function already finished running long ago. Will the handler still work when the button is finally clicked?</p>
+        <label class="quiz-option" data-val="a">No — the variable is already gone</label>
+        <label class="quiz-option" data-val="b">Only if the page hasn't been scrolled</label>
+        <label class="quiz-option" data-val="c">Only in some browsers, not all</label>
+        <label class="quiz-option" data-val="d">Yes — the handler's closure kept that variable alive</label>
+        <div class="explanation">This is the entire mechanism behind every event handler you've written since Session 17, whether or not you noticed it.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="a">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Every time React calls your component function during a render, does it reuse the exact same handler function objects from last time, or build new ones?</p>
+        <label class="quiz-option" data-val="a">Brand new function objects, every single render</label>
+        <label class="quiz-option" data-val="b">The same objects, reused forever</label>
+        <label class="quiz-option" data-val="c">New objects only on the very first render</label>
+        <label class="quiz-option" data-val="d">It depends on whether useState is used</label>
+        <div class="explanation">Calling a function again always creates new local functions inside it — a component function is no exception, which is the whole setup for Session 19.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — Functions, Scope, and What Gets Remembered</h2>
+
+    <h3>Every function call starts completely fresh</h3>
+    <p>
+      In C#, calling a method twice is unremarkable — you already know each
+      call gets its own stack frame and its own local variables. JavaScript
+      works the same way, but it's worth saying explicitly because closures
+      only make sense once this is second nature: every single time
+      JavaScript calls a function, it creates a brand new, private set of
+      local variables for that call. Nothing from a previous call leaks in.
+    </p>
+    <pre><code>function greet(name) {
+  let message = `Hello, ${name}`;   // brand new "message" every call
+  console.log(message);
+}
+
+greet("Priya");  // "Hello, Priya" — its own message
+greet("Sam");    // "Hello, Sam" — a completely different message</code></pre>
+
+    <h3>Execution context: the technical name for "a fresh run"</h3>
+    <p>
+      The formal term for one of these fresh runs is an <strong>execution
+      context</strong>. You don't need to memorize the term, but the shape
+      is worth internalizing, because it's the exact shape a closure hooks
+      into:
+    </p>
+    <div class="concept-grid" style="grid-template-columns:repeat(4,1fr);max-width:640px;">
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="30" width="100" height="40" rx="5" fill="none" stroke="white" stroke-width="2"/>
+          <text x="80" y="55" fill="white" font-family="monospace" font-size="10" text-anchor="middle">call it</text>
+        </svg>
+        <figcaption><b>1.</b> function called</figcaption>
+      </figure>
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="30" width="120" height="40" rx="5" fill="none" stroke="#ff5ca8" stroke-width="2"/>
+          <text x="80" y="55" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle">new locals made</text>
+        </svg>
+        <figcaption><b>2.</b> fresh local variables</figcaption>
+      </figure>
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="30" width="100" height="40" rx="5" fill="none" stroke="white" stroke-width="2"/>
+          <text x="80" y="55" fill="white" font-family="monospace" font-size="10" text-anchor="middle">code runs</text>
+        </svg>
+        <figcaption><b>3.</b> the body executes</figcaption>
+      </figure>
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 100" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="30" width="100" height="40" rx="5" fill="none" stroke="#666" stroke-width="2"/>
+          <text x="80" y="55" fill="#666" font-family="monospace" font-size="9" text-anchor="middle">context ends</text>
+        </svg>
+        <figcaption><b>4.</b> locals are discarded</figcaption>
+      </figure>
+    </div>
+    <p>
+      Step 4 is the important one. Once a function finishes, its local
+      variables are normally gone — nothing outside can reach them anymore,
+      so JavaScript is free to clean them up. <em>Normally.</em> There is one
+      way to stop this from happening, and that's the entire subject of this
+      lesson.
+    </p>
+
+    <h3>Lexical scope: how an inner function can see an outer variable</h3>
+    <p>
+      "Lexical" just means "based on where the code is physically written."
+      If you write one function's definition inside another function's body,
+      the inner one can read — not just guess at, actually read — any
+      variable that exists in the outer function, without you doing anything
+      special to wire it up.
+    </p>
+    <pre><code>function outer() {
+  let city = "Toronto";
+
+  function inner() {
+    console.log(city);   // inner can read outer's variable directly
+  }
+
+  inner();   // logs "Toronto"
+}
+
+outer();</code></pre>
+    <p>Here's a second example, proving it isn't magic tied to one variable name — it works for any variable declared anywhere in the outer function, read anywhere inside the inner one:</p>
+    <pre><code>function outer() {
+  let a = 1;
+  let b = 2;
+
+  function inner() {
+    console.log(a + b);   // inner can read BOTH outer variables
+  }
+
+  inner();   // logs 3
+}
+
+outer();</code></pre>
+    <p>
+      Notice what's <em>not</em> happening: <code>inner</code> never
+      declares its own <code>city</code>, <code>a</code>, or <code>b</code>.
+      It's reading the outer function's actual variables, live — this is
+      lexical scope, and it's true the moment you nest one function inside
+      another, whether or not the outer function has already returned.
+    </p>
+
+    <h3>Closures: the official definition, then plain English</h3>
+    <p>
+      Here's the formal definition you'll see in most JavaScript references:
+    </p>
+    <div class="alert alert-info">
+      <strong>A closure is the combination of a function bundled together
+      with references to its surrounding lexical scope.</strong>
+    </div>
+    <p>In plain English:</p>
+    <p style="font-size:16px;font-weight:600;">
+      A closure simply means a function remembers the variables that existed
+      when it was created — even after the function that created those
+      variables has already finished running.
+    </p>
+    <p>
+      There's a specific phrase JavaScript developers use for this, and it's
+      worth knowing because you'll see it in real code reviews and
+      documentation: <strong>"this function closes over this variable."</strong>
+      In the example above, we'd say <code>inner</code> "closes over"
+      <code>city</code>. That's not casual slang — it's the actual technical
+      term.
+    </p>
+    <pre><code>function outer() {
+  let x = 0;
+
+  return function increment() {
+    x = x + 1;
+    return x;
+  };
+}
+
+const fn = outer();   // outer() runs once, then finishes...
+console.log(fn());    // ...but increment still remembers x. Logs 1
+console.log(fn());    // Logs 2
+console.log(fn());    // Logs 3</code></pre>
+    <p>
+      <code>outer()</code> has already returned by the time you call
+      <code>fn()</code> the first time. Its execution context, by the rule
+      from Section 3.2, should have been discarded. But it wasn't — because
+      <code>increment</code> still holds a live reference to <code>x</code>,
+      JavaScript keeps <code>x</code> around instead of throwing it away.
+      That's the whole trick. Nothing else is going on.
+    </p>
+
+    <h3>Every call to the outer function makes a brand new closure</h3>
+    <p>
+      This next part is the single most important idea in this session, and
+      it's the exact thing Session 19 needs from you. Calling
+      <code>outer()</code> a second time does not reuse the first
+      <code>x</code> — it creates an entirely new execution context (Section
+      3.2 again), with its own entirely new <code>x</code>, and the function
+      it returns closes over <em>that</em> one instead.
+    </p>
+    <pre><code>const counterA = outer();   // creates its own private x, starting at 0
+const counterB = outer();   // creates a SEPARATE, independent x, starting at 0
+
+console.log(counterA());   // 1
+console.log(counterA());   // 2
+console.log(counterB());   // 1 — completely unaffected by counterA</code></pre>
+    <div class="concept-grid" style="grid-template-columns:repeat(2,1fr);max-width:420px;">
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+          <rect x="45" y="14" width="70" height="26" rx="4" fill="none" stroke="white" stroke-width="1.8"/>
+          <text x="80" y="32" fill="white" font-family="monospace" font-size="8" text-anchor="middle">counterA</text>
+          <rect x="55" y="54" width="50" height="30" rx="4" fill="none" stroke="#3fb950" stroke-width="1.8"/>
+          <text x="80" y="73" fill="#3fb950" font-family="monospace" font-size="13" text-anchor="middle" font-weight="bold">2</text>
+          <text x="80" y="106" fill="white" font-family="monospace" font-size="9" text-anchor="middle">its own x</text>
+        </svg>
+        <figcaption>closure <b>A</b></figcaption>
+      </figure>
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 120" xmlns="http://www.w3.org/2000/svg">
+          <rect x="45" y="14" width="70" height="26" rx="4" fill="none" stroke="white" stroke-width="1.8"/>
+          <text x="80" y="32" fill="white" font-family="monospace" font-size="8" text-anchor="middle">counterB</text>
+          <rect x="55" y="54" width="50" height="30" rx="4" fill="none" stroke="#ff5ca8" stroke-width="1.8"/>
+          <text x="80" y="73" fill="#ff5ca8" font-family="monospace" font-size="13" text-anchor="middle" font-weight="bold">1</text>
+          <text x="80" y="106" fill="white" font-family="monospace" font-size="9" text-anchor="middle">a different x</text>
+        </svg>
+        <figcaption>closure <b>B</b></figcaption>
+      </figure>
+    </div>
+    <p>
+      There is no shared state between <code>counterA</code> and
+      <code>counterB</code> whatsoever. They happen to be built from the same
+      function definition, but each call to <code>outer()</code> mints a
+      fully independent closure with its own private copy of everything it
+      closes over.
+    </p>
+
+    <h3>Event handlers are just ordinary functions that close over variables</h3>
+    <p>
+      Nothing about an event handler is special JavaScript syntax — it's an
+      ordinary function, and it follows the exact same closure rule as
+      everything above. When you attach a handler inside another function,
+      it closes over whatever variables that outer function had at the time.
+    </p>
+    <pre><code>function setupButton(name) {
+  const button = document.querySelector("button");
+
+  button.onclick = function handleClick() {
+    console.log(`Hello from ${name}`);   // closes over "name"
+  };
+}
+
+setupButton("Priya");
+// Click the button any time later — even minutes later — it still
+// logs "Hello from Priya". setupButton already finished running long
+// ago, but handleClick's closure kept "name" alive.</code></pre>
+    <p>
+      This is exactly what's been happening since Session 17's very first
+      <code>onClick</code>. It felt like ordinary React, but underneath it
+      was ordinary JavaScript closures the entire time.
+    </p>
+
+    <h3>React preview: every render makes new closures too</h3>
+    <p>
+      A React component is, underneath everything, just a function. Section
+      3.1 already told you what happens every time a function gets called:
+      a brand new execution context, with brand new local variables. React
+      re-rendering a component <em>is</em> calling that function again — so
+      every render creates a brand new <code>handleClick</code>, closing
+      over that render's own local <code>count</code>, completely
+      independent from the <code>handleClick</code> and <code>count</code>
+      from the render before it.
+    </p>
+    <div class="alert alert-warning">
+      <strong>Not required today, previewed for Session 19:</strong> this is
+      exactly why calling a state setter twice in one handler doesn't do
+      what you might expect (a "stale closure"), why React batches multiple
+      updates into a single re-render, and why a "functional update" like
+      <code>setCount(c =&gt; c + 1)</code> sidesteps the whole problem by
+      reading the latest value instead of a remembered one. You don't need
+      to understand any of those three things yet — you only need to know
+      that <em>closures</em> are the mechanism underneath all three, which
+      you now do.
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Write a plain JavaScript closure from
+      scratch, prove it remembers a variable, then prove that calling its
+      outer function twice produces two independent closures — no React
+      involved yet.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Create the lab file and write an outer function that returns an inner one</strong></p>
+        <pre><code>// src/labs/closures.js
+function makeCounter() {
+  let count = 0;
+
+  return function increment() {
+    count = count + 1;
+    return count;
+  };
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Call it once, and prove the returned function remembers <code>count</code></strong></p>
+        <pre><code>const counter1 = makeCounter();
+
+console.log(counter1());   // expect 1
+console.log(counter1());   // expect 2
+console.log(counter1());   // expect 3</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Call <code>makeCounter()</code> a second time, and prove the two closures are independent</strong></p>
+        <pre><code>const counter2 = makeCounter();
+
+console.log(counter2());   // expect 1 — NOT 4, its own fresh count
+console.log(counter1());   // expect 4 — counter1's count kept going, unaffected</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Run it and read the output</strong></p>
+        <pre><code>node src/labs/closures.js</code></pre>
+        <p>Confirm the console output matches the comments exactly: 1, 2, 3, then 1, then 4. If <code>counter2()</code> printed 4 instead of 1, the two closures aren't actually independent — double-check <code>count</code> is declared fresh inside <code>makeCounter</code>, not somewhere shared outside it.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Now the tiny React connection — read only, no file changes required</strong></p>
+        <p>
+          Open <code>src/component/CountryCard.jsx</code> from Session 18 and
+          look at <code>handleClick</code>. It reads <code>count</code>
+          without ever declaring it — exactly like <code>inner</code> reading
+          <code>city</code> back in Section 3.3. And exactly like
+          <code>counter1</code> and <code>counter2</code> above, every time
+          <code>CountryCard</code> runs again, it builds a brand new
+          <code>handleClick</code> that closes over that particular run's
+          own <code>count</code>. You already proved this behavior with plain
+          functions above — Session 19 is where you'll watch it happen inside
+          React itself.
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/labs/closures.js</code></td><td>Created</td><td>Standalone closure experiment — two independent counters proving closures are per-call</td></tr>
+          <tr><td><code>docs/sessions/session-18-5/index.html</code></td><td>Created</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/labs/closures.js docs/sessions/session-18-5/index.html
+git commit -m "session-18.5: closures lab — prove independent closures with two counters"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">makeCounter declares count inside its own body, not at module scope</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">The returned inner function reads and updates count without redeclaring it</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">counter1 and counter2 come from two separate calls to makeCounter()</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">Running the file shows counter2() starting back at 1 while counter1() keeps climbing</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I can say out loud, in my own words, what "closes over" means</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Proceed to Session 19 (Re-rendering Deep Dive) after ≥ 80%.">
+      <div class="quiz-question" data-question="0" data-answer="d">
+        <div class="question-num">Question 1 of 5</div>
+        <p>You call <code>makeCounter()</code> once into <code>counter1</code>, call <code>counter1()</code> three times, then call <code>makeCounter()</code> again into <code>counter2</code> and call it once. What does <code>counter2()</code> return?</p>
+        <label class="quiz-option" data-val="a">4, continuing from counter1</label>
+        <label class="quiz-option" data-val="b">3, matching counter1's last call</label>
+        <label class="quiz-option" data-val="c">undefined, count wasn't reset</label>
+        <label class="quiz-option" data-val="d">1 — its own fresh, independent count</label>
+        <div class="explanation">Every call to makeCounter() creates a new execution context with its own count — closures never share state across separate outer calls.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>A plain local variable normally vanishes once its function returns. Why doesn't that happen to a variable a closure depends on?</p>
+        <label class="quiz-option" data-val="a">Local variables never actually vanish</label>
+        <label class="quiz-option" data-val="b">A reachable reference keeps it alive</label>
+        <label class="quiz-option" data-val="c">Only var survives, let does not</label>
+        <label class="quiz-option" data-val="d">The browser caches it automatically</label>
+        <div class="explanation">Reachability is the deciding factor: if some live function still references a variable, JavaScript has no reason to discard it.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Why do event handlers naturally close over variables without any special React syntax being involved?</p>
+        <label class="quiz-option" data-val="a">Handlers are just ordinary functions</label>
+        <label class="quiz-option" data-val="b">React injects a hidden closure wrapper</label>
+        <label class="quiz-option" data-val="c">onClick is a special kind of variable</label>
+        <label class="quiz-option" data-val="d">JSX compiles closures in automatically</label>
+        <div class="explanation">This was the whole point of Section 6 — handlers get closures for free because they're just functions defined inside other functions.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="c">
+        <div class="question-num">Question 4 of 5</div>
+        <p>A React component function runs again on every re-render. Based on today's lesson, what does that imply about the event handlers it defines each time?</p>
+        <label class="quiz-option" data-val="a">The same handler objects are reused</label>
+        <label class="quiz-option" data-val="b">Handlers are created only once, ever</label>
+        <label class="quiz-option" data-val="c">Each render builds new handlers with new closures</label>
+        <label class="quiz-option" data-val="d">Handlers stop closing over state after render 1</label>
+        <div class="explanation">A render is just another function call — Section 7's exact rule applies: new call, new locals, new closures.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 19 will show two setCount calls in one handler only incrementing count by 1, not 2. Based on today's lesson, what's the most likely underlying reason?</p>
+        <label class="quiz-option" data-val="a">setCount can only run once per handler</label>
+        <label class="quiz-option" data-val="b">Both calls close over the same render's count</label>
+        <label class="quiz-option" data-val="c">React deletes the second call silently</label>
+        <label class="quiz-option" data-val="d">count is not actually a closed-over variable</label>
+        <div class="explanation">You don't need Session 19's full explanation yet — but you now have the exact vocabulary to predict it: both calls are reading the same remembered value from the same closure.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>What surprised you most about closures — was it that variables can survive after their function returns, or that two calls to the same function never share state?</li>
+        <li>Why do you think JavaScript was designed to let inner functions remember outer variables by default, instead of requiring you to pass them in explicitly?</li>
+        <li>Now that you understand closures, how does that change the way you think about what a React component function is actually doing on every render?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Return count directly instead of a function that reads it:</strong> You'd get a single number back, not a reusable counter — there would be nothing left to call a second time, and nothing demonstrating a closure at all.</li>
+        <li><strong>Declare count outside makeCounter, at module level:</strong> counter1 and counter2 would suddenly share the exact same count, and calling either one would affect the other — the opposite of what this lab is meant to prove.</li>
+        <li><strong>Call makeCounter() only once and reuse its result everywhere:</strong> You'd never observe two independent closures, only ever see one — the single most important lesson of this session would go unverified.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: a closure is a function that remembers the variables that existed when it was created, calling the same outer function twice always produces two independent closures, and event handlers — including every one you've written in this course — get this behavior for free because they're ordinary JavaScript functions. React didn't invent any of this; it just calls your component function again on every render, and JavaScript's own closure rules do the rest.</strong></p>
+      <p><strong>Next:</strong> <a href="../session-19/index.html">Session 19 — Re-rendering Deep Dive</a>.</p>
+    </div>
+
+    <p style="margin-top:24px;"><a href="../session-18/index.html">← Session 18</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-19/index.html">Session 19 →</a></p>
+
+  </div>
+</main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
+<script src="../../notes-widget.js" defer></script>
+<script src="../../bookmark-widget.js" defer></script>
+
+</body>
+</html>

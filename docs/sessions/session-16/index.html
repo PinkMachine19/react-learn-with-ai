@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 16 — What Is State?</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 3</span>
+      <span class="badge badge-current">Session 16</span>
+      <span style="color:var(--text-muted);font-size:13px;">State</span>
+    </div>
+    <h1>What Is State?</h1>
+    <p class="subtitle">
+      Layer 2 built a static country list — props flow down, UI matches data at
+      render time, nothing changes after mount. Layer 3 asks: what happens when
+      the user clicks, types, or toggles something and the screen must update?
+      Today is <strong>concept only</strong> — no new app code. Session 17
+      introduces <code>useState</code>.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes · No coding lab today</div>
+
+    <!-- SVG: session-16 concept map -->
+    <svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="370" fill="#111111"/>
+      <text x="340" y="20" fill="white" font-family="monospace" font-size="11" text-anchor="middle" font-weight="bold">Session 16 — What Is State?</text>
+
+      <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,93,110)"/>
+      <circle cx="28" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="28" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+      <text x="93" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">static now</text>
+      <text x="93" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Layer 2 list</text>
+      <text x="93" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">render once</text>
+      <text x="93" y="110" fill="white" font-family="monospace" font-size="7" text-anchor="middle">no clicks yet</text>
+      <text x="93" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">UI frozen until reload</text>
+      <text x="93" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">props + import only</text>
+
+      <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,257,110)"/>
+      <circle cx="192" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="192" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+      <text x="257" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">props</text>
+      <text x="257" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">from parent</text>
+      <text x="257" y="86" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">read-only</text>
+      <text x="257" y="110" fill="white" font-family="monospace" font-size="7" text-anchor="middle">name, region</text>
+      <text x="257" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Session 11</text>
+      <text x="257" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">external input</text>
+
+      <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,421,110)"/>
+      <circle cx="356" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="356" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+      <text x="421" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">state</text>
+      <text x="421" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">owned inside</text>
+      <text x="421" y="86" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">can change</text>
+      <text x="421" y="110" fill="white" font-family="monospace" font-size="7" text-anchor="middle">count, search,</text>
+      <text x="421" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">favorite toggle</text>
+      <text x="421" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">internal memory</text>
+
+      <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,585,110)"/>
+      <circle cx="520" cy="48" r="9" fill="#ff5ca8"/>
+      <text x="520" y="52" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+      <text x="585" y="50" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">let fails</text>
+      <text x="585" y="72" fill="white" font-family="monospace" font-size="7" text-anchor="middle">let count = 0</text>
+      <text x="585" y="86" fill="white" font-family="monospace" font-size="7" text-anchor="middle">count++ on click</text>
+      <text x="585" y="110" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">UI stays stale</text>
+      <text x="585" y="124" fill="white" font-family="monospace" font-size="7" text-anchor="middle">no re-render signal</text>
+      <text x="585" y="174" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">JS var ≠ React state</text>
+
+      <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,278)"/>
+      <circle cx="28" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="28" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+      <text x="93" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">re-render</text>
+      <text x="93" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">state changes →</text>
+      <text x="93" y="254" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">function runs again</text>
+      <text x="93" y="278" fill="white" font-family="monospace" font-size="7" text-anchor="middle">new JSX → diff</text>
+      <text x="93" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Session 15 diff</text>
+
+      <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,257,278)"/>
+      <circle cx="192" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="192" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+      <text x="257" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">setter preview</text>
+      <text x="257" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">useState (17)</text>
+      <text x="257" y="254" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">setCount(n)</text>
+      <text x="257" y="278" fill="white" font-family="monospace" font-size="7" text-anchor="middle">triggers render</text>
+      <text x="257" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">not today</text>
+
+      <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,421,278)"/>
+      <circle cx="356" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="356" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+      <text x="421" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">concept lab</text>
+      <text x="421" y="240" fill="white" font-family="monospace" font-size="7" text-anchor="middle">draw tree</text>
+      <text x="421" y="254" fill="white" font-family="monospace" font-size="7" text-anchor="middle">label prop vs</text>
+      <text x="421" y="268" fill="white" font-family="monospace" font-size="7" text-anchor="middle">future state</text>
+      <text x="421" y="292" fill="white" font-family="monospace" font-size="7" text-anchor="middle">no src/ changes</text>
+      <text x="421" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">paper only</text>
+
+      <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+      <circle cx="520" cy="216" r="9" fill="#ff5ca8"/>
+      <text x="520" y="220" fill="#111111" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+      <text x="585" y="218" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">next</text>
+      <text x="585" y="240" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">useState hook</text>
+      <text x="585" y="254" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Session 17</text>
+      <text x="585" y="278" fill="white" font-family="monospace" font-size="7" text-anchor="middle">click counter</text>
+      <text x="585" y="292" fill="white" font-family="monospace" font-size="7" text-anchor="middle">first code</text>
+      <text x="585" y="342" fill="white" font-family="monospace" font-size="8" text-anchor="middle" opacity="0.5">Layer 3 hands-on</text>
+    </svg>
+
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
+    <div class="card">
+      <ul>
+        <li>Distinguish props (passed in, read-only) from state (owned internally, can change)</li>
+        <li>Explain that updating state triggers a re-render of that component</li>
+        <li>Connect JavaScript variables to why ordinary local variables are not enough in React</li>
+        <li>Describe where state will live in the country app (preview: counters, search, filters)</li>
+        <li>Complete pre/post quizzes ≥ 80% before writing useState code in Session 17</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>In CountryList today, each card's <code>name</code> and <code>region</code> come from the imported countries array and are passed as props. Who can change what displays on screen after the first render?</p>
+        <label class="quiz-option" data-val="a">CountryCard mutates props.name</label>
+        <label class="quiz-option" data-val="b">Nobody — without state or a parent re-render, the UI is fixed until full page reload</label>
+        <label class="quiz-option" data-val="c">The browser automatically refreshes JSX</label>
+        <label class="quiz-option" data-val="d">imported arrays mutate themselves</label>
+        <div class="explanation">Static render: data → JSX once. Interaction needs state (coming next sessions).</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="c">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Props are to state as which analogy?</p>
+        <label class="quiz-option" data-val="a">Global variables are to CSS</label>
+        <label class="quiz-option" data-val="b">HTML is to JSON</label>
+        <label class="quiz-option" data-val="c">Function arguments from the caller are to variables the function owns and may update</label>
+        <label class="quiz-option" data-val="d">Keys are to refs</label>
+        <div class="explanation">Props = external inputs. State = internal memory that can change over time.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Why does this not work for a click counter in React?</p>
+        <pre style="margin:8px 0;font-size:13px;">let count = 0;
+function handleClick() { count++; }</pre>
+        <label class="quiz-option" data-val="a">Changing a local variable does not tell React to re-render — the screen stays stale</label>
+        <label class="quiz-option" data-val="b">let is illegal in components</label>
+        <label class="quiz-option" data-val="c">count must be a string</label>
+        <label class="quiz-option" data-val="d">handleClick cannot be a function</label>
+        <div class="explanation">React re-renders when state (or parent props) change — not when arbitrary variables mutate.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>When state updates in a component, what runs again?</p>
+        <label class="quiz-option" data-val="a">Only CSS</label>
+        <label class="quiz-option" data-val="b">The entire npm process</label>
+        <label class="quiz-option" data-val="c">Only browser paint, not the component function</label>
+        <label class="quiz-option" data-val="d">That component's function (and typically its children) — a re-render</label>
+        <div class="explanation">Re-render = React calls your function again with current props and state.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 16 lab milestone says "concept only — no code." What happens in Session 17?</p>
+        <label class="quiz-option" data-val="a">Replace React with vanilla JS</label>
+        <label class="quiz-option" data-val="b">Add useState — first interactive state in the app</label>
+        <label class="quiz-option" data-val="c">Delete CountryList</label>
+        <label class="quiz-option" data-val="d">Add real API fetch</label>
+        <div class="explanation">useState is the first hook for local component state.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — JavaScript First, Then React</h2>
+
+    <h3>JavaScript: values that change over time</h3>
+    <pre><code>let clicks = 0;
+
+function onButtonPress() {
+  clicks = clicks + 1;
+  console.log(clicks);  // 1, 2, 3… in the console
+}</code></pre>
+    <p>
+      The variable updates in memory. But a plain web page won't redraw a label
+      unless something tells the DOM to update. React's state system connects
+      "value changed" to "call component again and refresh UI."
+    </p>
+
+    <h3>Props vs state</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th></th><th>Props</th><th>State</th></tr></thead>
+        <tbody>
+          <tr><td>Who sets it?</td><td>Parent component</td><td>The component itself (via setter)</td></tr>
+          <tr><td>Mutable by this component?</td><td>No — read-only</td><td>Yes — via declared setter (Session 17)</td></tr>
+          <tr><td>Changes trigger re-render?</td><td>When parent re-renders with new props</td><td>When this component updates its state</td></tr>
+          <tr><td>Example in country app</td><td><code>name</code>, <code>region</code> on CountryCard</td><td>Click count, search text, favorite toggle (later)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- SVG: props vs state flow -->
+    <svg width="520" height="155" viewBox="0 0 520 155" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="520" height="155" fill="#111111"/>
+      <text x="260" y="18" fill="white" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">props vs state — who owns the data?</text>
+      <rect x="16" y="32" width="230" height="105" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="131" y="50" fill="white" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">PROPS</text>
+      <text x="131" y="68" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Parent sets → child reads</text>
+      <text x="131" y="82" fill="#f85149" font-family="monospace" font-size="7" text-anchor="middle">child cannot mutate</text>
+      <text x="131" y="96" fill="white" font-family="monospace" font-size="7" text-anchor="middle">e.g. name="Japan"</text>
+      <text x="131" y="120" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.6">changes when parent re-renders</text>
+      <rect x="274" y="32" width="230" height="105" fill="none" stroke="#3fb950" stroke-width="1.5"/>
+      <text x="389" y="50" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle" font-weight="bold">STATE</text>
+      <text x="389" y="68" fill="white" font-family="monospace" font-size="7" text-anchor="middle">Component owns → setter updates</text>
+      <text x="389" y="82" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">triggers re-render</text>
+      <text x="389" y="96" fill="white" font-family="monospace" font-size="7" text-anchor="middle">e.g. click count, search text</text>
+      <text x="389" y="120" fill="white" font-family="monospace" font-size="7" text-anchor="middle" opacity="0.6">useState in Session 17</text>
+      <text x="260" y="148" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">let x = 0; x++ does NOT trigger the state path → screen unchanged</text>
+    </svg>
+
+    <h3>Re-render mental model</h3>
+    <ol>
+      <li>User clicks a button (Session 17 lab wires a simple <code>onClick</code> for the counter; Session 18 goes deeper on events).</li>
+      <li>The handler calls the state setter from <code>useState</code> (Session 17).</li>
+      <li>React schedules a re-render of that component.</li>
+      <li>The component function runs again — new JSX reflects new state.</li>
+      <li>React diffs against previous output (Session 15 reconciliation) and updates the DOM.</li>
+    </ol>
+    <p>
+      Same function, second call — different return value because state changed.
+      Props from parent may be the same; state values are not.
+    </p>
+
+    <h3>What we are not doing today</h3>
+    <ul>
+      <li>No <code>useState</code> import — Session 17</li>
+      <li>No event handlers — Session 18</li>
+      <li>No lifting state — Session 21</li>
+      <li>No mutating imported <code>countries</code> array — still treat data as read-only until patterns for updates are taught</li>
+    </ul>
+
+    <div class="alert alert-success">
+      <strong>Concept lab:</strong> On paper, draw CountryCard with a "Favorites" heart.
+      Label what would be props vs state. Trace one click through steps 1–5 above.
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab (Concept Only)</h2>
+    <div class="card">
+      <ol>
+        <li>Draw the component tree: App → CountryList → CountryCard.</li>
+        <li>Mark each value as prop, imported data, or (future) state.</li>
+        <li>Write three sentences: what changes when user types in a search box?</li>
+        <li>Explain why <code>let search = ""</code> plus assignment on keystroke would not update the input display in React.</li>
+        <li>Read Session 17 title and objectives in the syllabus — preview only.</li>
+      </ol>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>docs/sessions/session-16/index.html</code></td><td>Updated</td><td>This session document</td></tr>
+          <tr><td><code>docs/session-notes/index.html</code></td><td>Optional note</td><td>Your props vs state summary in session notes</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>No <code>src/</code> files change today.</p>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add docs/sessions/session-16/index.html
+git commit -m "session-16: state vs props concept — Layer 3 begins"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">I can explain props vs state without reading notes</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">I know why plain <code>let</code> variables fail for UI updates</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">I can describe what a re-render is</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">Pre-quiz and post-quiz both ≥ 80%</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I did not add useState early — waiting for Session 17</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Proceed to Session 17 (useState) after ≥ 80%.">
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>CountryCard receives <code>name="Japan"</code> from parent. User clicks to toggle favorite — should favorite status be props or state?</p>
+        <label class="quiz-option" data-val="a">Props — parent always owns favorites</label>
+        <label class="quiz-option" data-val="b">Neither — store in CSS</label>
+        <label class="quiz-option" data-val="c">State (or eventually lifted state) — it changes in response to user action on this interaction</label>
+        <label class="quiz-option" data-val="d">key prop</label>
+        <div class="explanation">User-driven changes local to interaction are state candidates; lifting comes when siblings need the same data.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="a">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Parent re-renders with <code>name="Brazil"</code> instead of <code>name="Japan"</code>. Is that a props change or state change?</p>
+        <label class="quiz-option" data-val="a">Props change — parent passed new arguments</label>
+        <label class="quiz-option" data-val="b">State change inside CountryCard</label>
+        <label class="quiz-option" data-val="c">Neither — automatic</label>
+        <label class="quiz-option" data-val="d">key change only</label>
+        <div class="explanation">Child receives new props when parent re-renders with different attributes.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="b">
+        <div class="question-num">Question 3 of 5</div>
+        <p>After state updates, why does React call your component function again?</p>
+        <label class="quiz-option" data-val="a">To reset props to defaults</label>
+        <label class="quiz-option" data-val="b">To produce fresh JSX that reflects the new state</label>
+        <label class="quiz-option" data-val="c">Because JavaScript requires it every second</label>
+        <label class="quiz-option" data-val="d">Only in StrictMode</label>
+        <div class="explanation">Render = run function → get UI description → diff → update DOM.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Should you mutate the imported countries array when user deletes a country?</p>
+        <label class="quiz-option" data-val="a">Yes — .push and .splice on the import</label>
+        <label class="quiz-option" data-val="b">Yes — props can fix it</label>
+        <label class="quiz-option" data-val="c">Delete the module file</label>
+        <label class="quiz-option" data-val="d">Not yet as a casual pattern — Session 02 warned about mutation; state updates will use proper patterns later</label>
+        <div class="explanation">Treat shared module data carefully; state patterns for lists come with useState and immutability habits.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 17 will add to CountryCard:</p>
+        <label class="quiz-option" data-val="a">A REST fetch</label>
+        <label class="quiz-option" data-val="b">React Router</label>
+        <label class="quiz-option" data-val="c">A click counter with useState</label>
+        <label class="quiz-option" data-val="d">TypeScript interfaces</label>
+        <div class="explanation">First hands-on state: useState + simple displayed count.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>Name one value in the country app that should stay props and one that should become state.</li>
+        <li>Why does React need a special state system instead of ordinary variables?</li>
+        <li>What is the difference between "data changed in memory" and "user sees updated UI"?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Concept Is Ignored?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Using only props for everything:</strong> Parent must re-render for every tiny interaction — awkward data flow.</li>
+        <li><strong>Using only local variables:</strong> Clicks and typing appear to do nothing on screen.</li>
+        <li><strong>Mutating props or shared imports:</strong> Breaks one-way flow; bugs hard to trace.</li>
+        <li><strong>Skipping this session and jumping to useState:</strong> Syntax without mental model — confusion on when to use state at all.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: state is component-owned data that changes over time and triggers re-renders — distinct from read-only props.</strong></p>
+      <p><strong>Next:</strong> <a href="../session-17/index.html">Session 17 — useState Hook</a> — first interactive code in Layer 3.</p>
+    </div>
+
+    <p style="margin-top:24px;"><a href="../session-15/index.html">← Session 15</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-17/index.html">Session 17 →</a></p>
+
+  </div>
+</main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
+<script src="../../notes-widget.js" defer></script>
+<script src="../../bookmark-widget.js" defer></script>
+
+</body>
+</html>

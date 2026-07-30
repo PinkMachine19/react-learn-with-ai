@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 02 — Arrays and Iteration</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option {
+      display: block;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: border-color 0.15s, background 0.15s;
+      user-select: none;
+    }
+    .quiz-option:hover { border-color: var(--accent); background: var(--surface); }
+    .quiz-option.selected { border-color: var(--accent); background: rgba(88,166,255,0.1); }
+    .quiz-option.correct  { border-color: var(--green);  background: rgba(63,185,80,0.1); }
+    .quiz-option.wrong    { border-color: var(--red);    background: rgba(248,81,73,0.1); }
+
+    .quiz-question { margin-bottom: 28px; }
+    .quiz-question p { font-weight: 600; margin-bottom: 10px; font-size: 15px; }
+    .quiz-question .question-num { color: var(--text-muted); font-size: 12px; font-weight: 400; margin-bottom: 4px; }
+
+    .quiz-result {
+      display: none;
+      padding: 16px 20px;
+      border-radius: var(--radius);
+      margin-top: 16px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    .quiz-result.pass { background: rgba(63,185,80,0.12); border: 1px solid var(--green); color: var(--green); }
+    .quiz-result.fail { background: rgba(248,81,73,0.12); border: 1px solid var(--red);   color: var(--red); }
+
+    .explanation {
+      display: none;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      padding: 8px 12px;
+      background: var(--surface-2);
+      border-radius: var(--radius);
+      border-left: 2px solid var(--border);
+    }
+
+    .submit-btn {
+      background: var(--accent);
+      color: #0d1117;
+      border: none;
+      border-radius: var(--radius);
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.15s;
+    }
+    .submit-btn:hover { opacity: 0.85; }
+    .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .step-num {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #0d1117;
+      font-weight: 700;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+    .step-body { flex: 1; }
+    .step-body p { margin-bottom: 6px; }
+
+    .section-divider {
+      border: none;
+      border-top: 2px solid var(--border);
+      margin: 40px 0;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    .checklist-item input[type="checkbox"] {
+      margin-top: 3px;
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 600px) { .two-col { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <!-- Header -->
+    <div style="display:flex; align-items:center; gap:12px; margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 1</span>
+      <span class="badge badge-current">Session 02</span>
+      <span style="color:var(--text-muted); font-size:13px;">JavaScript Foundations</span>
+    </div>
+    <h1>Arrays and Iteration</h1>
+    <p class="subtitle">
+      Arrays are how you hold a list of things. In React, every list you render on screen
+      starts as a JavaScript array. Understanding arrays — and how to loop through them —
+      is the direct prerequisite for Session 14 where we render lists with <code>.map()</code>.
+    </p>
+
+    <div style="display:flex; gap:12px; margin-bottom:24px; flex-wrap:wrap;">
+      <div class="alert alert-info" style="margin:0; flex:1; min-width:200px;">
+        Estimated time: 35–40 minutes
+      </div>
+      <div class="alert alert-warning" style="margin:0; flex:1; min-width:200px;">
+        Prerequisite: Session 01 post-quiz score ≥ 80%
+      </div>
+    </div>
+
+    <!-- ── SECTION 0: VISUAL OVERVIEW ───────────────────────── -->
+    <h2>0. Session Map</h2>
+    <p>
+      Nine concepts covered today. Every diagram below reappears — larger and explained — in Section 3.
+      Use this map to orient yourself before diving in.
+    </p>
+
+    <svg width="680" height="510" viewBox="0 0 680 510" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;">
+      <rect width="680" height="510" fill="#111111"/>
+      <text x="16" y="26" font-family="monospace" font-size="12" fill="white">Session 02 — Concepts at a Glance</text>
+      <text x="448" y="26" font-family="monospace" font-size="9" fill="white" opacity="0.35">9 concepts · all in Section 3</text>
+
+      <!-- ── 1: Array ── 16,38 -->
+      <rect x="16" y="38" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="28" cy="50" r="9" fill="#ff5ca8"/>
+      <text x="24" y="54" font-family="monospace" font-size="9" fill="#111111">1</text>
+      <text x="40" y="54" font-family="monospace" font-size="10" fill="white">Array</text>
+      <text x="44" y="74" font-family="monospace" font-size="8" fill="#ff5ca8">0</text>
+      <text x="98" y="74" font-family="monospace" font-size="8" fill="#ff5ca8">1</text>
+      <text x="152" y="74" font-family="monospace" font-size="8" fill="#ff5ca8">2</text>
+      <rect x="30" y="78" width="50" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="36" y="96" font-family="monospace" font-size="8" fill="white">Canada</text>
+      <rect x="84" y="78" width="50" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="90" y="96" font-family="monospace" font-size="8" fill="white">Japan</text>
+      <rect x="138" y="78" width="50" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="144" y="96" font-family="monospace" font-size="8" fill="white">Brazil</text>
+      <path d="M30,109 L30,118 L188,116 L188,107" fill="none" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="68" y="132" font-family="monospace" font-size="8" fill="white">countries</text>
+      <text x="24" y="166" font-family="monospace" font-size="8" fill="white" opacity="0.5">ordered · position-based</text>
+
+      <!-- ── 2: Index Access ── 230,38 -->
+      <rect x="230" y="38" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="242" cy="50" r="9" fill="#ff5ca8"/>
+      <text x="238" y="54" font-family="monospace" font-size="9" fill="#111111">2</text>
+      <text x="254" y="54" font-family="monospace" font-size="10" fill="white">Index Access</text>
+      <rect x="244" y="68" width="46" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="250" y="85" font-family="monospace" font-size="8" fill="white">Canada</text>
+      <rect x="294" y="68" width="46" height="26" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1"/>
+      <text x="300" y="85" font-family="monospace" font-size="8" fill="#ff5ca8">Japan</text>
+      <rect x="344" y="68" width="46" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="350" y="85" font-family="monospace" font-size="8" fill="white">Brazil</text>
+      <text x="244" y="112" font-family="monospace" font-size="9" fill="#ff5ca8">countries[1]</text>
+      <path d="M292,110 L314,97" fill="none" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="311,94 315,97 311,100" fill="#ff5ca8"/>
+      <text x="244" y="130" font-family="monospace" font-size="8" fill="white">→ "Japan"</text>
+      <text x="244" y="166" font-family="monospace" font-size="8" fill="white" opacity="0.5">zero-indexed · starts at 0</text>
+
+      <!-- ── 3: Out of Bounds ── 444,38 -->
+      <rect x="444" y="38" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="456" cy="50" r="9" fill="#ff5ca8"/>
+      <text x="452" y="54" font-family="monospace" font-size="9" fill="#111111">3</text>
+      <text x="468" y="54" font-family="monospace" font-size="10" fill="white">Out of Bounds</text>
+      <rect x="454" y="70" width="36" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="459" y="87" font-family="monospace" font-size="8" fill="white">CA</text>
+      <rect x="494" y="70" width="36" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="499" y="87" font-family="monospace" font-size="8" fill="white">JP</text>
+      <rect x="534" y="70" width="36" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="539" y="87" font-family="monospace" font-size="8" fill="white">BR</text>
+      <rect x="574" y="70" width="36" height="26" fill="none" stroke="white" stroke-width="1" rx="1" stroke-dasharray="3,2" opacity="0.4"/>
+      <polygon points="578,112 598,112 588,96" fill="none" stroke="#ff5ca8" stroke-width="1" stroke-linejoin="round"/>
+      <text x="585" y="109" font-family="monospace" font-size="7" fill="#ff5ca8">!</text>
+      <text x="567" y="128" font-family="monospace" font-size="8" fill="#ff5ca8">undefined</text>
+      <text x="454" y="146" font-family="monospace" font-size="8" fill="white">countries[3]</text>
+      <text x="454" y="166" font-family="monospace" font-size="8" fill="white" opacity="0.5">past length − 1</text>
+
+      <!-- ── 4: Reference ── 16,191 -->
+      <rect x="16" y="191" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="28" cy="203" r="9" fill="#ff5ca8"/>
+      <text x="24" y="207" font-family="monospace" font-size="9" fill="#111111">4</text>
+      <text x="40" y="207" font-family="monospace" font-size="10" fill="white">Reference</text>
+      <text x="24" y="236" font-family="monospace" font-size="9" fill="white">original</text>
+      <text x="24" y="258" font-family="monospace" font-size="9" fill="white">alias</text>
+      <path d="M76,232 L112,242" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="109,239 113,243 109,246" fill="white"/>
+      <path d="M60,254 L112,248" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="109,245 113,249 109,252" fill="white"/>
+      <rect x="118" y="232" width="92" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="124" y="250" font-family="monospace" font-size="8" fill="white">["CA","JP","BR"]</text>
+      <rect x="80" y="278" width="86" height="16" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2"/>
+      <text x="85" y="289" font-family="monospace" font-size="8" fill="#ff5ca8">same memory</text>
+      <text x="24" y="319" font-family="monospace" font-size="8" fill="white" opacity="0.5">b = a copies reference only</text>
+
+      <!-- ── 5: for Loop ── 230,191 -->
+      <rect x="230" y="191" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="242" cy="203" r="9" fill="#ff5ca8"/>
+      <text x="238" y="207" font-family="monospace" font-size="9" fill="#111111">5</text>
+      <text x="254" y="207" font-family="monospace" font-size="10" fill="white">for Loop</text>
+      <rect x="244" y="220" width="44" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="256" y="237" font-family="monospace" font-size="8" fill="white">CA</text>
+      <rect x="294" y="220" width="44" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="306" y="237" font-family="monospace" font-size="8" fill="white">JP</text>
+      <rect x="344" y="220" width="44" height="26" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="356" y="237" font-family="monospace" font-size="8" fill="white">BR</text>
+      <text x="248" y="258" font-family="monospace" font-size="7" fill="#ff5ca8">i=0</text>
+      <text x="298" y="258" font-family="monospace" font-size="7" fill="#ff5ca8">i=1</text>
+      <text x="348" y="258" font-family="monospace" font-size="7" fill="#ff5ca8">i=2</text>
+      <path d="M244,215 L390,213" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="387,210 391,213 387,216" fill="white"/>
+      <text x="244" y="278" font-family="monospace" font-size="8" fill="white">use when index is needed</text>
+      <text x="244" y="319" font-family="monospace" font-size="8" fill="white" opacity="0.5">for(let i=0; i&lt;len; i++)</text>
+
+      <!-- ── 6: for...of ── 444,191 -->
+      <rect x="444" y="191" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="456" cy="203" r="9" fill="#ff5ca8"/>
+      <text x="452" y="207" font-family="monospace" font-size="9" fill="#111111">6</text>
+      <text x="468" y="207" font-family="monospace" font-size="10" fill="white">for...of</text>
+      <rect x="458" y="220" width="40" height="24" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="466" y="236" font-family="monospace" font-size="7" fill="white">CA</text>
+      <rect x="504" y="220" width="40" height="24" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="512" y="236" font-family="monospace" font-size="7" fill="white">JP</text>
+      <rect x="550" y="220" width="40" height="24" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="558" y="236" font-family="monospace" font-size="7" fill="white">BR</text>
+      <line x1="478" y1="244" x2="478" y2="258" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="475,255 478,260 481,255" fill="white"/>
+      <line x1="524" y1="244" x2="524" y2="258" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="521,255 524,260 527,255" fill="white"/>
+      <line x1="570" y1="244" x2="570" y2="258" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="567,255 570,260 573,255" fill="white"/>
+      <text x="462" y="272" font-family="monospace" font-size="7" fill="#ff5ca8">item</text>
+      <text x="508" y="272" font-family="monospace" font-size="7" fill="#ff5ca8">item</text>
+      <text x="554" y="272" font-family="monospace" font-size="7" fill="#ff5ca8">item</text>
+      <text x="454" y="293" font-family="monospace" font-size="8" fill="white">no index needed</text>
+      <text x="454" y="319" font-family="monospace" font-size="8" fill="white" opacity="0.5">for(const x of arr)</text>
+
+      <!-- ── 7: Mutating Methods ── 16,344 -->
+      <rect x="16" y="344" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="28" cy="356" r="9" fill="#ff5ca8"/>
+      <text x="24" y="360" font-family="monospace" font-size="9" fill="#111111">7</text>
+      <text x="40" y="360" font-family="monospace" font-size="10" fill="white">Mutating Methods</text>
+      <rect x="68" y="374" width="100" height="28" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="82" y="392" font-family="monospace" font-size="8" fill="white">[ original ]</text>
+      <text x="22" y="386" font-family="monospace" font-size="8" fill="#ff5ca8">.push()</text>
+      <line x1="60" y1="384" x2="67" y2="384" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,1"/>
+      <text x="22" y="400" font-family="monospace" font-size="8" fill="#ff5ca8">.pop()</text>
+      <line x1="60" y1="398" x2="67" y2="390" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,1"/>
+      <text x="176" y="386" font-family="monospace" font-size="8" fill="#ff5ca8">.sort()</text>
+      <line x1="172" y1="384" x2="169" y2="384" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,1"/>
+      <text x="172" y="400" font-family="monospace" font-size="8" fill="#ff5ca8">.rev()</text>
+      <line x1="172" y1="398" x2="169" y2="390" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="2,1"/>
+      <rect x="44" y="418" width="138" height="16" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2"/>
+      <text x="49" y="429" font-family="monospace" font-size="8" fill="#ff5ca8">changes original array</text>
+      <text x="22" y="470" font-family="monospace" font-size="8" fill="white" opacity="0.5">also: .splice() .unshift()</text>
+
+      <!-- ── 8: Non-mutating ── 230,344 -->
+      <rect x="230" y="344" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="242" cy="356" r="9" fill="#ff5ca8"/>
+      <text x="238" y="360" font-family="monospace" font-size="9" fill="#111111">8</text>
+      <text x="254" y="360" font-family="monospace" font-size="10" fill="white">Non-mutating</text>
+      <text x="240" y="382" font-family="monospace" font-size="8" fill="white">original</text>
+      <rect x="240" y="386" width="78" height="24" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="249" y="402" font-family="monospace" font-size="7" fill="white">["CA","JP"]</text>
+      <path d="M321,398 L343,398" stroke="white" stroke-width="1" stroke-linecap="round"/>
+      <polygon points="340,395 344,398 340,401" fill="white"/>
+      <text x="348" y="382" font-family="monospace" font-size="8" fill="#ff5ca8">new []</text>
+      <rect x="348" y="386" width="76" height="24" fill="none" stroke="#ff5ca8" stroke-width="1" rx="1"/>
+      <text x="357" y="402" font-family="monospace" font-size="7" fill="white">["CA","JP"]</text>
+      <text x="240" y="426" font-family="monospace" font-size="8" fill="#ff5ca8">.map() .filter() .slice()</text>
+      <text x="240" y="440" font-family="monospace" font-size="8" fill="#ff5ca8">.concat() [...spread]</text>
+      <text x="240" y="470" font-family="monospace" font-size="8" fill="white" opacity="0.5">original stays unchanged</text>
+
+      <!-- ── 9: Arrays of Objects ── 444,344 -->
+      <rect x="444" y="344" width="204" height="143" fill="none" stroke="white" stroke-width="1" rx="2" opacity="0.25"/>
+      <circle cx="456" cy="356" r="9" fill="#ff5ca8"/>
+      <text x="452" y="360" font-family="monospace" font-size="9" fill="#111111">9</text>
+      <text x="468" y="360" font-family="monospace" font-size="10" fill="white">Arrays of Objects</text>
+      <rect x="454" y="374" width="58" height="44" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="460" y="389" font-family="monospace" font-size="7" fill="#ff5ca8">id: 1</text>
+      <text x="460" y="401" font-family="monospace" font-size="7" fill="white">CA · Am.</text>
+      <rect x="518" y="374" width="58" height="44" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="524" y="389" font-family="monospace" font-size="7" fill="#ff5ca8">id: 2</text>
+      <text x="524" y="401" font-family="monospace" font-size="7" fill="white">JP · As.</text>
+      <rect x="582" y="374" width="58" height="44" fill="none" stroke="white" stroke-width="1" rx="1"/>
+      <text x="588" y="389" font-family="monospace" font-size="7" fill="#ff5ca8">id: 3</text>
+      <text x="588" y="401" font-family="monospace" font-size="7" fill="white">BR · Am.</text>
+      <path d="M444,370 L444,424 L648,422 L648,368" fill="none" stroke="white" stroke-width="1" stroke-dasharray="4,3" stroke-linecap="round" opacity="0.4"/>
+      <text x="454" y="440" font-family="monospace" font-size="8" fill="white">countries[0].name</text>
+      <rect x="454" y="448" width="116" height="16" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2"/>
+      <text x="459" y="459" font-family="monospace" font-size="8" fill="#ff5ca8">React uses this shape</text>
+    </svg>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 1: LEARNING OBJECTIVE ─────────────────────── -->
+    <h2>1. Learning Objective</h2>
+    <div class="card">
+      <p>By the end of this session you will be able to:</p>
+      <ul>
+        <li>Create an array and access elements by index</li>
+        <li>Use <code>.length</code> to know how many items are in an array</li>
+        <li>Iterate over an array using a <code>for</code> loop and a <code>for...of</code> loop</li>
+        <li>Explain the difference between mutating and non-mutating array methods</li>
+        <li>Use <code>.push()</code>, <code>.pop()</code>, <code>.includes()</code>, and <code>.indexOf()</code></li>
+        <li>Explain why React will care about whether you mutate an array or create a new one</li>
+      </ul>
+    </div>
+
+    <!-- ── SECTION 2: PRE-CODING QUIZ ─────────────────────────── -->
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer these <strong>before</strong> reading the concept section. Score honestly. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>
+          You have <code>const countries = ["Canada", "Japan", "Brazil"];</code><br/>
+          What does <code>countries[1]</code> return?
+        </p>
+        <label class="quiz-option" data-val="a">"Canada"</label>
+        <label class="quiz-option" data-val="b">undefined</label>
+        <label class="quiz-option" data-val="c">"Japan"</label>
+        <label class="quiz-option" data-val="d">"Brazil"</label>
+        <div class="explanation">
+          Arrays are zero-indexed. Index 0 is "Canada", index 1 is "Japan", index 2 is "Brazil".
+          This is one of the most common off-by-one mistakes in programming.
+        </div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>
+          You write <code>const a = ["X", "Y"];</code> then <code>const b = a;</code> then <code>b.push("Z");</code><br/>
+          What is <code>a.length</code> after this?
+        </p>
+        <label class="quiz-option" data-val="a">2 — because <code>const</code> makes arrays immutable</label>
+        <label class="quiz-option" data-val="b">3 — because <code>b</code> and <code>a</code> point to the same array</label>
+        <label class="quiz-option" data-val="c">2 — because <code>b</code> is a copy of <code>a</code></label>
+        <label class="quiz-option" data-val="d">An error — you cannot push to a const array</label>
+        <div class="explanation">
+          Arrays are objects. Like all objects, <code>const b = a</code> copies the reference, not the contents.
+          Both <code>a</code> and <code>b</code> point to the same array in memory, so <code>b.push("Z")</code>
+          mutates the array that both variables reference. This is the same reference behaviour from Session 01,
+          applied to arrays.
+        </div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>
+          Which of these loops correctly prints every item in <code>const items = [10, 20, 30];</code>?
+        </p>
+        <label class="quiz-option" data-val="a"><code>for (let i = 1; i &lt;= items.length; i++) { console.log(items[i]); }</code></label>
+        <label class="quiz-option" data-val="b"><code>for (let i = 0; i &lt; items.length; i++) { console.log(i); }</code></label>
+        <label class="quiz-option" data-val="c"><code>for (let i = 0; i &lt;= items.length; i++) { console.log(items[i]); }</code></label>
+        <label class="quiz-option" data-val="d"><code>for (let i = 0; i &lt; items.length; i++) { console.log(items[i]); }</code></label>
+        <div class="explanation">
+          Option A starts at index 1 (skips first item) and uses <code>&lt;=</code> (accesses one past the end, returning <code>undefined</code>).
+          Option B prints the index number, not the item. Option C uses <code>&lt;=</code> so it reads <code>items[3]</code> which is <code>undefined</code>.
+          Option D is correct: start at 0, stop before <code>length</code>, access <code>items[i]</code>.
+        </div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>
+          <code>.push()</code> adds an item to an array. Which statement about it is true?
+        </p>
+        <label class="quiz-option" data-val="a">It mutates the original array and returns the new length</label>
+        <label class="quiz-option" data-val="b">It returns a new array with the item added</label>
+        <label class="quiz-option" data-val="c">It mutates the original array and returns the added item</label>
+        <label class="quiz-option" data-val="d">It returns the original array unchanged</label>
+        <div class="explanation">
+          <code>.push()</code> is a mutating method. It changes the original array in-place and returns
+          the new <code>length</code> of the array. This is important for React: if you store an array
+          in state and push to it directly, React will not detect the change because the array reference
+          hasn't changed. You'll learn the correct pattern in Layer 3.
+        </div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          You have <code>const list = ["a", "b", "c"];</code><br/>
+          What does <code>list.indexOf("b")</code> return?
+        </p>
+        <label class="quiz-option" data-val="a">true</label>
+        <label class="quiz-option" data-val="b">2</label>
+        <label class="quiz-option" data-val="c">1</label>
+        <label class="quiz-option" data-val="d">-1</label>
+        <div class="explanation">
+          <code>.indexOf()</code> returns the index of the first matching element, or <code>-1</code> if not found.
+          "b" is at index 1 (zero-indexed). <code>-1</code> would be returned if "b" were not in the array.
+          The pattern <code>if (list.indexOf("b") !== -1)</code> checks for existence — though
+          <code>.includes()</code> is cleaner for that purpose.
+        </div>
+      </div>
+
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 3: CONCEPT EXPLANATION ─────────────────────── -->
+    <h2>3. The Concept — JavaScript Arrays</h2>
+
+    <h3>What is an array?</h3>
+    <p>
+      An array is an ordered list of values. Unlike an object (which stores values by key name),
+      an array stores values by numeric position — called an <strong>index</strong>.
+    </p>
+
+    <pre><code>// An object stores by name
+const country = { name: "Canada", region: "Americas" };
+
+// An array stores by position
+const countries = ["Canada", "Japan", "Brazil"];
+//                  index 0   index 1   index 2</code></pre>
+
+    <!-- SVG: Objects vs Arrays comparison -->
+    <svg width="480" height="170" viewBox="0 0 480 170" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="170" fill="#111111"/>
+      <text x="28" y="16" font-family="monospace" font-size="11" fill="#ff5ca8">object {}</text>
+      <rect x="12" y="22" width="170" height="33" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.6,97,38)"/>
+      <text x="20" y="43" font-family="monospace" font-size="10" fill="white">  name: "Canada"</text>
+      <rect x="12" y="55" width="170" height="33" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.4,97,71)"/>
+      <text x="20" y="76" font-family="monospace" font-size="10" fill="white">  region: "Americas"</text>
+      <line x1="185" y1="46" x2="212" y2="46" stroke="#ff5ca8" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="209,43 213,46 209,49" fill="#ff5ca8"/>
+      <text x="216" y="50" font-family="monospace" font-size="9" fill="#ff5ca8">keys</text>
+      <text x="222" y="96" font-family="monospace" font-size="14" fill="white" opacity="0.2">VS</text>
+      <text x="305" y="16" font-family="monospace" font-size="11" fill="#ff5ca8">array []</text>
+      <text x="320" y="28" font-family="monospace" font-size="8" fill="#ff5ca8">0</text>
+      <text x="373" y="28" font-family="monospace" font-size="8" fill="#ff5ca8">1</text>
+      <text x="426" y="28" font-family="monospace" font-size="8" fill="#ff5ca8">2</text>
+      <rect x="307" y="31" width="50" height="36" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,332,49)"/>
+      <text x="313" y="53" font-family="monospace" font-size="9" fill="white">Canada</text>
+      <rect x="357" y="31" width="50" height="36" fill="none" stroke="white" stroke-width="1.5" rx="1"/>
+      <text x="363" y="53" font-family="monospace" font-size="9" fill="white">Japan</text>
+      <rect x="407" y="31" width="50" height="36" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.5,432,49)"/>
+      <text x="413" y="53" font-family="monospace" font-size="9" fill="white">Brazil</text>
+      <path d="M307,70 L307,82 L457,80 L457,68" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="360" y="98" font-family="monospace" font-size="9" fill="white">countries</text>
+      <rect x="307" y="110" width="116" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.4,365,119)"/>
+      <text x="313" y="123" font-family="monospace" font-size="9" fill="#ff5ca8">order matters</text>
+    </svg>
+
+    <h3>Creating arrays and accessing elements</h3>
+    <pre><code>const countries = ["Canada", "Japan", "Brazil"];
+
+// Access by index (zero-based)
+console.log(countries[0]);  // "Canada"
+console.log(countries[1]);  // "Japan"
+console.log(countries[2]);  // "Brazil"
+console.log(countries[3]);  // undefined — no index 3 exists
+
+// Length: how many items
+console.log(countries.length);  // 3
+
+// Last item (works for any length)
+console.log(countries[countries.length - 1]);  // "Brazil"</code></pre>
+
+    <!-- SVG: Array index access -->
+    <svg width="480" height="155" viewBox="0 0 480 155" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="155" fill="#111111"/>
+      <text x="108" y="20" font-family="monospace" font-size="8" fill="#ff5ca8">0</text>
+      <text x="197" y="20" font-family="monospace" font-size="8" fill="#ff5ca8">1</text>
+      <text x="286" y="20" font-family="monospace" font-size="8" fill="#ff5ca8">2</text>
+      <rect x="80" y="25" width="80" height="38" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.4,120,44)"/>
+      <text x="92" y="48" font-family="monospace" font-size="10" fill="white">Canada</text>
+      <rect x="160" y="25" width="80" height="38" fill="none" stroke="#ff5ca8" stroke-width="2" rx="1"/>
+      <text x="172" y="48" font-family="monospace" font-size="10" fill="#ff5ca8">Japan</text>
+      <rect x="240" y="25" width="80" height="38" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.4,280,44)"/>
+      <text x="252" y="48" font-family="monospace" font-size="10" fill="white">Brazil</text>
+      <text x="22" y="104" font-family="monospace" font-size="11" fill="white">countries[1]</text>
+      <path d="M112,98 L112,85 L196,67" fill="none" stroke="#ff5ca8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <polygon points="193,64 197,68 193,71" fill="#ff5ca8"/>
+      <text x="155" y="125" font-family="monospace" font-size="10" fill="white">returns value</text>
+    </svg>
+
+    <div class="alert alert-warning">
+      <strong>Common mistake:</strong> Arrays are zero-indexed. The last valid index is always
+      <code>length - 1</code>. Accessing <code>array[array.length]</code> gives <code>undefined</code>,
+      not an error.
+    </div>
+
+    <!-- SVG: Invalid index access -->
+    <svg width="480" height="160" viewBox="0 0 480 160" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="160" fill="#111111"/>
+      <text x="44" y="18" font-family="monospace" font-size="8" fill="#ff5ca8">0</text>
+      <text x="109" y="18" font-family="monospace" font-size="8" fill="#ff5ca8">1</text>
+      <text x="174" y="18" font-family="monospace" font-size="8" fill="#ff5ca8">2</text>
+      <text x="239" y="18" font-family="monospace" font-size="8" fill="#ff5ca8">3</text>
+      <rect x="28" y="23" width="62" height="34" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,59,40)"/>
+      <text x="34" y="44" font-family="monospace" font-size="9" fill="white">Canada</text>
+      <rect x="93" y="23" width="62" height="34" fill="none" stroke="white" stroke-width="1.5" rx="1"/>
+      <text x="99" y="44" font-family="monospace" font-size="9" fill="white">Japan</text>
+      <rect x="158" y="23" width="62" height="34" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.3,189,40)"/>
+      <text x="164" y="44" font-family="monospace" font-size="9" fill="white">Brazil</text>
+      <rect x="223" y="23" width="62" height="34" fill="none" stroke="white" stroke-width="1" rx="1" stroke-dasharray="4,3" opacity="0.5"/>
+      <line x1="254" y1="57" x2="258" y2="76" stroke="#ff5ca8" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="255,74 258,79 261,74" fill="#ff5ca8"/>
+      <polygon points="245,100 275,100 260,80" fill="none" stroke="#ff5ca8" stroke-width="1.5" stroke-linejoin="round"/>
+      <text x="257" y="97" font-family="monospace" font-size="8" fill="#ff5ca8">!</text>
+      <text x="225" y="122" font-family="monospace" font-size="11" fill="#ff5ca8">undefined</text>
+      <text x="228" y="140" font-family="monospace" font-size="9" fill="white">countries[3]</text>
+    </svg>
+
+    <h3>Arrays are objects — reference behaviour applies</h3>
+    <p>
+      You learned in Session 01 that objects are passed and assigned by reference.
+      Arrays are objects, so the exact same rules apply.
+    </p>
+    <pre><code>const original = ["Canada", "Japan"];
+const alias = original;        // NOT a copy — same reference
+
+alias.push("Brazil");
+console.log(original);  // ["Canada", "Japan", "Brazil"]
+// original was mutated because alias points to the same array</code></pre>
+
+    <!-- SVG: Shared reference -->
+    <svg width="480" height="165" viewBox="0 0 480 165" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="165" fill="#111111"/>
+      <text x="20" y="42" font-family="monospace" font-size="11" fill="white">original</text>
+      <text x="20" y="100" font-family="monospace" font-size="11" fill="white">alias</text>
+      <line x1="92" y1="37" x2="175" y2="37" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="172,34 176,37 172,40" fill="white"/>
+      <line x1="64" y1="95" x2="175" y2="80" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="172,77 176,80 172,83" fill="white"/>
+      <rect x="180" y="22" width="200" height="70" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,280,57)"/>
+      <text x="190" y="48" font-family="monospace" font-size="10" fill="white">["Canada", "Japan",</text>
+      <text x="190" y="66" font-family="monospace" font-size="10" fill="white"> "Brazil"]</text>
+      <rect x="180" y="115" width="138" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.4,249,124)"/>
+      <text x="186" y="128" font-family="monospace" font-size="9" fill="#ff5ca8">same memory</text>
+      <text x="395" y="50" font-family="monospace" font-size="8" fill="#ff5ca8">← both variables</text>
+      <text x="395" y="63" font-family="monospace" font-size="8" fill="#ff5ca8">  point here</text>
+    </svg>
+
+    <h3>Iterating — the for loop</h3>
+    <p>
+      A <code>for</code> loop runs a block of code a set number of times.
+      It has three parts: <em>initialise</em>, <em>condition</em>, <em>update</em>.
+    </p>
+    <pre><code>const countries = ["Canada", "Japan", "Brazil"];
+
+for (let i = 0; i &lt; countries.length; i++) {
+  console.log(i, countries[i]);
+}
+// 0 "Canada"
+// 1 "Japan"
+// 2 "Brazil"</code></pre>
+
+    <p>
+      Read it as: start at <code>i = 0</code>, keep going while <code>i</code> is less than
+      the length, after each iteration add 1 to <code>i</code>.
+    </p>
+
+    <!-- SVG: for loop -->
+    <svg width="480" height="180" viewBox="0 0 480 180" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="180" fill="#111111"/>
+      <rect x="60" y="30" width="70" height="40" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,95,50)"/>
+      <text x="73" y="54" font-family="monospace" font-size="10" fill="white">Canada</text>
+      <rect x="135" y="30" width="70" height="40" fill="none" stroke="white" stroke-width="1.5" rx="1"/>
+      <text x="148" y="54" font-family="monospace" font-size="10" fill="white">Japan</text>
+      <rect x="210" y="30" width="70" height="40" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.5,245,50)"/>
+      <text x="223" y="54" font-family="monospace" font-size="10" fill="white">Brazil</text>
+      <text x="78" y="84" font-family="monospace" font-size="9" fill="#ff5ca8">i=0</text>
+      <text x="153" y="84" font-family="monospace" font-size="9" fill="#ff5ca8">i=1</text>
+      <text x="228" y="84" font-family="monospace" font-size="9" fill="#ff5ca8">i=2</text>
+      <path d="M60,20 L285,18" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="282,15 286,18 282,21" fill="white"/>
+      <path d="M290,30 Q320,20 310,55 Q305,78 280,78" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <polygon points="277,75 281,79 277,82" fill="white"/>
+      <rect x="320" y="110" width="120" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.4,380,119)"/>
+      <text x="326" y="123" font-family="monospace" font-size="9" fill="#ff5ca8">manual loop</text>
+      <text x="60" y="110" font-family="monospace" font-size="9" fill="white">for (let i = 0; i &lt; length; i++)</text>
+    </svg>
+
+    <h3>Iterating — the for...of loop</h3>
+    <p>
+      When you don't need the index, <code>for...of</code> is cleaner:
+    </p>
+    <pre><code>for (const country of countries) {
+  console.log(country);
+}
+// "Canada"
+// "Japan"
+// "Brazil"</code></pre>
+
+    <!-- SVG: for...of loop -->
+    <svg width="480" height="180" viewBox="0 0 480 180" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="180" fill="#111111"/>
+      <rect x="60" y="18" width="70" height="38" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.4,95,37)"/>
+      <text x="73" y="41" font-family="monospace" font-size="10" fill="white">Canada</text>
+      <rect x="135" y="18" width="70" height="38" fill="none" stroke="white" stroke-width="1.5" rx="1"/>
+      <text x="148" y="41" font-family="monospace" font-size="10" fill="white">Japan</text>
+      <rect x="210" y="18" width="70" height="38" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.4,245,37)"/>
+      <text x="223" y="41" font-family="monospace" font-size="10" fill="white">Brazil</text>
+      <line x1="95" y1="56" x2="95" y2="78" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="92,75 95,80 98,75" fill="white"/>
+      <line x1="170" y1="56" x2="170" y2="78" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="167,75 170,80 173,75" fill="white"/>
+      <line x1="245" y1="56" x2="245" y2="78" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="242,75 245,80 248,75" fill="white"/>
+      <text x="75" y="98" font-family="monospace" font-size="9" fill="white">country</text>
+      <text x="148" y="98" font-family="monospace" font-size="9" fill="white">country</text>
+      <text x="223" y="98" font-family="monospace" font-size="9" fill="white">country</text>
+      <line x1="345" y1="48" x2="380" y2="48" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="346" y1="52" x2="379" y2="52" stroke="#ff5ca8" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="340" y="38" font-family="monospace" font-size="9" fill="white">i</text>
+      <text x="385" y="55" font-family="monospace" font-size="9" fill="#ff5ca8">no index</text>
+      <rect x="320" y="116" width="120" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.3,380,125)"/>
+      <text x="326" y="129" font-family="monospace" font-size="9" fill="#ff5ca8">cleaner loop</text>
+      <text x="60" y="116" font-family="monospace" font-size="9" fill="white">for (const country of countries)</text>
+    </svg>
+
+    <div class="alert alert-info">
+      <strong>React connection:</strong> In Session 03 you will learn <code>.map()</code> —
+      a method that loops over an array and returns a <em>new</em> array of transformed values.
+      <code>.map()</code> is how React renders lists. Everything in this session is the foundation for that.
+    </div>
+
+    <h3>Mutating vs non-mutating methods</h3>
+    <p>
+      This distinction matters enormously in React. Some array methods change the original array.
+      Others return a new array and leave the original untouched.
+    </p>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title" style="color:var(--red);">Mutating — changes original</div>
+        <ul style="margin-top:8px;">
+          <li><code>.push(item)</code> — add to end</li>
+          <li><code>.pop()</code> — remove from end</li>
+          <li><code>.unshift(item)</code> — add to start</li>
+          <li><code>.shift()</code> — remove from start</li>
+          <li><code>.splice(i, n)</code> — remove/insert at index</li>
+          <li><code>.sort()</code> — sort in place</li>
+          <li><code>.reverse()</code> — reverse in place</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="card-title" style="color:var(--green);">Non-mutating — returns new array</div>
+        <ul style="margin-top:8px;">
+          <li><code>.map(fn)</code> — transform each item</li>
+          <li><code>.filter(fn)</code> — keep matching items</li>
+          <li><code>.slice(i, j)</code> — copy a portion</li>
+          <li><code>.concat(arr)</code> — combine arrays</li>
+          <li><code>[...arr]</code> — spread copy</li>
+          <li><code>.find(fn)</code> — returns one item</li>
+          <li><code>.reduce(fn)</code> — accumulate to one value</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SVG: Mutating methods -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <rect x="160" y="55" width="160" height="60" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,240,85)"/>
+      <text x="190" y="82" font-family="monospace" font-size="10" fill="white">["Canada",</text>
+      <text x="190" y="98" font-family="monospace" font-size="10" fill="white"> "Japan"...]</text>
+      <text x="22" y="42" font-family="monospace" font-size="10" fill="#ff5ca8">.push()</text>
+      <line x1="70" y1="46" x2="158" y2="70" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <text x="22" y="72" font-family="monospace" font-size="10" fill="#ff5ca8">.pop()</text>
+      <line x1="65" y1="72" x2="158" y2="82" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <text x="22" y="102" font-family="monospace" font-size="10" fill="#ff5ca8">.splice()</text>
+      <line x1="82" y1="100" x2="158" y2="94" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <text x="330" y="42" font-family="monospace" font-size="10" fill="#ff5ca8">.sort()</text>
+      <line x1="330" y1="44" x2="322" y2="62" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <text x="330" y="72" font-family="monospace" font-size="10" fill="#ff5ca8">.reverse()</text>
+      <line x1="330" y1="72" x2="322" y2="80" stroke="#ff5ca8" stroke-width="1" stroke-linecap="round" stroke-dasharray="3,2"/>
+      <rect x="155" y="132" width="170" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.3,240,141)"/>
+      <text x="161" y="145" font-family="monospace" font-size="9" fill="#ff5ca8">changes original</text>
+    </svg>
+
+    <!-- SVG: Non-mutating methods -->
+    <svg width="480" height="160" viewBox="0 0 480 160" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="160" fill="#111111"/>
+      <text x="18" y="16" font-family="monospace" font-size="9" fill="white">original</text>
+      <rect x="14" y="22" width="120" height="50" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.5,74,47)"/>
+      <text x="22" y="44" font-family="monospace" font-size="9" fill="white">["Canada",</text>
+      <text x="22" y="60" font-family="monospace" font-size="9" fill="white"> "Japan"...]</text>
+      <path d="M140,47 L200,47" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="197,44 201,47 197,50" fill="white"/>
+      <text x="142" y="38" font-family="monospace" font-size="8" fill="#ff5ca8">.map()</text>
+      <text x="142" y="50" font-family="monospace" font-size="8" fill="#ff5ca8">.filter()</text>
+      <text x="142" y="62" font-family="monospace" font-size="8" fill="#ff5ca8">.slice()</text>
+      <text x="340" y="16" font-family="monospace" font-size="9" fill="#ff5ca8">new []</text>
+      <rect x="212" y="22" width="120" height="50" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(0.4,272,47)"/>
+      <text x="220" y="44" font-family="monospace" font-size="9" fill="white">["Canada",</text>
+      <text x="220" y="60" font-family="monospace" font-size="9" fill="white"> "Japan"...]</text>
+      <rect x="175" y="105" width="160" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.3,255,114)"/>
+      <text x="181" y="118" font-family="monospace" font-size="9" fill="#ff5ca8">new array created</text>
+      <text x="356" y="50" font-family="monospace" font-size="8" fill="#ff5ca8">.concat()</text>
+      <text x="356" y="62" font-family="monospace" font-size="8" fill="#ff5ca8">[...spread]</text>
+    </svg>
+
+    <p>
+      In Layer 3, when you learn <code>useState</code>, you will discover that React only
+      re-renders when it sees a <em>new reference</em>. If you mutate an array in state,
+      React sees the same reference and does nothing. You must return a new array.
+      That is why this distinction matters right now — not just as trivia.
+    </p>
+
+    <h3>Useful array methods to know now</h3>
+    <pre><code>const countries = ["Canada", "Japan", "Brazil"];
+
+// Check if item exists
+console.log(countries.includes("Japan"));   // true
+console.log(countries.includes("France"));  // false
+
+// Find the position
+console.log(countries.indexOf("Brazil"));   // 2
+console.log(countries.indexOf("France"));   // -1  (not found)
+
+// Add to end (mutating)
+countries.push("France");
+console.log(countries);  // ["Canada", "Japan", "Brazil", "France"]
+
+// Remove from end (mutating)
+const removed = countries.pop();
+console.log(removed);    // "France"
+console.log(countries);  // ["Canada", "Japan", "Brazil"]
+
+// Copy a portion (non-mutating)
+const first2 = countries.slice(0, 2);
+console.log(first2);     // ["Canada", "Japan"]
+console.log(countries);  // ["Canada", "Japan", "Brazil"] — unchanged</code></pre>
+
+    <h3>Arrays of objects — the pattern React uses</h3>
+    <p>
+      In real React applications, you almost never have an array of plain strings.
+      You have an array of objects — one object per item to display.
+    </p>
+    <pre><code>const countries = [
+  { id: 1, name: "Canada",  region: "Americas" },
+  { id: 2, name: "Japan",   region: "Asia" },
+  { id: 3, name: "Brazil",  region: "Americas" }
+];
+
+// Access a specific country's name
+console.log(countries[0].name);   // "Canada"
+console.log(countries[1].region); // "Asia"
+
+// Loop and access properties
+for (const country of countries) {
+  console.log(country.name, "-", country.region);
+}
+// Canada - Americas
+// Japan - Asia
+// Brazil - Americas</code></pre>
+
+    <!-- SVG: Arrays of objects -->
+    <svg width="480" height="175" viewBox="0 0 480 175" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="175" fill="#111111"/>
+      <rect x="30" y="25" width="110" height="70" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.6,85,60)"/>
+      <text x="38" y="47" font-family="monospace" font-size="9" fill="#ff5ca8">id:</text>
+      <text x="60" y="47" font-family="monospace" font-size="9" fill="white">1</text>
+      <text x="38" y="63" font-family="monospace" font-size="9" fill="#ff5ca8">name:</text>
+      <text x="74" y="63" font-family="monospace" font-size="9" fill="white">"Canada"</text>
+      <text x="38" y="79" font-family="monospace" font-size="9" fill="white">region: "Am."</text>
+      <rect x="185" y="25" width="110" height="70" fill="none" stroke="white" stroke-width="1.5" rx="1"/>
+      <text x="193" y="47" font-family="monospace" font-size="9" fill="#ff5ca8">id:</text>
+      <text x="215" y="47" font-family="monospace" font-size="9" fill="white">2</text>
+      <text x="193" y="63" font-family="monospace" font-size="9" fill="#ff5ca8">name:</text>
+      <text x="229" y="63" font-family="monospace" font-size="9" fill="white">"Japan"</text>
+      <text x="193" y="79" font-family="monospace" font-size="9" fill="white">region: "As."</text>
+      <rect x="340" y="25" width="110" height="70" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.5,395,60)"/>
+      <text x="348" y="47" font-family="monospace" font-size="9" fill="#ff5ca8">id:</text>
+      <text x="370" y="47" font-family="monospace" font-size="9" fill="white">3</text>
+      <text x="348" y="63" font-family="monospace" font-size="9" fill="#ff5ca8">name:</text>
+      <text x="384" y="63" font-family="monospace" font-size="9" fill="white">"Brazil"</text>
+      <text x="348" y="79" font-family="monospace" font-size="9" fill="white">region: "Am."</text>
+      <path d="M20,18 L20,105 L460,103 L460,16 L20,18" fill="none" stroke="white" stroke-width="1" stroke-dasharray="5,3" stroke-linecap="round" stroke-linejoin="round"/>
+      <text x="180" y="130" font-family="monospace" font-size="9" fill="white">countries [ {...}, {...}, {...} ]</text>
+      <rect x="150" y="143" width="180" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.3,240,152)"/>
+      <text x="156" y="156" font-family="monospace" font-size="9" fill="#ff5ca8">React uses this</text>
+    </svg>
+
+    <p>
+      The <code>id</code> field on each object is not accidental. In Session 15, you will learn
+      that React needs a unique <code>key</code> for every item in a rendered list.
+      That key comes from here.
+    </p>
+
+    <!-- SVG: React keys -->
+    <svg width="480" height="165" viewBox="0 0 480 165" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;">
+      <rect width="480" height="165" fill="#111111"/>
+      <rect x="50" y="20" width="280" height="28" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(-0.4,190,34)"/>
+      <text x="58" y="38" font-family="monospace" font-size="10" fill="white">Canada — Americas</text>
+      <rect x="26" y="19" width="22" height="28" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(-0.4,37,33)"/>
+      <text x="32" y="37" font-family="monospace" font-size="9" fill="#ff5ca8">1</text>
+      <rect x="50" y="58" width="280" height="28" fill="none" stroke="white" stroke-width="1.5" rx="1"/>
+      <text x="58" y="76" font-family="monospace" font-size="10" fill="white">Japan — Asia</text>
+      <rect x="26" y="58" width="22" height="28" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1"/>
+      <text x="32" y="76" font-family="monospace" font-size="9" fill="#ff5ca8">2</text>
+      <rect x="50" y="96" width="280" height="28" fill="none" stroke="white" stroke-width="1.5" rx="1" transform="rotate(0.4,190,110)"/>
+      <text x="58" y="114" font-family="monospace" font-size="10" fill="white">Brazil — Americas</text>
+      <rect x="26" y="96" width="22" height="28" fill="none" stroke="#ff5ca8" stroke-width="1.5" rx="1" transform="rotate(0.4,37,110)"/>
+      <text x="32" y="114" font-family="monospace" font-size="9" fill="#ff5ca8">3</text>
+      <path d="M380,72 L340,72" stroke="#ff5ca8" stroke-width="1.5" stroke-linecap="round"/>
+      <polygon points="343,69 339,72 343,75" fill="#ff5ca8"/>
+      <text x="384" y="67" font-family="monospace" font-size="9" fill="#ff5ca8">key={id}</text>
+      <rect x="362" y="115" width="100" height="19" fill="none" stroke="#ff5ca8" stroke-width="1" rx="2" transform="rotate(-0.4,412,124)"/>
+      <text x="368" y="128" font-family="monospace" font-size="9" fill="#ff5ca8">unique keys</text>
+    </svg>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 4: LAB ──────────────────────────────────────── -->
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Create <code>src/countries.js</code> — an array of 3 country
+      objects. Iterate over it two ways, use 4 array methods, and prove you understand
+      mutating vs non-mutating behaviour.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Create the file</strong></p>
+        <p>Create <code>src/countries.js</code>. This file will grow every session through Layer 1.</p>
+        <pre><code>// src/countries.js</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Define an array of 3 country objects</strong></p>
+        <p>Each object must have at least: <code>id</code>, <code>name</code>, <code>region</code>, <code>population</code>.</p>
+        <pre><code>const countries = [
+  { id: 1, name: "Canada",  region: "Americas", population: 38000000 },
+  { id: 2, name: "Japan",   region: "Asia",      population: 125000000 },
+  { id: 3, name: "Brazil",  region: "Americas",  population: 215000000 }
+];</code></pre>
+        <p>Before continuing: why does each object have an <code>id</code>? Write the reason in a comment.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Access elements by index</strong></p>
+        <pre><code>console.log("First country:", countries[0].name);
+console.log("Last country:", countries[countries.length - 1].name);
+console.log("Total countries:", countries.length);</code></pre>
+        <p>Run this. Confirm the output matches your expectations.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Loop with a for loop</strong></p>
+        <pre><code>for (let i = 0; i &lt; countries.length; i++) {
+  console.log(i + ":", countries[i].name, "(" + countries[i].region + ")");
+}</code></pre>
+        <p>
+          Stop and trace this manually before running. What will <code>i</code> be on each iteration?
+          What will <code>countries[i].name</code> evaluate to each time? Write it down, then run and confirm.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Loop with for...of</strong></p>
+        <pre><code>for (const country of countries) {
+  console.log(country.name, "— population:", country.population.toLocaleString());
+}</code></pre>
+        <p>
+          Compare this to Step 4. Both loop over the array. When would you choose one over the other?
+          (Hint: do you need the index number?)
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <p><strong>Use .includes() and .indexOf()</strong></p>
+        <pre><code>const names = ["Canada", "Japan", "Brazil"];
+
+console.log("Includes Japan?", names.includes("Japan"));   // true
+console.log("Includes France?", names.includes("France")); // false
+console.log("Index of Brazil:", names.indexOf("Brazil"));  // 2
+console.log("Index of France:", names.indexOf("France"));  // -1</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <p><strong>Prove mutation: push and pop</strong></p>
+        <pre><code>console.log("Before push:", countries.length); // 3
+
+countries.push({ id: 4, name: "France", region: "Europe", population: 68000000 });
+console.log("After push:", countries.length);  // 4
+
+const removed = countries.pop();
+console.log("Removed:", removed.name);         // "France"
+console.log("After pop:", countries.length);   // 3</code></pre>
+        <p>
+          Notice that <code>.push()</code> and <code>.pop()</code> changed <code>countries</code> directly.
+          The array reference is the same — only the contents changed.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">8</div>
+      <div class="step-body">
+        <p><strong>Prove non-mutation: slice</strong></p>
+        <pre><code>const americasOnly = countries.filter(function(country) {
+  return country.region === "Americas";
+});
+
+console.log("Filtered:", americasOnly.length);   // 2
+console.log("Original:", countries.length);      // 3 — unchanged</code></pre>
+        <p>
+          <code>.filter()</code> is a preview of Session 03. Notice: it does not change <code>countries</code>.
+          It returns a brand new array. This is the pattern React requires for state updates.
+        </p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 5: EXPECTED FILES CHANGED ──────────────────── -->
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>File</th><th>Action</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>src/countries.js</code></td>
+            <td>Created</td>
+            <td>Array of country objects. This file will be extended in Sessions 03–06.</td>
+          </tr>
+          <tr>
+            <td><code>docs/sessions/session-02/index.html</code></td>
+            <td>Created</td>
+            <td>This session document.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="alert alert-warning">
+      Do not touch <code>src/country.js</code> from Session 01. That file stays as-is.
+      This is a new file: <code>src/countries.js</code> (plural).
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 6: COMMIT CHECKPOINT ───────────────────────── -->
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/countries.js docs/sessions/session-02/index.html
+git commit -m "session-02: array of country objects, for loop, for...of, mutation proof"</code></pre>
+    <div class="alert alert-info">
+      Before committing, verify out loud: "What is the difference between <code>.push()</code>
+      and <code>.filter()</code> in terms of what they do to the original array?"
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 7: CODE REVIEW CHECKLIST ───────────────────── -->
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item">
+        <input type="checkbox" id="c1" />
+        <label for="c1">Array is declared with <code>const</code></label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c2" />
+        <label for="c2">Each object in the array has an <code>id</code> field and I can explain why</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c3" />
+        <label for="c3">Index access uses <code>[0]</code>, <code>[1]</code>, <code>[countries.length - 1]</code></label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c4" />
+        <label for="c4"><code>for</code> loop is present and correctly uses <code>i &lt; countries.length</code> (not <code>&lt;=</code>)</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c5" />
+        <label for="c5"><code>for...of</code> loop is present</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c6" />
+        <label for="c6"><code>.push()</code> and <code>.pop()</code> mutation is demonstrated with before/after logs</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c7" />
+        <label for="c7"><code>.filter()</code> non-mutation is demonstrated — original array length stays the same</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="c8" />
+        <label for="c8">I can explain without looking: why does React care about this mutating/non-mutating difference?</label>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 8: POST-CODING QUIZ ────────────────────────── -->
+    <h2>8. Post-Coding Quiz</h2>
+    <p>Same 5 questions. Need 4/5 to mark this session complete.</p>
+
+    <div id="post-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>
+          You have <code>const countries = ["Canada", "Japan", "Brazil"];</code><br/>
+          What does <code>countries[1]</code> return?
+        </p>
+        <label class="quiz-option" data-val="a">"Canada"</label>
+        <label class="quiz-option" data-val="b">undefined</label>
+        <label class="quiz-option" data-val="c">"Japan"</label>
+        <label class="quiz-option" data-val="d">"Brazil"</label>
+        <div class="explanation">Arrays are zero-indexed. Index 0 = "Canada", 1 = "Japan", 2 = "Brazil".</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>
+          You write <code>const a = ["X", "Y"];</code> then <code>const b = a;</code> then <code>b.push("Z");</code><br/>
+          What is <code>a.length</code> after this?
+        </p>
+        <label class="quiz-option" data-val="a">2 — <code>const</code> makes it immutable</label>
+        <label class="quiz-option" data-val="b">3 — same reference, mutation affects both</label>
+        <label class="quiz-option" data-val="c">2 — <code>b</code> is a copy</label>
+        <label class="quiz-option" data-val="d">An error</label>
+        <div class="explanation">Arrays are objects. <code>b = a</code> copies the reference. Both variables point to the same array.</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Which loop correctly prints every item in <code>const items = [10, 20, 30];</code>?</p>
+        <label class="quiz-option" data-val="a"><code>for (let i = 1; i &lt;= items.length; i++) { console.log(items[i]); }</code></label>
+        <label class="quiz-option" data-val="b"><code>for (let i = 0; i &lt; items.length; i++) { console.log(i); }</code></label>
+        <label class="quiz-option" data-val="c"><code>for (let i = 0; i &lt;= items.length; i++) { console.log(items[i]); }</code></label>
+        <label class="quiz-option" data-val="d"><code>for (let i = 0; i &lt; items.length; i++) { console.log(items[i]); }</code></label>
+        <div class="explanation">Start at 0, use strict less-than, access items[i].</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p><code>.push()</code> adds an item to an array. Which statement is true?</p>
+        <label class="quiz-option" data-val="a">It mutates the original array and returns the new length</label>
+        <label class="quiz-option" data-val="b">It returns a new array with the item added</label>
+        <label class="quiz-option" data-val="c">It mutates the original array and returns the added item</label>
+        <label class="quiz-option" data-val="d">It returns the original array unchanged</label>
+        <div class="explanation"><code>.push()</code> mutates in-place and returns the new length value.</div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          You have <code>const list = ["a", "b", "c"];</code><br/>
+          What does <code>list.indexOf("b")</code> return?
+        </p>
+        <label class="quiz-option" data-val="a">true</label>
+        <label class="quiz-option" data-val="b">2</label>
+        <label class="quiz-option" data-val="c">1</label>
+        <label class="quiz-option" data-val="d">-1</label>
+        <div class="explanation">"b" is at index 1. <code>.indexOf()</code> returns the index, or -1 if not found.</div>
+      </div>
+
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 9: REFLECTION ───────────────────────────────── -->
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>
+          You used <code>.filter()</code> in Step 8 before we formally taught it.
+          Looking at the syntax, what do you think the function argument is doing?
+          Why does it return <code>true</code> or <code>false</code>?
+        </li>
+        <li>
+          If <code>.push()</code> mutates the array, and React requires a new array to detect state changes —
+          how would you add an item to a React state array without using <code>.push()</code>?
+          Take a guess. (We'll confirm this in Session 17.)
+        </li>
+        <li>
+          In Step 2, you gave each country an <code>id</code>. What problem would occur in a real app
+          if two countries had the same <code>id</code>?
+        </li>
+        <li>
+          When is <code>for...of</code> better than a regular <code>for</code> loop?
+          When is the regular <code>for</code> loop better?
+        </li>
+      </ol>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 10: WHAT BREAKS ─────────────────────────────── -->
+    <h2>10. What Breaks If This Knowledge Is Missing?</h2>
+    <div class="card">
+      <ul>
+        <li>
+          <strong>Off-by-one errors:</strong> Starting a <code>for</code> loop at 1 instead of 0,
+          or using <code>&lt;=</code> instead of <code>&lt;</code>, skips the first item or
+          reads one past the end (returning <code>undefined</code>). These are silent — no error thrown.
+        </li>
+        <li>
+          <strong>React state mutations (Layer 3):</strong> Using <code>.push()</code> or <code>.pop()</code>
+          directly on a state array causes the most common React beginner bug: the UI doesn't update
+          even though the data changed. React compares references, not contents.
+        </li>
+        <li>
+          <strong>Session 03 — map/filter:</strong> Those methods take a function argument and return
+          new arrays. If you don't understand what "returns a new array" means, the Session 03 labs
+          will be confusing.
+        </li>
+        <li>
+          <strong>Session 15 — Keys:</strong> React's <code>key</code> prop must uniquely identify
+          each list item. It comes from the <code>id</code> field in your array objects.
+          Duplicate or missing ids cause subtle rendering bugs.
+        </li>
+      </ul>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- ── SECTION 11: WHAT WE LEARNED ────────────────────────── -->
+    <h2>11. What We Learned</h2>
+    <div class="card" style="border-color: var(--green);">
+      <p><strong>JavaScript concepts mastered:</strong> Arrays, zero-based indexing, <code>for</code> loop,
+      <code>for...of</code> loop, <code>.push()</code>, <code>.pop()</code>, <code>.includes()</code>,
+      <code>.indexOf()</code>, <code>.filter()</code> preview, mutating vs non-mutating methods.</p>
+      <p><strong>React concept unlocked:</strong> Arrays of objects with <code>id</code> fields are exactly
+      the data shape React renders. When we reach Sessions 14 and 15, the array you built today
+      is the input. <code>.map()</code> will turn it into JSX. <code>id</code> will become the <code>key</code> prop.</p>
+      <p><strong>Next session:</strong>
+        <a href="../session-03/index.html">Session 03 — Array map() and filter()</a>.
+        We go deep on the two most important array methods in all of React.
+      </p>
+    </div>
+
+  </div>
+</main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
+
+<script src="../../notes-widget.js" defer></script>
+<script src="../../bookmark-widget.js" defer></script>
+
+</body>
+</html>

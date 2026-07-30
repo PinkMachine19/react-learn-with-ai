@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 04 — Arrow Functions</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+    .compare-table td{font-family:var(--font-mono);font-size:13px;padding:8px 12px;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 1</span>
+      <span class="badge badge-current">Session 04</span>
+      <span style="color:var(--text-muted);font-size:13px;">JavaScript Foundations</span>
+    </div>
+    <h1>Arrow Functions</h1>
+    <p class="subtitle">
+      Every React codebase is written almost entirely in arrow functions.
+      Every <code>.map()</code> callback, every component, every event handler.
+      This session converts your understanding of functions into the syntax you will actually use.
+    </p>
+    <div class="alert alert-info">Estimated time: 35–40 minutes</div>
+
+<!-- SVG: session-04 concept map — 8-panel overview -->
+<svg width="680" height="370" viewBox="0 0 680 370" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;max-width:100%;" font-family="monospace">
+  <rect width="680" height="370" fill="#111111"/>
+  <!-- header -->
+  <text x="340" y="22" fill="white" font-size="11" text-anchor="middle" font-weight="bold">Session 04 — Arrow Functions</text>
+
+  <!-- Panel 1: 3 forms (x=16, y=36, w=154, h=148) -->
+  <rect x="16" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,93,110)"/>
+  <circle cx="29" cy="36" r="9" fill="#ff5ca8"/>
+  <text x="29" y="40" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">1</text>
+  <text x="93" y="52" fill="white" font-size="8" text-anchor="middle" font-weight="bold">3 forms</text>
+  <text x="30" y="72" fill="white" font-size="7" opacity="0.45">function(n){</text>
+  <text x="30" y="83" fill="white" font-size="7" opacity="0.45">  return n*2;</text>
+  <text x="30" y="94" fill="white" font-size="7" opacity="0.45">}</text>
+  <text x="30" y="109" fill="white" font-size="7" opacity="0.45">const d=function(n){</text>
+  <text x="30" y="120" fill="white" font-size="7" opacity="0.45">  return n*2;</text>
+  <text x="30" y="131" fill="white" font-size="7" opacity="0.45">};</text>
+  <rect x="24" y="140" width="138" height="16" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+  <text x="30" y="152" fill="#ff5ca8" font-size="8">n =&gt; n * 2</text>
+  <text x="93" y="176" fill="white" font-size="8" text-anchor="middle" opacity="0.5">arrow = shortest form</text>
+
+  <!-- Panel 2: params (x=180, y=36, w=154, h=148) -->
+  <rect x="180" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,257,110)"/>
+  <circle cx="193" cy="36" r="9" fill="#ff5ca8"/>
+  <text x="193" y="40" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">2</text>
+  <text x="257" y="52" fill="white" font-size="8" text-anchor="middle" font-weight="bold">params</text>
+  <rect x="188" y="60" width="138" height="18" fill="none" stroke="white" stroke-width="1"/>
+  <text x="194" y="73" fill="white" font-size="8">() =&gt;</text>
+  <text x="290" y="73" fill="white" font-size="7" opacity="0.6">no params</text>
+  <rect x="188" y="85" width="138" height="18" fill="none" stroke="white" stroke-width="1"/>
+  <text x="194" y="98" fill="white" font-size="8">n =&gt;</text>
+  <text x="290" y="98" fill="white" font-size="7" opacity="0.6">one param</text>
+  <rect x="188" y="110" width="138" height="18" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+  <text x="194" y="123" fill="#ff5ca8" font-size="8">(a,b) =&gt;</text>
+  <text x="257" y="148" fill="white" font-size="7" text-anchor="middle" opacity="0.6">two+ always need ()</text>
+  <text x="257" y="176" fill="white" font-size="8" text-anchor="middle" opacity="0.5">() always req. with 0 params</text>
+
+  <!-- Panel 3: implicit return (x=344, y=36, w=154, h=148) -->
+  <rect x="344" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.5,421,110)"/>
+  <circle cx="357" cy="36" r="9" fill="#ff5ca8"/>
+  <text x="357" y="40" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">3</text>
+  <text x="421" y="52" fill="white" font-size="8" text-anchor="middle" font-weight="bold">implicit return</text>
+  <rect x="352" y="62" width="138" height="22" fill="none" stroke="#ff5ca8" stroke-width="1.5"/>
+  <text x="421" y="77" fill="#ff5ca8" font-size="8" text-anchor="middle">n =&gt; n * 2</text>
+  <line x1="421" y1="84" x2="421" y2="110" stroke="white" stroke-width="1"/>
+  <polygon points="421,113 417,106 425,106" fill="white"/>
+  <rect x="352" y="113" width="138" height="22" fill="none" stroke="white" stroke-width="1"/>
+  <text x="421" y="128" fill="white" font-size="8" text-anchor="middle">n * 2 is returned</text>
+  <text x="421" y="176" fill="white" font-size="8" text-anchor="middle" opacity="0.5">right of =&gt; = return value</text>
+
+  <!-- Panel 4: { } trap (x=508, y=36, w=154, h=148) -->
+  <rect x="508" y="36" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.3,585,110)"/>
+  <circle cx="521" cy="36" r="9" fill="#ff5ca8"/>
+  <text x="521" y="40" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">4</text>
+  <text x="585" y="52" fill="white" font-size="8" text-anchor="middle" font-weight="bold">&#123; &#125; trap</text>
+  <rect x="516" y="62" width="138" height="22" fill="none" stroke="#f85149" stroke-width="1.5"/>
+  <text x="522" y="77" fill="#f85149" font-size="7.5">n =&gt; &#123; n * 2; &#125;</text>
+  <line x1="585" y1="84" x2="585" y2="108" stroke="white" stroke-width="1"/>
+  <polygon points="585,111 581,104 589,104" fill="white"/>
+  <rect x="516" y="111" width="138" height="22" fill="none" stroke="#f85149" stroke-width="1"/>
+  <text x="585" y="126" fill="#f85149" font-size="9" text-anchor="middle">undefined</text>
+  <text x="585" y="176" fill="white" font-size="8" text-anchor="middle" opacity="0.5">&#123; &#125; always needs return</text>
+
+  <!-- Panel 5: object return (x=16, y=204, w=154, h=148) -->
+  <rect x="16" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.4,93,278)"/>
+  <circle cx="29" cy="204" r="9" fill="#ff5ca8"/>
+  <text x="29" y="208" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">5</text>
+  <text x="93" y="220" fill="white" font-size="8" text-anchor="middle" font-weight="bold">object return</text>
+  <text x="24" y="240" fill="white" font-size="7" opacity="0.6">n =&gt; &#123; val: n &#125;</text>
+  <text x="24" y="254" fill="#f85149" font-size="7">→ undefined</text>
+  <line x1="24" y1="264" x2="158" y2="264" stroke="white" stroke-width="0.5" opacity="0.3"/>
+  <text x="24" y="282" fill="#ff5ca8" font-size="7">n =&gt; (&#123; val: n &#125;)</text>
+  <text x="24" y="296" fill="#3fb950" font-size="7">→ &#123; val: n &#125;</text>
+  <text x="93" y="344" fill="white" font-size="8" text-anchor="middle" opacity="0.5">() wraps obj literal</text>
+
+  <!-- Panel 6: .map() style (x=180, y=204, w=154, h=148) -->
+  <rect x="180" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.5,257,278)"/>
+  <circle cx="193" cy="204" r="9" fill="#ff5ca8"/>
+  <text x="193" y="208" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">6</text>
+  <text x="257" y="220" fill="white" font-size="8" text-anchor="middle" font-weight="bold">.map() style</text>
+  <text x="188" y="240" fill="white" font-size="6.5" opacity="0.45">countries.map(</text>
+  <text x="188" y="252" fill="white" font-size="6.5" opacity="0.45">  function(c){</text>
+  <text x="188" y="264" fill="white" font-size="6.5" opacity="0.45">    return c.name;</text>
+  <text x="188" y="276" fill="white" font-size="6.5" opacity="0.45">  }</text>
+  <text x="188" y="288" fill="white" font-size="6.5" opacity="0.45">);</text>
+  <rect x="188" y="295" width="138" height="18" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+  <text x="194" y="308" fill="#ff5ca8" font-size="7">.map(c =&gt; c.name)</text>
+  <text x="257" y="344" fill="white" font-size="8" text-anchor="middle" opacity="0.5">same result · React style</text>
+
+  <!-- Panel 7: this (x=344, y=204, w=154, h=148) -->
+  <rect x="344" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(0.3,421,278)"/>
+  <circle cx="357" cy="204" r="9" fill="#ff5ca8"/>
+  <text x="357" y="208" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">7</text>
+  <text x="421" y="220" fill="white" font-size="8" text-anchor="middle" font-weight="bold">this</text>
+  <rect x="352" y="228" width="138" height="34" fill="none" stroke="white" stroke-width="1"/>
+  <text x="421" y="243" fill="white" font-size="7.5" text-anchor="middle">regular fn:</text>
+  <text x="421" y="256" fill="white" font-size="7.5" text-anchor="middle">this = caller</text>
+  <rect x="352" y="270" width="138" height="34" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+  <text x="421" y="285" fill="#ff5ca8" font-size="7.5" text-anchor="middle">arrow fn:</text>
+  <text x="421" y="298" fill="#ff5ca8" font-size="7.5" text-anchor="middle">this = definition</text>
+  <text x="421" y="344" fill="white" font-size="8" text-anchor="middle" opacity="0.5">arrow has no own this</text>
+
+  <!-- Panel 8: React uses (x=508, y=204, w=154, h=148) -->
+  <rect x="508" y="204" width="154" height="148" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,585,278)"/>
+  <circle cx="521" cy="204" r="9" fill="#ff5ca8"/>
+  <text x="521" y="208" fill="#111111" font-size="9" text-anchor="middle" font-weight="bold">8</text>
+  <text x="585" y="220" fill="white" font-size="8" text-anchor="middle" font-weight="bold">React uses</text>
+  <text x="516" y="242" fill="white" font-size="6.5">const Card =</text>
+  <text x="516" y="254" fill="#ff5ca8" font-size="6.5">(props) =&gt; &#123;...&#125;</text>
+  <line x1="516" y1="264" x2="654" y2="264" stroke="white" stroke-width="0.5" opacity="0.3"/>
+  <text x="516" y="282" fill="white" font-size="6.5">setCount(</text>
+  <text x="516" y="294" fill="#ff5ca8" font-size="6.5">prev =&gt; prev + 1</text>
+  <text x="516" y="306" fill="white" font-size="6.5">)</text>
+  <text x="585" y="344" fill="white" font-size="8" text-anchor="middle" opacity="0.5">arrow fns everywhere in React</text>
+</svg>
+<hr class="section-divider" />
+
+    <h2>1. Learning Objective</h2>
+    <div class="card">
+      <ul>
+        <li>Write an arrow function with explicit and implicit return</li>
+        <li>Know when parentheses around parameters are required and when they are optional</li>
+        <li>Explain what "implicit return" means and when curly braces break it</li>
+        <li>Understand why arrow functions handle <code>this</code> differently (enough to not be confused by it)</li>
+        <li>Rewrite all callbacks from Sessions 02 and 03 using arrow function syntax</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept section. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>Which arrow function correctly doubles a number?</p>
+        <label class="quiz-option" data-val="a"><code>n => { n * 2 }</code></label>
+        <label class="quiz-option" data-val="b"><code>n => { return n * 2 }</code> only — curly braces are always required</label>
+        <label class="quiz-option" data-val="c"><code>n => n * 2</code> — implicit return, no curly braces needed</label>
+        <label class="quiz-option" data-val="d"><code>=> n * 2</code></label>
+        <div class="explanation">Without curly braces, the expression to the right of <code>=&gt;</code> is automatically returned. This is called implicit return. Option A has curly braces but no <code>return</code> keyword — it returns <code>undefined</code>. Option B works but the curly braces are unnecessary for a single expression.</div>
+      </div>
+
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>You want to implicitly return an object literal from an arrow function. Which is correct?</p>
+        <label class="quiz-option" data-val="a"><code>c => { name: c.name }</code></label>
+        <label class="quiz-option" data-val="b"><code>c => ({ name: c.name })</code></label>
+        <label class="quiz-option" data-val="c"><code>c => return { name: c.name }</code></label>
+        <label class="quiz-option" data-val="d">You cannot implicitly return an object</label>
+        <div class="explanation">Curly braces are ambiguous — JavaScript sees them as a function body, not an object literal. Wrap the object in parentheses to signal "this is an expression, not a block".</div>
+      </div>
+
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Which is valid syntax for an arrow function with no parameters?</p>
+        <label class="quiz-option" data-val="a"><code>() => "hello"</code></label>
+        <label class="quiz-option" data-val="b"><code>=> "hello"</code></label>
+        <label class="quiz-option" data-val="c"><code>_ "hello"</code></label>
+        <label class="quiz-option" data-val="d"><code>void => "hello"</code></label>
+        <div class="explanation">Empty parentheses <code>()</code> are required when there are no parameters. You cannot omit them entirely.</div>
+      </div>
+
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>
+          <code>const greet = name => "Hello " + name;</code><br/>
+          What does <code>greet("Canada")</code> return?
+        </p>
+        <label class="quiz-option" data-val="a">undefined — there is no return keyword</label>
+        <label class="quiz-option" data-val="b">An error — single parameter needs parentheses</label>
+        <label class="quiz-option" data-val="c">"Hello"</label>
+        <label class="quiz-option" data-val="d">"Hello Canada"</label>
+        <div class="explanation">Single parameter without parentheses is valid. No curly braces means implicit return. The expression <code>"Hello " + name</code> is evaluated and returned automatically.</div>
+      </div>
+
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>
+          Arrow functions and regular functions handle <code>this</code> differently.
+          Which statement is correct?
+        </p>
+        <label class="quiz-option" data-val="a">Arrow functions have their own <code>this</code> that changes per call site</label>
+        <label class="quiz-option" data-val="b">Regular functions inherit <code>this</code> from the surrounding code</label>
+        <label class="quiz-option" data-val="c">Arrow functions inherit <code>this</code> from the surrounding scope at definition time; they do not have their own <code>this</code></label>
+        <label class="quiz-option" data-val="d">There is no difference between them for <code>this</code></label>
+        <div class="explanation">Arrow functions do not have their own <code>this</code>. They capture <code>this</code> from the lexical scope where they were defined. This is why React uses arrow functions for event handlers — they don't accidentally rebind <code>this</code>. In function components (which we use), this matters less, but it's the correct mental model.</div>
+      </div>
+
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — Arrow Functions</h2>
+
+    <h3>From regular function to arrow function</h3>
+    <p>An arrow function is a shorter syntax for writing a function. These three are equivalent:</p>
+    <pre><code>// Regular function declaration
+function double(n) {
+  return n * 2;
+}
+
+// Regular function expression
+const double = function(n) {
+  return n * 2;
+};
+
+// Arrow function
+const double = n => n * 2;</code></pre>
+
+<!-- SVG: arrow function 3-forms evolution -->
+<svg width="480" height="130" viewBox="0 0 480 130" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;" font-family="monospace">
+  <rect width="480" height="130" fill="#111111"/>
+  <!-- box 1: function declaration -->
+  <rect x="8" y="28" width="128" height="74" fill="none" stroke="white" stroke-width="1.5" opacity="0.4" transform="rotate(-0.4,72,65)"/>
+  <text x="16" y="48" fill="white" font-size="8" opacity="0.45">function(n) &#123;</text>
+  <text x="16" y="62" fill="white" font-size="8" opacity="0.45">  return n*2;</text>
+  <text x="16" y="76" fill="white" font-size="8" opacity="0.45">&#125;</text>
+  <text x="72" y="112" fill="white" font-size="7.5" text-anchor="middle" opacity="0.4">declaration</text>
+  <!-- arrow 1 -->
+  <line x1="140" y1="65" x2="172" y2="65" stroke="white" stroke-width="1.5" opacity="0.5"/>
+  <polygon points="175,65 168,61 168,69" fill="white" opacity="0.5"/>
+  <!-- box 2: function expression -->
+  <rect x="178" y="28" width="128" height="74" fill="none" stroke="white" stroke-width="1.5" opacity="0.4" transform="rotate(0.3,242,65)"/>
+  <text x="186" y="48" fill="white" font-size="8" opacity="0.45">const d=function(n)&#123;</text>
+  <text x="186" y="62" fill="white" font-size="8" opacity="0.45">  return n*2;</text>
+  <text x="186" y="76" fill="white" font-size="8" opacity="0.45">&#125;;</text>
+  <text x="242" y="112" fill="white" font-size="7.5" text-anchor="middle" opacity="0.4">expression</text>
+  <!-- arrow 2 -->
+  <line x1="310" y1="65" x2="342" y2="65" stroke="#ff5ca8" stroke-width="1.5"/>
+  <polygon points="345,65 338,61 338,69" fill="#ff5ca8"/>
+  <!-- box 3: arrow function (pink) -->
+  <rect x="348" y="38" width="120" height="44" fill="none" stroke="#ff5ca8" stroke-width="1.5" transform="rotate(0.5,408,60)"/>
+  <text x="408" y="57" fill="#ff5ca8" font-size="9.5" text-anchor="middle" font-weight="bold">n =&gt; n * 2</text>
+  <text x="408" y="112" fill="#ff5ca8" font-size="7.5" text-anchor="middle" opacity="0.7">arrow function</text>
+</svg>
+
+    <h3>Syntax rules</h3>
+    <div class="table-wrap">
+      <table class="compare-table">
+        <thead><tr><th>Situation</th><th>Syntax</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>No parameters</td><td><code>() =&gt;</code></td><td><code>() =&gt; "hello"</code></td></tr>
+          <tr><td>One parameter</td><td><code>x =&gt;</code> or <code>(x) =&gt;</code></td><td><code>n =&gt; n * 2</code></td></tr>
+          <tr><td>Two+ parameters</td><td><code>(x, y) =&gt;</code></td><td><code>(a, b) =&gt; a + b</code></td></tr>
+          <tr><td>Single expression</td><td>No braces — implicit return</td><td><code>n =&gt; n * 2</code></td></tr>
+          <tr><td>Multiple statements</td><td>Curly braces + explicit return</td><td><code>n =&gt; { const x = n * 2; return x; }</code></td></tr>
+          <tr><td>Return an object</td><td>Wrap object in parens</td><td><code>n =&gt; ({ value: n })</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Implicit return — the most important rule</h3>
+    <pre><code>// With curly braces — you MUST write return
+const add = (a, b) => {
+  return a + b;
+};
+
+// Without curly braces — return is implicit
+const add = (a, b) => a + b;
+
+// Common mistake: curly braces with no return — silently returns undefined
+const broken = (a, b) => {
+  a + b;   // no return! This evaluates a+b and discards the result
+};
+console.log(broken(1, 2));  // undefined</code></pre>
+
+<!-- SVG: explicit vs implicit vs broken return comparison -->
+<svg width="480" height="155" viewBox="0 0 480 155" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;" font-family="monospace">
+  <rect width="480" height="155" fill="#111111"/>
+  <!-- LEFT column: explicit return -->
+  <rect x="12" y="20" width="140" height="90" fill="none" stroke="white" stroke-width="1.5" transform="rotate(-0.4,82,65)"/>
+  <text x="82" y="38" fill="white" font-size="8" text-anchor="middle">explicit</text>
+  <text x="20" y="56" fill="white" font-size="7.5">(a,b) =&gt; &#123;</text>
+  <text x="20" y="70" fill="white" font-size="7.5">  return a+b;</text>
+  <text x="20" y="84" fill="white" font-size="7.5">&#125;</text>
+  <text x="82" y="125" fill="#3fb950" font-size="8" text-anchor="middle">explicit ✓</text>
+
+  <!-- MIDDLE column: implicit return (pink) -->
+  <rect x="172" y="30" width="136" height="58" fill="none" stroke="#ff5ca8" stroke-width="1.5" transform="rotate(0.3,240,59)"/>
+  <text x="240" y="50" fill="#ff5ca8" font-size="8" text-anchor="middle">implicit</text>
+  <text x="180" y="68" fill="#ff5ca8" font-size="8">(a,b) =&gt; a+b</text>
+  <text x="240" y="125" fill="#ff5ca8" font-size="8" text-anchor="middle">implicit ✓</text>
+
+  <!-- RIGHT column: broken -->
+  <rect x="328" y="20" width="140" height="90" fill="none" stroke="#f85149" stroke-width="1.5" transform="rotate(0.5,398,65)"/>
+  <text x="398" y="38" fill="#f85149" font-size="8" text-anchor="middle">broken</text>
+  <text x="336" y="56" fill="white" font-size="7.5">(a,b) =&gt; &#123;</text>
+  <text x="336" y="70" fill="#f85149" font-size="7.5">  a+b;</text>
+  <text x="336" y="84" fill="white" font-size="7.5">&#125;</text>
+  <text x="398" y="125" fill="#f85149" font-size="8" text-anchor="middle">undefined ✗</text>
+
+  <!-- dividers -->
+  <line x1="160" y1="15" x2="160" y2="140" stroke="white" stroke-width="0.5" opacity="0.2"/>
+  <line x1="320" y1="15" x2="320" y2="140" stroke="white" stroke-width="0.5" opacity="0.2"/>
+</svg>
+
+    <h3>Returning an object — the parenthesis trick</h3>
+    <pre><code>// WRONG — JavaScript reads { as start of function body
+const makeObj = n => { value: n };  // returns undefined
+
+// CORRECT — parentheses tell JavaScript "this is an expression"
+const makeObj = n => ({ value: n }); // returns { value: 5 } when called with 5</code></pre>
+
+<!-- SVG: object return — wrong vs correct -->
+<svg width="480" height="145" viewBox="0 0 480 145" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;" font-family="monospace">
+  <rect width="480" height="145" fill="#111111"/>
+  <!-- LEFT: wrong -->
+  <rect x="12" y="18" width="210" height="90" fill="none" stroke="#f85149" stroke-width="1.5" transform="rotate(-0.4,117,63)"/>
+  <text x="20" y="38" fill="white" font-size="8">n =&gt; &#123; value: n &#125;</text>
+  <rect x="20" y="47" width="44" height="14" fill="none" stroke="#f85149" stroke-width="1"/>
+  <text x="42" y="58" fill="#f85149" font-size="6.5" text-anchor="middle">fn body</text>
+  <line x1="117" y1="84" x2="117" y2="104" stroke="#f85149" stroke-width="1"/>
+  <polygon points="117,107 113,100 121,100" fill="#f85149"/>
+  <text x="117" y="122" fill="#f85149" font-size="9" text-anchor="middle">undefined</text>
+
+  <!-- divider -->
+  <line x1="240" y1="10" x2="240" y2="135" stroke="white" stroke-width="0.5" opacity="0.25"/>
+
+  <!-- RIGHT: correct -->
+  <rect x="258" y="18" width="210" height="90" fill="none" stroke="#ff5ca8" stroke-width="1.5" transform="rotate(0.4,363,63)"/>
+  <text x="266" y="38" fill="white" font-size="8">n =&gt; (&#123; value: n &#125;)</text>
+  <rect x="266" y="47" width="54" height="14" fill="none" stroke="#ff5ca8" stroke-width="1"/>
+  <text x="293" y="58" fill="#ff5ca8" font-size="6.5" text-anchor="middle">expression</text>
+  <line x1="363" y1="84" x2="363" y2="104" stroke="#ff5ca8" stroke-width="1"/>
+  <polygon points="363,107 359,100 367,100" fill="#ff5ca8"/>
+  <text x="363" y="122" fill="#3fb950" font-size="9" text-anchor="middle">&#123; value: 5 &#125;</text>
+</svg>
+
+    <h3>With .map() and .filter() — this is how React code looks</h3>
+    <pre><code>const countries = [
+  { id: 1, name: "Canada",  region: "Americas", population: 38000000 },
+  { id: 2, name: "Japan",   region: "Asia",      population: 125000000 },
+  { id: 3, name: "Brazil",  region: "Americas",  population: 215000000 }
+];
+
+// Before (regular function)
+const names = countries.map(function(c) { return c.name; });
+
+// After (arrow function — this is what React codebases look like)
+const names = countries.map(c => c.name);
+
+// Filter
+const americas = countries.filter(c => c.region === "Americas");
+
+// Chained
+const americaNames = countries
+  .filter(c => c.region === "Americas")
+  .map(c => c.name);</code></pre>
+
+<!-- SVG: .map() old style vs arrow style -->
+<svg width="480" height="145" viewBox="0 0 480 145" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:16px 0;" font-family="monospace">
+  <rect width="480" height="145" fill="#111111"/>
+  <!-- TOP ROW: old style -->
+  <rect x="12" y="14" width="280" height="42" fill="none" stroke="white" stroke-width="1.5" opacity="0.5" transform="rotate(-0.3,152,35)"/>
+  <text x="20" y="30" fill="white" font-size="7.5" opacity="0.55">countries.map(function(c) &#123; return c.name; &#125;)</text>
+  <text x="20" y="46" fill="white" font-size="7" opacity="0.4">old style</text>
+  <!-- arrow pointing to result -->
+  <line x1="296" y1="35" x2="326" y2="35" stroke="white" stroke-width="1" opacity="0.5"/>
+  <polygon points="329,35 322,31 322,39" fill="white" opacity="0.5"/>
+  <!-- BOTTOM ROW: arrow style (pink) -->
+  <rect x="12" y="78" width="280" height="38" fill="none" stroke="#ff5ca8" stroke-width="1.5" transform="rotate(0.4,152,97)"/>
+  <text x="20" y="95" fill="#ff5ca8" font-size="7.5">countries.map(c =&gt; c.name)</text>
+  <text x="20" y="108" fill="#ff5ca8" font-size="7" opacity="0.7">React style</text>
+  <!-- arrow pointing to result -->
+  <line x1="296" y1="97" x2="326" y2="97" stroke="#ff5ca8" stroke-width="1"/>
+  <polygon points="329,97 322,93 322,101" fill="#ff5ca8"/>
+  <!-- shared result box -->
+  <rect x="330" y="52" width="136" height="44" fill="none" stroke="#3fb950" stroke-width="1.5" transform="rotate(0.3,398,74)"/>
+  <text x="398" y="71" fill="#3fb950" font-size="8" text-anchor="middle">same output</text>
+  <text x="398" y="87" fill="#3fb950" font-size="7" text-anchor="middle">["Canada","Japan",...]</text>
+  <!-- connector lines from both arrows to box -->
+  <line x1="329" y1="35" x2="330" y2="65" stroke="white" stroke-width="0.5" opacity="0.3"/>
+  <line x1="329" y1="97" x2="330" y2="83" stroke="#ff5ca8" stroke-width="0.5" opacity="0.5"/>
+</svg>
+
+    <h3>Arrow functions and this</h3>
+    <p>
+      This is a subtle but important difference. Regular functions define their own <code>this</code>
+      based on how they are called. Arrow functions capture <code>this</code> from the surrounding scope.
+    </p>
+    <pre><code>const obj = {
+  name: "Canada",
+  greetRegular: function() { console.log(this.name); }, // "Canada" — this = obj
+  greetArrow:   () =>       { console.log(this.name); }  // undefined — this = outer scope (not obj)
+};
+
+obj.greetRegular(); // "Canada"
+obj.greetArrow();   // undefined (or global object's name)</code></pre>
+
+    <div class="alert alert-info">
+      <strong>React context:</strong> In React function components, you won't use <code>this</code> at all.
+      The <code>this</code> difference matters more in class components (which we don't use) and in
+      certain callback patterns. What matters now: know the rule exists, know arrow functions don't
+      have their own <code>this</code>.
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Update <code>src/countries.js</code> — rewrite every callback
+      function from Sessions 02 and 03 using arrow function syntax.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Open <code>src/countries.js</code></strong>. Find every place you used <code>function()</code> as a callback. Rewrite each one as an arrow function.</p>
+        <p>Before:</p>
+        <pre><code>const countryNames = countries.map(function(country) {
+  return country.name;
+});</code></pre>
+        <p>After:</p>
+        <pre><code>const countryNames = countries.map(country => country.name);</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Rewrite the filter callbacks</strong></p>
+        <pre><code>// Before
+const americas = countries.filter(function(country) {
+  return country.region === "Americas";
+});
+
+// After
+const americas = countries.filter(country => country.region === "Americas");</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Rewrite the for loop as an arrow function passed to forEach</strong></p>
+        <pre><code>// This is optional — for loops are fine — but practice the syntax
+countries.forEach(country => {
+  console.log(country.name, "—", country.region);
+});</code></pre>
+        <p>
+          Notice: <code>forEach</code> callback has two statements so it uses curly braces.
+          But no <code>return</code> needed because <code>forEach</code> ignores return values anyway.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Write a standalone arrow function</strong></p>
+        <pre><code>const formatCountry = country => country.name + " (" + country.region + ")";
+
+console.log(formatCountry(countries[0]));  // "Canada (Americas)"
+console.log(countries.map(formatCountry)); // all three formatted</code></pre>
+        <p>
+          Note: <code>formatCountry</code> is defined once and passed by reference to <code>.map()</code>.
+          The parentheses after <code>formatCountry</code> are absent — you are passing the function itself, not calling it.
+        </p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <p><strong>Try the implicit return of an object</strong></p>
+        <pre><code>const simplified = countries.map(c => ({
+  id: c.id,
+  label: c.name
+}));
+
+console.log(simplified);
+// [{ id: 1, label: "Canada" }, { id: 2, label: "Japan" }, ...]</code></pre>
+        <p>This pattern appears constantly in React when you prepare data for display.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <p><strong>Prove the code still works exactly as before</strong></p>
+        <pre><code>console.log("Names:", countries.map(c => c.name));
+console.log("Americas:", countries.filter(c => c.region === "Americas").map(c => c.name));
+console.log("Big:", countries.filter(c => c.population > 100000000).map(c => c.name));</code></pre>
+        <p>The output should be identical to Session 03. Only the syntax changed.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/countries.js</code></td><td>Updated</td><td>All callbacks rewritten as arrow functions. Output unchanged.</td></tr>
+          <tr><td><code>docs/sessions/session-04/index.html</code></td><td>Created</td><td>This session document.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add src/countries.js docs/sessions/session-04/index.html
+git commit -m "session-04: rewrite all callbacks as arrow functions, same output"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">Every <code>function()</code> callback is replaced with an arrow function</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">Single-expression callbacks use implicit return (no curly braces, no return keyword)</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">Multi-statement callbacks use curly braces with explicit return where needed</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">Object returned implicitly is wrapped in parentheses <code>=> ({ ... })</code></label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">All console.log output is identical to Session 03 — only syntax changed</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c6"/><label for="c6">I can explain: why does <code>n => { n * 2 }</code> return undefined?</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz">
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>Which arrow function correctly doubles a number?</p>
+        <label class="quiz-option" data-val="a"><code>n => { n * 2 }</code></label>
+        <label class="quiz-option" data-val="b">Curly braces always required</label>
+        <label class="quiz-option" data-val="c"><code>n => n * 2</code> — implicit return</label>
+        <label class="quiz-option" data-val="d"><code>=> n * 2</code></label>
+        <div class="explanation">No curly braces = implicit return of the expression.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>How do you implicitly return an object literal from an arrow function?</p>
+        <label class="quiz-option" data-val="a"><code>c => { name: c.name }</code></label>
+        <label class="quiz-option" data-val="b"><code>c => ({ name: c.name })</code></label>
+        <label class="quiz-option" data-val="c"><code>c => return { name: c.name }</code></label>
+        <label class="quiz-option" data-val="d">Cannot be done</label>
+        <div class="explanation">Wrap the object in parentheses so JS doesn't interpret <code>{</code> as a function body.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="a">
+        <div class="question-num">Question 3 of 5</div>
+        <p>Valid arrow function with no parameters?</p>
+        <label class="quiz-option" data-val="a"><code>() => "hello"</code></label>
+        <label class="quiz-option" data-val="b"><code>=> "hello"</code></label>
+        <label class="quiz-option" data-val="c"><code>_ "hello"</code></label>
+        <label class="quiz-option" data-val="d"><code>void => "hello"</code></label>
+        <div class="explanation">Empty parens <code>()</code> are required for zero parameters.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p><code>const greet = name => "Hello " + name;</code> — what does <code>greet("Canada")</code> return?</p>
+        <label class="quiz-option" data-val="a">undefined</label>
+        <label class="quiz-option" data-val="b">Error — single param needs parens</label>
+        <label class="quiz-option" data-val="c">"Hello"</label>
+        <label class="quiz-option" data-val="d">"Hello Canada"</label>
+        <div class="explanation">Single param without parens is valid. Implicit return of the expression.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="c">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Arrow functions and <code>this</code>: which is correct?</p>
+        <label class="quiz-option" data-val="a">Arrow functions have their own <code>this</code> per call site</label>
+        <label class="quiz-option" data-val="b">Regular functions inherit <code>this</code> from surrounding scope</label>
+        <label class="quiz-option" data-val="c">Arrow functions capture <code>this</code> from where they were defined; they have no own <code>this</code></label>
+        <label class="quiz-option" data-val="d">No difference</label>
+        <div class="explanation">Arrow functions use lexical this — from where they were defined, not where they were called.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>You rewrote all the callbacks. The output is identical. What was the point of doing this? What did you gain?</li>
+        <li>If <code>n => { n * 2 }</code> silently returns undefined, why doesn't JavaScript throw an error? What does that tell you about JavaScript's design?</li>
+        <li>Predict: in React, when you write <code>onClick={() => setCount(count + 1)}</code>, is that an explicit or implicit return? Does the return value matter here?</li>
+        <li>When would you still choose a regular <code>function</code> keyword over an arrow function?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Knowledge Is Missing?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>Sessions 05–40:</strong> Every React code example uses arrow functions. Without this session, the syntax of every subsequent session will be unfamiliar.</li>
+        <li><strong>Session 10 (Components):</strong> Function components are arrow functions: <code>const CountryCard = (props) => { ... }</code>.</li>
+        <li><strong>Session 17 (useState):</strong> State setters are often arrow callbacks: <code>setCount(prev => prev + 1)</code>.</li>
+        <li><strong>The curly brace trap:</strong> Forgetting to return inside a block body is a silent bug. It will appear in your React code and you need to recognise it.</li>
+      </ul>
+    </div>
+
+    <h2>11. What We Learned</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>JavaScript concept mastered:</strong> Arrow function syntax — implicit return, parameter rules, object literal trap, lexical this.</p>
+      <p><strong>React concept unlocked:</strong> Component syntax. Every React component you write from Session 10 onward will be an arrow function.</p>
+      <p><strong>Next session:</strong> <a href="../session-05/index.html">Session 05 — Destructuring and Spread</a>. The syntax that makes React props clean to work with.</p>
+    </div>
+
+  </div>
+</main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+  });
+</script>
+<script src="../../notes-widget.js" defer></script>
+<script src="../../bookmark-widget.js" defer></script>
+
+</body>
+</html>
