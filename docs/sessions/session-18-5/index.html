@@ -38,6 +38,12 @@
     .concept-card svg{display:block;width:100%;height:auto;}
     .concept-card figcaption{margin-top:6px;font-family:monospace;font-size:10.5px;line-height:1.3;color:#c9c9c9;text-align:center;}
     .concept-card figcaption b{color:#ff5ca8;}
+    .concept-explanation-toggle{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;margin-top:10px;padding:7px 8px;border:1px solid #3a3a3a;border-radius:5px;background:#1a1a1a;color:#ff5ca8;font-family:monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;}
+    .concept-explanation-toggle:hover,.concept-explanation-toggle:focus-visible{border-color:#ff5ca8;outline:none;}
+    .concept-explanation-hint{color:#8b949e;font-size:8px;font-weight:400;letter-spacing:0;text-transform:none;}
+    .concept-explanation-text{margin:7px 2px 0;font-size:11px;line-height:1.45;color:#d8d8d8;filter:blur(4px);user-select:none;transition:filter .2s ease;}
+    .concept-card.explanation-revealed .concept-explanation-text{filter:none;user-select:text;}
+    .concept-card.explanation-revealed .concept-explanation-hint{color:#3fb950;}
   </style>
 </head>
 <body>
@@ -91,6 +97,8 @@
           <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">every call starts over</text>
         </svg>
         <figcaption>each call = a <b>new</b> run</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">Calling the same function twice does not continue the first call. Each call creates a separate run with a fresh set of local variables.</p>
       </figure>
 
       <!-- 2. Execution context: call -> locals -> runs -> ends -->
@@ -110,6 +118,8 @@
           <text x="80" y="122" fill="#666" font-family="monospace" font-size="7" text-anchor="middle">ends, gone</text>
         </svg>
         <figcaption>the <b>execution context</b></figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">An execution context is the temporary workspace JavaScript creates for one function call. It holds that call's local variables while the function runs.</p>
       </figure>
 
       <!-- 3. Lexical scope: inner box nested in outer, seeing outward -->
@@ -126,6 +136,8 @@
           <text x="80" y="140" fill="white" font-family="monospace" font-size="9" text-anchor="middle">inner can reach out</text>
         </svg>
         <figcaption>lexical <b>scope</b></figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">Because <code>inner</code> was written inside <code>outer</code>, it can look outward and read <code>name</code>. Where a function is written determines what variables it can reach.</p>
       </figure>
 
       <!-- 4. Closure: function carrying a backpack with a captured variable -->
@@ -140,6 +152,8 @@
           <text x="80" y="132" fill="white" font-family="monospace" font-size="9" text-anchor="middle">remembers it forever</text>
         </svg>
         <figcaption>the <b>closure</b> backpack</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">A closure is like a function carrying a backpack. The backpack holds references to the outside variables the function still needs, so it can use them later.</p>
       </figure>
 
       <!-- 5. Multiple closures: outer() called twice, two independent backpacks -->
@@ -159,6 +173,8 @@
           <text x="80" y="132" fill="white" font-family="monospace" font-size="9" text-anchor="middle">two independent x's</text>
         </svg>
         <figcaption>closure A ≠ <b>closure B</b></figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">Two calls to the outer function create two different captured variables. Updating closure A's value does not change closure B's value.</p>
       </figure>
 
       <!-- 6. Event handler remembering a variable through a closure -->
@@ -175,6 +191,8 @@
           <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">no special syntax needed</text>
         </svg>
         <figcaption>handlers <b>remember</b> too</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">An event handler is an ordinary function. When it uses a nearby variable such as <code>msg</code>, its closure keeps that variable reachable until the later click happens.</p>
       </figure>
 
       <!-- 7. React preview: render 1 -> handler+state, render 2 -> new handler+state -->
@@ -192,6 +210,8 @@
           <text x="80" y="132" fill="white" font-family="monospace" font-size="9" text-anchor="middle">new closure every time</text>
         </svg>
         <figcaption>React's <b>real</b> secret: none</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">A React re-render calls the component function again. That new call creates new handlers, and each handler closes over the state values from its own render.</p>
       </figure>
 
       <!-- 8. Next session -->
@@ -206,6 +226,8 @@
           <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">this, applied to renders</text>
         </svg>
         <figcaption>next: re-rendering deep dive</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">This closure lesson is the bridge to Session 19. There you will use the same rules to explain why a handler can remember an older render's state.</p>
       </figure>
 
     </div>
@@ -711,6 +733,15 @@ git commit -m "session-18.5: closures lab — prove independent closures with tw
   document.addEventListener('DOMContentLoaded', function () {
     setupQuiz('pre');
     setupQuiz('post');
+
+    document.querySelectorAll('.concept-explanation-toggle').forEach(function (button) {
+      button.addEventListener('click', function () {
+        const card = button.closest('.concept-card');
+        card.classList.add('explanation-revealed');
+        button.setAttribute('aria-expanded', 'true');
+        button.querySelector('.concept-explanation-hint').textContent = 'Revealed';
+      });
+    });
   });
 </script>
 <script src="../../notes-widget.js" defer></script>
