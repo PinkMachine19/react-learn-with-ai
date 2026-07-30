@@ -737,9 +737,11 @@ git commit -m "session-18.5: closures lab — prove independent closures with tw
     document.querySelectorAll('.concept-explanation-toggle').forEach(function (button) {
       button.addEventListener('click', function () {
         const card = button.closest('.concept-card');
-        card.classList.add('explanation-revealed');
-        button.setAttribute('aria-expanded', 'true');
-        button.querySelector('.concept-explanation-hint').textContent = 'Revealed';
+        const isRevealed = card.classList.toggle('explanation-revealed');
+        button.setAttribute('aria-expanded', String(isRevealed));
+        button.querySelector('.concept-explanation-hint').textContent = isRevealed
+          ? 'Click to blur'
+          : 'Click to reveal';
       });
     });
   });
