@@ -1,21 +1,17 @@
-// Session 18.5 — Lab: prove closures are per-call, not shared
+/* Lab objective: Write a plain JavaScript closure from scratch, prove it remembers a variable, then prove that calling its outer function twice produces two independent closures — no React involved yet. */
 
-function makeCounter() {
-  let count = 0;
+function outer() {
+  let x = 0
 
-  return function increment() {
-    count = count + 1;
-    return count;
-  };
+  return function inner() {
+    x += 1
+    return x
+
+  }
+
 }
-
-const counter1 = makeCounter();
-
-console.log(counter1());   // expect 1
-console.log(counter1());   // expect 2
-console.log(counter1());   // expect 3
-
-const counter2 = makeCounter();
-
-console.log(counter2());   // expect 1 — NOT 4, its own fresh count
-console.log(counter1());   // expect 4 — counter1's count kept going, unaffected
+const fn = outer()
+const fn1 = outer()
+fn()
+console.log(fn())
+console.log(fn1())
