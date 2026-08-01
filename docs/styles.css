@@ -397,3 +397,20 @@ hr {
   .nav-grid { grid-template-columns: 1fr 1fr; }
   nav .container { gap: 4px; }
 }
+/* Academy-wide publication status watermark. */
+body::after {
+  content: "DRAFT";
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  z-index: 999;
+  transform: translate(-50%, -50%) rotate(-28deg);
+  color: rgba(255, 92, 168, 0.09);
+  font-size: clamp(88px, 18vw, 240px);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+}
