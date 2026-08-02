@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Session 18.8 — JavaScript, React, and the Invisible Handoff</title>
+  <link rel="stylesheet" href="../../styles.css" />
+  <link rel="stylesheet" href="../../notes-widget.css" />
+  <link rel="stylesheet" href="../../bookmark-widget.css" />
+  <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+  <style>
+    .quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;font-size:14px;transition:border-color .15s,background .15s;user-select:none;}
+    .quiz-option:hover{border-color:var(--accent);background:var(--surface);}
+    .quiz-option.selected{border-color:var(--accent);background:rgba(88,166,255,.1);}
+    .quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1);}
+    .quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1);}
+    .quiz-question{margin-bottom:28px;}
+    .quiz-question p{font-weight:600;margin-bottom:10px;font-size:15px;}
+    .question-num{color:var(--text-muted);font-size:12px;font-weight:400;margin-bottom:4px;}
+    .quiz-result{display:none;padding:16px 20px;border-radius:var(--radius);margin-top:16px;font-size:15px;font-weight:600;}
+    .quiz-result.pass{background:rgba(63,185,80,.12);border:1px solid var(--green);color:var(--green);}
+    .quiz-result.fail{background:rgba(248,81,73,.12);border:1px solid var(--red);color:var(--red);}
+    .explanation{display:none;font-size:13px;color:var(--text-muted);margin-top:6px;padding:8px 12px;background:var(--surface-2);border-radius:var(--radius);border-left:2px solid var(--border);}
+    .submit-btn{background:var(--accent);color:#0d1117;border:none;border-radius:var(--radius);padding:10px 22px;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px;}
+    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+    .step{display:flex;gap:16px;margin-bottom:20px;}
+    .step-num{flex-shrink:0;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;margin-top:2px;}
+    .step-body{flex:1;}
+    .step-body p{margin-bottom:6px;}
+    .section-divider{border:none;border-top:2px solid var(--border);margin:40px 0;}
+    .checklist-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;font-size:14px;}
+    .checklist-item input[type="checkbox"]{margin-top:3px;width:16px;height:16px;accent-color:var(--accent);flex-shrink:0;}
+
+    /* Comic-panel concept grid — image teaches first, caption only reinforces */
+    .concept-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0;}
+    @media (max-width:760px){.concept-grid{grid-template-columns:repeat(2,1fr);}}
+    .concept-card{background:#111111;border:1px solid #2a2a2a;border-radius:8px;padding:8px 8px 10px;}
+    .concept-card svg{display:block;width:100%;height:auto;}
+    .concept-card figcaption{margin-top:6px;font-family:monospace;font-size:10.5px;line-height:1.3;color:#c9c9c9;text-align:center;}
+    .concept-card figcaption b{color:#ff5ca8;}
+    .concept-explanation-toggle{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;margin-top:10px;padding:7px 8px;border:1px solid #3a3a3a;border-radius:5px;background:#1a1a1a;color:#ff5ca8;font-family:monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;}
+    .concept-explanation-toggle:hover,.concept-explanation-toggle:focus-visible{border-color:#ff5ca8;outline:none;}
+    .concept-explanation-hint{color:#8b949e;font-size:8px;font-weight:400;letter-spacing:0;text-transform:none;}
+    .concept-explanation-text{margin:7px 2px 0;font-size:11px;line-height:1.45;color:#d8d8d8;filter:blur(4px);user-select:none;transition:filter .2s ease;}
+    .concept-card.explanation-revealed .concept-explanation-text{filter:none;user-select:text;}
+    .concept-card.explanation-revealed .concept-explanation-hint{color:#3fb950;}
+    .timeline-pre{background:#111111;border:1px solid #2a2a2a;border-radius:8px;padding:16px 20px;font-family:monospace;font-size:13px;line-height:1.9;color:#e6edf3;overflow-x:auto;}
+    .timeline-pre .js-step{color:#e6edf3;}
+    .timeline-pre .react-step{color:#ff5ca8;font-weight:700;}
+    .timeline-pre .arrow{color:#666;}
+    .timeline-pre .divider{color:#3fb950;font-weight:700;}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../../index.html" class="brand">⚛ React Learning</a>
+    <a href="../../syllabus/index.html">Syllabus</a>
+    <a href="../../sessions/index.html" class="active">Sessions</a>
+    <a href="../../quizzes/index.html">Quizzes</a>
+    <a href="../../labs/index.html">Labs</a>
+  </div>
+</nav>
+
+<main>
+  <div class="container">
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
+      <span class="badge badge-layer">Layer 3</span>
+      <span class="badge badge-current">Session 18.8</span>
+      <span style="color:var(--text-muted);font-size:13px;">JavaScript + React</span>
+    </div>
+    <h1>JavaScript, React, and the Invisible Handoff</h1>
+    <p class="subtitle">
+      Why React Doesn't Re-render Immediately — Session 18.5 taught you what a
+      closure is. Session 19 is about to show you a render counter and a
+      batching experiment that only make sense if you already believe one
+      strange fact: calling <code>setCount</code> does not update anything —
+      it just asks React to update something, later. This short session is
+      the missing link between "I called a function" and "the screen
+      changed," and it is entirely about timing, not new JavaScript syntax.
+    </p>
+    <div class="alert alert-info">Estimated time: 20–25 minutes</div>
+
+    <!-- Comic-panel concept grid: image teaches first, caption only reinforces -->
+    <div class="concept-grid">
+
+      <!-- 1. Two cooperating systems, taking turns -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="40" width="60" height="40" rx="5" fill="none" stroke="white" stroke-width="2"/>
+          <text x="40" y="64" fill="white" font-family="monospace" font-size="9" text-anchor="middle">JS</text>
+          <rect x="90" y="40" width="60" height="40" rx="5" fill="none" stroke="#ff5ca8" stroke-width="2"/>
+          <text x="120" y="64" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">React</text>
+          <path d="M72,50 H88" stroke="#666" stroke-width="2" marker-end="url(#h1)"/>
+          <path d="M88,70 H72" stroke="#666" stroke-width="2" marker-end="url(#h1)"/>
+          <defs><marker id="h1" markerWidth="7" markerHeight="7" refX="3" refY="3" orient="auto"><polygon points="0,0 7,3 0,7" fill="#666"/></marker></defs>
+          <text x="80" y="110" fill="white" font-family="monospace" font-size="9" text-anchor="middle">they take turns</text>
+          <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">never both at once</text>
+        </svg>
+        <figcaption>two <b>cooperating</b> systems</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">JavaScript and React are two separate systems that hand control back and forth. Only one of them is ever actively running at a given moment — they never interrupt each other mid-task.</p>
+      </figure>
+
+      <!-- 2. JS cannot be interrupted mid-handler -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="45" y="30" width="70" height="40" rx="4" fill="none" stroke="white" stroke-width="2"/>
+          <text x="80" y="54" fill="white" font-family="monospace" font-size="9" text-anchor="middle">handleClick()</text>
+          <circle cx="80" cy="92" r="16" fill="none" stroke="#f85149" stroke-width="2.2"/>
+          <rect x="74" y="86" width="12" height="10" rx="2" fill="none" stroke="#f85149" stroke-width="1.8"/>
+          <path d="M76,86 v-4 a4,4 0 0 1 8,0 v4" fill="none" stroke="#f85149" stroke-width="1.6"/>
+          <text x="80" y="132" fill="white" font-family="monospace" font-size="9" text-anchor="middle">React cannot butt in</text>
+        </svg>
+        <figcaption>JS runs <b>uninterrupted</b></figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">JavaScript executes one thing at a time. Once handleClick starts running, it runs to completion — React has no mechanism to pause it partway through and sneak a re-render in.</p>
+      </figure>
+
+      <!-- 3. setCount looks like a normal call, but isn't -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="35" y="40" width="90" height="30" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2"/>
+          <text x="80" y="59" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle">setCount(6)</text>
+          <circle cx="128" cy="34" r="11" fill="none" stroke="white" stroke-width="1.6"/>
+          <text x="128" y="39" fill="white" font-family="monospace" font-size="12" text-anchor="middle">?</text>
+          <text x="80" y="100" fill="white" font-family="monospace" font-size="9" text-anchor="middle">looks ordinary</text>
+          <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">is not ordinary</text>
+        </svg>
+        <figcaption>setCount <b>looks</b> normal</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">setCount is called with normal function-call syntax, which naturally makes you expect it does its work immediately, the way most functions do. That expectation is exactly what trips people up.</p>
+      </figure>
+
+      <!-- 4. setCount only schedules, doesn't perform -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="30" width="100" height="28" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2"/>
+          <text x="80" y="48" fill="#ff5ca8" font-family="monospace" font-size="9" text-anchor="middle">setCount(6)</text>
+          <path d="M80,58 V78" stroke="white" stroke-width="1.8" marker-end="url(#h2)"/>
+          <defs><marker id="h2" markerWidth="7" markerHeight="7" refX="3" refY="3" orient="auto"><polygon points="0,0 7,3 0,7" fill="white"/></marker></defs>
+          <rect x="45" y="82" width="70" height="30" rx="4" fill="none" stroke="white" stroke-width="1.8" stroke-dasharray="4,3"/>
+          <text x="80" y="101" fill="white" font-family="monospace" font-size="8" text-anchor="middle">queued, not run</text>
+          <text x="80" y="132" fill="white" font-family="monospace" font-size="9" text-anchor="middle">a request, not an action</text>
+        </svg>
+        <figcaption><b>schedules</b>, doesn't perform</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">Calling setCount doesn't change anything on screen right then. It hands React a request — "please update this state" — that React holds onto instead of acting on immediately.</p>
+      </figure>
+
+      <!-- 5. React's hidden update queue -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="40" y="30" width="80" height="50" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2" stroke-dasharray="3,3"/>
+          <text x="80" y="52" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">update</text>
+          <text x="80" y="66" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">queue</text>
+          <circle cx="118" cy="34" r="9" fill="none" stroke="#666" stroke-width="1.4"/>
+          <line x1="112" y1="28" x2="124" y2="40" stroke="#666" stroke-width="1.6"/>
+          <text x="80" y="112" fill="white" font-family="monospace" font-size="9" text-anchor="middle">you never see it</text>
+          <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">it's intentionally hidden</text>
+        </svg>
+        <figcaption>a <b>hidden</b> queue</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">React keeps an internal queue of pending updates that your code never touches directly. It exists purely so React can decide when to actually act on the requests you've made.</p>
+      </figure>
+
+      <!-- 6. Handler finishes first, always -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="20" y="30" width="120" height="26" rx="4" fill="none" stroke="white" stroke-width="1.8"/>
+          <text x="80" y="47" fill="white" font-family="monospace" font-size="8" text-anchor="middle">rest of handleClick</text>
+          <path d="M80,56 V74" stroke="#3fb950" stroke-width="2" marker-end="url(#h3)"/>
+          <defs><marker id="h3" markerWidth="7" markerHeight="7" refX="3" refY="3" orient="auto"><polygon points="0,0 7,3 0,7" fill="#3fb950"/></marker></defs>
+          <path d="M56,90 l8,8 16,-18" fill="none" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">completes before anything else</text>
+        </svg>
+        <figcaption>the handler <b>finishes</b> first</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">Every remaining line in handleClick still runs after setCount is called — including another console.log — because JavaScript won't hand control to React until the whole function is done.</p>
+      </figure>
+
+      <!-- 7. Then React re-renders -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="45" y="20" width="70" height="24" rx="4" fill="none" stroke="#666" stroke-width="1.6"/>
+          <text x="80" y="36" fill="#666" font-family="monospace" font-size="7" text-anchor="middle">JS returns</text>
+          <path d="M80,44 V62" stroke="#ff5ca8" stroke-width="2.2" marker-end="url(#h4)"/>
+          <defs><marker id="h4" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"><polygon points="0,0 8,4 0,8" fill="#ff5ca8"/></marker></defs>
+          <rect x="35" y="66" width="90" height="26" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2"/>
+          <text x="80" y="83" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">React re-renders</text>
+          <text x="80" y="118" fill="white" font-family="monospace" font-size="9" text-anchor="middle">only now, not before</text>
+        </svg>
+        <figcaption>React <b>then</b> takes its turn</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">Only after JavaScript hands control back does React look at its queue and process the pending updates, which is what finally triggers the component to run again.</p>
+      </figure>
+
+      <!-- 8. Next session -->
+      <figure class="concept-card">
+        <svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+          <rect x="10" y="58" width="52" height="34" rx="4" fill="none" stroke="#666" stroke-width="1.8" transform="rotate(-2,36,75)"/>
+          <text x="36" y="79" fill="#666" font-family="monospace" font-size="9" text-anchor="middle">18.8</text>
+          <path d="M66,75 H108" stroke="#ff5ca8" stroke-width="2.5" stroke-dasharray="5,4" marker-end="url(#h5)"/>
+          <defs><marker id="h5" markerWidth="9" markerHeight="9" refX="4" refY="4" orient="auto"><polygon points="0,0 9,4 0,9" fill="#ff5ca8"/></marker></defs>
+          <rect x="112" y="52" width="42" height="46" rx="4" fill="none" stroke="#ff5ca8" stroke-width="2.2" transform="rotate(2,133,75)"/>
+          <text x="133" y="80" fill="#ff5ca8" font-family="monospace" font-size="14" text-anchor="middle" font-weight="bold">19</text>
+          <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">this, made concrete</text>
+        </svg>
+        <figcaption>next: re-rendering deep dive</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">Session 19 builds a render counter and a batching experiment that put everything from today into a real component you can watch run.</p>
+      </figure>
+
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>1. Learning Objectives</h2>
+    <div class="card">
+      <ul>
+        <li>Explain that JavaScript executes one thing at a time and cannot be interrupted mid-function</li>
+        <li>Explain that <code>setCount()</code> schedules an update rather than performing one immediately</li>
+        <li>Describe React's internal update queue as hidden — something your code never reads or writes directly</li>
+        <li>Trace the full handoff: the event handler runs to completion, JavaScript returns control, and only then does React process queued updates and re-render</li>
+        <li>Explain why this handoff is the actual mechanism behind Session 19's batching and stale-closure behavior</li>
+      </ul>
+    </div>
+
+    <h2>2. Pre-Coding Quiz</h2>
+    <p>Answer before reading the concept. Need 4/5 to proceed.</p>
+
+    <div id="pre-quiz">
+      <div class="quiz-question" data-question="0" data-answer="b">
+        <div class="question-num">Question 1 of 5</div>
+        <p>Inside a click handler, you call <code>setCount(6)</code> and then immediately call <code>console.log("after")</code> on the next line. Which runs first?</p>
+        <label class="quiz-option" data-val="a">React re-renders, then "after" logs</label>
+        <label class="quiz-option" data-val="b">"after" logs, then React re-renders later</label>
+        <label class="quiz-option" data-val="c">They happen at exactly the same instant</label>
+        <label class="quiz-option" data-val="d">Neither runs — setCount throws</label>
+        <div class="explanation">setCount only schedules an update. The very next line of your handler still runs normally, and React doesn't re-render until the whole handler finishes.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="a">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Can React pause your event handler halfway through and re-render immediately?</p>
+        <label class="quiz-option" data-val="a">No — JavaScript runs a function to completion, uninterrupted</label>
+        <label class="quiz-option" data-val="b">Yes, whenever setState is called</label>
+        <label class="quiz-option" data-val="c">Yes, but only in development mode</label>
+        <label class="quiz-option" data-val="d">Only if the handler is declared async</label>
+        <div class="explanation">JavaScript's single-threaded execution model means a running function always finishes before anything else gets a turn — React included.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="c">
+        <div class="question-num">Question 3 of 5</div>
+        <p>What does calling <code>setCount(6)</code> actually do, the moment it's called?</p>
+        <label class="quiz-option" data-val="a">Immediately re-renders the component</label>
+        <label class="quiz-option" data-val="b">Immediately changes the count variable in place</label>
+        <label class="quiz-option" data-val="c">Adds an update request to React's internal queue</label>
+        <label class="quiz-option" data-val="d">Pauses the handler until React responds</label>
+        <div class="explanation">setCount's real job is registering a request. Nothing about the screen changes at the exact moment it's called.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="d">
+        <div class="question-num">Question 4 of 5</div>
+        <p>After a click handler finishes running completely, what happens next?</p>
+        <label class="quiz-option" data-val="a">Nothing — updates require a page refresh</label>
+        <label class="quiz-option" data-val="b">The browser waits for the next click</label>
+        <label class="quiz-option" data-val="c">JavaScript restarts the handler automatically</label>
+        <label class="quiz-option" data-val="d">React processes its queue and re-renders</label>
+        <div class="explanation">The handler finishing is the signal — JavaScript hands control back, and only then does React look at what's pending and act on it.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Why does a console.log placed right after setCount() print before React re-renders?</p>
+        <label class="quiz-option" data-val="a">console.log is faster than React</label>
+        <label class="quiz-option" data-val="b">It's still part of the same uninterrupted handler run</label>
+        <label class="quiz-option" data-val="c">React re-renders are always delayed by one second</label>
+        <label class="quiz-option" data-val="d">It doesn't — this is a trick question</label>
+        <div class="explanation">That console.log is just another line inside the still-running handler. It executes before the handler returns, which is before React ever gets a turn.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+      <div class="quiz-result" id="pre-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>3. The Concept — Two Cooperating Systems, Taking Turns</h2>
+
+    <p>
+      <strong>There are two cooperating systems here: JavaScript and React.</strong>
+      They take turns. While JavaScript is executing your event handler, React
+      cannot interrupt it. Only after JavaScript finishes does React process
+      its queued updates. That's the entire idea of this session — everything
+      else is detail.
+    </p>
+
+    <div class="alert alert-warning">
+      <strong>Not a JavaScript internals lesson:</strong> we are not covering
+      the browser event loop, microtasks, or the call stack in detail here.
+      The only goal is naming the handoff between "your code is running" and
+      "React does its thing" — enough to make Session 19 feel obvious instead
+      of magical.
+    </div>
+
+    <h3>What you'd naturally expect</h3>
+    <p>
+      Most code you've written so far behaves like a simple chain — one
+      function directly calls the next, in order, and each one's work is
+      done by the time it returns:
+    </p>
+    <pre class="timeline-pre"><span class="js-step">A()</span>
+<span class="arrow">↓</span>
+<span class="js-step">B()</span>
+<span class="arrow">↓</span>
+<span class="js-step">C()</span>
+<span class="arrow">↓</span>
+<span class="js-step">D()</span></pre>
+    <p>React quietly breaks this pattern the moment a state update is involved:</p>
+    <pre class="timeline-pre"><span class="js-step">A()</span>
+<span class="arrow">↓</span>
+<span class="js-step">B()</span>
+<span class="arrow">↓</span>
+<span class="js-step">C()</span>
+
+<span class="divider">----------- JavaScript finishes -----------</span>
+
+<span class="react-step">React:</span>
+<span class="react-step">D()</span></pre>
+    <p>
+      <code>D()</code> — the re-render — is not called from inside
+      <code>C()</code>. It happens later, from an entirely different system,
+      after your own code has completely finished running. There is no line
+      in your handler that calls it. That missing, invisible line is exactly
+      what this session names.
+    </p>
+
+    <h3>The full handoff, traced step by step</h3>
+    <pre class="timeline-pre">Click
+<span class="arrow">↓</span>
+<span class="js-step">JavaScript starts handleClick()</span>
+<span class="arrow">↓</span>
+<span class="js-step">setCount(...)</span>
+<span class="arrow">↓</span>
+<span class="react-step">React records the update request</span>
+<span class="arrow">↓</span>
+<span class="js-step">handleClick continues running</span>
+<span class="arrow">↓</span>
+<span class="js-step">handleClick finishes</span>
+<span class="arrow">↓</span>
+<span class="js-step">JavaScript returns control</span>
+<span class="arrow">↓</span>
+<span class="react-step">React processes its queued updates</span>
+<span class="arrow">↓</span>
+<span class="react-step">React calls CountryCard() again</span>
+<span class="arrow">↓</span>
+<span class="react-step">New render</span>
+<span class="arrow">↓</span>
+<span class="react-step">New closures</span></pre>
+    <p>
+      Two things worth slowing down on: <code>setCount(...)</code> only
+      hands React a request — it does not call the component again itself.
+      And <code>handleClick continues running</code> after that request is
+      made — nothing about calling setCount stops or pauses the rest of the
+      function.
+    </p>
+
+    <h3>Why This Feels Weird</h3>
+    <div class="alert alert-info">
+      <ul style="margin:0;padding-left:20px;">
+        <li><code>setCount()</code> looks exactly like an ordinary function call.</li>
+        <li>Normally, calling a function means it does its work right then.</li>
+        <li>But <code>setCount()</code> only asks React to do work later.</li>
+        <li>React hides its scheduler and its update queue — you never see either one directly.</li>
+        <li>The actual re-render happens later, outside your handler's visible call chain.</li>
+      </ul>
+    </div>
+    <p>
+      You're not missing something obvious by finding this confusing — the
+      syntax is deliberately designed to look like an ordinary call, while
+      behaving completely differently underneath. Once you know the handoff
+      exists, the confusion has a name, and Session 19's batching and
+      stale-closure behavior stop feeling like magic.
+    </p>
+
+    <hr class="section-divider" />
+
+    <h2>4. Lab</h2>
+    <div class="alert alert-success">
+      <strong>Lab objective:</strong> Add a <code>console.log</code> before
+      and after <code>setCount</code> inside <code>handleClick</code>, and
+      confirm both logs print before the screen visibly updates.
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <p><strong>Add logs around setCount in CountryCard's handleClick</strong></p>
+        <pre><code>function handleClick(event) {
+  console.log("before setCount, count is", count);
+  setCount(count + 1);
+  console.log("after setCount — this still runs before any re-render");
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <p><strong>Open DevTools and click the button once</strong></p>
+        <p>Read the console output top to bottom. Both log lines appear before you see the count update on screen, and both appear on every single click, in the same order, every time.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <p><strong>Predict, then verify: does "after setCount" ever see the new count?</strong></p>
+        <p>Before running it again, guess what <code>count</code> equals inside the "after setCount" log line. Then check — it's still the OLD value, because <code>count</code> is a constant captured for this render, and this render hasn't been replaced yet.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <p><strong>Remove the logs once you've confirmed the behavior</strong></p>
+        <p>This lab is a diagnostic experiment, not a permanent feature — revert <code>handleClick</code> back to just calling <code>setCount(count + 1)</code> before committing.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>5. Expected Files Changed</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>File</th><th>Action</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><code>src/component/CountryCard.jsx</code></td><td>Updated temporarily</td><td>Add and then remove two console.log calls proving the handoff order</td></tr>
+          <tr><td><code>docs/sessions/session-18-8/index.html</code></td><td>Created</td><td>This session document</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2>6. Commit Checkpoint</h2>
+    <pre><code>git add docs/sessions/session-18-8/index.html
+git commit -m "session-18.8: prove setCount schedules an update instead of performing one immediately"</code></pre>
+
+    <h2>7. Code Review Checklist</h2>
+    <div class="card">
+      <div class="checklist-item"><input type="checkbox" id="c1"/><label for="c1">I placed console.log calls immediately before and after setCount, temporarily</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c2"/><label for="c2">I confirmed both logs print before the count visibly updates on screen</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c3"/><label for="c3">I confirmed the "after setCount" log still shows the OLD count value</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c4"/><label for="c4">CountryCard.jsx was reverted back to its Session 18 state before committing</label></div>
+      <div class="checklist-item"><input type="checkbox" id="c5"/><label for="c5">I can explain, out loud, why setCount doesn't call the component function itself</label></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>8. Post-Coding Quiz</h2>
+    <div id="post-quiz" data-pass-post="Proceed to Session 19 (Re-rendering Deep Dive) after ≥ 80%.">
+      <div class="quiz-question" data-question="0" data-answer="c">
+        <div class="question-num">Question 1 of 5</div>
+        <p>In the lab, the "after setCount" console.log still showed the OLD count value. Why?</p>
+        <label class="quiz-option" data-val="a">console.log lags one render behind</label>
+        <label class="quiz-option" data-val="b">setCount silently failed that time</label>
+        <label class="quiz-option" data-val="c">count stays fixed until a new render</label>
+        <label class="quiz-option" data-val="d">The browser cached the old log</label>
+        <div class="explanation">This is the direct link to Session 18.5's closures: count doesn't mutate in place — it stays the same until an entirely new render hands you a new one.</div>
+      </div>
+      <div class="quiz-question" data-question="1" data-answer="b">
+        <div class="question-num">Question 2 of 5</div>
+        <p>Why can't React simply re-render the instant setCount is called, mid-handler?</p>
+        <label class="quiz-option" data-val="a">React just chooses not to</label>
+        <label class="quiz-option" data-val="b">JS won't interrupt a running function</label>
+        <label class="quiz-option" data-val="c">It's a syntax error mid-function</label>
+        <label class="quiz-option" data-val="d">It does, in production builds</label>
+        <div class="explanation">This isn't a React design choice you could argue with — it's a direct consequence of how JavaScript itself executes code, one function to completion at a time.</div>
+      </div>
+      <div class="quiz-question" data-question="2" data-answer="d">
+        <div class="question-num">Question 3 of 5</div>
+        <p>What is React's update queue, functionally?</p>
+        <label class="quiz-option" data-val="a">A visible, inspectable array</label>
+        <label class="quiz-option" data-val="b">A list of rendered components</label>
+        <label class="quiz-option" data-val="c">The same thing as the DOM</label>
+        <label class="quiz-option" data-val="d">A hidden queue of update requests</label>
+        <div class="explanation">The queue exists purely internally — its entire job is holding requests until the moment JavaScript hands control back to React.</div>
+      </div>
+      <div class="quiz-question" data-question="3" data-answer="a">
+        <div class="question-num">Question 4 of 5</div>
+        <p>Given today's handoff, why does calling setCount twice in one handler not produce two separate re-renders?</p>
+        <label class="quiz-option" data-val="a">React only reads the queue once, later</label>
+        <label class="quiz-option" data-val="b">The second call is silently ignored</label>
+        <label class="quiz-option" data-val="c">A function can't call itself twice</label>
+        <label class="quiz-option" data-val="d">It does produce two renders, always</label>
+        <div class="explanation">Both requests land in the same queue before JavaScript ever returns control, so React only gets one chance to act on all of them together — this is the seed of Session 19's batching.</div>
+      </div>
+      <div class="quiz-question" data-question="4" data-answer="b">
+        <div class="question-num">Question 5 of 5</div>
+        <p>Session 19 will focus on:</p>
+        <label class="quiz-option" data-val="a">Writing the first Vitest test</label>
+        <label class="quiz-option" data-val="b">Proving the handoff with a render counter</label>
+        <label class="quiz-option" data-val="c">Adding a second component to the tree</label>
+        <label class="quiz-option" data-val="d">Wiring up a real API call</label>
+        <div class="explanation">Session 19 turns today's abstract handoff into something you watch happen, using a render counter and a doubled setCount call.</div>
+      </div>
+      <button class="submit-btn" disabled>Submit Post-Quiz</button>
+      <div class="quiz-result" id="post-result"></div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <h2>9. Reflection Questions</h2>
+    <div class="card">
+      <ol>
+        <li>Before today, did you assume setCount updated the screen immediately? Where do you think that assumption came from?</li>
+        <li>Why do you think React deliberately hides its update queue instead of exposing it as something you could inspect directly?</li>
+        <li>Now that you know JavaScript and React take turns, how does that change what you expect to see the next time you add a console.log around a state update?</li>
+      </ol>
+    </div>
+
+    <h2>10. What Breaks If This Code Is Removed?</h2>
+    <div class="card">
+      <ul>
+        <li><strong>This is a concept-only session — no permanent code changes:</strong> nothing in the actual app depends on today's lab, since the console.log statements are deliberately temporary and reverted before committing.</li>
+        <li><strong>Skipping this session's mental model:</strong> nothing crashes, but Session 19's render counter and batching experiment will feel like arbitrary trivia instead of the direct, predictable consequence of the handoff explained here.</li>
+        <li><strong>Misunderstanding the handoff going forward:</strong> expecting setCount to update synchronously leads directly to the stale-closure bugs Session 19 demonstrates — this session exists so that bug has an explanation instead of feeling random.</li>
+      </ul>
+    </div>
+
+    <h2>11. What React Concept Was Learned Today</h2>
+    <div class="card" style="border-color:var(--green);">
+      <p><strong>Today you learned: JavaScript and React are two cooperating systems that take turns. JavaScript always finishes running your event handler before React ever gets a turn, and setCount only schedules a request in React's hidden update queue rather than performing an update itself. That handoff — not any new syntax — is the entire reason batching and stale closures exist.</strong></p>
+      <p><strong>Next:</strong> <a href="../session-19/index.html">Session 19 — Re-rendering Deep Dive</a>.</p>
+    </div>
+
+    <p style="margin-top:24px;"><a href="../session-18-5/index.html">← Session 18.5</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-19/index.html">Session 19 →</a></p>
+
+  </div>
+</main>
+
+<script src="../../quiz.js" defer></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    setupQuiz('pre');
+    setupQuiz('post');
+
+    document.querySelectorAll('.concept-explanation-toggle').forEach(function (button) {
+      button.addEventListener('click', function () {
+        const card = button.closest('.concept-card');
+        const isRevealed = card.classList.toggle('explanation-revealed');
+        button.setAttribute('aria-expanded', String(isRevealed));
+        button.querySelector('.concept-explanation-hint').textContent = isRevealed
+          ? 'Click to blur'
+          : 'Click to reveal';
+      });
+    });
+  });
+</script>
+<script src="../../notes-widget.js" defer></script>
+<script src="../../bookmark-widget.js" defer></script>
+
+<div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;padding:6px 11px;border:1px solid rgba(255,92,168,.55);border-radius:999px;background:rgba(13,17,23,.88);color:#ff5ca8;font:800 11px/1 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,sans-serif;letter-spacing:.16em;pointer-events:none">DRAFT</div><aside class="academy-project-status" aria-label="Project status" style="max-width:920px;margin:40px auto 24px;padding:16px 24px;border:1px solid #30363d;border-left:4px solid #ff5ca8;border-radius:6px;background:#161b22;color:#8b949e;font:13px/1.6 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Helvetica,Arial,sans-serif"><strong style="color:#ff5ca8">Project Status:</strong> This course is part of an evolving personal engineering library. AI assisted with drafting and organization, but every lesson is intended to be reviewed, validated, and improved over time as I work through the material myself. Draft content should be treated as work in progress until marked as validated.</aside></body>
+</html>
