@@ -38,6 +38,12 @@
     .concept-card svg{display:block;width:100%;height:auto;}
     .concept-card figcaption{margin-top:6px;font-family:monospace;font-size:10.5px;line-height:1.3;color:#c9c9c9;text-align:center;}
     .concept-card figcaption b{color:#ff5ca8;}
+    .concept-explanation-toggle{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;margin-top:10px;padding:7px 8px;border:1px solid #3a3a3a;border-radius:5px;background:#1a1a1a;color:#ff5ca8;font-family:monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;}
+    .concept-explanation-toggle:hover,.concept-explanation-toggle:focus-visible{border-color:#ff5ca8;outline:none;}
+    .concept-explanation-hint{color:#8b949e;font-size:8px;font-weight:400;letter-spacing:0;text-transform:none;}
+    .concept-explanation-text{margin:7px 2px 0;font-size:11px;line-height:1.45;color:#d8d8d8;filter:blur(4px);user-select:none;transition:filter .2s ease;}
+    .concept-card.explanation-revealed .concept-explanation-text{filter:none;user-select:text;}
+    .concept-card.explanation-revealed .concept-explanation-hint{color:#3fb950;}
   </style>
 </head>
 <body>
@@ -86,6 +92,8 @@
           <text x="80" y="130" fill="white" font-family="monospace" font-size="9" text-anchor="middle">App can't reach it</text>
         </svg>
         <figcaption>state trapped in <b>CountryList</b></figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">CountryList created searchTerm with its own useState call, so that state belongs only to CountryList. App cannot reach into its child and read that local value to perform the filtering.</p>
       </figure>
 
       <!-- 2. Nearest common ancestor: App as the meeting point -->
@@ -102,6 +110,8 @@
           <text x="115" y="121" fill="#3fb950" font-family="monospace" font-size="7" text-anchor="middle">list</text>
         </svg>
         <figcaption>App sees <b>both</b> sides</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">App is the nearest component above everything that needs the search value. Once App owns it, App can control the input and decide which countries the list receives.</p>
       </figure>
 
       <!-- 3. Move up: box migrating from child to parent -->
@@ -116,6 +126,8 @@
           <text x="80" y="140" fill="white" font-family="monospace" font-size="9" text-anchor="middle">child → parent</text>
         </svg>
         <figcaption>useState <b>moves</b> to App</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">Lifting state means removing searchTerm and its setter from CountryList and recreating them in App. There should be one owner, not a second disconnected copy in each component.</p>
       </figure>
 
       <!-- 4. Filter in App: funnel narrowing list -->
@@ -131,6 +143,8 @@
           <text x="80" y="136" fill="white" font-family="monospace" font-size="9" text-anchor="middle">match only</text>
         </svg>
         <figcaption>App <b>filters</b> the list</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">Because App now has both the full countries array and searchTerm, it can use filter() to create an array containing only names that include the typed text.</p>
       </figure>
 
       <!-- 5. Pass down as a prop -->
@@ -145,6 +159,8 @@
           <text x="80" y="113" fill="white" font-family="monospace" font-size="8" text-anchor="middle">CountryList</text>
         </svg>
         <figcaption>filtered list <b>down</b></figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">Data flows down the component tree through props. App passes filteredCountries into CountryList's countries prop, so the child renders exactly the list its parent selected.</p>
       </figure>
 
       <!-- 6. CountryList becomes dumb: empty box, no gears -->
@@ -158,6 +174,8 @@
           <text x="80" y="112" fill="white" font-family="monospace" font-size="9" text-anchor="middle">no logic, no state</text>
         </svg>
         <figcaption>"<b>presentational</b>" only</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">CountryList no longer owns search state or filtering logic. It becomes a presentational component: receive a countries prop, handle the empty case, and render the supplied cards.</p>
       </figure>
 
       <!-- 7. One source of truth -->
@@ -171,6 +189,8 @@
           <text x="80" y="136" fill="white" font-family="monospace" font-size="9" text-anchor="middle">never drifts apart</text>
         </svg>
         <figcaption>one <b>searchTerm</b>, always</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">A single source of truth prevents two copies of searchTerm from disagreeing. The input and filtered list are both produced from the same state owned by App.</p>
       </figure>
 
       <!-- 8. Next session -->
@@ -185,6 +205,8 @@
           <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">derived, not stored</text>
         </svg>
         <figcaption>next: derived state</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">filteredCountries can be calculated from countries and searchTerm during every render. Session 22 names this derived state and explains why it should be computed instead of stored separately.</p>
       </figure>
 
     </div>
@@ -291,6 +313,8 @@
           <text x="80" y="124" fill="white" font-family="monospace" font-size="9" text-anchor="middle">before</text>
         </svg>
         <figcaption>state stuck in the <b>child</b></figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">Before lifting state, CountryList owns both the input and searchTerm. App renders the child but cannot directly inspect the state hidden inside it.</p>
       </figure>
       <figure class="concept-card">
         <svg viewBox="0 0 160 140" xmlns="http://www.w3.org/2000/svg">
@@ -304,6 +328,8 @@
           <text x="80" y="124" fill="white" font-family="monospace" font-size="9" text-anchor="middle">after</text>
         </svg>
         <figcaption>state lives in the <b>parent</b></figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">After lifting state, App owns the input value, change handler, and filter. CountryList receives the resulting array as a prop and only renders it.</p>
       </figure>
     </div>
 
@@ -569,6 +595,17 @@ git commit -m "session-21: lift search state up to App and pass filtered countri
   document.addEventListener('DOMContentLoaded', function () {
     setupQuiz('pre');
     setupQuiz('post');
+
+    document.querySelectorAll('.concept-explanation-toggle').forEach(function (button) {
+      button.addEventListener('click', function () {
+        const card = button.closest('.concept-card');
+        const isRevealed = card.classList.toggle('explanation-revealed');
+        button.setAttribute('aria-expanded', String(isRevealed));
+        button.querySelector('.concept-explanation-hint').textContent = isRevealed
+          ? 'Click to hide'
+          : 'Click to reveal';
+      });
+    });
   });
 </script>
 <script src="../../notes-widget.js" defer></script>
