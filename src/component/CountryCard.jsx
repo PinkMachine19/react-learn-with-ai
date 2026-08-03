@@ -13,7 +13,7 @@ function CountryCard ({name, region}) {
 
   function handleClick(event) {
     console.log(`Action:${event.type},\n Target attr:`,event.target)
-    setCount(count + 1)
+    setCount(count+1)
   }
 
   function handleReset() {
