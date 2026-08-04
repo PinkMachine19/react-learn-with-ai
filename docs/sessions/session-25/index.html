@@ -1,46 +1,61 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Session 25 — Fake Async Responses</title>
-  <link rel="stylesheet" href="../../styles.css" />
-  <link rel="stylesheet" href="../../notes-widget.css" />
-  <link rel="stylesheet" href="../../bookmark-widget.css" />
-</head>
-<body>
-<nav>
-  <div class="container">
-    <a href="../../index.html" class="brand">⚛ React Learning</a>
-    <a href="../../syllabus/index.html">Syllabus</a>
-    <a href="../../sessions/index.html" class="active">Sessions</a>
-    <a href="../../quizzes/index.html">Quizzes</a>
-    <a href="../../labs/index.html">Labs</a>
-  </div>
-</nav>
-<main>
-  <div class="container">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
-      <span class="badge badge-layer">Layer 4</span>
-      <span class="badge badge-current">Session 25</span>
-      <span style="color:var(--text-muted);font-size:13px;">Mock Data</span>
-    </div>
-    <h1>Fake Async Responses</h1>
-    <div class="alert alert-warning">
-      <strong>Outline page.</strong> The full lesson doc (quizzes, SVGs, lab, commit checkpoint) is not written yet.
-      Use the syllabus outline below until this session is hydrated.
-    </div>
-    <div class="card">
-      <h2>From the syllabus</h2>
-      <p><strong>Core concept:</strong> Wrapping data in Promises to simulate real API timing</p>
-      <p><strong>Project milestone:</strong> Make countryService.js return Promise.resolve(data) with delay</p>
-      <p><strong>Status:</strong> <span class="badge badge-current">Available</span> — session page is open; complete prior sessions in order when doing the lab track.</p>
-    </div>
-    <p style="margin-top:24px;"><a href="../session-24/index.html">← Session 24</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-26/index.html">Session 26 →</a></p>
-  </div>
-</main>
-<script src="../../notes-widget.js" defer></script>
-<script src="../../bookmark-widget.js" defer></script>
-
-<div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;padding:6px 11px;border:1px solid rgba(255,92,168,.55);border-radius:999px;background:rgba(13,17,23,.88);color:#ff5ca8;font:800 11px/1 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,sans-serif;letter-spacing:.16em;pointer-events:none">DRAFT</div><aside class="academy-project-status" aria-label="Project status" style="max-width:920px;margin:40px auto 24px;padding:16px 24px;border:1px solid #30363d;border-left:4px solid #ff5ca8;border-radius:6px;background:#161b22;color:#8b949e;font:13px/1.6 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Helvetica,Arial,sans-serif"><strong style="color:#ff5ca8">Project Status:</strong> This course is part of an evolving personal engineering library. AI assisted with drafting and organization, but every lesson is intended to be reviewed, validated, and improved over time as I work through the material myself. Draft content should be treated as work in progress until marked as validated.</aside></body>
-</html>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Session 25 — Fake Async Responses</title><link rel="stylesheet" href="../../styles.css"/><link rel="stylesheet" href="../../notes-widget.css"/><link rel="stylesheet" href="../../bookmark-widget.css"/><style>
+.quiz-option{display:block;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;margin-bottom:8px;cursor:pointer;user-select:none}.quiz-option.selected{border-color:var(--accent)}.quiz-option.correct{border-color:var(--green);background:rgba(63,185,80,.1)}.quiz-option.wrong{border-color:var(--red);background:rgba(248,81,73,.1)}.quiz-question{margin-bottom:28px}.quiz-question p{font-weight:600}.question-num{color:var(--text-muted);font-size:12px}.quiz-result{display:none;padding:16px;margin-top:16px}.quiz-result.pass{border:1px solid var(--green);color:var(--green)}.quiz-result.fail{border:1px solid var(--red);color:var(--red)}.explanation{display:none;color:var(--text-muted);font-size:13px;padding:8px}.submit-btn{background:var(--accent);border:0;border-radius:var(--radius);padding:10px 22px;font-weight:700}.submit-btn:disabled{opacity:.4}.step{display:flex;gap:16px;margin-bottom:20px}.step-num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;display:flex;align-items:center;justify-content:center}.step-body{flex:1}.section-divider{border:0;border-top:2px solid var(--border);margin:40px 0}.checklist-item{display:flex;gap:10px;margin-bottom:10px}.concept-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}@media(max-width:760px){.concept-grid{grid-template-columns:repeat(2,1fr)}}.concept-card{background:#111;border:1px solid #2a2a2a;border-radius:8px;padding:8px}.concept-card svg{display:block;width:100%}.concept-card figcaption{text-align:center;font:10.5px monospace;color:#c9c9c9}.concept-card figcaption b{color:#ff5ca8}.concept-explanation-toggle{display:flex;justify-content:space-between;width:100%;margin-top:10px;padding:7px;border:1px solid #3a3a3a;border-radius:5px;background:#1a1a1a;color:#ff5ca8;font:700 10px monospace;text-transform:uppercase;cursor:pointer}.concept-explanation-hint{color:#8b949e;font-size:8px;font-weight:400;text-transform:none}.concept-explanation-text{font-size:11px;line-height:1.45;color:#d8d8d8;filter:blur(4px);user-select:none}.explanation-revealed .concept-explanation-text{filter:none;user-select:text}.explanation-revealed .concept-explanation-hint{color:#3fb950}
+</style></head><body><nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html" class="active">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../../labs/index.html">Labs</a></div></nav><main><div class="container">
+<div style="display:flex;gap:12px"><span class="badge badge-layer">Layer 4</span><span class="badge badge-current">Session 25</span><span style="color:var(--text-muted)">Mock Data</span></div><h1>Fake Async Responses</h1><p class="subtitle">Make the service behave more like a network API by returning Promises after a controlled delay.</p><div class="alert alert-info">Estimated time: 35–40 minutes</div>
+<div class="concept-grid">
+<figure class="concept-card"><svg viewBox="0 0 160 120"><rect x="18" y="38" width="45" height="30" fill="none" stroke="#58a6ff"/><text x="40" y="57" fill="#58a6ff" font-size="8" text-anchor="middle">call</text><path d="M65 53h50" stroke="#ff5ca8" stroke-dasharray="4 3"/><circle cx="132" cy="53" r="18" fill="none" stroke="#ff5ca8"/><text x="132" y="57" fill="#ff5ca8" font-size="8" text-anchor="middle">wait</text></svg><figcaption>results arrive <b>later</b></figcaption><button class="concept-explanation-toggle"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Network requests do not return data immediately. A delayed Promise lets local code practice that timing before a real API is connected.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 120"><rect x="35" y="26" width="90" height="55" rx="6" fill="none" stroke="#ff5ca8"/><text x="80" y="48" fill="#ff5ca8" font-size="9" text-anchor="middle">Promise</text><text x="80" y="68" fill="white" font-size="8" text-anchor="middle">pending → fulfilled</text></svg><figcaption>Promise represents a <b>future</b> value</figcaption><button class="concept-explanation-toggle"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">A Promise is an object representing work that may finish later. It begins pending and eventually fulfills with data or rejects with an error.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 120"><text x="80" y="35" fill="#58a6ff" font-size="10" text-anchor="middle">await service()</text><path d="M80 45v28" stroke="white"/><text x="80" y="92" fill="#3fb950" font-size="9" text-anchor="middle">countries</text></svg><figcaption><b>await</b> unwraps success</figcaption><button class="concept-explanation-toggle"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Inside an async function, await pauses that function until the Promise settles and then gives back its fulfilled value.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 120"><path d="M25 32h110v58H25z" fill="none" stroke="#f85149"/><text x="80" y="52" fill="#f85149" font-size="9" text-anchor="middle">try</text><text x="80" y="73" fill="white" font-size="9" text-anchor="middle">catch errors</text></svg><figcaption>async work can <b>fail</b></figcaption><button class="concept-explanation-toggle"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Promise rejection behaves like a thrown error when awaited. try/catch makes failure visible and prepares the same code shape used with real HTTP requests.</p></figure>
+</div>
+<hr class="section-divider"/><h2>1. Learning Objectives</h2><div class="card"><ul><li>Describe pending, fulfilled, and rejected Promise states</li><li>Create a reusable delay helper with setTimeout</li><li>Convert synchronous service functions to async functions</li><li>Consume a service Promise with await and try/catch</li><li>Explain what simulated latency does and does not test</li></ul></div>
+<h2>2. Pre-Coding Quiz</h2><p>Need 4/5 to proceed.</p><div id="pre-quiz">
+<div class="quiz-question" data-question="0" data-answer="c"><div class="question-num">Question 1 of 5</div><p>An async function always returns:</p><label class="quiz-option" data-val="a">An array</label><label class="quiz-option" data-val="b">undefined</label><label class="quiz-option" data-val="c">A Promise</label><label class="quiz-option" data-val="d">JSX</label><div class="explanation">Even returning a plain value fulfills a Promise with that value.</div></div>
+<div class="quiz-question" data-question="1" data-answer="a"><div class="question-num">Question 2 of 5</div><p>await may be used inside:</p><label class="quiz-option" data-val="a">An async function</label><label class="quiz-option" data-val="b">CSS</label><label class="quiz-option" data-val="c">JSON</label><label class="quiz-option" data-val="d">A className</label><div class="explanation">This lesson uses await inside an async function.</div></div>
+<div class="quiz-question" data-question="2" data-answer="d"><div class="question-num">Question 3 of 5</div><p>setTimeout provides:</p><label class="quiz-option" data-val="a">Country data</label><label class="quiz-option" data-val="b">A network call</label><label class="quiz-option" data-val="c">React state</label><label class="quiz-option" data-val="d">Delayed callback timing</label><div class="explanation">We wrap that callback timing in a Promise.</div></div>
+<div class="quiz-question" data-question="3" data-answer="b"><div class="question-num">Question 4 of 5</div><p>A rejected awaited Promise is handled with:</p><label class="quiz-option" data-val="a">map</label><label class="quiz-option" data-val="b">try/catch</label><label class="quiz-option" data-val="c">CSS</label><label class="quiz-option" data-val="d">filter</label><div class="explanation">await surfaces rejection as a thrown error.</div></div>
+<div class="quiz-question" data-question="4" data-answer="c"><div class="question-num">Question 5 of 5</div><p>Does a fake delay make an HTTP request?</p><label class="quiz-option" data-val="a">Always</label><label class="quiz-option" data-val="b">Only in Vite</label><label class="quiz-option" data-val="c">No</label><label class="quiz-option" data-val="d">Only after 300ms</label><div class="explanation">It simulates timing while data remains local.</div></div><button class="submit-btn" disabled>Submit Pre-Quiz</button><div class="quiz-result" id="pre-result"></div></div>
+<hr class="section-divider"/><h2>3. The Concept — Same Data, Different Timing</h2><p>Session 24 returned arrays and objects immediately. A real API returns a Promise, so callers must wait. We can model that behavior with one helper:</p><pre><code>function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}</code></pre><h3>Convert the service operation</h3><pre><code>export async function fetchAllCountries() {
+  await delay(300);
+  return [...countries];
+}</code></pre><p>The <code>async</code> keyword guarantees a Promise return. The delay keeps it pending briefly. The final return fulfills it with a fresh array.</p><h3>Consume it safely</h3><pre><code>async function run() {
+  try {
+    const countries = await fetchAllCountries();
+    console.log(countries);
+  } catch (error) {
+    console.error(error.message);
+  }
+}</code></pre><div class="alert alert-warning"><strong>Common mistake:</strong> logging <code>fetchAllCountries()</code> without await logs the Promise, not the resolved array.</div>
+<hr class="section-divider"/><h2>4. Lab</h2><div class="alert alert-success"><strong>Lab objective:</strong> Convert <code>countryService.js</code> to return delayed Promises and verify the functions with async/await and error handling.</div>
+<div class="step"><div class="step-num">1</div><div class="step-body"><p><strong>Add delay</strong></p><pre><code>function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}</code></pre></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body"><p><strong>Make all-countries asynchronous</strong></p><pre><code>export async function fetchAllCountries() {
+  await delay(300);
+  return [...countries];
+}</code></pre></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-body"><p><strong>Add asynchronous queries</strong></p><pre><code>export async function fetchCountryById(id) {
+  await delay(150);
+  const country = countries.find(c => c.id === id);
+  if (!country) throw new Error(`Country ${id} not found`);
+  return country;
+}
+export async function fetchCountriesByRegion(region) {
+  await delay(200);
+  return countries.filter(c => c.region === region);
+}</code></pre><p>An empty region result is a valid empty array, so do not test it with <code>if (!results)</code>; empty arrays are truthy.</p></div></div>
+<div class="step"><div class="step-num">4</div><div class="step-body"><p><strong>Verify success and failure</strong></p><p>Use an async test function with try/catch. Await all countries, one known ID, one region, and an unknown ID. Confirm the unknown ID reaches catch only after its delay.</p></div></div>
+<h2>5. Expected Files Changed</h2><div class="table-wrap"><table><tr><th>File</th><th>Action</th><th>Why</th></tr><tr><td><code>src/services/countryService.js</code></td><td>Updated</td><td>Delayed Promise-returning operations</td></tr><tr><td><code>docs/sessions/session-25/index.html</code></td><td>Updated</td><td>Full lesson</td></tr></table></div>
+<h2>6. Commit Checkpoint</h2><pre><code>git add src/services/countryService.js docs/sessions/session-25/index.html
+git commit -m "session-25: simulate asynchronous country responses"</code></pre>
+<h2>7. Code Review Checklist</h2><div class="card"><div class="checklist-item"><input type="checkbox"/><label>delay resolves after the supplied milliseconds</label></div><div class="checklist-item"><input type="checkbox"/><label>Every fetch function is async and awaits delay</label></div><div class="checklist-item"><input type="checkbox"/><label>Callers await the Promise before using data</label></div><div class="checklist-item"><input type="checkbox"/><label>Unknown IDs reject with a useful Error</label></div><div class="checklist-item"><input type="checkbox"/><label>An empty region correctly resolves to []</label></div></div>
+<h2>8. Post-Coding Quiz</h2><div id="post-quiz">
+<div class="quiz-question" data-question="0" data-answer="b"><div class="question-num">Question 1 of 5</div><p>Before delay finishes, the Promise is:</p><label class="quiz-option" data-val="a">fulfilled</label><label class="quiz-option" data-val="b">pending</label><label class="quiz-option" data-val="c">an array</label><label class="quiz-option" data-val="d">undefined</label><div class="explanation">Pending means not yet settled.</div></div>
+<div class="quiz-question" data-question="1" data-answer="d"><div class="question-num">Question 2 of 5</div><p>What does await return after success?</p><label class="quiz-option" data-val="a">The timer ID</label><label class="quiz-option" data-val="b">Another async keyword</label><label class="quiz-option" data-val="c">Always undefined</label><label class="quiz-option" data-val="d">The fulfilled value</label><div class="explanation">await unwraps the successful value.</div></div>
+<div class="quiz-question" data-question="2" data-answer="a"><div class="question-num">Question 3 of 5</div><p>Why is if (!results) wrong for an empty filtered array?</p><label class="quiz-option" data-val="a">[] is truthy</label><label class="quiz-option" data-val="b">filter throws</label><label class="quiz-option" data-val="c">Promises are strings</label><label class="quiz-option" data-val="d">Arrays have no length</label><div class="explanation">Check results.length if emptiness is an error.</div></div>
+<div class="quiz-question" data-question="3" data-answer="c"><div class="question-num">Question 4 of 5</div><p>What stays local in this session?</p><label class="quiz-option" data-val="a">The browser</label><label class="quiz-option" data-val="b">The Promise</label><label class="quiz-option" data-val="c">The country data</label><label class="quiz-option" data-val="d">The error</label><div class="explanation">Only API-like timing is simulated.</div></div>
+<div class="quiz-question" data-question="4" data-answer="b"><div class="question-num">Question 5 of 5</div><p>The biggest caller-side change is:</p><label class="quiz-option" data-val="a">Use map twice</label><label class="quiz-option" data-val="b">Await the service result</label><label class="quiz-option" data-val="c">Import CSS</label><label class="quiz-option" data-val="d">Remove errors</label><div class="explanation">The service now returns a Promise instead of immediate data.</div></div><button class="submit-btn" disabled>Submit Post-Quiz</button><div class="quiz-result" id="post-result"></div></div>
+<h2>9. Reflection Questions</h2><div class="card"><ol><li>What behavior does the delay realistically simulate?</li><li>Why should an unknown ID reject while an unmatched region can return []?</li><li>What UI states become necessary once data is asynchronous?</li></ol></div><h2>10. What Breaks If This Code Is Removed?</h2><div class="card"><ul><li>Without async, callers never practice waiting for data.</li><li>Without await, code tries to use a Promise as if it were the result.</li><li>Without try/catch, rejected operations become unhandled failures.</li></ul></div><h2>11. What Was Learned Today</h2><div class="card" style="border-color:var(--green)"><p><strong>Delayed Promises let a local service reproduce the timing and error-handling shape of a future API.</strong></p><p><strong>Next:</strong> <a href="../session-26/index.html">Session 26 — Designing Against a Contract</a>.</p></div><p><a href="../session-24/index.html">← Session 24</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-26/index.html">Session 26 →</a></p>
+</div></main><script src="../../quiz.js" defer></script><script>document.addEventListener('DOMContentLoaded',()=>{setupQuiz('pre');setupQuiz('post');document.querySelectorAll('.concept-explanation-toggle').forEach(button=>button.addEventListener('click',()=>{const card=button.closest('.concept-card');const shown=card.classList.toggle('explanation-revealed');button.setAttribute('aria-expanded',String(shown));button.querySelector('.concept-explanation-hint').textContent=shown?'Click to hide':'Click to reveal'}))})</script><script src="../../notes-widget.js" defer></script><script src="../../bookmark-widget.js" defer></script><div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;color:#ff5ca8">DRAFT</div></body></html>
