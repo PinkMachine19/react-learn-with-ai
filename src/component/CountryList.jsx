@@ -52,7 +52,7 @@ show cards (still written manually — map comes in Session 14).
 import CountryCard from './CountryCard';
 
 function CountryList({countries}) {
-  
+
 
   if (countries.length === 0) {
     return <p className='empty-message'>No countries found</p>
@@ -60,6 +60,7 @@ function CountryList({countries}) {
 
   return (
   <section className='country-list'>
+   
     {countries.map(c => (
       <CountryCard key={c.id} name={c.name} region={c.region}/>
     ))}

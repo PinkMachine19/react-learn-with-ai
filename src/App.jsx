@@ -7,16 +7,20 @@ import { useState } from 'react';
 
 function App() {
   const [searchTerm ,setSearchTerm] = useState('')
+  
 
   function handleSearchTerm(event) {
     setSearchTerm(event.target.value)
   }
 
   const filterdCountries =  countries.filter(c => 
-    c.name.includes(searchTerm)
+    c.name.toLowerCase().includes(searchTerm.toLowerCase())
   )
+  
+  const resultCount = filterdCountries.length
 
   return (
+    
     <div>
       <h1>Countries</h1>
       <input
@@ -25,6 +29,7 @@ function App() {
          onChange={handleSearchTerm}
          placeholder='Search Countries.....'
       />
+      <p>{resultCount} {resultCount === 1 ? 'result' : 'results'}</p>
       <CountryList countries={filterdCountries} />
     </div>
   );
