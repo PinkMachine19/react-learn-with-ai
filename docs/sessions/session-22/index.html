@@ -38,6 +38,12 @@
     .concept-card svg{display:block;width:100%;height:auto;}
     .concept-card figcaption{margin-top:6px;font-family:monospace;font-size:10.5px;line-height:1.3;color:#c9c9c9;text-align:center;}
     .concept-card figcaption b{color:#ff5ca8;}
+    .concept-explanation-toggle{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;margin-top:10px;padding:7px 8px;border:1px solid #3a3a3a;border-radius:5px;background:#1a1a1a;color:#ff5ca8;font-family:monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;}
+    .concept-explanation-toggle:hover,.concept-explanation-toggle:focus-visible{border-color:#ff5ca8;outline:none;}
+    .concept-explanation-hint{color:#8b949e;font-size:8px;font-weight:400;letter-spacing:0;text-transform:none;}
+    .concept-explanation-text{margin:7px 2px 0;font-size:11px;line-height:1.45;color:#d8d8d8;filter:blur(4px);user-select:none;transition:filter .2s ease;}
+    .concept-card.explanation-revealed .concept-explanation-text{filter:none;user-select:text;}
+    .concept-card.explanation-revealed .concept-explanation-hint{color:#3fb950;}
   </style>
 </head>
 <body>
@@ -89,6 +95,8 @@
           <text x="80" y="130" fill="white" font-family="monospace" font-size="9" text-anchor="middle">two things to update</text>
         </svg>
         <figcaption>the <b>anti-pattern</b>: two useStates</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">Storing both searchTerm and filteredCountries in state creates two values that describe the same information. Every change must update both correctly, adding unnecessary synchronization work.</p>
       </figure>
 
       <!-- 2. How it drifts: forgot one update, mismatch -->
@@ -104,6 +112,8 @@
           <text x="80" y="132" fill="white" font-family="monospace" font-size="9" text-anchor="middle">forgot to update B</text>
         </svg>
         <figcaption>one <b>missed</b> update = drift</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">If searchTerm changes but the stored filtered list is not updated in the same path, the two state values disagree. The screen can then show results for an older search.</p>
       </figure>
 
       <!-- 3. The rule: if you can calculate it, don't store it -->
@@ -118,6 +128,8 @@
           <text x="80" y="136" fill="white" font-family="monospace" font-size="9" text-anchor="middle">don't store it</text>
         </svg>
         <figcaption>if you <b>can</b> calculate it...</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">When a value can be calculated entirely from current props or state, compute it during render as a normal variable. Do not create another useState just to hold the calculation.</p>
       </figure>
 
       <!-- 4. What App already does: const, fresh every render -->
@@ -129,6 +141,8 @@
           <text x="80" y="128" fill="#8b949e" font-family="monospace" font-size="7" text-anchor="middle">recomputed every render</text>
         </svg>
         <figcaption>already <b>correct</b> since S21</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">Session 21 already computes filteredCountries with const and filter(). App runs again whenever searchTerm changes, so the filtered array is rebuilt from the newest value on every render.</p>
       </figure>
 
       <!-- 5. Case-sensitivity bug: Kenya vs kenya -->
@@ -141,6 +155,8 @@
           <text x="80" y="130" fill="white" font-family="monospace" font-size="9" text-anchor="middle">case mismatch → no match</text>
         </svg>
         <figcaption>real bug: <b>case</b> sensitivity</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">includes() compares uppercase and lowercase letters exactly, so "kenya" does not match "Kenya". Converting both the country name and search term to lowercase makes searching case-insensitive.</p>
       </figure>
 
       <!-- 6. resultCount derived from filteredCountries -->
@@ -155,6 +171,8 @@
           <text x="80" y="134" fill="white" font-family="monospace" font-size="9" text-anchor="middle">derived from derived</text>
         </svg>
         <figcaption>resultCount = <b>.length</b></figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">resultCount is derived from another derived value: filteredCountries.length. It should also be a plain const because its correct value can always be calculated immediately.</p>
       </figure>
 
       <!-- 7. What IS real state: only searchTerm, a lone star -->
@@ -168,6 +186,8 @@
           <text x="80" y="140" fill="white" font-family="monospace" font-size="9" text-anchor="middle">everything else derives</text>
         </svg>
         <figcaption>only <b>searchTerm</b> is real</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">searchTerm represents independent information supplied by the user, so it belongs in state. The filtered list and result count follow from that one source and do not need state of their own.</p>
       </figure>
 
       <!-- 8. Next: Layer 4 gate cleared -->
@@ -178,6 +198,8 @@
           <text x="80" y="128" fill="white" font-family="monospace" font-size="9" text-anchor="middle">Layer 3 gate cleared</text>
         </svg>
         <figcaption>next: <b>Layer 4</b>, mock data</figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">Recognizing independent state and deriving everything else completes Layer 3. Layer 4 moves into data workflows, beginning with why mock data is useful before connecting an API.</p>
       </figure>
 
     </div>
@@ -307,6 +329,8 @@ function handleSearchChange(event) {
           <text x="80" y="122" fill="white" font-family="monospace" font-size="9" text-anchor="middle">can go stale</text>
         </svg>
         <figcaption>stored — <b>risky</b></figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">A calculated value stored with useState persists between renders and can become stale whenever an update path forgets to synchronize it with its source values.</p>
       </figure>
       <figure class="concept-card">
         <svg viewBox="0 0 160 130" xmlns="http://www.w3.org/2000/svg">
@@ -316,6 +340,8 @@ function handleSearchChange(event) {
           <text x="80" y="122" fill="white" font-family="monospace" font-size="9" text-anchor="middle">always correct</text>
         </svg>
         <figcaption>derived — <b>safe</b></figcaption>
+        <button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button>
+        <p class="concept-explanation-text">A derived const is recalculated whenever the component renders. Because it always uses the current source state, there is no old copy left behind that can drift out of sync.</p>
       </figure>
     </div>
 
@@ -516,6 +542,17 @@ git commit -m "session-22: derive a case-insensitive filter and result count, no
   document.addEventListener('DOMContentLoaded', function () {
     setupQuiz('pre');
     setupQuiz('post');
+
+    document.querySelectorAll('.concept-explanation-toggle').forEach(function (button) {
+      button.addEventListener('click', function () {
+        const card = button.closest('.concept-card');
+        const isRevealed = card.classList.toggle('explanation-revealed');
+        button.setAttribute('aria-expanded', String(isRevealed));
+        button.querySelector('.concept-explanation-hint').textContent = isRevealed
+          ? 'Click to hide'
+          : 'Click to reveal';
+      });
+    });
   });
 </script>
 <script src="../../notes-widget.js" defer></script>
