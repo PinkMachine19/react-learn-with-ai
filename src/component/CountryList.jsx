@@ -48,29 +48,18 @@ show cards (still written manually — map comes in Session 14).
 // already-filtered list down as the countries prop. This component only
 // renders what it's given; it doesn't know or care that it's filtered.
 
-import { useState } from 'react';
-import countries from '../data/countries';
+
 import CountryCard from './CountryCard';
 
-function CountryList() {
-  const [searchTerm, setSearchTerm] = useState('');
+function CountryList({countries}) {
+  
 
   if (countries.length === 0) {
     return <p className='empty-message'>No countries found</p>
   }
 
-  function handleSearchChange(event) {
-  setSearchTerm(event.target.value);
-}
-
   return (
   <section className='country-list'>
-    <input
-      type="text"
-      value={searchTerm}
-      onChange={handleSearchChange}
-      placeholder="Search countries..."
-    />
     {countries.map(c => (
       <CountryCard key={c.id} name={c.name} region={c.region}/>
     ))}
