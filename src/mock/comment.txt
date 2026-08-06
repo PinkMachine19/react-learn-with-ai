@@ -1,0 +1,1 @@
+"_comment": "Create mock/countries.json at the repository root. This fixture is intentionally separate from src/data/countries.js: it documents the future external contract.",
