@@ -1,46 +1,87 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Session 31 — Testing the Service Layer</title>
-  <link rel="stylesheet" href="../../styles.css" />
-  <link rel="stylesheet" href="../../notes-widget.css" />
-  <link rel="stylesheet" href="../../bookmark-widget.css" />
-</head>
-<body>
-<nav>
-  <div class="container">
-    <a href="../../index.html" class="brand">⚛ React Learning</a>
-    <a href="../../syllabus/index.html">Syllabus</a>
-    <a href="../../sessions/index.html" class="active">Sessions</a>
-    <a href="../../quizzes/index.html">Quizzes</a>
-    <a href="../../labs/index.html">Labs</a>
-  </div>
-</nav>
-<main>
-  <div class="container">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
-      <span class="badge badge-layer">Layer 5</span>
-      <span class="badge badge-gate">Session 31</span>
-      <span style="color:var(--text-muted);font-size:13px;">Testing</span>
-    </div>
-    <h1>Testing the Service Layer</h1>
-    <div class="alert alert-warning">
-      <strong>Outline page.</strong> The full lesson doc (quizzes, SVGs, lab, commit checkpoint) is not written yet.
-      Use the syllabus outline below until this session is hydrated.
-    </div>
-    <div class="card">
-      <h2>From the syllabus</h2>
-      <p><strong>Core concept:</strong> vi.mock, testing async functions, asserting resolved shape</p>
-      <p><strong>Project milestone:</strong> Test that countryService.getAll() resolves with correct shape</p>
-      <p><strong>Status:</strong> <span class="badge badge-gate">Layer gate</span> — session page is open; complete prior sessions in order when doing the lab track.</p>
-    </div>
-    <p style="margin-top:24px;"><a href="../session-30/index.html">← Session 30</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-32/index.html">Session 32 →</a></p>
-  </div>
-</main>
-<script src="../../notes-widget.js" defer></script>
-<script src="../../bookmark-widget.js" defer></script>
-
-<div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;padding:6px 11px;border:1px solid rgba(255,92,168,.55);border-radius:999px;background:rgba(13,17,23,.88);color:#ff5ca8;font:800 11px/1 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,sans-serif;letter-spacing:.16em;pointer-events:none">DRAFT</div><aside class="academy-project-status" aria-label="Project status" style="max-width:920px;margin:40px auto 24px;padding:16px 24px;border:1px solid #30363d;border-left:4px solid #ff5ca8;border-radius:6px;background:#161b22;color:#8b949e;font:13px/1.6 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Helvetica,Arial,sans-serif"><strong style="color:#ff5ca8">Project Status:</strong> This course is part of an evolving personal engineering library. AI assisted with drafting and organization, but every lesson is intended to be reviewed, validated, and improved over time as I work through the material myself. Draft content should be treated as work in progress until marked as validated.</aside></body>
-</html>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Session 31 — Testing the Service Layer</title><link rel="stylesheet" href="../../styles.css"/><link rel="stylesheet" href="../../notes-widget.css"/><link rel="stylesheet" href="../../bookmark-widget.css"/><link rel="stylesheet" href="../../quiz-explain-modal.css"/><link rel="stylesheet" href="../../session-full.css"/></head><body><nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html" class="active">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../../labs/index.html">Labs</a></div></nav><main><div class="container">
+<div style="display:flex;gap:12px"><span class="badge badge-layer">Layer 5</span><span class="badge badge-gate">Session 31 — Layer 5 Gate</span><span style="color:var(--text-muted)">Testing</span></div><h1>Testing the Service Layer</h1><p class="subtitle">Test asynchronous service contracts independently: control imported country data, await Promise outcomes, assert returned shapes, and distinguish an empty collection from a rejected singular lookup.</p><div class="alert alert-warning"><strong>Layer 5 gate:</strong> score ≥ 80% on the post-quiz before continuing.</div>
+<svg class="hero-diagram" viewBox="0 0 680 230"><rect width="680" height="230" rx="8" fill="#111"/><text x="340" y="28" fill="white" font-size="12" text-anchor="middle">CONTROL INPUT → CALL SERVICE → ASSERT PROMISE CONTRACT</text><rect x="35" y="70" width="150" height="90" fill="none" stroke="#58a6ff" stroke-width="2"/><text x="110" y="104" fill="#58a6ff" font-size="9" text-anchor="middle">vi.mock(data)</text><text x="110" y="132" fill="white" font-size="8" text-anchor="middle">known fixture</text><rect x="265" y="60" width="150" height="110" fill="none" stroke="#ff5ca8" stroke-width="2"/><text x="340" y="104" fill="#ff5ca8" font-size="9" text-anchor="middle">fetchAllCountries()</text><text x="340" y="132" fill="white" font-size="8" text-anchor="middle">Promise</text><rect x="495" y="70" width="150" height="90" fill="none" stroke="#3fb950" stroke-width="2"/><text x="570" y="104" fill="#3fb950" font-size="9" text-anchor="middle">resolves</text><text x="570" y="132" fill="white" font-size="8" text-anchor="middle">Country[] shape</text><path d="M185,115 H265 M415,115 H495" stroke="white"/></svg>
+<div class="concept-grid">
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="24" width="120" height="28" fill="none" stroke="#58a6ff"/><text x="80" y="42" fill="#58a6ff" font-size="8" text-anchor="middle">vi.mock(data module)</text><line x1="80" y1="52" x2="80" y2="80" stroke="white"/><rect x="20" y="82" width="120" height="28" fill="none" stroke="#3fb950"/><text x="80" y="100" fill="#3fb950" font-size="8" text-anchor="middle">known Country[]</text></svg><figcaption>mock the <b>dependency boundary</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">A mocked data module gives the service deterministic input without coupling assertions to the full project fixture.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="24" fill="white" font-size="8" text-anchor="middle">Promise states</text><circle cx="35" cy="70" r="20" fill="none" stroke="#58a6ff"/><text x="35" y="75" fill="#58a6ff" font-size="7" text-anchor="middle">pending</text><circle cx="80" cy="70" r="20" fill="none" stroke="#3fb950"/><text x="80" y="75" fill="#3fb950" font-size="7" text-anchor="middle">fulfilled</text><circle cx="125" cy="70" r="20" fill="none" stroke="#f85149"/><text x="125" y="75" fill="#f85149" font-size="7" text-anchor="middle">rejected</text></svg><figcaption>assert both <b>success + failure</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Async contracts include fulfilled values and rejection behavior, not only the fact that a Promise exists.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="28" width="120" height="30" fill="none" stroke="#3fb950"/><text x="80" y="47" fill="#3fb950" font-size="8" text-anchor="middle">await expect(promise)</text><text x="80" y="82" fill="white" font-size="8" text-anchor="middle">.resolves</text><text x="80" y="108" fill="#58a6ff" font-size="8" text-anchor="middle">value assertion</text></svg><figcaption>await the <b>matcher chain</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Awaiting the expectation ensures Vitest waits for the Promise outcome and records failures in the test.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="28" width="120" height="30" fill="none" stroke="#f85149"/><text x="80" y="47" fill="#f85149" font-size="8" text-anchor="middle">.rejects.toThrow</text><text x="80" y="82" fill="white" font-size="8" text-anchor="middle">unknown id</text><text x="80" y="108" fill="#ff5ca8" font-size="8" text-anchor="middle">error contract</text></svg><figcaption>rejection is <b>observable behavior</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">A missing singular entity can be represented as a rejected Promise with a meaningful error message.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="24" fill="white" font-size="8" text-anchor="middle">region has no matches</text><rect x="25" y="45" width="110" height="34" fill="none" stroke="#3fb950"/><text x="80" y="67" fill="#3fb950" font-size="11" text-anchor="middle">[]</text><text x="80" y="110" fill="#58a6ff" font-size="8" text-anchor="middle">valid collection result</text></svg><figcaption>empty collection is <b>not failure</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">A collection query can successfully contain zero elements; this differs from a failed operation.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="24" width="120" height="28" fill="none" stroke="#58a6ff"/><text x="80" y="42" fill="#58a6ff" font-size="8" text-anchor="middle">source array</text><path d="M80,52 V80" stroke="white"/><rect x="20" y="82" width="120" height="28" fill="none" stroke="#3fb950"/><text x="80" y="100" fill="#3fb950" font-size="8" text-anchor="middle">resolved copy</text></svg><figcaption>test <b>copy semantics</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">When the contract promises a new outer array, reference inequality can verify callers cannot reorder the service source directly.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="24" fill="white" font-size="8" text-anchor="middle">fake timers</text><rect x="20" y="45" width="120" height="28" fill="none" stroke="#ff5ca8"/><text x="80" y="63" fill="#ff5ca8" font-size="8" text-anchor="middle">advance 300 ms</text><text x="80" y="106" fill="#3fb950" font-size="8" text-anchor="middle">no real waiting</text></svg><figcaption>control <b>time</b> deliberately</figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Fake timers can make delayed tests fast and deterministic, but timers must be advanced before awaiting the pending service Promise.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="26" width="120" height="28" fill="none" stroke="#58a6ff"/><text x="80" y="44" fill="#58a6ff" font-size="8" text-anchor="middle">toMatchObject</text><text x="80" y="78" fill="white" font-size="8" text-anchor="middle">id · name · region</text><text x="80" y="108" fill="#3fb950" font-size="8" text-anchor="middle">shape over full fixture</text></svg><figcaption>assert the <b>contract shape</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Shape assertions focus on fields promised by the service instead of copying every fixture value into the test.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="24" fill="white" font-size="8" text-anchor="middle">Layer 5 gate</text><circle cx="80" cy="70" r="38" fill="none" stroke="#3fb950" stroke-width="2"/><path d="M58,70 l14,14 30,-34" fill="none" stroke="#3fb950" stroke-width="4"/><text x="80" y="128" fill="white" font-size="8" text-anchor="middle">behavior protected</text></svg><figcaption>UI + service tests <b>complete layer</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">The layer now protects initial output, interaction behavior, and asynchronous data contracts at appropriate boundaries.</p></figure>
+</div>
+<hr class="section-divider"/><h2>1. Learning Objectives</h2><div class="card"><ul><li>Mock an imported data dependency with <code>vi.mock</code></li><li>Await resolved and rejected Promise assertions</li><li>Assert Country array shape without duplicating the fixture</li><li>Distinguish empty collection success from singular lookup failure</li><li>Use fake timers without racing pending Promises</li></ul></div>
+<h2>2. Pre-Coding Quiz</h2><p>Need 4/5 to proceed.</p><div id="pre-quiz">
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 1 of 5</div><p>Why mock the imported country data in a service unit test?</p>
+<label class="quiz-option" data-val="a">To make every service function synchronous and remove its documented delay</label>
+<label class="quiz-option" data-val="b">To give the service deterministic dependency input</label>
+<label class="quiz-option" data-val="c">To replace Vitest’s Promise assertions</label>
+<label class="quiz-option" data-val="d">To render CountryCard inside the service</label>
+<div class="explanation">Controlled dependency input isolates service behavior and avoids coupling expectations to the full fixture.</div></div>
+<div class="quiz-question" data-answer="d"><div class="question-num">Question 2 of 5</div><p>Which assertion correctly checks a rejected lookup Promise?</p>
+<label class="quiz-option" data-val="a"><code>expect(service()).toThrow()</code></label>
+<label class="quiz-option" data-val="b"><code>expect(await service()).toRejectWithMatchingServiceError()</code></label>
+<label class="quiz-option" data-val="c"><code>await expect(service()).toBeError()</code></label>
+<label class="quiz-option" data-val="d"><code>await expect(service()).rejects.toThrow()</code></label>
+<div class="explanation">The rejects chain unwraps the rejected Promise and applies the error matcher.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 3 of 5</div><p>What should a no-match region query resolve to?</p>
+<label class="quiz-option" data-val="a">An empty array representing zero matches</label>
+<label class="quiz-option" data-val="b">Undefined representing a missing entity</label>
+<label class="quiz-option" data-val="c">A rejected Promise for invalid rendering</label>
+<label class="quiz-option" data-val="d">The first country in the source array</label>
+<div class="explanation">Collection queries can successfully return zero members while preserving an array return type.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 4 of 5</div><p>With fake timers enabled, a service Promise waits on <code>setTimeout</code>. What must happen before awaiting its result?</p>
+<label class="quiz-option" data-val="a">The mocked data module must be permanently restored before the timer callback executes</label>
+<label class="quiz-option" data-val="b">CountryCard must render the pending Promise</label>
+<label class="quiz-option" data-val="c">The fake clock must advance through the delay</label>
+<label class="quiz-option" data-val="d">The Promise must be converted into an array</label>
+<div class="explanation">The timeout callback cannot run until the controlled clock advances.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 5 of 5</div><p>Why avoid asserting the entire production fixture in this service test?</p>
+<label class="quiz-option" data-val="a">Vitest cannot compare arrays containing object records with nested primitive properties</label>
+<label class="quiz-option" data-val="b">Fixture content changes could break a test unrelated to service behavior</label>
+<label class="quiz-option" data-val="c">Mocked modules cannot export default arrays</label>
+<label class="quiz-option" data-val="d">Service tests must assert DOM roles instead</label>
+<div class="explanation">Controlled minimal data keeps the test focused on service transformation and contract behavior.</div></div><button class="submit-btn" disabled>Submit Pre-Quiz</button><div class="quiz-result" id="pre-result"></div></div>
+<hr class="section-divider"/><h2>3. The Concept — Test the Boundary, Control the Dependency</h2><pre><code>vi.mock('../data/countries.js', () =&gt; ({
+  default: [
+    { id: 1, name: 'Japan', region: 'Asia', population: 1 }
+  ]
+}));</code></pre><p>Vitest hoists <code>vi.mock</code>, so values used by its factory should be declared inside the factory (or with <code>vi.hoisted</code>). Use the service’s actual exported names—currently <code>fetchAllCountries</code>, <code>fetchAllById</code>, and <code>fetchAllByRegion</code>—rather than inventing a generic <code>getAll</code> API.</p>
+<hr class="section-divider"/><h2>4. Lab</h2><div class="alert alert-success"><strong>Lab objective:</strong> test the country service’s fulfilled collections, id rejection, filtering, and returned shape.</div><div class="step"><div class="step-num">1</div><div class="step-body"><p>Create <code>src/services/countryServices.test.js</code> and mock the data module with two known countries.</p></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><p>Assert <code>fetchAllCountries()</code> resolves to two objects matching the Country contract.</p></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><p>Assert a known id resolves and an unknown id rejects with a meaningful message.</p></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><p>Assert a known region returns matches and an unknown region resolves to an empty array.</p></div></div><div class="step"><div class="step-num">5</div><div class="step-body"><p>Optionally use fake timers: start the Promise, advance time with <code>vi.advanceTimersByTimeAsync</code>, then await the assertion. Restore real timers after each test.</p></div></div>
+<h2>5. Expected Files Changed</h2><div class="card"><code>src/services/countryServices.test.js</code> — learner creates service tests. No service implementation change is required unless a test exposes a genuine contract bug.</div><h2>6. Commit Checkpoint</h2><pre><code>git add src/services/countryServices.test.js
+git commit -m "session-31: test asynchronous country service contracts"</code></pre><h2>7. Code Review Checklist</h2><div class="card"><div class="checklist-item"><input type="checkbox"/><label>Mock input is minimal and deterministic</label></div><div class="checklist-item"><input type="checkbox"/><label>Promise assertions are awaited</label></div><div class="checklist-item"><input type="checkbox"/><label>Empty collection and rejection semantics are distinct</label></div><div class="checklist-item"><input type="checkbox"/><label>Assertions focus on the documented Country shape</label></div></div>
+<hr class="section-divider"/><h2>8. Post-Coding Quiz</h2><div id="post-quiz" data-pass-post="Layer 5 complete. Proceed after ≥ 80%.">
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 1 of 5</div><p>A mocked source contains two countries, but get-all resolves to the same array reference. Which contract concern can a test expose?</p>
+<label class="quiz-option" data-val="a">Whether each returned country renders as an h2 inside CountryCard output</label>
+<label class="quiz-option" data-val="b">Whether user-event can click the array</label>
+<label class="quiz-option" data-val="c">Whether callers can mutate service-owned array order</label>
+<label class="quiz-option" data-val="d">Whether jsdom defines localStorage</label>
+<div class="explanation">Reference identity matters when the service promises a protective outer-array copy.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 2 of 5</div><p>Why await <code>expect(promise).resolves</code> rather than only creating the expectation?</p>
+<label class="quiz-option" data-val="a">So the test waits for and records the asynchronous outcome</label>
+<label class="quiz-option" data-val="b">So the Promise becomes a synchronous service function</label>
+<label class="quiz-option" data-val="c">So the mocked module restores itself before execution</label>
+<label class="quiz-option" data-val="d">So React commits a component DOM update after the asynchronous service resolution</label>
+<div class="explanation">Without awaiting or returning the chain, a test can finish before the assertion settles.</div></div>
+<div class="quiz-question" data-answer="d"><div class="question-num">Question 3 of 5</div><p>A region filter returns <code>[]</code>. Which expectation matches the collection contract?</p>
+<label class="quiz-option" data-val="a"><code>await expect(call).rejects.toThrow()</code></label>
+<label class="quiz-option" data-val="b"><code>await expect(call).resolves.toBeUndefined()</code></label>
+<label class="quiz-option" data-val="c"><code>await expect(call).resolves.toBeNull()</code></label>
+<label class="quiz-option" data-val="d"><code>await expect(call).resolves.toEqual([])</code></label>
+<div class="explanation">No matches is a successful empty collection, not an operational failure.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 4 of 5</div><p>A test mocks the service itself while claiming to test service filtering. What is the problem?</p>
+<label class="quiz-option" data-val="a">Vitest never permits an imported service or dependency module to be mocked</label>
+<label class="quiz-option" data-val="b">The implementation under test has been replaced</label>
+<label class="quiz-option" data-val="c">The data dependency remains too deterministic</label>
+<label class="quiz-option" data-val="d">The test now requires a visible button</label>
+<div class="explanation">Mock dependencies of the unit, not the unit behavior being verified.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 5 of 5</div><p>Which suite provides the best Layer 5 coverage without duplicating internals?</p>
+<label class="quiz-option" data-val="a">Only serialized snapshots of every rendered wrapper and descendant element</label>
+<label class="quiz-option" data-val="b">Only assertions about hook and handler names</label>
+<label class="quiz-option" data-val="c">Output, user interaction, and service-contract tests</label>
+<label class="quiz-option" data-val="d">Only checks that source files can be imported</label>
+<div class="explanation">These tests protect distinct observable boundaries: initial UI, stateful behavior, and asynchronous data access.</div></div><button class="submit-btn" disabled>Submit Post-Quiz</button><div class="quiz-result" id="post-result"></div></div>
+<h2>9. Reflection Questions</h2><div class="card"><ol><li>Which service dependency should be controlled and which behavior must remain real?</li><li>Why do empty collection and missing singular entity use different outcomes?</li><li>What bug could fake timers accidentally hide if used carelessly?</li></ol></div><h2>10. What Breaks If Service Tests Are Removed?</h2><div class="card"><ul><li>Promise shape and failure regressions can reach UI callers.</li><li>Filtering behavior can drift silently.</li><li>Fixture changes may alter contracts without focused feedback.</li></ul></div><h2>11. What Engineering Concept Was Learned Today</h2><div class="card" style="border-color:var(--green)"><p><strong>Service tests control external inputs while exercising real asynchronous behavior and asserting the public data contract.</strong></p><p><strong>Next:</strong> <a href="../session-32/index.html">Session 32 — the next curriculum layer</a>.</p></div><p><a href="../session-30/index.html">← Session 30</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-32/index.html">Session 32 →</a></p>
+</div></main><script src="../../quiz.js" defer></script><script src="../../session-full.js" defer></script><script src="../../notes-widget.js" defer></script><script src="../../bookmark-widget.js" defer></script><div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;color:#ff5ca8">DRAFT</div></body></html>

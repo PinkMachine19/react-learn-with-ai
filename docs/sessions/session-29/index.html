@@ -1,46 +1,87 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Session 29 — Testing Props and Output</title>
-  <link rel="stylesheet" href="../../styles.css" />
-  <link rel="stylesheet" href="../../notes-widget.css" />
-  <link rel="stylesheet" href="../../bookmark-widget.css" />
-</head>
-<body>
-<nav>
-  <div class="container">
-    <a href="../../index.html" class="brand">⚛ React Learning</a>
-    <a href="../../syllabus/index.html">Syllabus</a>
-    <a href="../../sessions/index.html" class="active">Sessions</a>
-    <a href="../../quizzes/index.html">Quizzes</a>
-    <a href="../../labs/index.html">Labs</a>
-  </div>
-</nav>
-<main>
-  <div class="container">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
-      <span class="badge badge-layer">Layer 5</span>
-      <span class="badge badge-current">Session 29</span>
-      <span style="color:var(--text-muted);font-size:13px;">Testing</span>
-    </div>
-    <h1>Testing Props and Output</h1>
-    <div class="alert alert-warning">
-      <strong>Outline page.</strong> The full lesson doc (quizzes, SVGs, lab, commit checkpoint) is not written yet.
-      Use the syllabus outline below until this session is hydrated.
-    </div>
-    <div class="card">
-      <h2>From the syllabus</h2>
-      <p><strong>Core concept:</strong> getByRole, getByText, asserting rendered content</p>
-      <p><strong>Project milestone:</strong> Test that country name appears in CountryCard output</p>
-      <p><strong>Status:</strong> <span class="badge badge-current">Available</span> — session page is open; complete prior sessions in order when doing the lab track.</p>
-    </div>
-    <p style="margin-top:24px;"><a href="../session-28/index.html">← Session 28</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-30/index.html">Session 30 →</a></p>
-  </div>
-</main>
-<script src="../../notes-widget.js" defer></script>
-<script src="../../bookmark-widget.js" defer></script>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Session 29 — Testing Props and Output</title><link rel="stylesheet" href="../../styles.css"/><link rel="stylesheet" href="../../notes-widget.css"/><link rel="stylesheet" href="../../bookmark-widget.css"/><link rel="stylesheet" href="../../quiz-explain-modal.css"/><link rel="stylesheet" href="../../session-full.css"/></head><body><nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html" class="active">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../../labs/index.html">Labs</a></div></nav><main><div class="container">
+<div style="display:flex;gap:12px"><span class="badge badge-layer">Layer 5</span><span class="badge badge-current">Session 29</span><span style="color:var(--text-muted)">Testing</span></div><h1>Testing Props and Output</h1><p class="subtitle">Render CountryCard with known props, query the DOM through semantic roles and visible text, and assert the contract a user can observe.</p><div class="alert alert-info">Estimated time: 40–50 minutes · Milestone: verify country name and region output</div>
+<svg class="hero-diagram" viewBox="0 0 680 230"><rect width="680" height="230" rx="8" fill="#111"/><text x="340" y="28" fill="white" font-size="12" text-anchor="middle">PROPS IN → ACCESSIBLE DOM OUT</text><rect x="45" y="70" width="160" height="90" fill="none" stroke="#58a6ff" stroke-width="2"/><text x="125" y="104" fill="#58a6ff" font-size="9" text-anchor="middle">name="Japan"</text><text x="125" y="130" fill="#58a6ff" font-size="9" text-anchor="middle">region="Asia"</text><line x1="205" y1="115" x2="285" y2="115" stroke="#ff5ca8" stroke-width="2"/><rect x="285" y="60" width="150" height="110" fill="none" stroke="#ff5ca8" stroke-width="2"/><text x="360" y="105" fill="#ff5ca8" font-size="10" text-anchor="middle">CountryCard</text><line x1="435" y1="115" x2="515" y2="115" stroke="#3fb950" stroke-width="2"/><rect x="515" y="70" width="130" height="90" fill="none" stroke="#3fb950" stroke-width="2"/><text x="580" y="105" fill="#3fb950" font-size="9" text-anchor="middle">heading: Japan</text><text x="580" y="130" fill="white" font-size="8" text-anchor="middle">text: Region:Asia</text></svg>
+<div class="concept-grid">
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="25" fill="white" font-size="8" text-anchor="middle">screen.getByRole</text><rect x="20" y="45" width="120" height="35" fill="none" stroke="#3fb950"/><text x="80" y="67" fill="#3fb950" font-size="8" text-anchor="middle">heading: Japan</text><text x="80" y="112" fill="#8b949e" font-size="8" text-anchor="middle">semantic query</text></svg><figcaption>prefer <b>role + name</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">A role query expresses what element the user is finding and which accessible name identifies it.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="25" fill="white" font-size="8" text-anchor="middle">getByText</text><rect x="20" y="45" width="120" height="35" fill="none" stroke="#58a6ff"/><text x="80" y="67" fill="#58a6ff" font-size="8" text-anchor="middle">Region:Asia</text><text x="80" y="112" fill="white" font-size="8" text-anchor="middle">visible content</text></svg><figcaption>text query for <b>non-semantic copy</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Visible text is useful when no stronger semantic role identifies the content.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="30" y="32" fill="#3fb950" font-size="8">getBy</text><text x="100" y="32" fill="#ff5ca8" font-size="8">queryBy</text><text x="30" y="67" fill="white" font-size="8">must exist</text><text x="100" y="67" fill="white" font-size="8">may not</text><text x="80" y="108" fill="#58a6ff" font-size="8" text-anchor="middle">choose by expectation</text></svg><figcaption><b>get</b> throws; <b>query</b> returns null</figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Use getBy for required presence. Use queryBy when absence is the expected assertion so the query itself does not throw.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="28" width="120" height="30" fill="none" stroke="#58a6ff"/><text x="80" y="47" fill="#58a6ff" font-size="8" text-anchor="middle">render with known props</text><path d="M80,58 V84" stroke="white"/><rect x="20" y="86" width="120" height="30" fill="none" stroke="#3fb950"/><text x="80" y="105" fill="#3fb950" font-size="8" text-anchor="middle">assert exact output</text></svg><figcaption>control input, predict <b>output</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Known props make the expected DOM deterministic and turn the test into a precise contract example.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="22" y="25" width="116" height="30" fill="none" stroke="#f85149"/><text x="80" y="44" fill="#f85149" font-size="8" text-anchor="middle">.country-card h2</text><rect x="22" y="82" width="116" height="30" fill="none" stroke="#3fb950"/><text x="80" y="101" fill="#3fb950" font-size="8" text-anchor="middle">role=heading</text></svg><figcaption>semantic queries resist <b>CSS churn</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">A role query remains valid when classes change but the user-facing semantic structure is preserved.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="25" fill="white" font-size="8" text-anchor="middle">exact vs regex</text><rect x="20" y="45" width="120" height="28" fill="none" stroke="#58a6ff"/><text x="80" y="63" fill="#58a6ff" font-size="8" text-anchor="middle">/^japan$/i</text><text x="80" y="108" fill="#3fb950" font-size="8" text-anchor="middle">intentional flexibility</text></svg><figcaption>match only the <b>variation allowed</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Regex can allow intentional case variation, but overly broad patterns can hide incorrect content.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="26" fill="white" font-size="8" text-anchor="middle">toBeInTheDocument</text><circle cx="48" cy="72" r="20" fill="none" stroke="#3fb950"/><text x="48" y="77" fill="#3fb950" font-size="8" text-anchor="middle">exists</text><circle cx="112" cy="72" r="20" fill="none" stroke="#58a6ff"/><text x="112" y="77" fill="#58a6ff" font-size="8" text-anchor="middle">DOM</text><text x="80" y="118" fill="white" font-size="8" text-anchor="middle">readable assertion</text></svg><figcaption>jest-dom states <b>intent</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">DOM-specific matchers produce clearer assertions and failure messages than generic truthiness checks.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="24" width="120" height="28" fill="none" stroke="#f85149"/><text x="80" y="42" fill="#f85149" font-size="8" text-anchor="middle">getByTestId(card)</text><line x1="80" y1="52" x2="80" y2="80" stroke="white"/><rect x="20" y="82" width="120" height="28" fill="none" stroke="#3fb950"/><text x="80" y="100" fill="#3fb950" font-size="8" text-anchor="middle">getByRole(heading)</text></svg><figcaption>test IDs are a <b>fallback</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Use semantic queries first. Test IDs are useful when the UI genuinely has no accessible or visible identifier.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="24" fill="white" font-size="8" text-anchor="middle">next</text><rect x="20" y="45" width="120" height="28" fill="none" stroke="#ff5ca8"/><text x="80" y="63" fill="#ff5ca8" font-size="8" text-anchor="middle">user.click(button)</text><path d="M80,73 V96" stroke="white"/><text x="80" y="116" fill="#3fb950" font-size="8" text-anchor="middle">assert changed DOM</text></svg><figcaption>next: test <b>events + state</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Session 30 adds realistic interaction and verifies state only through its visible consequences.</p></figure>
+</div>
+<hr class="section-divider"/><h2>1. Learning Objectives</h2><div class="card"><ul><li>Render a component with controlled prop values</li><li>Choose role queries before text or test-id fallbacks</li><li>Distinguish getBy, queryBy, and their intended failure behavior</li><li>Use jest-dom assertions for readable DOM expectations</li><li>Avoid selectors tied to CSS or wrapper structure</li></ul></div>
+<h2>2. Pre-Coding Quiz</h2><p>Need 4/5 to proceed.</p><div id="pre-quiz">
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 1 of 5</div><p>Which query best locates the country title “Japan” rendered as an h2?</p>
+<label class="quiz-option" data-val="a"><code>screen.getByTestId('country')</code></label>
+<label class="quiz-option" data-val="b"><code>screen.getByRole('heading', { name: 'Japan' })</code></label>
+<label class="quiz-option" data-val="c"><code>container.querySelector('.country-card h2[data-name="Japan"]')</code></label>
+<label class="quiz-option" data-val="d"><code>container.firstChild.firstChild</code></label>
+<div class="explanation">Role plus accessible name describes the semantic element and its user-visible identity.</div></div>
+<div class="quiz-question" data-answer="d"><div class="question-num">Question 2 of 5</div><p>You expect “Brazil” not to appear. Which query allows an absence assertion?</p>
+<label class="quiz-option" data-val="a"><code>screen.getByText('Brazil')</code></label>
+<label class="quiz-option" data-val="b"><code>screen.findByText('Brazil')</code></label>
+<label class="quiz-option" data-val="c"><code>screen.getAllByText('Brazil')</code></label>
+<label class="quiz-option" data-val="d"><code>screen.queryByText('Brazil')</code></label>
+<div class="explanation">queryBy returns null when absent, allowing <code>not.toBeInTheDocument()</code>.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 3 of 5</div><p>Why is a CSS selector usually weaker than <code>getByRole</code>?</p>
+<label class="quiz-option" data-val="a">It couples the test to styling or structure rather than semantics</label>
+<label class="quiz-option" data-val="b">It cannot locate any semantic element created by React inside the rendered container</label>
+<label class="quiz-option" data-val="c">It automatically changes the component props</label>
+<label class="quiz-option" data-val="d">It forces Vitest to use the Node environment</label>
+<div class="explanation">CSS and wrapper changes may be harmless to users but still break implementation-coupled selectors.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 4 of 5</div><p>What does <code>toBeInTheDocument()</code> communicate?</p>
+<label class="quiz-option" data-val="a">The element has a particular CSS display value in the rendered document</label>
+<label class="quiz-option" data-val="b">The element was returned from a service Promise</label>
+<label class="quiz-option" data-val="c">The matched element belongs to the rendered document</label>
+<label class="quiz-option" data-val="d">The element contains no descendant nodes</label>
+<div class="explanation">The matcher asserts document membership, producing a clearer DOM-specific message than generic truthiness.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 5 of 5</div><p>When is <code>getByText</code> appropriate?</p>
+<label class="quiz-option" data-val="a">Whenever a role query would express the same intent more clearly</label>
+<label class="quiz-option" data-val="b">When visible content has no stronger semantic query</label>
+<label class="quiz-option" data-val="c">Only when the expected content is absent</label>
+<label class="quiz-option" data-val="d">Only when selecting a hidden implementation node</label>
+<div class="explanation">Visible text is a good query when role, label, or other accessible semantics do not identify the target.</div></div><button class="submit-btn" disabled>Submit Pre-Quiz</button><div class="quiz-result" id="pre-result"></div></div>
+<hr class="section-divider"/><h2>3. The Concept — Query Like a User</h2><p>Testing Library’s query priority reflects accessible use. Start with role and accessible name, then use labels, visible text, and only finally test IDs when no user-facing identifier exists.</p><pre><code>render(&lt;CountryCard name="Japan" region="Asia" /&gt;);
 
-<div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;padding:6px 11px;border:1px solid rgba(255,92,168,.55);border-radius:999px;background:rgba(13,17,23,.88);color:#ff5ca8;font:800 11px/1 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,sans-serif;letter-spacing:.16em;pointer-events:none">DRAFT</div><aside class="academy-project-status" aria-label="Project status" style="max-width:920px;margin:40px auto 24px;padding:16px 24px;border:1px solid #30363d;border-left:4px solid #ff5ca8;border-radius:6px;background:#161b22;color:#8b949e;font:13px/1.6 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Helvetica,Arial,sans-serif"><strong style="color:#ff5ca8">Project Status:</strong> This course is part of an evolving personal engineering library. AI assisted with drafting and organization, but every lesson is intended to be reviewed, validated, and improved over time as I work through the material myself. Draft content should be treated as work in progress until marked as validated.</aside></body>
-</html>
+expect(screen.getByRole('heading', { name: 'Japan' }))
+  .toBeInTheDocument();
+expect(screen.getByText('Region:Asia')).toBeInTheDocument();</code></pre>
+<hr class="section-divider"/><h2>4. Lab</h2><div class="alert alert-success"><strong>Lab objective:</strong> upgrade the smoke test to prove CountryCard renders supplied name and region props.</div><div class="step"><div class="step-num">1</div><div class="step-body"><p>Import <code>screen</code> and <code>expect</code>.</p></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><p>Render Japan and Asia as known inputs.</p></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><p>Assert the heading with <code>getByRole</code> and the region with <code>getByText</code>.</p></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><p>Temporarily misspell the expected name, inspect the failure message, then restore it.</p></div></div>
+<h2>5. Expected Files Changed</h2><div class="card"><code>src/component/CountryCard.test.jsx</code> — learner adds prop/output assertions.</div><h2>6. Commit Checkpoint</h2><pre><code>git add src/component/CountryCard.test.jsx
+git commit -m "session-29: test CountryCard props and output"</code></pre><h2>7. Code Review Checklist</h2><div class="card"><div class="checklist-item"><input type="checkbox"/><label>Known props make expected output deterministic</label></div><div class="checklist-item"><input type="checkbox"/><label>Heading uses role and accessible name</label></div><div class="checklist-item"><input type="checkbox"/><label>Visible region text is asserted</label></div><div class="checklist-item"><input type="checkbox"/><label>No CSS selector or test ID was needed</label></div></div>
+<hr class="section-divider"/><h2>8. Post-Coding Quiz</h2><div id="post-quiz" data-pass-post="Proceed to Session 30 after ≥ 80%.">
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 1 of 5</div><p>The h2 becomes an h3 but remains a heading named Japan. What happens to the role query?</p>
+<label class="quiz-option" data-val="a">It fails because role queries require h2 specifically</label>
+<label class="quiz-option" data-val="b">It selects the card wrapper instead of the heading</label>
+<label class="quiz-option" data-val="c">It still passes unless a heading level was requested</label>
+<label class="quiz-option" data-val="d">It changes the component prop to match h3</label>
+<div class="explanation">Both h2 and h3 have heading role; add a level option only when hierarchy is part of the requirement.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 2 of 5</div><p>Which assertion intentionally checks that Ghana is absent?</p>
+<label class="quiz-option" data-val="a"><code>expect(screen.queryByText('Ghana')).not.toBeInTheDocument()</code></label>
+<label class="quiz-option" data-val="b"><code>expect(screen.getByText('Ghana')).toBeUndefined()</code></label>
+<label class="quiz-option" data-val="c"><code>expect(screen.findByText('Ghana')).toBeNull()</code></label>
+<label class="quiz-option" data-val="d"><code>expect(screen.getAllByText('Ghana', { exact: true })).toHaveLength(0)</code></label>
+<div class="explanation">queryBy represents optional presence and returns null rather than throwing.</div></div>
+<div class="quiz-question" data-answer="d"><div class="question-num">Question 3 of 5</div><p>A test uses <code>/Asia/</code> and passes for “Eurasia.” What caused the false confidence?</p>
+<label class="quiz-option" data-val="a">jsdom converted both visible strings into the same accessible text value</label>
+<label class="quiz-option" data-val="b">jest-dom ignored text after the first match</label>
+<label class="quiz-option" data-val="c">render changed the supplied prop during mounting</label>
+<label class="quiz-option" data-val="d">The text matcher was broader than the intended contract</label>
+<div class="explanation">A loose substring pattern can match unintended output; use exact text or a bounded expression when exactness matters.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 4 of 5</div><p>Why render CountryCard with explicit props in each test?</p>
+<label class="quiz-option" data-val="a">To make React skip all component rendering</label>
+<label class="quiz-option" data-val="b">To control inputs and predict the expected DOM</label>
+<label class="quiz-option" data-val="c">To replace the need for any assertions</label>
+<label class="quiz-option" data-val="d">To mutate the imported component definition before each test renders it</label>
+<div class="explanation">Controlled inputs produce a clear example mapping from props to observable output.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 5 of 5</div><p>What is still untested after name and region assertions pass?</p>
+<label class="quiz-option" data-val="a">Whether Vitest can import and transform the complete component module</label>
+<label class="quiz-option" data-val="b">Whether jsdom provides a document object</label>
+<label class="quiz-option" data-val="c">Whether button interactions update displayed state</label>
+<label class="quiz-option" data-val="d">Whether known props produce visible text</label>
+<div class="explanation">Output assertions cover initial rendering; Session 30 adds user actions and state-driven DOM changes.</div></div><button class="submit-btn" disabled>Submit Post-Quiz</button><div class="quiz-result" id="post-result"></div></div>
+<h2>9. Reflection Questions</h2><div class="card"><ol><li>Which output deserves a role query and which requires visible text?</li><li>When would heading level be part of the contract?</li><li>What overly broad matcher could hide a bug here?</li></ol></div><h2>10. What Breaks If Assertions Are Removed?</h2><div class="card"><ul><li>The test returns to proving only that rendering did not throw.</li><li>Prop wiring regressions can pass silently.</li><li>Semantic output is no longer protected.</li></ul></div><h2>11. What Engineering Concept Was Learned Today</h2><div class="card" style="border-color:var(--green)"><p><strong>Semantic queries turn component props and visible DOM output into a refactor-resistant behavior contract.</strong></p><p><strong>Next:</strong> <a href="../session-30/index.html">Session 30 — Testing Events and State</a>.</p></div><p><a href="../session-28/index.html">← Session 28</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-30/index.html">Session 30 →</a></p>
+</div></main><script src="../../quiz.js" defer></script><script src="../../session-full.js" defer></script><script src="../../notes-widget.js" defer></script><script src="../../bookmark-widget.js" defer></script><div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;color:#ff5ca8">DRAFT</div></body></html>

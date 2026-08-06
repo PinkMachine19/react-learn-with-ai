@@ -1,46 +1,104 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Session 28 — Setting Up Vitest + RTL</title>
-  <link rel="stylesheet" href="../../styles.css" />
-  <link rel="stylesheet" href="../../notes-widget.css" />
-  <link rel="stylesheet" href="../../bookmark-widget.css" />
-</head>
-<body>
-<nav>
-  <div class="container">
-    <a href="../../index.html" class="brand">⚛ React Learning</a>
-    <a href="../../syllabus/index.html">Syllabus</a>
-    <a href="../../sessions/index.html" class="active">Sessions</a>
-    <a href="../../quizzes/index.html">Quizzes</a>
-    <a href="../../labs/index.html">Labs</a>
-  </div>
-</nav>
-<main>
-  <div class="container">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
-      <span class="badge badge-layer">Layer 5</span>
-      <span class="badge badge-current">Session 28</span>
-      <span style="color:var(--text-muted);font-size:13px;">Testing</span>
-    </div>
-    <h1>Setting Up Vitest + RTL</h1>
-    <div class="alert alert-warning">
-      <strong>Outline page.</strong> The full lesson doc (quizzes, SVGs, lab, commit checkpoint) is not written yet.
-      Use the syllabus outline below until this session is hydrated.
-    </div>
-    <div class="card">
-      <h2>From the syllabus</h2>
-      <p><strong>Core concept:</strong> Install, configure, write first smoke test</p>
-      <p><strong>Project milestone:</strong> Test that CountryCard renders without crashing</p>
-      <p><strong>Status:</strong> <span class="badge badge-current">Available</span> — session page is open; complete prior sessions in order when doing the lab track.</p>
-    </div>
-    <p style="margin-top:24px;"><a href="../session-27/index.html">← Session 27</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-29/index.html">Session 29 →</a></p>
-  </div>
-</main>
-<script src="../../notes-widget.js" defer></script>
-<script src="../../bookmark-widget.js" defer></script>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Session 28 — Setting Up Vitest + RTL</title><link rel="stylesheet" href="../../styles.css"/><link rel="stylesheet" href="../../notes-widget.css"/><link rel="stylesheet" href="../../bookmark-widget.css"/><link rel="stylesheet" href="../../quiz-explain-modal.css"/><link rel="stylesheet" href="../../session-full.css"/></head><body><nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html" class="active">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../../labs/index.html">Labs</a></div></nav><main><div class="container">
+<div style="display:flex;gap:12px"><span class="badge badge-layer">Layer 5</span><span class="badge badge-current">Session 28</span><span style="color:var(--text-muted)">Testing</span></div><h1>Setting Up Vitest + React Testing Library</h1><p class="subtitle">Build the smallest reliable test environment: Vitest runs tests, jsdom supplies browser-like DOM APIs, and React Testing Library renders components through their public output.</p><div class="alert alert-info">Estimated time: 45–60 minutes · Milestone: CountryCard smoke test</div>
+<svg class="hero-diagram" viewBox="0 0 680 230"><rect width="680" height="230" rx="8" fill="#111"/><text x="340" y="28" fill="white" font-size="12" text-anchor="middle">THE COMPONENT-TESTING STACK</text><rect x="35" y="70" width="140" height="90" fill="none" stroke="#58a6ff" stroke-width="2"/><text x="105" y="106" fill="#58a6ff" font-size="10" text-anchor="middle">Vitest</text><text x="105" y="132" fill="white" font-size="8" text-anchor="middle">runner + assertions</text><rect x="270" y="70" width="140" height="90" fill="none" stroke="#ff5ca8" stroke-width="2"/><text x="340" y="106" fill="#ff5ca8" font-size="10" text-anchor="middle">jsdom</text><text x="340" y="132" fill="white" font-size="8" text-anchor="middle">document + window</text><rect x="505" y="70" width="140" height="90" fill="none" stroke="#3fb950" stroke-width="2"/><text x="575" y="106" fill="#3fb950" font-size="10" text-anchor="middle">RTL</text><text x="575" y="132" fill="white" font-size="8" text-anchor="middle">render + queries</text><line x1="175" y1="115" x2="270" y2="115" stroke="white"/><line x1="410" y1="115" x2="505" y2="115" stroke="white"/></svg>
+<div class="concept-grid">
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="28" y="25" width="104" height="34" fill="none" stroke="#58a6ff"/><text x="80" y="46" fill="#58a6ff" font-size="9" text-anchor="middle">vitest run</text><path d="M80,59 V86" stroke="white"/><text x="80" y="108" fill="#3fb950" font-size="9" text-anchor="middle">pass / fail</text></svg><figcaption>Vitest is the <b>runner</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Vitest discovers test files, executes test functions, reports failures, and provides assertions and mocks.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="25" y="25" width="110" height="75" fill="none" stroke="#ff5ca8"/><text x="80" y="50" fill="#ff5ca8" font-size="9" text-anchor="middle">jsdom</text><text x="80" y="72" fill="white" font-size="8" text-anchor="middle">window</text><text x="80" y="90" fill="white" font-size="8" text-anchor="middle">document</text><text x="80" y="124" fill="#8b949e" font-size="8" text-anchor="middle">not a real browser</text></svg><figcaption>jsdom supplies a <b>DOM environment</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Node has no document by default. jsdom implements enough browser APIs for many component tests.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="25" fill="white" font-size="8" text-anchor="middle">render(&lt;Card /&gt;)</text><rect x="25" y="44" width="110" height="55" fill="none" stroke="#3fb950"/><text x="80" y="68" fill="#3fb950" font-size="8" text-anchor="middle">DOM output</text><text x="80" y="87" fill="white" font-size="8" text-anchor="middle">query like a user</text><text x="80" y="122" fill="#8b949e" font-size="8" text-anchor="middle">RTL</text></svg><figcaption>RTL renders <b>public output</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">React Testing Library mounts the component into a DOM container and encourages semantic queries.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="24" width="120" height="28" fill="none" stroke="#58a6ff"/><text x="80" y="42" fill="#58a6ff" font-size="8" text-anchor="middle">vite.config.js</text><line x1="80" y1="52" x2="80" y2="78" stroke="white"/><rect x="20" y="80" width="120" height="28" fill="none" stroke="#ff5ca8"/><text x="80" y="98" fill="#ff5ca8" font-size="8" text-anchor="middle">environment: jsdom</text></svg><figcaption>config chooses the <b>environment</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Without jsdom configuration, DOM-dependent rendering fails because Vitest’s default environment is Node.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="24" width="120" height="28" fill="none" stroke="#58a6ff"/><text x="80" y="42" fill="#58a6ff" font-size="8" text-anchor="middle">test/setup.js</text><line x1="80" y1="52" x2="80" y2="78" stroke="white"/><text x="80" y="98" fill="#3fb950" font-size="8" text-anchor="middle">jest-dom matchers</text><text x="80" y="118" fill="white" font-size="8" text-anchor="middle">cleanup after each</text></svg><figcaption>setup removes <b>repetition</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">A setup file runs before test files, extending assertions and registering shared cleanup behavior.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="24" fill="white" font-size="8" text-anchor="middle">smoke test</text><rect x="25" y="44" width="110" height="34" fill="none" stroke="#3fb950"/><text x="80" y="65" fill="#3fb950" font-size="8" text-anchor="middle">render succeeds</text><path d="M60,104 l10,10 26,-30" fill="none" stroke="#3fb950" stroke-width="3"/></svg><figcaption>first prove it <b>mounts</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">A smoke test establishes that imports, JSX transformation, jsdom, and component rendering are wired correctly.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="25" fill="white" font-size="8" text-anchor="middle">package.json</text><rect x="20" y="45" width="120" height="30" fill="none" stroke="#58a6ff"/><text x="80" y="64" fill="#58a6ff" font-size="8" text-anchor="middle">"test": "vitest run"</text><rect x="20" y="88" width="120" height="30" fill="none" stroke="#ff5ca8"/><text x="80" y="107" fill="#ff5ca8" font-size="8" text-anchor="middle">"test:watch": "vitest"</text></svg><figcaption>scripts define <b>repeatable commands</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">A one-shot script suits verification and CI; watch mode reruns affected tests during development.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="25" width="120" height="28" fill="none" stroke="#f85149"/><text x="80" y="43" fill="#f85149" font-size="8" text-anchor="middle">Node: document missing</text><line x1="80" y1="53" x2="80" y2="80" stroke="white"/><rect x="20" y="82" width="120" height="28" fill="none" stroke="#3fb950"/><text x="80" y="100" fill="#3fb950" font-size="8" text-anchor="middle">jsdom: document exists</text></svg><figcaption>errors point to <b>missing layers</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Setup errors are architecture clues: missing document indicates environment configuration, not a CountryCard bug.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="24" fill="white" font-size="8" text-anchor="middle">next</text><rect x="22" y="44" width="116" height="28" fill="none" stroke="#58a6ff"/><text x="80" y="62" fill="#58a6ff" font-size="8" text-anchor="middle">screen.getByRole</text><line x1="80" y1="72" x2="80" y2="96" stroke="white"/><text x="80" y="116" fill="#3fb950" font-size="8" text-anchor="middle">assert output</text></svg><figcaption>next: query <b>props + output</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Session 29 turns the smoke render into meaningful assertions about what CountryCard displays.</p></figure>
+</div>
+<hr class="section-divider"/><h2>1. Learning Objectives</h2><div class="card"><ul><li>Explain the responsibilities of Vitest, jsdom, and React Testing Library</li><li>Configure jsdom and a shared setup file</li><li>Add repeatable test scripts</li><li>Write a CountryCard smoke test</li><li>Diagnose setup failures by architectural layer</li></ul></div>
+<h2>2. Pre-Coding Quiz</h2><p>Need 4/5 to proceed.</p><div id="pre-quiz">
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 1 of 5</div><p>Vitest reports <code>document is not defined</code> while rendering CountryCard. What is the first configuration to inspect?</p>
+<label class="quiz-option" data-val="a">The component’s country name prop</label>
+<label class="quiz-option" data-val="b">The CSS class on the card wrapper</label>
+<label class="quiz-option" data-val="c">The test environment set to jsdom</label>
+<label class="quiz-option" data-val="d">The service delay used by fetch calls</label>
+<div class="explanation">Rendering needs DOM globals; jsdom supplies them in the test process.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 2 of 5</div><p>Which package is responsible for <code>render()</code> in these component tests?</p>
+<label class="quiz-option" data-val="a"><code>@testing-library/react</code></label>
+<label class="quiz-option" data-val="b"><code>@testing-library/jest-dom</code></label>
+<label class="quiz-option" data-val="c"><code>@testing-library/user-event</code></label>
+<label class="quiz-option" data-val="d"><code>jsdom</code></label>
+<div class="explanation">React Testing Library exports render; jest-dom adds matchers, user-event simulates interaction, and jsdom supplies the environment.</div></div>
+<div class="quiz-question" data-answer="d"><div class="question-num">Question 3 of 5</div><p>Why put <code>@testing-library/jest-dom/vitest</code> in a setup file?</p>
+<label class="quiz-option" data-val="a">To compile CountryCard before Vite reads JSX</label>
+<label class="quiz-option" data-val="b">To replace every Vitest assertion with serialized component snapshots</label>
+<label class="quiz-option" data-val="c">To create a browser server for each test file</label>
+<label class="quiz-option" data-val="d">To extend expect consistently before tests execute</label>
+<div class="explanation">Setup files centralize shared initialization such as DOM matchers.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 4 of 5</div><p>What does a smoke test establish?</p>
+<label class="quiz-option" data-val="a">Every CountryCard behavior is correct</label>
+<label class="quiz-option" data-val="b">The component can render in the configured environment</label>
+<label class="quiz-option" data-val="c">All accessibility and interaction requirements are already satisfied</label>
+<label class="quiz-option" data-val="d">Every future refactor is automatically safe</label>
+<div class="explanation">A smoke test is deliberately narrow: basic rendering works without throwing.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 5 of 5</div><p>Which command is best for one deterministic verification run?</p>
+<label class="quiz-option" data-val="a"><code>vite --watch</code></label>
+<label class="quiz-option" data-val="b"><code>npm run dev</code></label>
+<label class="quiz-option" data-val="c"><code>vitest run</code></label>
+<label class="quiz-option" data-val="d"><code>vitest --ui</code></label>
+<div class="explanation">The run command executes once and exits with success or failure, making it suitable for checks and CI.</div></div><button class="submit-btn" disabled>Submit Pre-Quiz</button><div class="quiz-result" id="pre-result"></div></div>
+<hr class="section-divider"/><h2>3. The Concept — Three Tools, Three Jobs</h2><pre><code>npm install -D vitest jsdom @testing-library/react \
+  @testing-library/jest-dom @testing-library/user-event</code></pre><p>Vitest runs tests; jsdom supplies DOM globals; Testing Library renders and queries. Keep these responsibilities separate when diagnosing failures.</p>
+<hr class="section-divider"/><h2>4. Lab</h2><div class="alert alert-success"><strong>Lab objective:</strong> configure Vitest and render CountryCard in the first smoke test.</div><div class="step"><div class="step-num">1</div><div class="step-body"><p><strong>Install test dev dependencies</strong> using the command above.</p></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><p><strong>Add test configuration</strong></p><pre><code>import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
 
-<div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;padding:6px 11px;border:1px solid rgba(255,92,168,.55);border-radius:999px;background:rgba(13,17,23,.88);color:#ff5ca8;font:800 11px/1 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,sans-serif;letter-spacing:.16em;pointer-events:none">DRAFT</div><aside class="academy-project-status" aria-label="Project status" style="max-width:920px;margin:40px auto 24px;padding:16px 24px;border:1px solid #30363d;border-left:4px solid #ff5ca8;border-radius:6px;background:#161b22;color:#8b949e;font:13px/1.6 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Helvetica,Arial,sans-serif"><strong style="color:#ff5ca8">Project Status:</strong> This course is part of an evolving personal engineering library. AI assisted with drafting and organization, but every lesson is intended to be reviewed, validated, and improved over time as I work through the material myself. Draft content should be treated as work in progress until marked as validated.</aside></body>
-</html>
+export default defineConfig({
+  plugins: [react()],
+  test: {
+    environment: 'jsdom',
+    setupFiles: './test/setup.js'
+  }
+});</code></pre></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><p><strong>Create shared setup</strong></p><pre><code>import '@testing-library/jest-dom/vitest';
+import { cleanup } from '@testing-library/react';
+import { afterEach } from 'vitest';
+
+afterEach(cleanup);</code></pre></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><p><strong>Add scripts</strong></p><pre><code>"test": "vitest run",
+"test:watch": "vitest"</code></pre></div></div><div class="step"><div class="step-num">5</div><div class="step-body"><p><strong>Write the smoke test</strong></p><pre><code>import { test } from 'vitest';
+import { render } from '@testing-library/react';
+import CountryCard from './CountryCard';
+
+test('renders CountryCard without crashing', () =&gt; {
+  render(&lt;CountryCard name="Japan" region="Asia" /&gt;);
+});</code></pre><p>Run <code>npm test</code>. No output assertion yet; Session 29 adds meaningful queries.</p></div></div>
+<h2>5. Expected Files Changed</h2><div class="table-wrap"><table><tr><th>File</th><th>Learner action</th></tr><tr><td><code>package.json</code> and lockfile</td><td>Add dependencies and scripts</td></tr><tr><td><code>vite.config.js</code></td><td>Add test configuration</td></tr><tr><td><code>test/setup.js</code></td><td>Add matchers and cleanup</td></tr><tr><td><code>src/component/CountryCard.test.jsx</code></td><td>Add smoke test</td></tr></table></div><h2>6. Commit Checkpoint</h2><pre><code>git add package.json package-lock.json vite.config.js test/setup.js src/component/CountryCard.test.jsx
+git commit -m "session-28: configure Vitest and render CountryCard"</code></pre><h2>7. Code Review Checklist</h2><div class="card"><div class="checklist-item"><input type="checkbox"/><label>Vitest uses jsdom</label></div><div class="checklist-item"><input type="checkbox"/><label>Setup loads jest-dom and cleanup</label></div><div class="checklist-item"><input type="checkbox"/><label>Test scripts separate one-shot and watch modes</label></div><div class="checklist-item"><input type="checkbox"/><label>The smoke test passes with required props</label></div></div>
+<hr class="section-divider"/><h2>8. Post-Coding Quiz</h2><div id="post-quiz" data-pass-post="Proceed to Session 29 after ≥ 80%.">
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 1 of 5</div><p>The smoke test fails before CountryCard executes because JSX cannot be transformed. Which layer is suspect?</p>
+<label class="quiz-option" data-val="a">The card’s click-counter state transition</label>
+<label class="quiz-option" data-val="b">The Vite/Vitest transform configuration</label>
+<label class="quiz-option" data-val="c">The accessible name of the reset button</label>
+<label class="quiz-option" data-val="d">The fixture’s population field type</label>
+<div class="explanation">A transform failure occurs before component behavior and points to build/test configuration.</div></div>
+<div class="quiz-question" data-answer="d"><div class="question-num">Question 2 of 5</div><p>Why explicitly call cleanup after each test when not relying on globals?</p>
+<label class="quiz-option" data-val="a">To remove component source files after execution</label>
+<label class="quiz-option" data-val="b">To reset Vitest’s dependency installation cache</label>
+<label class="quiz-option" data-val="c">To close the Vite development server after assertions</label>
+<label class="quiz-option" data-val="d">To prevent rendered DOM from leaking between tests</label>
+<div class="explanation">Cleanup isolates tests by unmounting rendered trees and clearing their containers.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 3 of 5</div><p>Which failure is the smoke test designed to catch?</p>
+<label class="quiz-option" data-val="a">CountryCard throws while mounting with valid props</label>
+<label class="quiz-option" data-val="b">The rendered country heading uses an incorrect semantic level in the document</label>
+<label class="quiz-option" data-val="c">Increment requires two clicks instead of one</label>
+<label class="quiz-option" data-val="d">Reset leaves the displayed count unchanged</label>
+<div class="explanation">The smoke test only establishes successful rendering; later sessions protect output and interaction.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 4 of 5</div><p>A matcher says <code>toBeInTheDocument is not a function</code>. What is most likely missing?</p>
+<label class="quiz-option" data-val="a">The jsdom environment option in CountryCard</label>
+<label class="quiz-option" data-val="b">The React import in the service module</label>
+<label class="quiz-option" data-val="c">The jest-dom Vitest setup import</label>
+<label class="quiz-option" data-val="d">The user-event click configuration</label>
+<div class="explanation">toBeInTheDocument is supplied by jest-dom, not core Vitest.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 5 of 5</div><p>Why keep user-event installed even though the smoke test does not use it yet?</p>
+<label class="quiz-option" data-val="a">It is required for jsdom to define document and browser-style global objects</label>
+<label class="quiz-option" data-val="b">Session 30 will use it for realistic interactions</label>
+<label class="quiz-option" data-val="c">It replaces render for component mounting</label>
+<label class="quiz-option" data-val="d">Vitest cannot discover tests without it</label>
+<div class="explanation">The testing sequence installs the interaction tool now and introduces its behavior later.</div></div><button class="submit-btn" disabled>Submit Post-Quiz</button><div class="quiz-result" id="post-result"></div></div>
+<h2>9. Reflection Questions</h2><div class="card"><ol><li>Which tool owns each step from test discovery to DOM query?</li><li>What does the smoke test not prove?</li><li>How would you diagnose a missing document differently from a render exception?</li></ol></div><h2>10. What Breaks If Setup Is Removed?</h2><div class="card"><ul><li>Without jsdom, DOM rendering has no document.</li><li>Without setup, custom DOM matchers and explicit cleanup disappear.</li><li>Without scripts, test execution becomes inconsistent.</li></ul></div><h2>11. What Engineering Concept Was Learned Today</h2><div class="card" style="border-color:var(--green)"><p><strong>A component test needs a runner, a DOM environment, and a rendering/query library—each with a distinct responsibility.</strong></p><p><strong>Next:</strong> <a href="../session-29/index.html">Session 29 — Testing Props and Output</a>.</p></div><p><a href="../session-27/index.html">← Session 27</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-29/index.html">Session 29 →</a></p>
+</div></main><script src="../../quiz.js" defer></script><script src="../../session-full.js" defer></script><script src="../../notes-widget.js" defer></script><script src="../../bookmark-widget.js" defer></script><div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;color:#ff5ca8">DRAFT</div></body></html>

@@ -1,46 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Session 27 — Why We Test and What to Test</title>
-  <link rel="stylesheet" href="../../styles.css" />
-  <link rel="stylesheet" href="../../notes-widget.css" />
-  <link rel="stylesheet" href="../../bookmark-widget.css" />
-</head>
-<body>
-<nav>
-  <div class="container">
-    <a href="../../index.html" class="brand">⚛ React Learning</a>
-    <a href="../../syllabus/index.html">Syllabus</a>
-    <a href="../../sessions/index.html" class="active">Sessions</a>
-    <a href="../../quizzes/index.html">Quizzes</a>
-    <a href="../../labs/index.html">Labs</a>
-  </div>
-</nav>
-<main>
-  <div class="container">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
-      <span class="badge badge-layer">Layer 5</span>
-      <span class="badge badge-current">Session 27</span>
-      <span style="color:var(--text-muted);font-size:13px;">Testing</span>
-    </div>
-    <h1>Why We Test and What to Test</h1>
-    <div class="alert alert-warning">
-      <strong>Outline page.</strong> The full lesson doc (quizzes, SVGs, lab, commit checkpoint) is not written yet.
-      Use the syllabus outline below until this session is hydrated.
-    </div>
-    <div class="card">
-      <h2>From the syllabus</h2>
-      <p><strong>Core concept:</strong> Test types, behavior-driven testing, what NOT to test</p>
-      <p><strong>Project milestone:</strong> Concept only — no code</p>
-      <p><strong>Status:</strong> <span class="badge badge-current">Available</span> — session page is open; complete prior sessions in order when doing the lab track.</p>
-    </div>
-    <p style="margin-top:24px;"><a href="../session-26/index.html">← Session 26</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-28/index.html">Session 28 →</a></p>
-  </div>
-</main>
-<script src="../../notes-widget.js" defer></script>
-<script src="../../bookmark-widget.js" defer></script>
-
-<div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;padding:6px 11px;border:1px solid rgba(255,92,168,.55);border-radius:999px;background:rgba(13,17,23,.88);color:#ff5ca8;font:800 11px/1 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,sans-serif;letter-spacing:.16em;pointer-events:none">DRAFT</div><aside class="academy-project-status" aria-label="Project status" style="max-width:920px;margin:40px auto 24px;padding:16px 24px;border:1px solid #30363d;border-left:4px solid #ff5ca8;border-radius:6px;background:#161b22;color:#8b949e;font:13px/1.6 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Helvetica,Arial,sans-serif"><strong style="color:#ff5ca8">Project Status:</strong> This course is part of an evolving personal engineering library. AI assisted with drafting and organization, but every lesson is intended to be reviewed, validated, and improved over time as I work through the material myself. Draft content should be treated as work in progress until marked as validated.</aside></body>
-</html>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Session 27 — Why We Test and What to Test</title><link rel="stylesheet" href="../../styles.css"/><link rel="stylesheet" href="../../notes-widget.css"/><link rel="stylesheet" href="../../bookmark-widget.css"/><link rel="stylesheet" href="../../quiz-explain-modal.css"/><link rel="stylesheet" href="../../session-full.css"/></head><body><nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html" class="active">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../../labs/index.html">Labs</a></div></nav><main><div class="container">
+<div style="display:flex;gap:12px"><span class="badge badge-layer">Layer 5</span><span class="badge badge-current">Session 27</span><span style="color:var(--text-muted)">Testing</span></div><h1>Why We Test and What to Test</h1><p class="subtitle">Tests protect observable behavior, not implementation trivia. Learn to choose assertions that survive safe refactoring and fail when users would notice a regression.</p><div class="alert alert-info">Estimated time: 40–50 minutes · Concept session — no application code changes</div>
+<svg class="hero-diagram" viewBox="0 0 680 230"><rect width="680" height="230" rx="8" fill="#111"/><text x="340" y="28" fill="white" font-size="12" text-anchor="middle">TEST THROUGH THE USER-VISIBLE BOUNDARY</text><rect x="45" y="70" width="150" height="90" fill="none" stroke="#58a6ff" stroke-width="2"/><text x="120" y="106" fill="#58a6ff" font-size="10" text-anchor="middle">Arrange</text><text x="120" y="132" fill="white" font-size="8" text-anchor="middle">render with props</text><rect x="265" y="70" width="150" height="90" fill="none" stroke="#ff5ca8" stroke-width="2"/><text x="340" y="106" fill="#ff5ca8" font-size="10" text-anchor="middle">Act</text><text x="340" y="132" fill="white" font-size="8" text-anchor="middle">click like a user</text><rect x="485" y="70" width="150" height="90" fill="none" stroke="#3fb950" stroke-width="2"/><text x="560" y="106" fill="#3fb950" font-size="10" text-anchor="middle">Assert</text><text x="560" y="132" fill="white" font-size="8" text-anchor="middle">observe the DOM</text><line x1="195" y1="115" x2="265" y2="115" stroke="white"/><line x1="415" y1="115" x2="485" y2="115" stroke="white"/></svg>
+<div class="concept-grid">
+<figure class="concept-card"><svg viewBox="0 0 160 140"><circle cx="80" cy="60" r="34" fill="none" stroke="#58a6ff" stroke-width="2"/><text x="80" y="57" fill="#58a6ff" font-size="8" text-anchor="middle">user sees</text><text x="80" y="75" fill="white" font-size="8" text-anchor="middle">DOM behavior</text><text x="80" y="120" fill="#3fb950" font-size="8" text-anchor="middle">stable boundary</text></svg><figcaption>test <b>observable behavior</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">A valuable component test asks what a user can find, read, or do rather than inspecting internal variables.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="25" width="120" height="28" fill="none" stroke="#f85149"/><text x="80" y="43" fill="#f85149" font-size="8" text-anchor="middle">state.count === 1</text><rect x="20" y="78" width="120" height="28" fill="none" stroke="#3fb950"/><text x="80" y="96" fill="#3fb950" font-size="8" text-anchor="middle">"Clicked 1 times"</text></svg><figcaption>output beats <b>implementation</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">State is an implementation mechanism. The displayed result is the contract a user depends on.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="24" fill="white" font-size="9" text-anchor="middle">test pyramid</text><rect x="28" y="95" width="104" height="24" fill="none" stroke="#58a6ff"/><rect x="48" y="64" width="64" height="24" fill="none" stroke="#ff5ca8"/><rect x="66" y="33" width="28" height="24" fill="none" stroke="#3fb950"/><text x="80" y="111" fill="white" font-size="7" text-anchor="middle">unit/component</text></svg><figcaption>different tests cover <b>different risk</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Small tests isolate behavior quickly; integration and end-to-end tests cover cooperation at greater cost.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="18" y="35" width="52" height="46" fill="none" stroke="#58a6ff"/><text x="44" y="62" fill="#58a6ff" font-size="8" text-anchor="middle">refactor</text><rect x="90" y="35" width="52" height="46" fill="none" stroke="#3fb950"/><text x="116" y="62" fill="#3fb950" font-size="8" text-anchor="middle">tests pass</text><line x1="70" y1="58" x2="90" y2="58" stroke="white"/><text x="80" y="112" fill="white" font-size="8" text-anchor="middle">behavior unchanged</text></svg><figcaption>good tests permit <b>refactoring</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">When implementation changes but behavior remains, behavior-focused tests should continue passing.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="28" width="120" height="28" fill="none" stroke="#58a6ff"/><text x="80" y="46" fill="#58a6ff" font-size="8" text-anchor="middle">getByRole(button)</text><path d="M80,56 V82" stroke="white"/><rect x="35" y="84" width="90" height="28" fill="none" stroke="#3fb950"/><text x="80" y="102" fill="#3fb950" font-size="8" text-anchor="middle">accessible UI</text></svg><figcaption>queries resemble <b>real use</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Role and accessible-name queries align tests with how users and assistive technologies locate controls.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="24" fill="white" font-size="8" text-anchor="middle">one test</text><rect x="25" y="45" width="110" height="24" fill="none" stroke="#3fb950"/><text x="80" y="61" fill="#3fb950" font-size="8" text-anchor="middle">one behavior</text><rect x="25" y="84" width="110" height="24" fill="none" stroke="#f85149"/><text x="80" y="100" fill="#f85149" font-size="8" text-anchor="middle">not every detail</text></svg><figcaption>keep failures <b>diagnosable</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Focused tests make a failure point to one broken behavior instead of a long sequence of unrelated assertions.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="24" y="25" width="112" height="30" fill="none" stroke="#f85149"/><text x="80" y="44" fill="#f85149" font-size="8" text-anchor="middle">className = card</text><line x1="80" y1="55" x2="80" y2="82" stroke="white"/><text x="80" y="103" fill="white" font-size="8" text-anchor="middle">style refactor breaks test</text></svg><figcaption>avoid <b>incidental details</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">A class-name assertion is usually brittle unless the class itself is an intentional public requirement.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="24" fill="white" font-size="8" text-anchor="middle">regression</text><path d="M30,74 L62,104 L125,38" fill="none" stroke="#3fb950" stroke-width="3"/><path d="M45,40 L120,112" stroke="#f85149" stroke-width="2" stroke-dasharray="4,3"/><text x="80" y="128" fill="white" font-size="8" text-anchor="middle">test catches changed behavior</text></svg><figcaption>tests are <b>change detectors</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">A regression test should fail when behavior changes unexpectedly and pass when behavior is preserved.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="25" width="120" height="28" fill="none" stroke="#58a6ff"/><text x="80" y="43" fill="#58a6ff" font-size="8" text-anchor="middle">risk: click counter</text><path d="M80,53 V80" stroke="white"/><rect x="20" y="82" width="120" height="28" fill="none" stroke="#ff5ca8"/><text x="80" y="100" fill="#ff5ca8" font-size="8" text-anchor="middle">test: click → output</text></svg><figcaption>start from <b>risk</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Choose a test by identifying what meaningful failure could reach a user, then exercise that behavior.</p></figure>
+</div>
+<hr class="section-divider"/><h2>1. Learning Objectives</h2><div class="card"><ul><li>Distinguish unit, component, integration, and end-to-end scope</li><li>Select behaviors worth protecting based on user-visible risk</li><li>Avoid testing state variables, function names, and incidental markup</li><li>Use Arrange–Act–Assert to structure a test</li><li>Explain how behavior-focused tests support refactoring</li></ul></div>
+<h2>2. Pre-Coding Quiz</h2><p>Need 4/5 to proceed.</p><div id="pre-quiz">
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 1 of 5</div><p>CountryCard changes from <code>useState</code> to <code>useReducer</code> but displays the same count. Which test should remain valid?</p>
+<label class="quiz-option" data-val="a">The component calls useState exactly once during render</label>
+<label class="quiz-option" data-val="b">Clicking the button changes the displayed count</label>
+<label class="quiz-option" data-val="c">The state setter is named setCount in source code</label>
+<label class="quiz-option" data-val="d">The handler closes over a variable named count</label>
+<div class="explanation">The user-visible outcome remains part of the contract; the state mechanism is replaceable.</div></div>
+<div class="quiz-question" data-answer="d"><div class="question-num">Question 2 of 5</div><p>Which assertion is most coupled to presentation implementation?</p>
+<label class="quiz-option" data-val="a">The country name appears as a heading</label>
+<label class="quiz-option" data-val="b">The reset control is available by role</label>
+<label class="quiz-option" data-val="c">The count changes after a user click</label>
+<label class="quiz-option" data-val="d">The outer div has class country-card</label>
+<div class="explanation">A CSS class can change during a harmless styling refactor without affecting behavior.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 3 of 5</div><p>What is the “Act” in a click-counter test?</p>
+<label class="quiz-option" data-val="a">A user clicks the increment button</label>
+<label class="quiz-option" data-val="b">CountryCard is rendered with props</label>
+<label class="quiz-option" data-val="c">The updated text is compared to one</label>
+<label class="quiz-option" data-val="d">The test imports the component module</label>
+<div class="explanation">Arrange creates the situation, Act performs the interaction, and Assert checks the outcome.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 4 of 5</div><p>When does a passing component test provide the strongest confidence?</p>
+<label class="quiz-option" data-val="a">When it repeats every component implementation decision line by line</label>
+<label class="quiz-option" data-val="b">When it checks every DOM node regardless of importance</label>
+<label class="quiz-option" data-val="c">When it exercises a meaningful behavior through public output</label>
+<label class="quiz-option" data-val="d">When it depends on private variables remaining unchanged</label>
+<div class="explanation">Confidence comes from exercising behavior users rely on, not reproducing implementation details.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 5 of 5</div><p>A refactor preserves all visible behavior but many tests fail. What is the likely diagnosis?</p>
+<label class="quiz-option" data-val="a">The refactor necessarily introduced a user-facing regression</label>
+<label class="quiz-option" data-val="b">The tests are coupled to replaceable implementation details</label>
+<label class="quiz-option" data-val="c">The test runner cannot execute refactored JavaScript</label>
+<label class="quiz-option" data-val="d">The component now requires an end-to-end environment</label>
+<div class="explanation">Tests that break under behavior-preserving refactors are often asserting internals rather than outcomes.</div></div><button class="submit-btn" disabled>Submit Pre-Quiz</button><div class="quiz-result" id="pre-result"></div></div>
+<hr class="section-divider"/><h2>3. The Concept — Confidence Without Handcuffs</h2><p>Tests are executable examples of promised behavior. For CountryCard, high-value risks include missing prop output, controls that cannot be found, and interactions that fail to update the screen. Low-value targets include the exact hook used, local function names, and the number of wrapper divs.</p><div class="table-wrap"><table><thead><tr><th>Test target</th><th>Value</th><th>Reason</th></tr></thead><tbody><tr><td>Heading shows country name</td><td>High</td><td>User-visible prop behavior</td></tr><tr><td>Click changes count text</td><td>High</td><td>Critical interaction</td></tr><tr><td>Handler named handleClick</td><td>Low</td><td>Private implementation</td></tr><tr><td>Outer class name</td><td>Usually low</td><td>Styling detail, unless contractual</td></tr></tbody></table></div>
+<hr class="section-divider"/><h2>4. Guided Analysis</h2><div class="alert alert-success"><strong>Objective:</strong> design a behavior test plan without changing application code.</div><div class="step"><div class="step-num">1</div><div class="step-body"><p>List three user-visible CountryCard behaviors.</p></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><p>For each behavior, write Arrange, Act, and Assert in plain English.</p></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><p>Identify one tempting implementation-detail assertion and explain why it is brittle.</p></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><p>Rank the behaviors by regression risk and choose the first smoke test for Session 28.</p></div></div>
+<h2>5. Expected Files Changed</h2><div class="card"><p><strong>None in <code>src</code>.</strong> This is a concept session. Keep the written plan in your learning notes if desired.</p></div><h2>6. Commit Checkpoint</h2><div class="alert alert-info">No application commit is required for this concept-only session.</div><h2>7. Review Checklist</h2><div class="card"><div class="checklist-item"><input type="checkbox"/><label>Each planned test protects observable behavior</label></div><div class="checklist-item"><input type="checkbox"/><label>Arrange, Act, and Assert are distinguishable</label></div><div class="checklist-item"><input type="checkbox"/><label>Implementation details were removed from the plan</label></div><div class="checklist-item"><input type="checkbox"/><label>Test priority follows user-facing risk</label></div></div>
+<hr class="section-divider"/><h2>8. Post-Coding Quiz</h2><div id="post-quiz" data-pass-post="Proceed to Session 28 after ≥ 80%.">
+<div class="quiz-question" data-answer="d"><div class="question-num">Question 1 of 5</div><p>Which CountryCard test best survives a harmless markup refactor?</p>
+<label class="quiz-option" data-val="a">Expect exactly two paragraphs under the outer div</label>
+<label class="quiz-option" data-val="b">Expect the first child to be an h2 element</label>
+<label class="quiz-option" data-val="c">Expect the wrapper to keep its current CSS class</label>
+<label class="quiz-option" data-val="d">Expect a heading with the supplied country name</label>
+<div class="explanation">The semantic heading and its content express behavior without pinning wrapper structure.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 2 of 5</div><p>A Reset button is renamed visually to Clear. Which test contract would intentionally fail?</p>
+<label class="quiz-option" data-val="a">A user can find a button named Reset</label>
+<label class="quiz-option" data-val="b">A second button exists somewhere in the div</label>
+<label class="quiz-option" data-val="c">The handler function has one argument</label>
+<label class="quiz-option" data-val="d">The component contains two closures</label>
+<div class="explanation">If the accessible name Reset is part of the intended UI, changing it is observable and should update or fail the test intentionally.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 3 of 5</div><p>Why prefer a role query for a button over a CSS selector?</p>
+<label class="quiz-option" data-val="a">Role queries automatically invoke every click handler</label>
+<label class="quiz-option" data-val="b">Role queries inspect React state without rendering</label>
+<label class="quiz-option" data-val="c">Role queries reflect how accessible controls are identified</label>
+<label class="quiz-option" data-val="d">Role queries prevent semantic markup from ever being changed or refactored</label>
+<div class="explanation">Semantic queries align tests with user-facing accessibility rather than styling hooks.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 4 of 5</div><p>One test renders, clicks increment, clicks reset, changes props, and checks five labels. What is the main cost?</p>
+<label class="quiz-option" data-val="a">Vitest cannot execute more than one interaction or assertion in a test case</label>
+<label class="quiz-option" data-val="b">A failure is harder to diagnose because many behaviors are mixed</label>
+<label class="quiz-option" data-val="c">React Testing Library forbids multiple assertions</label>
+<label class="quiz-option" data-val="d">The DOM is deleted after the first expectation</label>
+<div class="explanation">Focused tests produce more specific failures and make the protected behavior obvious.</div></div>
+<div class="quiz-question" data-answer="d"><div class="question-num">Question 5 of 5</div><p>What should determine whether a behavior deserves a test first?</p>
+<label class="quiz-option" data-val="a">The total number of source lines and functions used to implement it</label>
+<label class="quiz-option" data-val="b">The alphabetical order of component functions</label>
+<label class="quiz-option" data-val="c">The ease of selecting its DOM element</label>
+<label class="quiz-option" data-val="d">The impact and likelihood of a meaningful regression</label>
+<div class="explanation">Testing priority should follow risk, not implementation size or convenience.</div></div><button class="submit-btn" disabled>Submit Post-Quiz</button><div class="quiz-result" id="post-result"></div></div>
+<h2>9. Reflection Questions</h2><div class="card"><ol><li>Which current CountryCard detail is most tempting but least useful to test?</li><li>What regression would hurt a user most?</li><li>How can a test suite make refactoring safer instead of harder?</li></ol></div><h2>10. What Breaks Without Testing Principles?</h2><div class="card"><ul><li>Low-value assertions create noisy failures.</li><li>Important behavior may remain unprotected.</li><li>Safe refactors become unnecessarily expensive.</li></ul></div><h2>11. What Engineering Concept Was Learned Today</h2><div class="card" style="border-color:var(--green)"><p><strong>Tests should maximize confidence in observable behavior while minimizing coupling to replaceable implementation.</strong></p><p><strong>Next:</strong> <a href="../session-28/index.html">Session 28 — Setting Up Vitest + RTL</a>.</p></div><p><a href="../session-26/index.html">← Session 26</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-28/index.html">Session 28 →</a></p>
+</div></main><script src="../../quiz.js" defer></script><script src="../../session-full.js" defer></script><script src="../../notes-widget.js" defer></script><script src="../../bookmark-widget.js" defer></script><div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;color:#ff5ca8">DRAFT</div></body></html>

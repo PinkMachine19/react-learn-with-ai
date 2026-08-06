@@ -1,46 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Session 30 — Testing Events and State</title>
-  <link rel="stylesheet" href="../../styles.css" />
-  <link rel="stylesheet" href="../../notes-widget.css" />
-  <link rel="stylesheet" href="../../bookmark-widget.css" />
-</head>
-<body>
-<nav>
-  <div class="container">
-    <a href="../../index.html" class="brand">⚛ React Learning</a>
-    <a href="../../syllabus/index.html">Syllabus</a>
-    <a href="../../sessions/index.html" class="active">Sessions</a>
-    <a href="../../quizzes/index.html">Quizzes</a>
-    <a href="../../labs/index.html">Labs</a>
-  </div>
-</nav>
-<main>
-  <div class="container">
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:6px;">
-      <span class="badge badge-layer">Layer 5</span>
-      <span class="badge badge-current">Session 30</span>
-      <span style="color:var(--text-muted);font-size:13px;">Testing</span>
-    </div>
-    <h1>Testing Events and State</h1>
-    <div class="alert alert-warning">
-      <strong>Outline page.</strong> The full lesson doc (quizzes, SVGs, lab, commit checkpoint) is not written yet.
-      Use the syllabus outline below until this session is hydrated.
-    </div>
-    <div class="card">
-      <h2>From the syllabus</h2>
-      <p><strong>Core concept:</strong> fireEvent, userEvent, asserting state changes via DOM</p>
-      <p><strong>Project milestone:</strong> Test that clicking a button updates displayed count</p>
-      <p><strong>Status:</strong> <span class="badge badge-current">Available</span> — session page is open; complete prior sessions in order when doing the lab track.</p>
-    </div>
-    <p style="margin-top:24px;"><a href="../session-29/index.html">← Session 29</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-31/index.html">Session 31 →</a></p>
-  </div>
-</main>
-<script src="../../notes-widget.js" defer></script>
-<script src="../../bookmark-widget.js" defer></script>
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Session 30 — Testing Events and State</title><link rel="stylesheet" href="../../styles.css"/><link rel="stylesheet" href="../../notes-widget.css"/><link rel="stylesheet" href="../../bookmark-widget.css"/><link rel="stylesheet" href="../../quiz-explain-modal.css"/><link rel="stylesheet" href="../../session-full.css"/></head><body><nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html" class="active">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../../labs/index.html">Labs</a></div></nav><main><div class="container">
+<div style="display:flex;gap:12px"><span class="badge badge-layer">Layer 5</span><span class="badge badge-current">Session 30</span><span style="color:var(--text-muted)">Testing</span></div><h1>Testing Events and State</h1><p class="subtitle">Drive CountryCard through its buttons as a user would, then verify state only through the DOM changes it causes.</p><div class="alert alert-info">Estimated time: 45–55 minutes · Milestone: click increments count and reset restores zero</div>
+<svg class="hero-diagram" viewBox="0 0 680 230"><rect width="680" height="230" rx="8" fill="#111"/><text x="340" y="28" fill="white" font-size="12" text-anchor="middle">USER ACTION → HANDLER → STATE → DOM</text><rect x="28" y="75" width="125" height="80" fill="none" stroke="#58a6ff" stroke-width="2"/><text x="90" y="120" fill="#58a6ff" font-size="9" text-anchor="middle">user.click</text><rect x="198" y="75" width="125" height="80" fill="none" stroke="#ff5ca8" stroke-width="2"/><text x="260" y="120" fill="#ff5ca8" font-size="9" text-anchor="middle">handleClick</text><rect x="368" y="75" width="125" height="80" fill="none" stroke="#ff5ca8" stroke-width="2"/><text x="430" y="110" fill="#ff5ca8" font-size="9" text-anchor="middle">setCount</text><text x="430" y="132" fill="white" font-size="8" text-anchor="middle">re-render</text><rect x="538" y="75" width="115" height="80" fill="none" stroke="#3fb950" stroke-width="2"/><text x="595" y="110" fill="#3fb950" font-size="9" text-anchor="middle">DOM</text><text x="595" y="132" fill="white" font-size="8" text-anchor="middle">Clicked 1 times</text><path d="M153,115 H198 M323,115 H368 M493,115 H538" stroke="white"/></svg>
+<div class="concept-grid">
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="25" fill="white" font-size="8" text-anchor="middle">const user = userEvent.setup()</text><rect x="22" y="48" width="116" height="30" fill="none" stroke="#58a6ff"/><text x="80" y="67" fill="#58a6ff" font-size="8" text-anchor="middle">await user.click(button)</text><text x="80" y="112" fill="#3fb950" font-size="8" text-anchor="middle">realistic sequence</text></svg><figcaption>prefer <b>user-event</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">user-event dispatches a fuller interaction sequence and performs accessibility checks closer to real use.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="25" width="120" height="28" fill="none" stroke="#58a6ff"/><text x="80" y="43" fill="#58a6ff" font-size="8" text-anchor="middle">button: Click Me</text><line x1="80" y1="53" x2="80" y2="80" stroke="white"/><rect x="20" y="82" width="120" height="28" fill="none" stroke="#3fb950"/><text x="80" y="100" fill="#3fb950" font-size="8" text-anchor="middle">Clicked 1 times</text></svg><figcaption>assert the <b>visible consequence</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">The displayed count proves the interaction, handler, state update, re-render, and DOM commit cooperated.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="28" fill="white" font-size="8" text-anchor="middle">do not inspect</text><rect x="25" y="48" width="110" height="30" fill="none" stroke="#f85149"/><text x="80" y="67" fill="#f85149" font-size="8" text-anchor="middle">count state directly</text><text x="80" y="112" fill="#8b949e" font-size="8" text-anchor="middle">private mechanism</text></svg><figcaption>state is <b>not the assertion target</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Users cannot inspect hook memory. Assert the output that state controls instead.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><circle cx="80" cy="42" r="22" fill="none" stroke="#58a6ff"/><text x="80" y="47" fill="#58a6ff" font-size="8" text-anchor="middle">0</text><path d="M80,64 V88" stroke="white"/><circle cx="80" cy="108" r="22" fill="none" stroke="#3fb950"/><text x="80" y="113" fill="#3fb950" font-size="8" text-anchor="middle">1</text></svg><figcaption>assert <b>before + after</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Checking the initial state prevents a false pass caused by output that already matched before the action.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="24" fill="white" font-size="8" text-anchor="middle">async interaction</text><rect x="20" y="45" width="120" height="28" fill="none" stroke="#ff5ca8"/><text x="80" y="63" fill="#ff5ca8" font-size="8" text-anchor="middle">await user.click</text><text x="80" y="105" fill="#3fb950" font-size="8" text-anchor="middle">then assert</text></svg><figcaption><code>await</code> the <b>user action</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Modern user-event methods are asynchronous; awaiting them prevents assertions from racing the interaction.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="18" y="25" width="124" height="28" fill="none" stroke="#3fb950"/><text x="80" y="43" fill="#3fb950" font-size="8" text-anchor="middle">getByRole(button)</text><text x="80" y="75" fill="white" font-size="8" text-anchor="middle">name: /click me/i</text><text x="80" y="108" fill="#58a6ff" font-size="8" text-anchor="middle">accessible control</text></svg><figcaption>locate controls by <b>role + name</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Accessible-name queries distinguish the increment and reset buttons without relying on position.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><circle cx="48" cy="48" r="20" fill="none" stroke="#58a6ff"/><text x="48" y="53" fill="#58a6ff" font-size="8" text-anchor="middle">3</text><path d="M68,48 H95" stroke="white"/><circle cx="115" cy="48" r="20" fill="none" stroke="#3fb950"/><text x="115" y="53" fill="#3fb950" font-size="8" text-anchor="middle">0</text><text x="80" y="106" fill="white" font-size="8" text-anchor="middle">Reset is separate behavior</text></svg><figcaption>test reset from a <b>nonzero state</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Resetting zero to zero proves nothing. Increment first, then reset, so the output must visibly transition.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="25" fill="white" font-size="8" text-anchor="middle">fireEvent.click</text><rect x="20" y="45" width="120" height="28" fill="none" stroke="#8b949e"/><text x="80" y="63" fill="#8b949e" font-size="8" text-anchor="middle">lower-level dispatch</text><text x="80" y="106" fill="#ff5ca8" font-size="8" text-anchor="middle">use when deliberate</text></svg><figcaption>fireEvent is <b>lower level</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">fireEvent remains useful for targeted event dispatch, but user-event better models ordinary user interaction.</p></figure>
+<figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="24" fill="white" font-size="8" text-anchor="middle">next</text><rect x="20" y="45" width="120" height="28" fill="none" stroke="#ff5ca8"/><text x="80" y="63" fill="#ff5ca8" font-size="8" text-anchor="middle">await service()</text><path d="M80,73 V96" stroke="white"/><text x="80" y="116" fill="#3fb950" font-size="8" text-anchor="middle">assert resolved shape</text></svg><figcaption>next: test <b>async services</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Session 31 moves below the UI boundary to verify Promise results and service failure behavior.</p></figure>
+</div>
+<hr class="section-divider"/><h2>1. Learning Objectives</h2><div class="card"><ul><li>Create a user-event instance and await interactions</li><li>Locate controls by role and accessible name</li><li>Assert state through visible output</li><li>Verify initial, incremented, and reset states</li><li>Explain when fireEvent is a lower-level alternative</li></ul></div>
+<h2>2. Pre-Coding Quiz</h2><p>Need 4/5 to proceed.</p><div id="pre-quiz">
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 1 of 5</div><p>Why should the test await <code>user.click(button)</code>?</p>
+<label class="quiz-option" data-val="a">The click downloads a remote country record</label>
+<label class="quiz-option" data-val="b">Vitest requires every component function and assertion call to be awaited</label>
+<label class="quiz-option" data-val="c">user-event interactions may complete asynchronously</label>
+<label class="quiz-option" data-val="d">The button’s accessible role is a Promise</label>
+<div class="explanation">Awaiting the interaction ensures the event sequence completes before assertions run.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 2 of 5</div><p>Which assertion tests the effect of state without coupling to hooks?</p>
+<label class="quiz-option" data-val="a">Expect the DOM to show “Clicked 1 times”</label>
+<label class="quiz-option" data-val="b">Expect useState to receive one as its argument</label>
+<label class="quiz-option" data-val="c">Expect setCount to be the second array item</label>
+<label class="quiz-option" data-val="d">Expect count to exist in the component closure</label>
+<div class="explanation">Visible output is observable behavior; hook details are private implementation.</div></div>
+<div class="quiz-question" data-answer="d"><div class="question-num">Question 3 of 5</div><p>Why increment before testing Reset?</p>
+<label class="quiz-option" data-val="a">Reset is disabled until two events have fired</label>
+<label class="quiz-option" data-val="b">user-event cannot click a control at count zero</label>
+<label class="quiz-option" data-val="c">React removes reset handlers from every initial render until state becomes nonzero</label>
+<label class="quiz-option" data-val="d">Resetting zero to zero would not prove a transition</label>
+<div class="explanation">A meaningful reset test starts from nonzero output and verifies that it returns to zero.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 4 of 5</div><p>Which query distinguishes the increment button from Reset?</p>
+<label class="quiz-option" data-val="a"><code>screen.getAllByRole('button', { hidden: false })[0]</code></label>
+<label class="quiz-option" data-val="b"><code>screen.getByRole('button', { name: /click me/i })</code></label>
+<label class="quiz-option" data-val="c"><code>document.querySelector('button')</code></label>
+<label class="quiz-option" data-val="d"><code>container.firstChild.lastChild</code></label>
+<div class="explanation">Role plus accessible name identifies the intended control without depending on order.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 5 of 5</div><p>When is <code>fireEvent</code> a reasonable choice?</p>
+<label class="quiz-option" data-val="a">Whenever user-event is available and already models the complete user action accurately</label>
+<label class="quiz-option" data-val="b">When the test needs to inspect hook state directly</label>
+<label class="quiz-option" data-val="c">When deliberately dispatching a specific low-level event</label>
+<label class="quiz-option" data-val="d">When jsdom has not been configured</label>
+<div class="explanation">fireEvent is useful for targeted dispatch; ordinary interactions are generally better represented by user-event.</div></div><button class="submit-btn" disabled>Submit Pre-Quiz</button><div class="quiz-result" id="pre-result"></div></div>
+<hr class="section-divider"/><h2>3. The Concept — Test the State Machine Through the Screen</h2><pre><code>const user = userEvent.setup();
+render(&lt;CountryCard name="Japan" region="Asia" /&gt;);
 
-<div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;padding:6px 11px;border:1px solid rgba(255,92,168,.55);border-radius:999px;background:rgba(13,17,23,.88);color:#ff5ca8;font:800 11px/1 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,sans-serif;letter-spacing:.16em;pointer-events:none">DRAFT</div><aside class="academy-project-status" aria-label="Project status" style="max-width:920px;margin:40px auto 24px;padding:16px 24px;border:1px solid #30363d;border-left:4px solid #ff5ca8;border-radius:6px;background:#161b22;color:#8b949e;font:13px/1.6 -apple-system,BlinkMacSystemFont,&quot;Segoe UI&quot;,Helvetica,Arial,sans-serif"><strong style="color:#ff5ca8">Project Status:</strong> This course is part of an evolving personal engineering library. AI assisted with drafting and organization, but every lesson is intended to be reviewed, validated, and improved over time as I work through the material myself. Draft content should be treated as work in progress until marked as validated.</aside></body>
-</html>
+expect(screen.getByText('Clicked 0 times')).toBeInTheDocument();
+await user.click(screen.getByRole('button', { name: /click me/i }));
+expect(screen.getByText('Clicked 1 times')).toBeInTheDocument();</code></pre><p>This one behavior crosses the full chain without knowing how state is implemented.</p>
+<hr class="section-divider"/><h2>4. Lab</h2><div class="alert alert-success"><strong>Lab objective:</strong> verify increment and reset behavior through user interaction and visible count text.</div><div class="step"><div class="step-num">1</div><div class="step-body"><p>Import <code>userEvent</code> and create a user instance inside the test.</p></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><p>Assert the initial zero output before acting.</p></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><p>Await one increment click and assert one.</p></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><p>Click two more times, verify three, then click Reset and verify zero.</p></div></div>
+<h2>5. Expected Files Changed</h2><div class="card"><code>src/component/CountryCard.test.jsx</code> — learner adds interaction tests.</div><h2>6. Commit Checkpoint</h2><pre><code>git add src/component/CountryCard.test.jsx
+git commit -m "session-30: test CountryCard events and state output"</code></pre><h2>7. Code Review Checklist</h2><div class="card"><div class="checklist-item"><input type="checkbox"/><label>Interactions use awaited user-event calls</label></div><div class="checklist-item"><input type="checkbox"/><label>Buttons are found by role and name</label></div><div class="checklist-item"><input type="checkbox"/><label>Initial and changed output are both asserted</label></div><div class="checklist-item"><input type="checkbox"/><label>No hook or handler internals are inspected</label></div></div>
+<hr class="section-divider"/><h2>8. Post-Coding Quiz</h2><div id="post-quiz" data-pass-post="Proceed to Session 31 after ≥ 80%.">
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 1 of 5</div><p>The click handler is renamed but behavior stays identical. What should happen?</p>
+<label class="quiz-option" data-val="a">The test should fail because handler names are contractual</label>
+<label class="quiz-option" data-val="b">The interaction test should continue passing</label>
+<label class="quiz-option" data-val="c">user-event should search for the handler name</label>
+<label class="quiz-option" data-val="d">The test should replace clicks with state inspection</label>
+<div class="explanation">The test depends on accessible controls and visible results, not local function names.</div></div>
+<div class="quiz-question" data-answer="d"><div class="question-num">Question 2 of 5</div><p>A test clicks Reset at the initial zero and sees zero. Why is the result weak?</p>
+<label class="quiz-option" data-val="a">Reset buttons cannot be queried before increment</label>
+<label class="quiz-option" data-val="b">The test must mock React before every reset</label>
+<label class="quiz-option" data-val="c">Zero is not valid visible text inside a jsdom-rendered component document</label>
+<label class="quiz-option" data-val="d">The same output could appear even if Reset did nothing</label>
+<div class="explanation">A transition from nonzero to zero distinguishes working reset behavior from no behavior.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 3 of 5</div><p>What does a passing increment test jointly demonstrate?</p>
+<label class="quiz-option" data-val="a">The control, handler, state update, render, and DOM output cooperate</label>
+<label class="quiz-option" data-val="b">The asynchronous service returns every country without delay or failure</label>
+<label class="quiz-option" data-val="c">The component uses exactly one state hook</label>
+<label class="quiz-option" data-val="d">The browser persists count after reload</label>
+<div class="explanation">The behavior test crosses multiple implementation steps while asserting only the visible result.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 4 of 5</div><p>The assertion runs before an un-awaited user click completes. What kind of failure can result?</p>
+<label class="quiz-option" data-val="a">The component permanently loses its props</label>
+<label class="quiz-option" data-val="b">The role of every button changes to generic</label>
+<label class="quiz-option" data-val="c">A timing race observes stale DOM output</label>
+<label class="quiz-option" data-val="d">The service fixture becomes malformed JSON</label>
+<div class="explanation">Without awaiting the asynchronous interaction, the assertion may run before React commits the update.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 5 of 5</div><p>Why assert “Clicked 0 times” before clicking?</p>
+<label class="quiz-option" data-val="a">To make user-event install and register the component click handler before rendering</label>
+<label class="quiz-option" data-val="b">To prove the later value changed from the expected initial state</label>
+<label class="quiz-option" data-val="c">To force the component to import useState</label>
+<label class="quiz-option" data-val="d">To prevent cleanup after the test</label>
+<div class="explanation">A before-and-after assertion proves a transition rather than only finding the final text.</div></div><button class="submit-btn" disabled>Submit Post-Quiz</button><div class="quiz-result" id="post-result"></div></div>
+<h2>9. Reflection Questions</h2><div class="card"><ol><li>What parts of the update chain does one click assertion cover?</li><li>Why is direct hook inspection less useful?</li><li>What other nonzero starting state could strengthen Reset testing?</li></ol></div><h2>10. What Breaks If Interaction Tests Are Removed?</h2><div class="card"><ul><li>Buttons may render while handlers silently fail.</li><li>State can update incorrectly without detection.</li><li>Reset regressions remain unprotected.</li></ul></div><h2>11. What Engineering Concept Was Learned Today</h2><div class="card" style="border-color:var(--green)"><p><strong>Test stateful behavior by performing realistic user actions and asserting the resulting DOM, never by inspecting state directly.</strong></p><p><strong>Next:</strong> <a href="../session-31/index.html">Session 31 — Testing the Service Layer</a>.</p></div><p><a href="../session-29/index.html">← Session 29</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-31/index.html">Session 31 →</a></p>
+</div></main><script src="../../quiz.js" defer></script><script src="../../session-full.js" defer></script><script src="../../notes-widget.js" defer></script><script src="../../bookmark-widget.js" defer></script><div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;color:#ff5ca8">DRAFT</div></body></html>
