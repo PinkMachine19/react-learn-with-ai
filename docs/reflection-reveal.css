@@ -1,0 +1,9 @@
+.reflection-list{padding-left:24px}
+.reflection-item{margin-bottom:18px;padding-left:4px}
+.reflection-question{margin:0 0 8px;font-weight:600}
+.reflection-answer-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;padding:8px 10px;border:1px solid #3a3a3a;border-radius:5px;background:#1a1a1a;color:#ff5ca8;font:700 10px monospace;text-transform:uppercase;letter-spacing:.04em;cursor:pointer}
+.reflection-answer-toggle:hover,.reflection-answer-toggle:focus-visible{border-color:#ff5ca8;outline:none}
+.reflection-answer-hint{color:#8b949e;font-size:9px;font-weight:400;letter-spacing:0;text-transform:none}
+.reflection-answer{margin:8px 2px 0;padding:10px 12px;border-left:2px solid #3a3a3a;border-radius:4px;background:var(--surface-2);color:#d8d8d8;font-size:13px;line-height:1.55;filter:blur(5px);user-select:none;transition:filter .2s ease,border-color .2s ease}
+.reflection-item.answer-revealed .reflection-answer{filter:none;user-select:text;border-left-color:#3fb950}
+.reflection-item.answer-revealed .reflection-answer-hint{color:#3fb950}
