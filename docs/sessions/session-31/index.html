@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Session 31 — Testing the Service Layer</title><link rel="stylesheet" href="../../styles.css"/><link rel="stylesheet" href="../../notes-widget.css"/><link rel="stylesheet" href="../../bookmark-widget.css"/><link rel="stylesheet" href="../../quiz-explain-modal.css"/><link rel="stylesheet" href="../../session-full.css"/><link rel="stylesheet" href="../../reflection-reveal.css"/></head><body><nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html" class="active">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../../labs/index.html">Labs</a></div></nav><main><div class="container">
 <div style="display:flex;gap:12px"><span class="badge badge-layer">Layer 5</span><span class="badge badge-gate">Session 31 — Layer 5 Gate</span><span style="color:var(--text-muted)">Testing</span></div><h1>Testing the Service Layer</h1><p class="subtitle">Test asynchronous service contracts independently: control imported country data, await Promise outcomes, assert returned shapes, and distinguish an empty collection from a rejected singular lookup.</p><div class="alert alert-warning"><strong>Layer 5 gate:</strong> score ≥ 80% on the post-quiz before continuing.</div>
-<svg class="hero-diagram" viewBox="0 0 680 230"><rect width="680" height="230" rx="8" fill="#111"/><text x="340" y="28" fill="white" font-size="12" text-anchor="middle">CONTROL INPUT → CALL SERVICE → ASSERT PROMISE CONTRACT</text><rect x="35" y="70" width="150" height="90" fill="none" stroke="#58a6ff" stroke-width="2"/><text x="110" y="104" fill="#58a6ff" font-size="9" text-anchor="middle">vi.mock(data)</text><text x="110" y="132" fill="white" font-size="8" text-anchor="middle">known fixture</text><rect x="265" y="60" width="150" height="110" fill="none" stroke="#ff5ca8" stroke-width="2"/><text x="340" y="104" fill="#ff5ca8" font-size="9" text-anchor="middle">fetchAllCountries()</text><text x="340" y="132" fill="white" font-size="8" text-anchor="middle">Promise</text><rect x="495" y="70" width="150" height="90" fill="none" stroke="#3fb950" stroke-width="2"/><text x="570" y="104" fill="#3fb950" font-size="9" text-anchor="middle">resolves</text><text x="570" y="132" fill="white" font-size="8" text-anchor="middle">Country[] shape</text><path d="M185,115 H265 M415,115 H495" stroke="white"/></svg>
+<svg class="hero-diagram" viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Session 31 five-step lab flow"><rect width="680" height="260" rx="8" fill="#111"/><text x="340" y="27" fill="white" font-family="monospace" font-size="12" text-anchor="middle" font-weight="bold">SESSION 31 LAB FLOW</text><text x="340" y="47" fill="#8b949e" font-family="monospace" font-size="8" text-anchor="middle">Test fulfilled collections, singular rejection, filtering, and Promise timing in the country service.</text><rect x="20" y="72" width="116" height="68" rx="5" fill="#161b22" stroke="#58a6ff" stroke-width="2"/><circle cx="38" cy="91" r="10" fill="#58a6ff"/><text x="38" y="95" fill="#0d1117" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text><text x="90" y="107" fill="#58a6ff" font-family="monospace" font-size="8" text-anchor="middle">Mock fixture</text><path d="M136 106 H156" stroke="#ff5ca8" stroke-width="2"/><rect x="160" y="72" width="116" height="68" rx="5" fill="#161b22" stroke="#ff5ca8" stroke-width="2"/><circle cx="178" cy="91" r="10" fill="#ff5ca8"/><text x="178" y="95" fill="#0d1117" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text><text x="230" y="107" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">Test all</text><path d="M276 106 H296" stroke="#ff5ca8" stroke-width="2"/><rect x="300" y="72" width="116" height="68" rx="5" fill="#161b22" stroke="#f0883e" stroke-width="2"/><circle cx="318" cy="91" r="10" fill="#f0883e"/><text x="318" y="95" fill="#0d1117" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text><text x="370" y="107" fill="#f0883e" font-family="monospace" font-size="8" text-anchor="middle">Test id</text><path d="M416 106 H436" stroke="#ff5ca8" stroke-width="2"/><rect x="440" y="72" width="116" height="68" rx="5" fill="#161b22" stroke="#a371f7" stroke-width="2"/><circle cx="458" cy="91" r="10" fill="#a371f7"/><text x="458" y="95" fill="#0d1117" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text><text x="510" y="107" fill="#a371f7" font-family="monospace" font-size="8" text-anchor="middle">Test region</text><path d="M556 106 H576" stroke="#ff5ca8" stroke-width="2"/><rect x="580" y="72" width="116" height="68" rx="5" fill="#161b22" stroke="#3fb950" stroke-width="2"/><circle cx="598" cy="91" r="10" fill="#3fb950"/><text x="598" y="95" fill="#0d1117" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text><text x="650" y="107" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">Control time</text><path d="M638 140 V164 H340 V180" fill="none" stroke="#3fb950" stroke-width="2"/><rect x="90" y="184" width="500" height="52" rx="5" fill="#161b22" stroke="#3fb950" stroke-width="2"/><text x="340" y="206" fill="#3fb950" font-family="monospace" font-size="9" text-anchor="middle">END STATE</text><text x="340" y="224" fill="white" font-family="monospace" font-size="8" text-anchor="middle">Controlled fixture input exercises real service logic for success, empty results, and errors.</text></svg>
 <div class="concept-grid">
 <figure class="concept-card"><svg viewBox="0 0 160 140"><rect x="20" y="24" width="120" height="28" fill="none" stroke="#58a6ff"/><text x="80" y="42" fill="#58a6ff" font-size="8" text-anchor="middle">vi.mock(data module)</text><line x1="80" y1="52" x2="80" y2="80" stroke="white"/><rect x="20" y="82" width="120" height="28" fill="none" stroke="#3fb950"/><text x="80" y="100" fill="#3fb950" font-size="8" text-anchor="middle">known Country[]</text></svg><figcaption>mock the <b>dependency boundary</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">A mocked data module gives the service deterministic input without coupling assertions to the full project fixture.</p></figure>
 <figure class="concept-card"><svg viewBox="0 0 160 140"><text x="80" y="24" fill="white" font-size="8" text-anchor="middle">Promise states</text><circle cx="35" cy="70" r="20" fill="none" stroke="#58a6ff"/><text x="35" y="75" fill="#58a6ff" font-size="7" text-anchor="middle">pending</text><circle cx="80" cy="70" r="20" fill="none" stroke="#3fb950"/><text x="80" y="75" fill="#3fb950" font-size="7" text-anchor="middle">fulfilled</text><circle cx="125" cy="70" r="20" fill="none" stroke="#f85149"/><text x="125" y="75" fill="#f85149" font-size="7" text-anchor="middle">rejected</text></svg><figcaption>assert both <b>success + failure</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">Async contracts include fulfilled values and rejection behavior, not only the fact that a Promise exists.</p></figure>
@@ -49,7 +49,64 @@
     { id: 1, name: 'Japan', region: 'Asia', population: 1 }
   ]
 }));</code></pre><p>Vitest hoists <code>vi.mock</code>, so values used by its factory should be declared inside the factory (or with <code>vi.hoisted</code>). Use the service’s actual exported names—currently <code>fetchAllCountries</code>, <code>fetchAllById</code>, and <code>fetchAllByRegion</code>—rather than inventing a generic <code>getAll</code> API.</p>
-<hr class="section-divider"/><h2>4. Lab</h2><div class="alert alert-success"><strong>Lab objective:</strong> test the country service’s fulfilled collections, id rejection, filtering, and returned shape.</div><div class="step"><div class="step-num">1</div><div class="step-body"><p>Create <code>src/services/countryServices.test.js</code> and mock the data module with two known countries.</p></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><p>Assert <code>fetchAllCountries()</code> resolves to two objects matching the Country contract.</p></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><p>Assert a known id resolves and an unknown id rejects with a meaningful message.</p></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><p>Assert a known region returns matches and an unknown region resolves to an empty array.</p></div></div><div class="step"><div class="step-num">5</div><div class="step-body"><p>Optionally use fake timers: start the Promise, advance time with <code>vi.advanceTimersByTimeAsync</code>, then await the assertion. Restore real timers after each test.</p></div></div>
+<hr class="section-divider"/><h2>4. Lab</h2><div class="alert alert-success"><strong>Lab objective:</strong> Test fulfilled collections, singular rejection, filtering, and Promise timing in the country service.</div><div class="alert alert-info"><strong>End state:</strong> Controlled fixture input exercises real service logic for success, empty results, and errors.</div>
+<div class="step"><div class="step-num">1</div><div class="step-body"><p><strong>Mock only fixture data</strong></p><p>Keep filtering, copying, delays, and errors real.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 1 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>import { afterEach, expect, test, vi } from 'vitest';
+
+vi.mock('../data/countries', () =&gt; ({
+  default: [
+    { id: 1, name: 'Canada', region: 'Americas', population: 50000000 },
+    { id: 2, name: 'Japan', region: 'Asia', population: 150000000 }
+  ]
+}));
+
+import {
+  getCountries,
+  getCountryById,
+  getCountriesByRegion
+} from './countryServices.js';
+
+afterEach(() =&gt; vi.useRealTimers());</code></pre></div></div></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body"><p><strong>Assert the collection</strong></p><p>Check shape and a fresh outer array.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 2 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>test('getCountries resolves a fresh Country array', async () =&gt; {
+  const first = await getCountries();
+  const second = await getCountries();
+
+  expect(first).toHaveLength(2);
+  expect(first[0]).toEqual({
+    id: 1, name: 'Canada',
+    region: 'Americas', population: 50000000
+  });
+  expect(first).not.toBe(second);
+});</code></pre></div></div></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-body"><p><strong>Test known and unknown IDs</strong></p><p>Prove both singular outcomes.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 3 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>test('known id resolves', async () =&gt; {
+  await expect(getCountryById(2)).resolves.toMatchObject({
+    id: 2, name: 'Japan'
+  });
+});
+
+test('unknown id rejects', async () =&gt; {
+  await expect(getCountryById(999)).rejects.toThrow(
+    'Country 999 not found'
+  );
+});</code></pre></div></div></div></div>
+<div class="step"><div class="step-num">4</div><div class="step-body"><p><strong>Test matching and empty regions</strong></p><p>Collections fulfill consistently.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 4 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>test('region returns matches', async () =&gt; {
+  await expect(getCountriesByRegion('Asia')).resolves.toEqual([
+    { id: 2, name: 'Japan', region: 'Asia', population: 150000000 }
+  ]);
+});
+
+test('unknown region returns []', async () =&gt; {
+  await expect(getCountriesByRegion('Oceania')).resolves.toEqual([]);
+});</code></pre></div></div></div></div>
+<div class="step"><div class="step-num">5</div><div class="step-body"><p><strong>Control Promise timing</strong></p><p>Advance the documented delay and restore timers.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 5 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>test('getCountries waits 300ms', async () =&gt; {
+  vi.useFakeTimers();
+
+  const assertion = expect(
+    getCountries()
+  ).resolves.toHaveLength(2);
+
+  await vi.advanceTimersByTimeAsync(300);
+  await assertion;
+});</code></pre></div></div></div></div>
 <h2>5. Expected Files Changed</h2><div class="card"><code>src/services/countryServices.test.js</code> — learner creates service tests. No service implementation change is required unless a test exposes a genuine contract bug.</div><h2>6. Commit Checkpoint</h2><pre><code>git add src/services/countryServices.test.js
 git commit -m "session-31: test asynchronous country service contracts"</code></pre><h2>7. Code Review Checklist</h2><div class="card"><div class="checklist-item"><input type="checkbox"/><label>Mock input is minimal and deterministic</label></div><div class="checklist-item"><input type="checkbox"/><label>Promise assertions are awaited</label></div><div class="checklist-item"><input type="checkbox"/><label>Empty collection and rejection semantics are distinct</label></div><div class="checklist-item"><input type="checkbox"/><label>Assertions focus on the documented Country shape</label></div></div>
 <hr class="section-divider"/><h2>8. Post-Coding Quiz</h2><div id="post-quiz" data-pass-post="Layer 5 complete. Proceed after ≥ 80%.">
