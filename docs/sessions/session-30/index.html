@@ -1,5 +1,33 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Session 30 — Testing Events and State</title><link rel="stylesheet" href="../../styles.css"/><link rel="stylesheet" href="../../notes-widget.css"/><link rel="stylesheet" href="../../bookmark-widget.css"/><link rel="stylesheet" href="../../quiz-explain-modal.css"/><link rel="stylesheet" href="../../session-full.css"/><link rel="stylesheet" href="../../reflection-reveal.css"/></head><body><nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html" class="active">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../../labs/index.html">Labs</a></div></nav><main><div class="container">
 <div style="display:flex;gap:12px"><span class="badge badge-layer">Layer 5</span><span class="badge badge-current">Session 30</span><span style="color:var(--text-muted)">Testing</span></div><h1>Testing Events and State</h1><p class="subtitle">Drive CountryCard through its buttons as a user would, then verify state only through the DOM changes it causes.</p><div class="alert alert-info">Estimated time: 45–55 minutes · Milestone: click increments count and reset restores zero</div>
+<details class="warmup-expander"><summary><span class="warmup-label">Optional Warm-Up</span><span>5-Minute Wake-Up Challenge: Counter Test Driver</span></summary><div class="warmup-content">
+<p><strong>Give yourself five minutes.</strong> Complete the missing user actions and visible assertions without inspecting React state. Run or revise the snippet repeatedly while you work.</p>
+<div class="alert alert-info"><strong>No full app run required:</strong> use a separate scratch file, the VS Code/Node REPL, or the browser console—whichever creates the least friction.</div>
+<pre><code>test('increments and resets', async () =&gt; {
+  const user = userEvent.setup();
+  render(&lt;CountryCard name="Japan" region="Asia" /&gt;);
+
+  const increment = screen.getByRole('button', {
+    name: /click me/i
+  });
+  const reset = screen.getByRole('button', {
+    name: /reset/i
+  });
+
+  // Click increment twice.
+  // Prove the visible count is 2.
+  // Click Reset.
+  // Prove the visible count is 0.
+});</code></pre>
+<p><strong>Your task:</strong> Write the four missing lines. Await each user action and assert only rendered output.</p>
+<div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Warm-Up solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>await user.click(increment);
+await user.click(increment);
+expect(screen.getByText('Clicked 2 times')).toBeInTheDocument();
+
+await user.click(reset);
+expect(screen.getByText('Clicked 0 times')).toBeInTheDocument();</code></pre></div></div>
+<div class="alert alert-success"><strong>Lesson connection:</strong> You just tested the complete action → handler → state → DOM chain without touching a hook or private variable.</div>
+</div></details>
 <svg class="hero-diagram" viewBox="0 0 680 285" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="s30-hero-title s30-hero-desc"><title id="s30-hero-title">A click drives a visible score counter</title><desc id="s30-hero-desc">A finger launches a pinball through a mechanism that advances the public score from zero to one. Reset sends the score back to zero.</desc><rect width="680" height="285" rx="8" fill="#111"/><text x="340" y="28" fill="white" font-family="monospace" font-size="12" text-anchor="middle" font-weight="bold">ACTION IN — VISIBLE STATE OUT</text><rect x="70" y="62" width="420" height="178" rx="18" fill="#161b22" stroke="#58a6ff" stroke-width="4"/><circle cx="135" cy="186" r="30" fill="#ff5ca8"/><text x="135" y="191" fill="#0d1117" font-size="10" text-anchor="middle" font-weight="bold">CLICK</text><path d="M165 186 C218 184 207 92 275 92 C346 92 338 177 408 174" fill="none" stroke="#f0883e" stroke-width="6"/><circle cx="188" cy="166" r="12" fill="#f0883e"/><path d="M250 120 l22 18 20-29 26 32 24-28" fill="none" stroke="#a371f7" stroke-width="4"/><rect x="365" y="76" width="90" height="54" rx="7" fill="#0d1117" stroke="#3fb950" stroke-width="3"/><text x="410" y="110" fill="#3fb950" font-family="monospace" font-size="25" text-anchor="middle">1</text><path d="M492 108 H548" stroke="#3fb950" stroke-width="4"/><polygon points="548,108 534,100 534,116" fill="#3fb950"/><rect x="556" y="78" width="78" height="60" rx="8" fill="#3fb950"/><text x="595" y="105" fill="#0d1117" font-size="9" text-anchor="middle">VISIBLE</text><text x="595" y="122" fill="#0d1117" font-size="9" text-anchor="middle">COUNT</text><rect x="263" y="211" width="90" height="34" rx="6" fill="#0d1117" stroke="#f85149" stroke-width="3"/><text x="308" y="232" fill="#f85149" font-size="10" text-anchor="middle">RESET → 0</text></svg>
 <div class="concept-grid">
 <figure class="concept-card"><svg viewBox="0 0 160 140" role="img" aria-labelledby="s30-visual-2-title s30-visual-2-desc"><title id="s30-visual-2-title">prefer user-event</title><desc id="s30-visual-2-desc">Illustration supporting prefer user-event in Session 30.</desc><text x="80" y="25" fill="white" font-size="8" text-anchor="middle">const user = userEvent.setup()</text><rect x="22" y="48" width="116" height="30" fill="none" stroke="#58a6ff"/><text x="80" y="67" fill="#58a6ff" font-size="8" text-anchor="middle">await user.click(button)</text><text x="80" y="112" fill="#3fb950" font-size="8" text-anchor="middle">realistic sequence</text></svg><figcaption>prefer <b>user-event</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">user-event dispatches a fuller interaction sequence and performs accessibility checks closer to real use.</p></figure>
