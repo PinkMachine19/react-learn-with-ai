@@ -1,5 +1,54 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Session 27 — Why We Test and What to Test</title><link rel="stylesheet" href="../../styles.css"/><link rel="stylesheet" href="../../notes-widget.css"/><link rel="stylesheet" href="../../bookmark-widget.css"/><link rel="stylesheet" href="../../quiz-explain-modal.css"/><link rel="stylesheet" href="../../session-full.css"/><link rel="stylesheet" href="../../reflection-reveal.css"/></head><body><nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html" class="active">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../../labs/index.html">Labs</a></div></nav><main><div class="container">
 <div style="display:flex;gap:12px"><span class="badge badge-layer">Layer 5</span><span class="badge badge-current">Session 27</span><span style="color:var(--text-muted)">Testing</span></div><h1>Why We Test and What to Test</h1><p class="subtitle">Tests protect observable behavior, not implementation trivia. Learn to choose assertions that survive safe refactoring and fail when users would notice a regression.</p><div class="alert alert-info">Estimated time: 40–50 minutes · Concept session — no application code changes</div>
+<details class="warmup-expander"><summary><span class="warmup-label">Warm-Up</span><span>5-Minute Wake-Up Challenge: Contract Inspector</span></summary><div class="warmup-content">
+<p><strong>Start coding before reading the lesson.</strong> Give yourself five minutes and run the code repeatedly while developing your answer. Return every country that violates at least one contract rule.</p>
+<div class="alert alert-info"><strong>No React setup required:</strong> you do not need to modify or run the full React application. Choose whichever option below has the least friction—the purpose is to start coding immediately, not practice project setup.</div>
+<h3>Starting code</h3>
+<pre><code>const countries = [
+  { id: 1, name: "Ghana", region: "Africa", population: 34_000_000 },
+  { id: 2, name: "Canada", region: "Americas", population: "40 million" },
+  { id: 3, name: "Japan", region: "Asia", populaton: 124_000_000 },
+  { id: 4, name: "", region: "Europe", population: 10_000_000 }
+];
+
+function findInvalidCountries(countries) {
+  // Return every country that violates the rules.
+}</code></pre>
+<h3>Validation rules</h3>
+<ul><li><code>id</code> must be a number.</li><li><code>name</code> must be a nonempty string.</li><li><code>region</code> must be a nonempty string.</li><li><code>population</code> must exist and be a number.</li></ul>
+<div class="warmup-options">
+<section class="warmup-option"><h4>Option 1 — Separate VS Code file</h4><ol><li>Create <code>contractChallenge.js</code>.</li><li>Paste the challenge into it.</li><li>Add a <code>console.log</code> that calls <code>findInvalidCountries</code>.</li><li>Open the VS Code terminal.</li><li>Run:</li></ol><pre><code>node contractChallenge.js</code></pre></section>
+<section class="warmup-option"><h4>Option 2 — VS Code JavaScript REPL</h4><p>Open a JavaScript or Node REPL inside VS Code and paste the data and function directly into it. Start Node from the built-in terminal with:</p><pre><code>node</code></pre><p>Enter the code, then type <code>.exit</code> when finished. If an installed VS Code extension provides a JavaScript REPL or scratch-code runner, you may use that instead.</p></section>
+<section class="warmup-option"><h4>Option 3 — Browser console</h4><ol><li>Open the browser’s Developer Tools.</li><li>Select the Console tab.</li><li>Paste the data, function, and <code>console.log</code>.</li><li>Press Enter.</li></ol><p><small>The browser may block pasted code with a self-XSS warning. Follow its displayed instructions only when this is code you understand and intend to run.</small></p></section>
+</div>
+<div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Warm-Up solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>function findInvalidCountries(countries) {
+  return countries.filter(country => {
+    const hasValidId = typeof country.id === "number";
+    const hasValidName =
+      typeof country.name === "string" &amp;&amp;
+      country.name.trim() !== "";
+    const hasValidRegion =
+      typeof country.region === "string" &amp;&amp;
+      country.region.trim() !== "";
+    const hasValidPopulation =
+      Object.hasOwn(country, "population") &amp;&amp;
+      typeof country.population === "number";
+
+    return !(
+      hasValidId &amp;&amp;
+      hasValidName &amp;&amp;
+      hasValidRegion &amp;&amp;
+      hasValidPopulation
+    );
+  });
+}
+
+console.log(
+  findInvalidCountries(countries).map(country => country.id)
+);
+// [2, 3, 4]</code></pre><div class="card"><ul><li><code>filter</code> selects every invalid record.</li><li><code>typeof</code> checks JavaScript primitive types.</li><li>A misspelled property makes the expected property <code>undefined</code>.</li><li><code>trim</code> detects empty strings and strings containing only whitespace.</li></ul></div></div></div>
+<div class="alert alert-success"><strong>Lesson connection:</strong> “You just performed runtime contract validation. JSDoc documents the expected contract for the editor, but it does not execute these checks when data arrives.”</div>
+</div></details>
 <svg class="hero-diagram" viewBox="0 0 680 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Session 27 five-step lab flow"><rect width="680" height="260" rx="8" fill="#111"/><text x="340" y="27" fill="white" font-family="monospace" font-size="12" text-anchor="middle" font-weight="bold">SESSION 27 LAB FLOW</text><text x="340" y="47" fill="#8b949e" font-family="monospace" font-size="8" text-anchor="middle">Design a behavior-first CountryCard test plan without changing application code.</text><rect x="20" y="72" width="116" height="68" rx="5" fill="#161b22" stroke="#58a6ff" stroke-width="2"/><circle cx="38" cy="91" r="10" fill="#58a6ff"/><text x="38" y="95" fill="#0d1117" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">1</text><text x="90" y="107" fill="#58a6ff" font-family="monospace" font-size="8" text-anchor="middle">List behavior</text><path d="M136 106 H156" stroke="#ff5ca8" stroke-width="2"/><rect x="160" y="72" width="116" height="68" rx="5" fill="#161b22" stroke="#ff5ca8" stroke-width="2"/><circle cx="178" cy="91" r="10" fill="#ff5ca8"/><text x="178" y="95" fill="#0d1117" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">2</text><text x="230" y="107" fill="#ff5ca8" font-family="monospace" font-size="8" text-anchor="middle">Write AAA</text><path d="M276 106 H296" stroke="#ff5ca8" stroke-width="2"/><rect x="300" y="72" width="116" height="68" rx="5" fill="#161b22" stroke="#f0883e" stroke-width="2"/><circle cx="318" cy="91" r="10" fill="#f0883e"/><text x="318" y="95" fill="#0d1117" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">3</text><text x="370" y="107" fill="#f0883e" font-family="monospace" font-size="8" text-anchor="middle">Reject internals</text><path d="M416 106 H436" stroke="#ff5ca8" stroke-width="2"/><rect x="440" y="72" width="116" height="68" rx="5" fill="#161b22" stroke="#a371f7" stroke-width="2"/><circle cx="458" cy="91" r="10" fill="#a371f7"/><text x="458" y="95" fill="#0d1117" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">4</text><text x="510" y="107" fill="#a371f7" font-family="monospace" font-size="8" text-anchor="middle">Rank risk</text><path d="M556 106 H576" stroke="#ff5ca8" stroke-width="2"/><rect x="580" y="72" width="116" height="68" rx="5" fill="#161b22" stroke="#3fb950" stroke-width="2"/><circle cx="598" cy="91" r="10" fill="#3fb950"/><text x="598" y="95" fill="#0d1117" font-family="monospace" font-size="9" text-anchor="middle" font-weight="bold">5</text><text x="650" y="107" fill="#3fb950" font-family="monospace" font-size="8" text-anchor="middle">Build matrix</text><path d="M638 140 V164 H340 V180" fill="none" stroke="#3fb950" stroke-width="2"/><rect x="90" y="184" width="500" height="52" rx="5" fill="#161b22" stroke="#3fb950" stroke-width="2"/><text x="340" y="206" fill="#3fb950" font-family="monospace" font-size="9" text-anchor="middle">END STATE</text><text x="340" y="224" fill="white" font-family="monospace" font-size="8" text-anchor="middle">A prioritized test matrix separates user-visible contracts from replaceable implementation details.</text></svg>
 <div class="concept-grid">
 <figure class="concept-card"><svg viewBox="0 0 160 140"><circle cx="80" cy="60" r="34" fill="none" stroke="#58a6ff" stroke-width="2"/><text x="80" y="57" fill="#58a6ff" font-size="8" text-anchor="middle">user sees</text><text x="80" y="75" fill="white" font-size="8" text-anchor="middle">DOM behavior</text><text x="80" y="120" fill="#3fb950" font-size="8" text-anchor="middle">stable boundary</text></svg><figcaption>test <b>observable behavior</b></figcaption><button class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><p class="concept-explanation-text">A valuable component test asks what a user can find, read, or do rather than inspecting internal variables.</p></figure>
