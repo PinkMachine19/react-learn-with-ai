@@ -1,53 +1,36 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Session 27 — Why We Test and What to Test</title><link rel="stylesheet" href="../../styles.css"/><link rel="stylesheet" href="../../notes-widget.css"/><link rel="stylesheet" href="../../bookmark-widget.css"/><link rel="stylesheet" href="../../quiz-explain-modal.css"/><link rel="stylesheet" href="../../session-full.css"/><link rel="stylesheet" href="../../reflection-reveal.css"/></head><body><nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html" class="active">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../../labs/index.html">Labs</a></div></nav><main><div class="container">
 <div style="display:flex;gap:12px"><span class="badge badge-layer">Layer 5</span><span class="badge badge-current">Session 27</span><span style="color:var(--text-muted)">Testing</span></div><h1>Why We Test and What to Test</h1><p class="subtitle">Tests protect observable behavior, not implementation trivia. Learn to choose assertions that survive safe refactoring and fail when users would notice a regression.</p><div class="alert alert-info">Estimated time: 40–50 minutes · Concept session — no application code changes</div>
-<details class="warmup-expander"><summary><span class="warmup-label">Warm-Up</span><span>5-Minute Wake-Up Challenge: Contract Inspector</span></summary><div class="warmup-content">
-<p><strong>Start coding before reading the lesson.</strong> Give yourself five minutes and run the code repeatedly while developing your answer. Return every country that violates at least one contract rule.</p>
-<div class="alert alert-info"><strong>No React setup required:</strong> you do not need to modify or run the full React application. Choose whichever option below has the least friction—the purpose is to start coding immediately, not practice project setup.</div>
-<h3>Starting code</h3>
-<pre><code>const countries = [
-  { id: 1, name: "Ghana", region: "Africa", population: 34_000_000 },
-  { id: 2, name: "Canada", region: "Americas", population: "40 million" },
-  { id: 3, name: "Japan", region: "Asia", populaton: 124_000_000 },
-  { id: 4, name: "", region: "Europe", population: 10_000_000 }
+<details class="warmup-expander"><summary><span class="warmup-label">Optional Warm-Up</span><span>5-Minute Wake-Up Challenge: Behavior or Machinery?</span></summary><div class="warmup-content">
+<p><strong>Give yourself five minutes.</strong> Decide which checks protect something a user experiences and which are coupled to replaceable internals. Run or revise the snippet repeatedly while you work.</p>
+<div class="alert alert-info"><strong>No full app run required:</strong> use a separate scratch file, the VS Code/Node REPL, or the browser console—whichever creates the least friction.</div>
+<pre><code>const possibleTests = [
+  "The heading shows the supplied country name",
+  "CountryCard calls useState exactly once",
+  "Clicking Click Me changes the visible count",
+  "The click handler is named handleClick",
+  "Reset returns a changed count to zero",
+  "The wrapper keeps the class country-card"
 ];
 
-function findInvalidCountries(countries) {
-  // Return every country that violates the rules.
+function chooseBehaviorTests(possibleTests) {
+  // Return only the checks that protect observable behavior.
 }</code></pre>
-<h3>Validation rules</h3>
-<ul><li><code>id</code> must be a number.</li><li><code>name</code> must be a nonempty string.</li><li><code>region</code> must be a nonempty string.</li><li><code>population</code> must exist and be a number.</li></ul>
-<div class="warmup-options">
-<section class="warmup-option"><h4>Option 1 — Separate VS Code file</h4><ol><li>Create <code>contractChallenge.js</code>.</li><li>Paste the challenge into it.</li><li>Add a <code>console.log</code> that calls <code>findInvalidCountries</code>.</li><li>Open the VS Code terminal.</li><li>Run:</li></ol><pre><code>node contractChallenge.js</code></pre></section>
-<section class="warmup-option"><h4>Option 2 — VS Code JavaScript REPL</h4><p>Open a JavaScript or Node REPL inside VS Code and paste the data and function directly into it. Start Node from the built-in terminal with:</p><pre><code>node</code></pre><p>Enter the code, then type <code>.exit</code> when finished. If an installed VS Code extension provides a JavaScript REPL or scratch-code runner, you may use that instead.</p></section>
-<section class="warmup-option"><h4>Option 3 — Browser console</h4><ol><li>Open the browser’s Developer Tools.</li><li>Select the Console tab.</li><li>Paste the data, function, and <code>console.log</code>.</li><li>Press Enter.</li></ol><p><small>The browser may block pasted code with a self-XSS warning. Follow its displayed instructions only when this is code you understand and intend to run.</small></p></section>
-</div>
-<div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Warm-Up solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>function findInvalidCountries(countries) {
-  return countries.filter(country => {
-    const hasValidId = typeof country.id === "number";
-    const hasValidName =
-      typeof country.name === "string" &amp;&amp;
-      country.name.trim() !== "";
-    const hasValidRegion =
-      typeof country.region === "string" &amp;&amp;
-      country.region.trim() !== "";
-    const hasValidPopulation =
-      Object.hasOwn(country, "population") &amp;&amp;
-      typeof country.population === "number";
-
-    return !(
-      hasValidId &amp;&amp;
-      hasValidName &amp;&amp;
-      hasValidRegion &amp;&amp;
-      hasValidPopulation
-    );
-  });
+<p><strong>Your task:</strong> Implement chooseBehaviorTests. Return the three checks that should survive a harmless internal refactor.</p>
+<div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Warm-Up solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>function chooseBehaviorTests(possibleTests) {
+  return possibleTests.filter(test =&gt;
+    test.includes("heading shows") ||
+    test.includes("changes the visible count") ||
+    test.includes("returns a changed count to zero")
+  );
 }
 
-console.log(
-  findInvalidCountries(countries).map(country => country.id)
-);
-// [2, 3, 4]</code></pre><div class="card"><ul><li><code>filter</code> selects every invalid record.</li><li><code>typeof</code> checks JavaScript primitive types.</li><li>A misspelled property makes the expected property <code>undefined</code>.</li><li><code>trim</code> detects empty strings and strings containing only whitespace.</li></ul></div></div></div>
-<div class="alert alert-success"><strong>Lesson connection:</strong> “You just performed runtime contract validation. JSDoc documents the expected contract for the editor, but it does not execute these checks when data arrives.”</div>
+console.log(chooseBehaviorTests(possibleTests));
+// [
+//   "The heading shows the supplied country name",
+//   "Clicking Click Me changes the visible count",
+//   "Reset returns a changed count to zero"
+// ]</code></pre></div></div>
+<div class="alert alert-success"><strong>Lesson connection:</strong> You just separated user-visible contracts from implementation machinery—the central decision behind valuable tests.</div>
 </div></details>
 <svg class="hero-diagram" viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="s27-hero-title s27-hero-desc"><title id="s27-hero-title">Behavior survives an internal refactor</title><desc id="s27-hero-desc">Two vending machines have different internal mechanisms, but pressing the same labeled button dispenses the same drink. A test watches the button and drink, not the gears.</desc><rect width="680" height="300" rx="8" fill="#111"/><text x="340" y="28" fill="white" font-family="monospace" font-size="12" text-anchor="middle" font-weight="bold">TEST THE EXPERIENCE, NOT THE GEARS</text><g transform="translate(48 55)"><rect width="220" height="180" rx="10" fill="#161b22" stroke="#58a6ff" stroke-width="3"/><rect x="22" y="22" width="74" height="74" rx="5" fill="#0d1117" stroke="#3fb950"/><circle cx="45" cy="48" r="12" fill="none" stroke="#ff5ca8" stroke-width="3"/><circle cx="75" cy="70" r="14" fill="none" stroke="#f0883e" stroke-width="3"/><path d="M57 48 L66 63 M58 70 H42" stroke="white" stroke-width="2"/><rect x="126" y="30" width="66" height="32" rx="5" fill="#ff5ca8"/><text x="159" y="51" fill="#0d1117" font-family="monospace" font-size="10" text-anchor="middle">COLA</text><rect x="68" y="128" width="84" height="32" rx="5" fill="#0d1117" stroke="#3fb950"/><path d="M94 128 v-18 h32 v18" fill="none" stroke="#3fb950" stroke-width="3"/></g><path d="M284 145 H396" stroke="#8b949e" stroke-width="3" stroke-dasharray="7 6"/><text x="340" y="130" fill="#8b949e" font-family="monospace" font-size="9" text-anchor="middle">REFACTOR</text><g transform="translate(412 55)"><rect width="220" height="180" rx="10" fill="#161b22" stroke="#a371f7" stroke-width="3"/><rect x="22" y="22" width="74" height="74" rx="5" fill="#0d1117" stroke="#3fb950"/><path d="M36 40 H84 M36 58 H84 M36 76 H84" stroke="#a371f7" stroke-width="4"/><rect x="126" y="30" width="66" height="32" rx="5" fill="#ff5ca8"/><text x="159" y="51" fill="#0d1117" font-family="monospace" font-size="10" text-anchor="middle">COLA</text><rect x="68" y="128" width="84" height="32" rx="5" fill="#0d1117" stroke="#3fb950"/><path d="M94 128 v-18 h32 v18" fill="none" stroke="#3fb950" stroke-width="3"/></g><path d="M158 250 v18 M522 250 v18" stroke="#3fb950" stroke-width="3"/><text x="340" y="281" fill="#3fb950" font-family="monospace" font-size="10" text-anchor="middle">SAME BUTTON → SAME DRINK → TEST STILL PASSES</text></svg>
 <div class="concept-grid">
