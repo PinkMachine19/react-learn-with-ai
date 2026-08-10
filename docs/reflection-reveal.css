@@ -27,3 +27,6 @@
 .warmup-option{padding:12px;border:1px solid var(--border);border-radius:6px;background:var(--surface-2)}
 .warmup-option h4{margin:0 0 8px;color:#58a6ff}
 @media(max-width:760px){.warmup-options{grid-template-columns:1fr}}
+.visual-sequence-label{display:inline-block;margin:14px 0 6px;padding:3px 7px;border:1px solid #3a3a3a;border-radius:999px;color:#8b949e;font:700 9px monospace;letter-spacing:.04em;text-transform:uppercase}
+.concept-card>.visual-sequence-label{margin:0 0 7px}
+.step-progress{margin:0 0 5px;color:#ff5ca8;font:700 10px monospace;letter-spacing:.04em;text-transform:uppercase}
