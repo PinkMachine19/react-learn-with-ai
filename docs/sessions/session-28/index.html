@@ -3,7 +3,10 @@
 <details class="warmup-expander"><summary><span class="warmup-label">Optional Warm-Up</span><span>5-Minute Wake-Up Challenge: Repair the Test Bench</span></summary><div class="warmup-content">
 <p><strong>Give yourself five minutes.</strong> Diagnose a deliberately incomplete Vitest setup before reading the configuration lesson. Run or revise the snippet repeatedly while you work.</p>
 <div class="alert alert-info"><strong>No full app run required:</strong> use a separate scratch file, the VS Code/Node REPL, or the browser console—whichever creates the least friction.</div>
-<pre><code>// vite.config.js
+<pre><code>// vite.config.js — in the project root, beside package.json
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+
 export default defineConfig({
   plugins: [react()],
   test: {
@@ -23,7 +26,10 @@ test("renders a card", () =&gt; {
 // 1. document is not defined
 // 2. toBeInTheDocument is not a function</code></pre>
 <p><strong>Your task:</strong> Identify the two setup changes needed to provide a DOM and install the custom DOM matcher.</p>
-<div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Warm-Up solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>// vite.config.js
+<div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Warm-Up solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>// vite.config.js — in the project root, beside package.json
+import { defineConfig } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+
 export default defineConfig({
   plugins: [react()],
   test: {
@@ -84,12 +90,21 @@ afterEach(cleanup);</code></pre></div></div>
 <label class="quiz-option" data-val="c"><code>vitest run</code></label>
 <label class="quiz-option" data-val="d"><code>vitest --ui</code></label>
 <div class="explanation">The run command executes once and exits with success or failure, making it suitable for checks and CI.</div></div><button class="submit-btn" disabled>Submit Pre-Quiz</button><div class="quiz-result" id="pre-result"></div></div>
-<hr class="section-divider"/><h2>3. The Concept — Three Tools, Three Jobs</h2><pre><code>npm install -D vitest jsdom @testing-library/react \
-  @testing-library/jest-dom @testing-library/user-event</code></pre><p>Vitest runs tests; jsdom supplies DOM globals; Testing Library renders and queries. Keep these responsibilities separate when diagnosing failures.</p>
+<hr class="section-divider"/><h2>3. The Concept — Three Tools, Three Jobs</h2><pre><code>npm install -D vitest jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event</code></pre><p>Run this command from the project root. Vitest runs tests; jsdom supplies DOM globals; Testing Library renders and queries. Keep these responsibilities separate when diagnosing failures.</p>
 <hr class="section-divider"/><h2>4. Lab</h2><div class="alert alert-success"><strong>Lab objective:</strong> Install and configure the component-testing stack, then render CountryCard in a first smoke test.</div><div class="alert alert-info"><strong>End state:</strong> Vitest runs in jsdom, shared matchers load once, and one deterministic smoke test passes.</div>
-<div class="step"><div class="step-num">1</div><div class="step-body"><p class="step-progress">Step 1 of 5</p><p><strong>Install test dependencies</strong></p><p>Add the runner, DOM, rendering, matcher, and interaction packages.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 1 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>npm install -D vitest jsdom @testing-library/react \
-  @testing-library/jest-dom @testing-library/user-event</code></pre></div></div></div></div>
-<div class="step"><div class="step-num">2</div><div class="step-body"><p class="step-progress">Step 2 of 5</p><p><strong>Configure Vitest</strong></p><p>Preserve React support and select jsdom plus shared setup.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 2 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>import { defineConfig } from 'vitest/config';
+<div class="card"><h3>Where these files go</h3><p>Start in the project root—the folder that contains <code>package.json</code>, <code>vite.config.js</code>, and <code>src/</code>. Paths beginning with <code>test/</code> or <code>src/</code> below are relative to that root.</p><pre><code>your-react-project/
+├── package.json              ← add test scripts here
+├── vite.config.js            ← add the test configuration here
+├── test/
+│   └── setup.js              ← create this file
+└── src/
+    └── component/
+        ├── CountryCard.jsx
+        └── CountryCard.test.jsx  ← create beside CountryCard</code></pre><div class="alert alert-warning"><strong>Do not create a second Vite config.</strong> Open the existing root <code>vite.config.js</code> and update it. Keep the React plugin already present.</div></div>
+<div class="card"><h3><code>vite</code> versus <code>vitest/config</code></h3><p>Both packages export a helper named <code>defineConfig</code>. The helper returns the configuration object; it does not run tests.</p><ul><li><code>import { defineConfig } from 'vite'</code> is the normal Vite-only import and understands Vite options such as <code>plugins</code>.</li><li><code>import { defineConfig } from 'vitest/config'</code> extends that configuration typing with Vitest’s <code>test</code> section, including <code>environment</code> and <code>setupFiles</code>.</li></ul><p>Because this single file configures both Vite and Vitest, replace the existing <code>vite</code> import with <code>vitest/config</code>. Keep <code>react</code> imported from <code>@vitejs/plugin-react</code>; that is a separate Vite plugin.</p></div>
+<div class="step"><div class="step-num">1</div><div class="step-body"><p class="step-progress">Step 1 of 5</p><p><strong>Install test dependencies from the project root</strong></p><p>Open the VS Code terminal in the folder containing <code>package.json</code>, then run this as one line. It works in PowerShell, Command Prompt, Bash, and zsh.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 1 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>npm install -D vitest jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event</code></pre></div></div></div></div>
+<div class="step"><div class="step-num">2</div><div class="step-body"><p class="step-progress">Step 2 of 5</p><p><strong>Update the existing root <code>vite.config.js</code></strong></p><p>Replace its <code>defineConfig</code> import, preserve the React plugin, and add the <code>test</code> property. The complete file should look like this:</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 2 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>// vite.config.js
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
@@ -98,19 +113,21 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './test/setup.js'
   }
-});</code></pre></div></div></div></div>
-<div class="step"><div class="step-num">3</div><div class="step-body"><p class="step-progress">Step 3 of 5</p><p><strong>Create shared setup</strong></p><p>Load DOM matchers and clean up after each test.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 3 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>import '@testing-library/jest-dom/vitest';
+});</code></pre><p><code>setupFiles: './test/setup.js'</code> is resolved from the project root, so it points to the file created in Step 3.</p></div></div></div></div>
+<div class="step"><div class="step-num">3</div><div class="step-body"><p class="step-progress">Step 3 of 5</p><p><strong>Create <code>test/setup.js</code> from the project root</strong></p><p>Create a root-level <code>test</code> folder—not <code>src/test</code>—then create <code>setup.js</code> inside it. This file loads DOM matchers and cleans up after each test.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 3 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>// test/setup.js
+import '@testing-library/jest-dom/vitest';
 import { cleanup } from '@testing-library/react';
 import { afterEach } from 'vitest';
 
 afterEach(cleanup);</code></pre></div></div></div></div>
-<div class="step"><div class="step-num">4</div><div class="step-body"><p class="step-progress">Step 4 of 5</p><p><strong>Add test scripts</strong></p><p>Provide one-shot and watch commands.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 4 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>{
+<div class="step"><div class="step-num">4</div><div class="step-body"><p class="step-progress">Step 4 of 5</p><p><strong>Add scripts to the existing root <code>package.json</code></strong></p><p>Merge these entries into the existing <code>scripts</code> object. Keep scripts such as <code>dev</code>, <code>build</code>, and <code>lint</code>; do not replace the whole file with this abbreviated example.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 4 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>{
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest"
   }
 }</code></pre></div></div></div></div>
-<div class="step"><div class="step-num">5</div><div class="step-body"><p class="step-progress">Step 5 of 5</p><p><strong>Write the smoke test</strong></p><p>Render every required CountryCard prop.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 5 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>import { render } from '@testing-library/react';
+<div class="step"><div class="step-num">5</div><div class="step-body"><p class="step-progress">Step 5 of 5</p><p><strong>Create the smoke test beside <code>CountryCard.jsx</code></strong></p><p>Create <code>src/component/CountryCard.test.jsx</code>. Keeping a component test beside its component makes the import <code>./CountryCard.jsx</code> resolve locally. If your project uses a different component folder, place the test beside the actual file and use that path.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 5 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>// src/component/CountryCard.test.jsx
+import { render } from '@testing-library/react';
 import { test } from 'vitest';
 import CountryCard from './CountryCard.jsx';
 
