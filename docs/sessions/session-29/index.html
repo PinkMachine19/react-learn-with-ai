@@ -75,36 +75,48 @@ expect(screen.getByRole('heading', { name: 'Japan' }))
   .toBeInTheDocument();
 expect(screen.getByText('Region:Asia')).toBeInTheDocument();</code></pre>
 <hr class="section-divider"/><h2>4. Lab</h2><div class="alert alert-success"><strong>Lab objective:</strong> Prove CountryCard renders controlled props through accessible DOM output.</div><div class="alert alert-info"><strong>End state:</strong> Known props produce precise semantic output and absence checks avoid broad false matches.</div>
-<div class="step"><div class="step-num">1</div><div class="step-body"><p><strong>Import APIs</strong></p><p>Use screen for document queries and expect for assertions.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 1 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>import { render, screen } from '@testing-library/react';
+<div class="card"><h3>Continue in the Session 28 test file</h3><p>Work from the project root—the folder containing <code>package.json</code>. Open the existing <code>src/component/CountryCard.test.jsx</code> created in Session 28. Do not create another test folder or another Vite config.</p><pre><code>your-react-project/
+├── package.json
+├── vite.config.js
+├── test/setup.js
+└── src/component/
+    ├── CountryCard.jsx
+    └── CountryCard.test.jsx  ← edit this file</code></pre><div class="alert alert-warning"><strong>Prerequisite:</strong> <code>npm test</code> should already work from Session 28. If the terminal says <code>Missing script: test</code> or <code>document is not defined</code>, finish Session 28’s configuration steps before continuing.</div></div>
+<div class="step"><div class="step-num">1</div><div class="step-body"><p><strong>Update imports in <code>CountryCard.test.jsx</code></strong></p><p>Add <code>screen</code> for document queries and <code>expect</code> for assertions. Keep the CountryCard import relative because the test sits beside the component.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 1 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>// src/component/CountryCard.test.jsx
+import { render, screen } from '@testing-library/react';
 import { expect, test } from 'vitest';
 import CountryCard from './CountryCard.jsx';</code></pre></div></div></div></div>
-<div class="step"><div class="step-num">2</div><div class="step-body"><p><strong>Render known props</strong></p><p>Choose deterministic inputs.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 2 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>test('renders supplied country details', () =&gt; {
+<div class="step"><div class="step-num">2</div><div class="step-body"><p><strong>Start the output test</strong></p><p>Add this test below the imports. Steps 2 and 3 build the same test; do not create a second test when you reach Step 3.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 2 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>test('renders supplied country details', () =&gt; {
   render(&lt;CountryCard name="Japan" region="Asia" /&gt;);
 });</code></pre></div></div></div></div>
-<div class="step"><div class="step-num">3</div><div class="step-body"><p><strong>Assert semantic output</strong></p><p>Query the title by role and region by exact text.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 3 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>render(&lt;CountryCard name="Japan" region="Asia" /&gt;);
+<div class="step"><div class="step-num">3</div><div class="step-body"><p><strong>Finish that same test with semantic assertions</strong></p><p>Place these assertions after <code>render(...)</code> and before the test’s closing <code>});</code>. Query the title by role and the current component’s exact visible region text.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 3 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>test('renders supplied country details', () =&gt; {
+  render(&lt;CountryCard name="Japan" region="Asia" /&gt;);
 
 expect(
   screen.getByRole('heading', { name: 'Japan' })
 ).toBeInTheDocument();
 
-expect(
-  screen.getByText('Region:Asia', { exact: true })
-).toBeInTheDocument();</code></pre></div></div></div></div>
+  expect(
+    screen.getByText('Region:Asia', { exact: true })
+  ).toBeInTheDocument();
+});</code></pre><p>The exact string is <code>Region:Asia</code> because the current CountryCard renders no space after the colon.</p></div></div></div></div>
 <div class="step"><div class="step-num">4</div><div class="step-body"><p><strong>Inspect a failure</strong></p><p>Misspell once, read the diagnostic, then restore.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 4 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>// Temporary diagnostic:
 expect(
   screen.getByRole('heading', { name: 'Japna' })
 ).toBeInTheDocument();
 
 // Run npm test, inspect available roles, then restore "Japan".</code></pre></div></div></div></div>
-<div class="step"><div class="step-num">5</div><div class="step-body"><p><strong>Assert absence precisely</strong></p><p>Use queryBy for absence and exact matching.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 5 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>render(&lt;CountryCard name="Japan" region="Asia" /&gt;);
+<div class="step"><div class="step-num">5</div><div class="step-body"><p><strong>Add a separate absence test, then run the file</strong></p><p>Use <code>queryBy</code> for elements expected not to exist. This is a second test below the output test—not extra assertions pasted outside a <code>test(...)</code> block.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 5 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>test('does not render unrelated country details', () =&gt; {
+  render(&lt;CountryCard name="Japan" region="Asia" /&gt;);
 
 expect(
   screen.queryByText('Ghana', { exact: true })
 ).not.toBeInTheDocument();
 
-expect(
-  screen.queryByText('Eurasia', { exact: true })
-).not.toBeInTheDocument();</code></pre></div></div></div></div>
+  expect(
+    screen.queryByText('Eurasia', { exact: true })
+  ).not.toBeInTheDocument();
+});</code></pre></div></div><h3>Run the Session 29 tests</h3><p>Save the file, open the VS Code terminal at the project root, and run:</p><pre><code>npm test</code></pre><p>Vitest runs once and returns to the terminal. For automatic reruns while editing, use <code>npm run test:watch</code>; press <code>q</code> to exit.</p><div class="alert alert-success"><strong>Expected result:</strong> <code>CountryCard.test.jsx</code> is discovered and all tests pass. If you retained Session 28’s original smoke test, you may see <code>3 passed</code>; if you replaced that smoke test with the two focused tests above, you will see <code>2 passed</code>.</div><details><summary>Quick troubleshooting</summary><div class="card"><ul><li><strong>No test files found:</strong> confirm the filename is exactly <code>CountryCard.test.jsx</code> and run the command from the project root.</li><li><strong><code>screen</code> or <code>expect</code> is undefined:</strong> confirm the Step 1 named imports were added.</li><li><strong>Unable to find <code>Region:Asia</code>:</strong> inspect CountryCard’s rendered punctuation and spacing; assertions must match the current visible text.</li><li><strong><code>toBeInTheDocument</code> is not a function:</strong> confirm <code>test/setup.js</code> imports <code>@testing-library/jest-dom/vitest</code> and the root config references that setup file.</li></ul></div></details></div></div>
 <h2>5. Expected Files Changed</h2><div class="card"><code>src/component/CountryCard.test.jsx</code> — learner adds prop/output assertions.</div><h2>6. Commit Checkpoint</h2><pre><code>git add src/component/CountryCard.test.jsx
 git commit -m "session-29: test CountryCard props and output"</code></pre><h2>7. Code Review Checklist</h2><div class="card"><div class="checklist-item"><input type="checkbox"/><label>Known props make expected output deterministic</label></div><div class="checklist-item"><input type="checkbox"/><label>Heading uses role and accessible name</label></div><div class="checklist-item"><input type="checkbox"/><label>Visible region text is asserted</label></div><div class="checklist-item"><input type="checkbox"/><label>No CSS selector or test ID was needed</label></div><div class="checklist-item"><input type="checkbox"/><label>Text matchers are scoped tightly enough to avoid substring false positives</label></div></div>
 <hr class="section-divider"/><h2>8. Post-Coding Quiz</h2><div id="post-quiz" data-pass-post="Proceed to Session 30 after ≥ 80%.">
