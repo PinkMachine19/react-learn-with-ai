@@ -27,7 +27,7 @@ export async function getCountries() {
 export async function getCountryById(id) {
   await delay(150)
   const country = countries.find(c=> c.id ===id)
-  if(!country) throw Error (`Country ${country} Not Found`);
+  if(!country) throw Error (`Country ${id} Not Found`);
   return country    
 }
 
