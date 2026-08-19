@@ -1,5 +1,5 @@
 import CountryList from './component/CountryList';
-import countries from './data/countries';
+import countries from './features/countries/countries';
 import { useState } from 'react';
 
 

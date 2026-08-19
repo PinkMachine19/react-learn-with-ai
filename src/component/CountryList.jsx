@@ -49,8 +49,8 @@ show cards (still written manually — map comes in Session 14).
 // renders what it's given; it doesn't know or care that it's filtered.
 
 
-import CountryCard from './CountryCard';
-import { getCountries } from '../services/countryServices';
+import CountryCard from '../features/countries/CountryCard';
+import { getCountries } from '../features/countries/countryServices';
 
 function CountryList({countries}) {
   const countriesContainer = getCountries()

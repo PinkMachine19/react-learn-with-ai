@@ -6,7 +6,7 @@
  * 
 */
 
-import countries from '../data/countries'
+import countries from './countries'
 
 function delay(ms) {
   return new Promise (resolve => setTimeout(resolve,ms))

@@ -262,7 +262,7 @@
     // import allCountries from './data/countries.js';
     // console.log(allCountries === countries); // true if same import — same module instance
 
-import Cservice from './services/countryServices.js'
+import Cservice from './features/countries/countryServices.js'
 async function main() {
    try {
         const all = await Cservice.fetchAllCountries();
