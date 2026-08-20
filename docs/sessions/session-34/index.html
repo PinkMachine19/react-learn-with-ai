@@ -1,4 +1,13 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Session 34 — Custom Hooks</title><link rel="stylesheet" href="../../styles.css"/><link rel="stylesheet" href="../../notes-widget.css"/><link rel="stylesheet" href="../../bookmark-widget.css"/><link rel="stylesheet" href="../../quiz-explain-modal.css"/><link rel="stylesheet" href="../../session-full.css"/><link rel="stylesheet" href="../../reflection-reveal.css"/></head><body><nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html" class="active">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../../labs/index.html">Labs</a></div></nav><main><div class="container">
+<!DOCTYPE html><html lang="en"><head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-B74JVERZLW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-B74JVERZLW');
+  </script>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Session 34 — Custom Hooks</title><link rel="stylesheet" href="../../styles.css"/><link rel="stylesheet" href="../../notes-widget.css"/><link rel="stylesheet" href="../../bookmark-widget.css"/><link rel="stylesheet" href="../../quiz-explain-modal.css"/><link rel="stylesheet" href="../../session-full.css"/><link rel="stylesheet" href="../../reflection-reveal.css"/></head><body><nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html" class="active">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../../labs/index.html">Labs</a></div></nav><main><div class="container">
 <div style="display:flex;gap:12px"><span class="badge badge-layer">Layer 6</span><span class="badge badge-current">Session 34</span><span style="color:var(--text-muted)">Architecture</span></div><h1>Custom Hooks</h1><p class="subtitle">Extract reusable stateful logic into a custom hook while keeping rendering decisions in components.</p><div class="alert alert-info">Estimated time: 50–65 minutes · Milestone: Integrate and verify</div>
 <details class="warmup-expander"><summary><span class="warmup-label">Optional Warm-Up</span><span>5-Minute Wake-Up Challenge: Find the Hook Boundary</span></summary><div class="warmup-content"><p><strong>Give yourself five minutes.</strong> Separate stateful search mechanics from the JSX that presents results. Use a scratch file, Node REPL, or browser console; no full React app run is required.</p><pre><code>const concerns = ['query state', 'filter calculation', 'result heading', 'input markup', 'clear-query action'];
 
