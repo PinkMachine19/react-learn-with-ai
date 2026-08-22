@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-B74JVERZLW"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-B74JVERZLW');
+  </script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Side Lab — Real-Time Collaborative Coding with VS Code Live Share</title>
+  <link rel="stylesheet" href="../../styles.css"/>
+  <style>
+    .side-lab-shell{max-width:920px;margin:0 auto}.side-lab-badge{display:inline-flex;gap:8px;align-items:center;padding:7px 11px;border:1px solid #d2a8ff;border-radius:999px;color:#d2a8ff;font:800 12px monospace;letter-spacing:.04em}.audit-grid,.role-grid,.memory-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.step-stage{margin:24px 0}.step-card{display:none;border:1px solid #30363d;border-left:5px solid #58a6ff;border-radius:9px;background:#111820;padding:22px}.step-card.active{display:block}.step-kicker{color:#58a6ff;font:800 12px monospace;text-transform:uppercase;letter-spacing:.08em}.instruction-grid{display:grid;grid-template-columns:150px 1fr;gap:8px 16px;margin:18px 0}.instruction-grid dt{color:#ff5ca8;font-weight:800}.instruction-grid dd{margin:0}.step-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}.step-actions button{border:1px solid #58a6ff;border-radius:6px;background:#161b22;color:#f0f6fc;padding:10px 14px;font-weight:800;cursor:pointer}.step-actions .done{border-color:#3fb950;color:#3fb950}.step-actions .question{border-color:#d2a8ff;color:#d2a8ff}.step-actions .error{border-color:#f0883e;color:#f0883e}.support-panel{display:none;margin-top:16px;padding:16px;border:1px solid #30363d;border-radius:7px;background:#0d1117}.support-panel.open{display:block}.progress-track{height:9px;border-radius:999px;background:#21262d;overflow:hidden;margin:14px 0 22px}.progress-fill{height:100%;width:16.66%;background:linear-gradient(90deg,#58a6ff,#ff5ca8);transition:width .25s}.role-host{border-left:4px solid #ff5ca8}.role-guest{border-left:4px solid #58a6ff}.quiz-feedback{display:none;margin-top:12px}.quiz-feedback.show{display:block}.final-panel{display:none}.final-panel.show{display:block}@media(max-width:680px){.audit-grid,.role-grid,.memory-grid{grid-template-columns:1fr}.instruction-grid{grid-template-columns:1fr}.instruction-grid dt{margin-top:8px}}
+  </style>
+</head>
+<body>
+<nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../index.html" class="active">Labs</a></div></nav>
+<main><div class="container side-lab-shell">
+  <span class="side-lab-badge">Optional Enrichment · Not Required</span>
+  <h1>Side Lab: Real-Time Collaborative Coding with VS Code Live Share</h1>
+  <p class="subtitle">Practice professional pair programming in one shared VS Code workspace without replacing Git, branches, commits, or pull requests.</p>
+  <div class="alert alert-info"><strong>Time:</strong> 25–35 minutes · <strong>People:</strong> ideally two learners · <strong>Curriculum status:</strong> optional and not required for React progress</div>
+
+  <h2>Why Live Share Exists</h2>
+  <p>Screen sharing lets another person watch. Live Share lets them enter the host’s current workspace through their own VS Code: navigate independently, follow another participant, co-edit permitted files, join debugging, view shared servers, and use shared terminals when the host allows it. Teams use it when conversation and immediate shared context are more useful than exchanging patches back and forth.</p>
+  <div class="role-grid">
+    <div class="card role-host"><h3>Excellent for synchronous work</h3><ul><li>Pair programming</li><li>Mentoring and onboarding</li><li>Debugging a difficult problem together</li><li>Technical interviews</li><li>Classroom learning and code walkthroughs</li></ul></div>
+    <div class="card role-guest"><h3>Git still handles durable work</h3><ul><li>Independent feature development</li><li>Commit history and authorship</li><li>Asynchronous review</li><li>Automated pull-request checks</li><li>Merging, reverting, and release history</li></ul></div>
+  </div>
+
+  <h2>Current-Information Audit</h2>
+  <div class="audit-grid">
+    <div class="card"><h3>Live Share is not Git</h3><p>A guest works against the host’s shared workspace. Live Share does not replace branches, commits, pull requests, or a durable review trail. Commit the resulting work through the team’s normal Git workflow.</p></div>
+    <div class="card"><h3>The guest does not need a full clone</h3><p>Live Share gives the guest remote access to the host-approved workspace without synchronizing the entire repository first. The host’s machine and workspace remain the source of the session.</p></div>
+    <div class="card"><h3>Following is optional</h3><p>Participants may follow the host’s cursor for a walkthrough, then stop following and navigate independently. Independent navigation is normal, not a disconnected session.</p></div>
+    <div class="card"><h3>Terminal access is powerful</h3><p>A shared terminal runs on the host machine. Start read-only, never expose secrets, and grant read/write access only to a trusted collaborator for a specific reason.</p></div>
+    <div class="card"><h3>Sign-in affects permissions</h3><p>The host signs in to share. Microsoft documents anonymous/read-only guest scenarios, but a guest should sign in with GitHub or Microsoft when edit access is required.</p></div>
+    <div class="card"><h3>UI labels can move</h3><p>The extension remains available, but some official documentation contains legacy platform/version wording and VS Code surfaces evolve. The Command Palette names in this lab are the most reliable route when a status-bar button looks different.</p></div>
+  </div>
+
+  <h2>Learning Objectives</h2>
+  <div class="card"><ul><li>Explain real-time collaborative coding</li><li>Install and configure VS Code Live Share</li><li>Host and join a collaboration session</li><li>Edit one project simultaneously</li><li>Use following, independent navigation, and shared terminals safely</li><li>Choose Live Share or Git branches based on the collaboration need</li></ul></div>
+
+  <div class="alert alert-warning"><strong>One-step rule:</strong> complete only the visible step. Select <strong>Done</strong>, <strong>I have a question</strong>, or <strong>I hit an error</strong>. The next step stays hidden until the current step is complete.</div>
+  <div class="progress-track" aria-label="Lab progress"><div class="progress-fill" id="progress-fill"></div></div>
+  <p id="progress-label" class="step-kicker">Step 1 of 6</p>
+
+  <section class="step-stage" id="step-stage">
+    <article class="step-card active" data-step="1">
+      <h2>Step 1/6 — Install, Sign In, and Establish Roles</h2>
+      <p><strong>Concept first:</strong> Live Share is a VS Code extension. Both people install it; the host must authenticate to create a trusted session, and a guest should authenticate when edit access is needed.</p>
+      <dl class="instruction-grid"><dt>Application</dt><dd>Visual Studio Code on both computers.</dd><dt>Who acts</dt><dd>Host and guest.</dd><dt>Menu/command</dt><dd>Open <strong>Extensions</strong> with <code>Ctrl+Shift+X</code> (macOS: <code>⇧⌘X</code>). Search for <strong>Live Share</strong> published by Microsoft and select <strong>Install</strong>. Then open the Command Palette with <code>Ctrl+Shift+P</code> (macOS: <code>⇧⌘P</code>), type <strong>Live Share: Sign In</strong>, and complete GitHub or Microsoft authentication.</dd><dt>Success looks like</dt><dd>The Microsoft Live Share extension shows <strong>Installed</strong>, VS Code recognizes your signed-in identity, and searching the Command Palette for <strong>Live Share</strong> returns collaboration commands.</dd></dl>
+      <div class="alert alert-info"><strong>Decide now:</strong> one person is the <strong>host</strong> whose local project will be shared; the other is the <strong>guest</strong>. The guest should not open a different copy of the same repository for this exercise.</div>
+      <div class="step-actions"><button class="done" data-action="done">Done — show Step 2</button><button class="question" data-action="question">I have a question</button><button class="error" data-action="error">I hit an error</button></div>
+      <div class="support-panel question-panel"><strong>Stay on Step 1.</strong><p>Ask: “In Step 1, I am the host/guest. I expected Live Share commands, but I see ____. What should I check next?” Include your operating system and whether the extension says Installed.</p></div>
+      <div class="support-panel error-panel"><strong>Troubleshoot one check at a time:</strong><ol><li>Confirm the publisher is Microsoft and the extension identifier is <code>MS-vsliveshare.vsliveshare</code>.</li><li>Reload VS Code from the Command Palette with <strong>Developer: Reload Window</strong>.</li><li>Search the Command Palette for <strong>Live Share</strong> before relying on a status-bar icon.</li><li>If browser sign-in does not return to VS Code, finish authentication, return to VS Code manually, and run <strong>Live Share: Sign In</strong> once more.</li></ol><p>Do not continue until Live Share commands appear.</p></div>
+    </article>
+
+    <article class="step-card" data-step="2">
+      <h2>Step 2/6 — Host the Project and Create an Invite</h2>
+      <p><strong>Concept first:</strong> the host shares the currently opened workspace. The invite link grants access to a live session, so treat it like a temporary credential and send it only to the intended guest.</p>
+      <dl class="instruction-grid"><dt>Application</dt><dd>Visual Studio Code on the host computer.</dd><dt>Who acts</dt><dd>Host only.</dd><dt>Menu/command</dt><dd>Use <strong>File → Open Folder…</strong> and open the project you intend to share. Open the Command Palette and run <strong>Live Share: Start Collaboration Session</strong>. If VS Code asks for guest approval or workspace trust, review the prompt and approve only the expected project and person.</dd><dt>Success looks like</dt><dd>VS Code reports that a collaboration session started, the Live Share participants area appears, and an invitation link is copied or offered for copying.</dd></dl>
+      <div class="alert alert-warning"><strong>Host safety check:</strong> close files containing secrets, review the shared root, and do not paste the invitation into a public channel.</div>
+      <div class="step-actions"><button class="done" data-action="done">Done — show Step 3</button><button class="question" data-action="question">I have a question</button><button class="error" data-action="error">I hit an error</button></div>
+      <div class="support-panel question-panel"><strong>Stay on Step 2.</strong><p>State whether the command is missing, sign-in is requested, the session starts without a link, or workspace trust is blocking it.</p></div>
+      <div class="support-panel error-panel"><strong>Troubleshoot incrementally:</strong><ol><li>Confirm an actual folder—not an empty VS Code window—is open.</li><li>Run <strong>Live Share: Sign In</strong> and retry the start command.</li><li>Open the Live Share view and look for <strong>Copy Collaboration Link</strong> if the clipboard notification disappeared.</li><li>If connectivity fails, record the exact Live Share notification before changing firewall or network settings.</li></ol></div>
+    </article>
+
+    <article class="step-card" data-step="3">
+      <h2>Step 3/6 — Join as the Guest</h2>
+      <p><strong>Concept first:</strong> the guest enters the host’s remote workspace. They do not need to clone the repository, install the project dependencies, or open their own competing copy first.</p>
+      <dl class="instruction-grid"><dt>Application</dt><dd>A browser and Visual Studio Code on the guest computer.</dd><dt>Who acts</dt><dd>Guest, with host approval if prompted.</dd><dt>Menu/command</dt><dd>Open the private invitation link and allow it to launch VS Code. If browser launching fails, copy the link, open the Command Palette, run <strong>Live Share: Join Collaboration Session</strong>, and paste the link. Sign in if edit access is required.</dd><dt>Success looks like</dt><dd>The guest sees the host’s shared file tree and both participants appear in Live Share. The host sees the expected guest identity and approves it if approval is enabled.</dd></dl>
+      <div class="alert alert-info"><strong>Permission signal:</strong> if the guest can view but not edit, confirm they are signed in and that the host did not intentionally start a read-only session.</div>
+      <div class="step-actions"><button class="done" data-action="done">Done — show Step 4</button><button class="question" data-action="question">I have a question</button><button class="error" data-action="error">I hit an error</button></div>
+      <div class="support-panel question-panel"><strong>Stay on Step 3.</strong><p>Tell the host whether you see no workspace, a read-only workspace, an approval wait, or a connection failure.</p></div>
+      <div class="support-panel error-panel"><strong>Troubleshoot incrementally:</strong><ol><li>Confirm the host session is still active and request a freshly copied link.</li><li>Use the Command Palette join command instead of the browser handoff.</li><li>Confirm the guest is signed in for read/write access.</li><li>Have the host inspect the participant approval notification before restarting the session.</li></ol></div>
+    </article>
+
+    <article class="step-card" data-step="4">
+      <h2>Step 4/6 — Follow, Navigate Independently, and Co-Edit</h2>
+      <p><strong>Concept first:</strong> following is useful for a walkthrough; independent navigation is useful for investigation. Professional pairs switch between both modes instead of forcing everyone to stare at one cursor.</p>
+      <dl class="instruction-grid"><dt>Application</dt><dd>Visual Studio Code on host and guest.</dd><dt>Who acts</dt><dd>Both participants.</dd><dt>Menu/command</dt><dd>The host creates a harmless practice file named <code>collaboration-practice.js</code>. In the Live Share participants list, the guest selects the host to follow. The host opens the practice file and types <code>const pair = [];</code>. The guest stops following by opening another file, returns to the practice file independently, and adds one name inside the array. The host adds the second name.</dd><dt>Success looks like</dt><dd>Both participants see each other’s cursor/presence, edits appear in near real time, following moves the guest with the host, and independent navigation does not disconnect the session.</dd></dl>
+      <pre><code>const pair = ['host-name', 'guest-name'];</code></pre>
+      <div class="alert alert-warning"><strong>Professional workflow:</strong> say what you intend to edit before typing in the same lines. One person can drive while the other navigates, researches, reviews, or prepares the next small change.</div>
+      <div class="step-actions"><button class="done" data-action="done">Done — show Step 5</button><button class="question" data-action="question">I have a question</button><button class="error" data-action="error">I hit an error</button></div>
+      <div class="support-panel question-panel"><strong>Stay on Step 4.</strong><p>Describe whether the problem involves following, independent navigation, cursor visibility, or edit permission.</p></div>
+      <div class="support-panel error-panel"><strong>Troubleshoot incrementally:</strong><ol><li>If edits are blocked, recheck the guest’s sign-in and session permissions.</li><li>If following does nothing, select the participant from the Live Share participant list again.</li><li>If the file is missing, confirm the host created it inside the shared workspace root.</li><li>If edits conflict, stop typing, choose one driver, restore the intended line, and retry with verbal handoff.</li></ol></div>
+    </article>
+
+    <article class="step-card" data-step="5">
+      <h2>Step 5/6 — Share a Terminal Safely</h2>
+      <p><strong>Concept first:</strong> a shared terminal is not a simulated guest terminal—it runs on the host machine with the host’s files and environment. Read-only access supports teaching with less risk; read/write access enables pairing but should be temporary and trusted.</p>
+      <dl class="instruction-grid"><dt>Application</dt><dd>Visual Studio Code on host and guest.</dd><dt>Who acts</dt><dd>Host shares; guest observes first.</dd><dt>Menu/command</dt><dd>The host opens the Command Palette and runs <strong>Live Share: Share Terminal</strong>, or opens the Live Share view and selects the terminal-sharing action if the wording differs. Choose <strong>read-only</strong> first. In that terminal, the host runs a harmless command such as <code>git status</code>. The guest opens the shared terminal from the Live Share view and observes the output.</dd><dt>Success looks like</dt><dd>The guest sees the host’s terminal output but cannot type in read-only mode. Both understand that commands execute against the host workspace.</dd></dl>
+      <div class="alert alert-warning"><strong>Never demonstrate with secrets.</strong> Do not print environment variables, tokens, SSH material, password files, browser profiles, or unrelated directories. Grant read/write only when the host trusts the guest and the task truly requires joint command entry.</div>
+      <div class="step-actions"><button class="done" data-action="done">Done — show Step 6</button><button class="question" data-action="question">I have a question</button><button class="error" data-action="error">I hit an error</button></div>
+      <div class="support-panel question-panel"><strong>Stay on Step 5.</strong><p>Ask whether the issue is finding Share Terminal, choosing permissions, opening the terminal as guest, or seeing command output.</p></div>
+      <div class="support-panel error-panel"><strong>Troubleshoot incrementally:</strong><ol><li>Confirm the host has a local integrated terminal open.</li><li>Look in both the Command Palette and Live Share view because labels can move.</li><li>Confirm the guest opens the shared terminal, not a new local terminal.</li><li>If the guest can type unexpectedly, stop sharing and recreate the terminal as read-only.</li></ol></div>
+    </article>
+
+    <article class="step-card" data-step="6">
+      <h2>Step 6/6 — Verify, End the Session, and Preserve Work with Git</h2>
+      <p><strong>Concept first:</strong> Live Share is temporary synchronous access. Git creates the durable record after the pairing session: what changed, why, who reviewed it, and how it enters the main branch.</p>
+      <dl class="instruction-grid"><dt>Application</dt><dd>Visual Studio Code on both computers; terminal on the host.</dd><dt>Who acts</dt><dd>Both verify; host ends the session.</dd><dt>Menu/command</dt><dd>Confirm both names remain in <code>collaboration-practice.js</code>. The host runs <code>git diff -- collaboration-practice.js</code>. Discuss whether to keep or delete the practice file. Then the host opens the Command Palette and runs <strong>Live Share: End Collaboration Session</strong>.</dd><dt>Success looks like</dt><dd>The guest is disconnected, the host’s local file retains the final edits, the collaboration link no longer provides the live workspace, and any real work is ready for a normal branch/commit/pull-request workflow.</dd></dl>
+      <div class="card"><h3>Live Share or Git?</h3><div class="table-wrap"><table><tr><th>Need</th><th>Use</th><th>Reason</th></tr><tr><td>Two people solve one problem now</td><td>Live Share</td><td>Immediate shared context and conversation</td></tr><tr><td>Work continues independently</td><td>Git branch</td><td>Isolation and durable history</td></tr><tr><td>Teammates review later</td><td>Pull request</td><td>Asynchronous discussion and automated checks</td></tr><tr><td>Mentor demonstrates and learner drives</td><td>Live Share</td><td>Fast role switching without environment setup</td></tr><tr><td>Production change must be merged</td><td>Git + pull request</td><td>Reviewable, testable, reversible record</td></tr></table></div></div>
+      <div class="step-actions"><button class="done" data-action="done">Done — verify the lab</button><button class="question" data-action="question">I have a question</button><button class="error" data-action="error">I hit an error</button></div>
+      <div class="support-panel question-panel"><strong>Stay on Step 6.</strong><p>Ask whether the uncertainty concerns preserving edits, ending the session, or choosing Live Share versus Git for the next task.</p></div>
+      <div class="support-panel error-panel"><strong>Troubleshoot incrementally:</strong><ol><li>If the guest remains connected, confirm the host ran the end-session command rather than only closing a file.</li><li>If edits disappeared, check the host’s actual workspace and <code>git status</code>; the host filesystem is authoritative.</li><li>If the practice file should not remain, remove only that explicitly named file through your normal editor or Git workflow.</li></ol></div>
+    </article>
+  </section>
+
+  <section class="final-panel" id="final-panel">
+    <div class="alert alert-success"><strong>Setup verified:</strong> you installed Live Share, created and joined a session, followed and navigated independently, co-edited one file, observed a safe shared terminal, and ended the session.</div>
+    <h2>3-Question Recall Quiz</h2>
+    <div class="quiz-question" data-recall="git"><p><strong>1.</strong> Your teammate will implement a feature over two days and request review tomorrow. Which tool should hold that work?</p><label><input type="radio" name="r1" value="live"> Live Share only</label><label><input type="radio" name="r1" value="git"> A Git branch and pull request</label><label><input type="radio" name="r1" value="screen"> Screen sharing only</label></div>
+    <div class="quiz-question" data-recall="follow"><p><strong>2.</strong> A guest wants to watch the host explain one file, then investigate another file without disconnecting. What should they use?</p><label><input type="radio" name="r2" value="clone"> Clone twice</label><label><input type="radio" name="r2" value="follow"> Follow, then independent navigation</label><label><input type="radio" name="r2" value="terminal"> A read/write terminal</label></div>
+    <div class="quiz-question" data-recall="readonly"><p><strong>3.</strong> What is the safest first permission for a teaching terminal?</p><label><input type="radio" name="r3" value="admin"> Administrator</label><label><input type="radio" name="r3" value="write"> Read/write</label><label><input type="radio" name="r3" value="readonly"> Read-only</label></div>
+    <button class="submit-btn" id="recall-submit">Check Recall Quiz</button><div class="quiz-feedback alert" id="recall-feedback"></div>
+    <h2>Memory Anchor</h2>
+    <div class="card" style="border-color:#d2a8ff"><p style="font-size:1.15rem"><strong>Live Share is the shared workbench; Git is the permanent ledger.</strong></p><p>Use the workbench to solve something together now. Use the ledger to preserve, review, merge, and reverse the result.</p></div>
+    <h2>What You Can Now Do</h2>
+    <div class="card"><ul><li>Install and authenticate Live Share</li><li>Host and join a trusted collaboration session</li><li>Switch between following and independent navigation</li><li>Co-edit while communicating ownership of each change</li><li>Share a terminal with deliberate permissions</li><li>End temporary access and preserve real work through Git</li><li>Explain when Live Share complements—but does not replace—branches and pull requests</li></ul></div>
+  </section>
+
+  <h2>What to Memorize vs. Look Up</h2>
+  <div class="memory-grid"><div class="card"><h3>Memorize</h3><ul><li>The host’s workspace is authoritative</li><li>Invite links are temporary credentials</li><li>Shared terminals run on the host</li><li>Live Share is synchronous; Git is durable</li><li>Start with least privilege</li></ul></div><div class="card"><h3>Look up when needed</h3><ul><li>Exact command/menu placement</li><li>Firewall and proxy requirements</li><li>Advanced server/debug sharing</li><li>Guest approval settings</li><li>Platform-specific troubleshooting</li></ul></div></div>
+
+  <h2>Official References</h2>
+  <div class="card"><ul><li><a href="https://learn.microsoft.com/en-us/visualstudio/liveshare/quickstart/share">Microsoft: Share a project and start a collaboration session</a></li><li><a href="https://learn.microsoft.com/en-us/visualstudio/liveshare/quickstart/join">Microsoft: Join a collaboration session</a></li><li><a href="https://learn.microsoft.com/en-us/visualstudio/liveshare/use/vscode">Microsoft: Install and sign in from VS Code</a></li><li><a href="https://learn.microsoft.com/en-us/visualstudio/liveshare/reference/security">Microsoft: Live Share security</a></li><li><a href="https://marketplace.visualstudio.com/items?itemName=MS-vsliveshare.vsliveshare">Visual Studio Marketplace: Live Share by Microsoft</a></li></ul></div>
+  <p><a href="../index.html">← Back to Lab Index</a></p>
+</div></main>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const cards = Array.from(document.querySelectorAll('.step-card'));
+  const progressFill = document.getElementById('progress-fill');
+  const progressLabel = document.getElementById('progress-label');
+  const finalPanel = document.getElementById('final-panel');
+  let current = 0;
+
+  function showStep(index) {
+    current = index;
+    cards.forEach((card, cardIndex) => card.classList.toggle('active', cardIndex === index));
+    progressFill.style.width = `${Math.min(index + 1, cards.length) / cards.length * 100}%`;
+    progressLabel.textContent = index < cards.length ? `Step ${index + 1} of ${cards.length}` : 'Lab steps complete';
+    if (index < cards.length) cards[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  document.querySelectorAll('[data-action]').forEach(function (button) {
+    button.addEventListener('click', function () {
+      const card = button.closest('.step-card');
+      const action = button.dataset.action;
+      card.querySelectorAll('.support-panel').forEach(panel => panel.classList.remove('open'));
+      if (action === 'question') {
+        card.querySelector('.question-panel').classList.add('open');
+        return;
+      }
+      if (action === 'error') {
+        card.querySelector('.error-panel').classList.add('open');
+        return;
+      }
+      if (current < cards.length - 1) {
+        showStep(current + 1);
+      } else {
+        cards[current].classList.remove('active');
+        progressFill.style.width = '100%';
+        progressLabel.textContent = 'Lab steps complete';
+        finalPanel.classList.add('show');
+        finalPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+
+  document.getElementById('recall-submit').addEventListener('click', function () {
+    const questions = Array.from(document.querySelectorAll('[data-recall]'));
+    let correct = 0;
+    questions.forEach(function (question) {
+      const checked = question.querySelector('input:checked');
+      if (checked && checked.value === question.dataset.recall) correct += 1;
+    });
+    const feedback = document.getElementById('recall-feedback');
+    feedback.className = `quiz-feedback alert show ${correct === 3 ? 'alert-success' : 'alert-warning'}`;
+    feedback.textContent = correct === 3
+      ? '3/3 — You can distinguish temporary real-time collaboration from durable Git workflow.'
+      : `${correct}/3 — Review the Live Share vs. Git table and the terminal least-privilege rule, then try again.`;
+  });
+});
+</script>
+</body>
+</html>
