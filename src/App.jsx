@@ -1,4 +1,4 @@
-import CountryList from './component/CountryList';
+import CountryList from './features/countries/CountryList';
 import countries from './features/countries/countries';
 import { useState } from 'react';
 

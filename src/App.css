@@ -182,3 +182,26 @@
     border-right-color: var(--border);
   }
 }
+.button {
+  border: 1px solid transparent;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font: inherit;
+  padding: 0.55rem 0.9rem;
+}
+
+.button--primary {
+  background: #2563eb;
+  color: white;
+}
+
+.button--quiet {
+  background: transparent;
+  border-color: currentColor;
+  color: inherit;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}

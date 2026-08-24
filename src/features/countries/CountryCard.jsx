@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Button from "../../component/ui/button";
 
 // Session 19: module-level, not state — incrementing this does NOT trigger
 // a re-render. It only counts how many times React has already called this
@@ -24,8 +25,8 @@ function CountryCard ({name, region}) {
      <h2>{name}</h2>
      <p>Region:{region}</p> 
      <p>Clicked {count} times</p>
-     <button onClick={handleClick}>Click Me</button>
-     <button onClick={handleReset}>Reset</button>
+     <Button onClick={handleClick}>Click Me</Button>
+     <Button variant="quiet" onClick={handleReset}>Reset</Button>
   </div>);
 }
 
