@@ -1,24 +1,22 @@
-import CountryList from './features/countries/CountryList';
+import CountryList from "./component/CountryList.jsx"
 import countries from './features/countries/countries';
-import { useState } from 'react';
+import useCountrySearch from './features/countries/useCountrySearch.js';
+import Button from './component/ui/button.jsx';
 
 
 /* Lab objective: Move searchTerm, its handler, and the <input> from CountryList to App. Filter countries in App and pass the result down as a countries prop. */
 
 function App() {
-  const [searchTerm ,setSearchTerm] = useState('')
+ 
+
+const {
+  searchTerm,
+  handleSearchTerm,
+  filteredCountries,
+  resultCount,
+  clearSearch
+} = useCountrySearch(countries);
   
-
-  function handleSearchTerm(event) {
-    setSearchTerm(event.target.value)
-  }
-
-  const filterdCountries =  countries.filter(c => 
-    c.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
-  
-  const resultCount = filterdCountries.length
-
   return (
     
     <div>
@@ -29,8 +27,9 @@ function App() {
          onChange={handleSearchTerm}
          placeholder='Search Countries.....'
       />
+      <Button onClick={clearSearch}>Clear search</Button>
       <p>{resultCount} {resultCount === 1 ? 'result' : 'results'}</p>
-      <CountryList countries={filterdCountries} />
+      <CountryList countries={filteredCountries} />
     </div>
   );
 }
