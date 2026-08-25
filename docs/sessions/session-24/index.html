@@ -1,5 +1,15 @@
 <!DOCTYPE html>
 <html lang="en"><head>
+  <!-- Visit notification beacon -->
+  <script>
+    fetch('https://visit-relay.parmdeepchhabra.workers.dev/ping', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ path: location.pathname, referrer: document.referrer, site: location.hostname }),
+    }).catch(() => {});
+  </script>
+
+
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-B74JVERZLW"></script>
   <script>
