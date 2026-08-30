@@ -1,26 +1,663 @@
-<!DOCTYPE html>
-<html lang="en"><head>
-<script>fetch('https://visit-relay.parmdeepchhabra.workers.dev/ping',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({path:location.pathname,referrer:document.referrer,site:location.hostname})}).catch(()=>{});</script>
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-B74JVERZLW"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-B74JVERZLW');</script>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Session 37 — useEffect</title><link rel="stylesheet" href="../../styles.css"/><link rel="stylesheet" href="../../notes-widget.css"/><link rel="stylesheet" href="../../bookmark-widget.css"/><link rel="stylesheet" href="../../quiz-explain-modal.css"/><link rel="stylesheet" href="../../session-full.css"/><link rel="stylesheet" href="../../reflection-reveal.css"/></head><body><nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html" class="active">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../../labs/index.html">Labs</a></div></nav><main><div class="container">
-<div style="display:flex;gap:12px"><span class="badge badge-layer">Layer 6</span><span class="badge badge-current">Session 37</span><span style="color:var(--text-muted)">React Effects</span></div><h1>useEffect</h1><p class="subtitle">Understand why effects exist, when they run, why cleanup matters, and why ordinary calculations should stay out of them.</p><div class="alert alert-info">Estimated time: 75–95 minutes · Milestone: Synchronize one external system safely</div>
-<div class="figure-label">Visual Primer · 9 concepts</div><div class="concept-grid"><figure class="concept-card"><svg viewBox="0 0 200 140" role="img" aria-labelledby="s37v0t s37v0d"><title id="s37v0t">Render is calculation</title><desc id="s37v0d">Render is calculation in useEffect</desc><g fill="#58a6ff22" stroke="#58a6ff" stroke-width="4" stroke-linecap="round"><circle cx="55" cy="70" r="28"/><path d="M86 70h75m-18-15 19 15-19 15"/></g></svg><figcaption><b>1 of 9</b> · Render is calculation</figcaption><button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><div class="concept-explanation-text"><p><strong>What problem does this solve?</strong> It makes the render is calculation part of useeffect visible instead of leaving it hidden in code.</p><p><strong>Why should I care?</strong> You can point to this stage when explaining where information changes or where a failure belongs.</p><p><strong>What would happen if React did not have this?</strong> JavaScript could still build an interface, but we would need another explicit way to manage this responsibility and its timing.</p></div></figure>
-<figure class="concept-card"><svg viewBox="0 0 200 140" role="img" aria-labelledby="s37v1t s37v1d"><title id="s37v1t">Outside system</title><desc id="s37v1d">Outside system in useEffect</desc><g fill="#3fb95022" stroke="#3fb950" stroke-width="4" stroke-linecap="round"><rect x="22" y="34" width="55" height="72" rx="8"/><rect x="123" y="34" width="55" height="72" rx="8"/><path d="M77 70h46"/></g></svg><figcaption><b>2 of 9</b> · Outside system</figcaption><button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><div class="concept-explanation-text"><p><strong>What problem does this solve?</strong> It makes the outside system part of useeffect visible instead of leaving it hidden in code.</p><p><strong>Why should I care?</strong> You can point to this stage when explaining where information changes or where a failure belongs.</p><p><strong>What would happen if React did not have this?</strong> JavaScript could still build an interface, but we would need another explicit way to manage this responsibility and its timing.</p></div></figure>
-<figure class="concept-card"><svg viewBox="0 0 200 140" role="img" aria-labelledby="s37v2t s37v2d"><title id="s37v2t">Effect runs later</title><desc id="s37v2d">Effect runs later in useEffect</desc><g fill="#d2a8ff22" stroke="#d2a8ff" stroke-width="4" stroke-linecap="round"><circle cx="35" cy="70" r="18"/><circle cx="100" cy="70" r="18"/><circle cx="165" cy="70" r="18"/><path d="M53 70h29m36 0h29"/></g></svg><figcaption><b>3 of 9</b> · Effect runs later</figcaption><button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><div class="concept-explanation-text"><p><strong>What problem does this solve?</strong> It makes the effect runs later part of useeffect visible instead of leaving it hidden in code.</p><p><strong>Why should I care?</strong> You can point to this stage when explaining where information changes or where a failure belongs.</p><p><strong>What would happen if React did not have this?</strong> JavaScript could still build an interface, but we would need another explicit way to manage this responsibility and its timing.</p></div></figure>
-<figure class="concept-card"><svg viewBox="0 0 200 140" role="img" aria-labelledby="s37v3t s37v3d"><title id="s37v3t">Dependency list</title><desc id="s37v3d">Dependency list in useEffect</desc><g fill="#f0883e22" stroke="#f0883e" stroke-width="4" stroke-linecap="round"><circle cx="55" cy="70" r="28"/><path d="M86 70h75m-18-15 19 15-19 15"/></g></svg><figcaption><b>4 of 9</b> · Dependency list</figcaption><button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><div class="concept-explanation-text"><p><strong>What problem does this solve?</strong> It makes the dependency list part of useeffect visible instead of leaving it hidden in code.</p><p><strong>Why should I care?</strong> You can point to this stage when explaining where information changes or where a failure belongs.</p><p><strong>What would happen if React did not have this?</strong> JavaScript could still build an interface, but we would need another explicit way to manage this responsibility and its timing.</p></div></figure>
-<figure class="concept-card"><svg viewBox="0 0 200 140" role="img" aria-labelledby="s37v4t s37v4d"><title id="s37v4t">Stale value</title><desc id="s37v4d">Stale value in useEffect</desc><g fill="#ff5ca822" stroke="#ff5ca8" stroke-width="4" stroke-linecap="round"><rect x="22" y="34" width="55" height="72" rx="8"/><rect x="123" y="34" width="55" height="72" rx="8"/><path d="M77 70h46"/></g></svg><figcaption><b>5 of 9</b> · Stale value</figcaption><button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><div class="concept-explanation-text"><p><strong>What problem does this solve?</strong> It makes the stale value part of useeffect visible instead of leaving it hidden in code.</p><p><strong>Why should I care?</strong> You can point to this stage when explaining where information changes or where a failure belongs.</p><p><strong>What would happen if React did not have this?</strong> JavaScript could still build an interface, but we would need another explicit way to manage this responsibility and its timing.</p></div></figure>
-<figure class="concept-card"><svg viewBox="0 0 200 140" role="img" aria-labelledby="s37v5t s37v5d"><title id="s37v5t">Cleanup</title><desc id="s37v5d">Cleanup in useEffect</desc><g fill="#79c0ff22" stroke="#79c0ff" stroke-width="4" stroke-linecap="round"><circle cx="35" cy="70" r="18"/><circle cx="100" cy="70" r="18"/><circle cx="165" cy="70" r="18"/><path d="M53 70h29m36 0h29"/></g></svg><figcaption><b>6 of 9</b> · Cleanup</figcaption><button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><div class="concept-explanation-text"><p><strong>What problem does this solve?</strong> It makes the cleanup part of useeffect visible instead of leaving it hidden in code.</p><p><strong>Why should I care?</strong> You can point to this stage when explaining where information changes or where a failure belongs.</p><p><strong>What would happen if React did not have this?</strong> JavaScript could still build an interface, but we would need another explicit way to manage this responsibility and its timing.</p></div></figure>
-<figure class="concept-card"><svg viewBox="0 0 200 140" role="img" aria-labelledby="s37v6t s37v6d"><title id="s37v6t">Timer</title><desc id="s37v6d">Timer in useEffect</desc><g fill="#56d36422" stroke="#56d364" stroke-width="4" stroke-linecap="round"><circle cx="55" cy="70" r="28"/><path d="M86 70h75m-18-15 19 15-19 15"/></g></svg><figcaption><b>7 of 9</b> · Timer</figcaption><button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><div class="concept-explanation-text"><p><strong>What problem does this solve?</strong> It makes the timer part of useeffect visible instead of leaving it hidden in code.</p><p><strong>Why should I care?</strong> You can point to this stage when explaining where information changes or where a failure belongs.</p><p><strong>What would happen if React did not have this?</strong> JavaScript could still build an interface, but we would need another explicit way to manage this responsibility and its timing.</p></div></figure>
-<figure class="concept-card"><svg viewBox="0 0 200 140" role="img" aria-labelledby="s37v7t s37v7d"><title id="s37v7t">Event listener</title><desc id="s37v7d">Event listener in useEffect</desc><g fill="#e3b34122" stroke="#e3b341" stroke-width="4" stroke-linecap="round"><rect x="22" y="34" width="55" height="72" rx="8"/><rect x="123" y="34" width="55" height="72" rx="8"/><path d="M77 70h46"/></g></svg><figcaption><b>8 of 9</b> · Event listener</figcaption><button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><div class="concept-explanation-text"><p><strong>What problem does this solve?</strong> It makes the event listener part of useeffect visible instead of leaving it hidden in code.</p><p><strong>Why should I care?</strong> You can point to this stage when explaining where information changes or where a failure belongs.</p><p><strong>What would happen if React did not have this?</strong> JavaScript could still build an interface, but we would need another explicit way to manage this responsibility and its timing.</p></div></figure>
-<figure class="concept-card"><svg viewBox="0 0 200 140" role="img" aria-labelledby="s37v8t s37v8d"><title id="s37v8t">Do not derive state</title><desc id="s37v8d">Do not derive state in useEffect</desc><g fill="#bc8cff22" stroke="#bc8cff" stroke-width="4" stroke-linecap="round"><circle cx="35" cy="70" r="18"/><circle cx="100" cy="70" r="18"/><circle cx="165" cy="70" r="18"/><path d="M53 70h29m36 0h29"/></g></svg><figcaption><b>9 of 9</b> · Do not derive state</figcaption><button type="button" class="concept-explanation-toggle" aria-expanded="false"><span>Explanation</span><span class="concept-explanation-hint">Click to reveal</span></button><div class="concept-explanation-text"><p><strong>What problem does this solve?</strong> It makes the do not derive state part of useeffect visible instead of leaving it hidden in code.</p><p><strong>Why should I care?</strong> You can point to this stage when explaining where information changes or where a failure belongs.</p><p><strong>What would happen if React did not have this?</strong> JavaScript could still build an interface, but we would need another explicit way to manage this responsibility and its timing.</p></div></figure></div>
-<details class="warmup-expander"><summary><span class="warmup-label">Optional Warm-Up</span><span>5-Minute Wake-Up Challenge: Predict the Timeline</span></summary><div class="warmup-content"><p><strong>Give yourself five minutes.</strong> Write the order in which these events happen: component function runs, JSX appears, effect runs, cleanup runs. You may use paper or a scratch file; do not modify the entire React app.</p><pre><code>render → commit visible UI → effect setup; cleanup runs before the next changed setup and on unmount</code></pre><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Warm-Up solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><p>Effects do not interrupt rendering. They synchronize after React commits the result.</p></div></div></div></details>
-<hr class="section-divider"/><h2>1. Learning Objectives</h2><div class="card"><ul><li>Explain what outside system an effect synchronizes</li><li>Predict setup and cleanup timing</li><li>Choose honest effect dependencies</li><li>Recognize stale closures</li><li>Keep derived calculations out of effects</li></ul></div>
-<h2>2. Pre-Coding Quiz</h2><p>Need 4/5 to proceed. Choose from understanding; answer length is deliberately unhelpful.</p><div id="pre-quiz"><div class="quiz-question" data-answer="a"><div class="question-num">Question 1 of 5</div><p>What is the main purpose of useEffect?</p><label class="quiz-option" data-val="a">Understand why effects exist, when they run, why cleanup matters, and why ordinary calculations should stay out of them.</label><label class="quiz-option" data-val="b">Move every responsibility into App so the complete process exists in one file, even when the component or boundary has a different responsibility</label><label class="quiz-option" data-val="c">Add a new abstraction before identifying the behavior or risk it should protect</label><label class="quiz-option" data-val="d">Judge the result only by whether the final page looks approximately correct</label><div class="explanation">The purpose is specific to this lesson, not generic cleanup. In plain English: Render decides the screen. An effect updates something React does not own, then cleans up after itself.</div></div>
-<div class="quiz-question" data-answer="b"><div class="question-num">Question 2 of 5</div><p>Why does “Render is calculation” matter here?</p><label class="quiz-option" data-val="a">Move every responsibility into App so the complete process exists in one file</label><label class="quiz-option" data-val="b">It identifies one concrete responsibility in the useeffect flow</label><label class="quiz-option" data-val="c">Add a new abstraction before identifying the behavior or risk it should protect</label><label class="quiz-option" data-val="d">Judge the result only by whether the final page looks approximately correct</label><div class="explanation">Naming the responsibility helps us trace where values and failures belong.</div></div>
-<div class="quiz-question" data-answer="c"><div class="question-num">Question 3 of 5</div><p>Which starting action is safest?</p><label class="quiz-option" data-val="a">Add a new abstraction before identifying the behavior or risk it should protect</label><label class="quiz-option" data-val="b">Move every responsibility into App so the complete process exists in one file</label><label class="quiz-option" data-val="c">Trace the current behavior before changing its boundary</label><label class="quiz-option" data-val="d">Judge the result only by whether the final page looks approximately correct</label><div class="explanation">A map of current behavior prevents a redesign based on guesses.</div></div>
-<div class="quiz-question" data-answer="d"><div class="question-num">Question 4 of 5</div><p>Why explain the problem before writing code?</p><label class="quiz-option" data-val="a">Judge the result only by whether the final page looks approximately correct</label><label class="quiz-option" data-val="b">Move every responsibility into App so the complete process exists in one file</label><label class="quiz-option" data-val="c">Add a new abstraction before identifying the behavior or risk it should protect</label><label class="quiz-option" data-val="d">The problem determines whether the proposed abstraction earns its cost</label><div class="explanation">Tools are tradeoffs. Understanding the pain prevents ritual refactoring.</div></div>
-<div class="quiz-question" data-answer="a"><div class="question-num">Question 5 of 5</div><p>What kind of answer should a review prefer?</p><label class="quiz-option" data-val="a">A decision supported by observable behavior and a relevant check</label><label class="quiz-option" data-val="b">Move every responsibility into App so the complete process exists in one file</label><label class="quiz-option" data-val="c">Add a new abstraction before identifying the behavior or risk it should protect</label><label class="quiz-option" data-val="d">Judge the result only by whether the final page looks approximately correct</label><div class="explanation">Evidence makes the decision understandable and repeatable.</div></div><button class="submit-btn" disabled>Submit Pre-Quiz</button><div class="quiz-result" id="pre-result"></div></div>
-<hr class="section-divider"/><h2>3. The Concept — Effects Synchronize Outside React</h2><div class="alert alert-info"><strong>Big picture:</strong> Understand why effects exist, when they run, why cleanup matters, and why ordinary calculations should stay out of them.</div><div class="card"><h3>Rendering should stay pure</h3><p><strong>What problem does this solve?</strong> React may call a component more than once while deciding UI.</p><p><strong>Why should I care?</strong> Pure rendering produces the same JSX without changing the outside world.</p><p><strong>What would happen if React did not have this?</strong> Without purity, merely checking UI could start timers or subscriptions.</p><pre><code>Problem
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      fetch("https://visit-relay.parmdeepchhabra.workers.dev/ping", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          path: location.pathname,
+          referrer: document.referrer,
+          site: location.hostname,
+        }),
+      }).catch(() => {});
+    </script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-B74JVERZLW"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-B74JVERZLW");
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Session 37 — useEffect</title>
+    <link rel="stylesheet" href="../../styles.css" />
+    <link rel="stylesheet" href="../../notes-widget.css" />
+    <link rel="stylesheet" href="../../bookmark-widget.css" />
+    <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+    <link rel="stylesheet" href="../../session-full.css" />
+    <link rel="stylesheet" href="../../reflection-reveal.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="container">
+        <a href="../../index.html" class="brand">⚛ React Learning</a
+        ><a href="../../syllabus/index.html">Syllabus</a
+        ><a href="../../sessions/index.html" class="active">Sessions</a
+        ><a href="../../quizzes/index.html">Quizzes</a
+        ><a href="../../labs/index.html">Labs</a>
+      </div>
+    </nav>
+    <main>
+      <div class="container">
+        <div style="display: flex; gap: 12px">
+          <span class="badge badge-layer">Layer 6</span
+          ><span class="badge badge-current">Session 37</span
+          ><span style="color: var(--text-muted)">React Effects</span>
+        </div>
+        <h1>useEffect</h1>
+        <p class="subtitle">
+          Understand why effects exist, when they run, why cleanup matters, and
+          why ordinary calculations should stay out of them.
+        </p>
+        <div class="alert alert-info">
+          Estimated time: 75–95 minutes · Milestone: Synchronize one external
+          system safely
+        </div>
+        <div class="figure-label">Visual Primer · 9 concepts</div>
+        <div class="concept-grid">
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s37v0t s37v0d"
+            >
+              <title id="s37v0t">Render is calculation</title>
+              <desc id="s37v0d">Render is calculation in useEffect</desc>
+              <g
+                fill="#58a6ff22"
+                stroke="#58a6ff"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <circle cx="55" cy="70" r="28" />
+                <path d="M86 70h75m-18-15 19 15-19 15" />
+              </g>
+            </svg>
+            <figcaption><b>1 of 9</b> · Render is calculation</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the
+                render is calculation part of useeffect visible instead of
+                leaving it hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s37v1t s37v1d"
+            >
+              <title id="s37v1t">Outside system</title>
+              <desc id="s37v1d">Outside system in useEffect</desc>
+              <g
+                fill="#3fb95022"
+                stroke="#3fb950"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <rect x="22" y="34" width="55" height="72" rx="8" />
+                <rect x="123" y="34" width="55" height="72" rx="8" />
+                <path d="M77 70h46" />
+              </g>
+            </svg>
+            <figcaption><b>2 of 9</b> · Outside system</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the
+                outside system part of useeffect visible instead of leaving it
+                hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s37v2t s37v2d"
+            >
+              <title id="s37v2t">Effect runs later</title>
+              <desc id="s37v2d">Effect runs later in useEffect</desc>
+              <g
+                fill="#d2a8ff22"
+                stroke="#d2a8ff"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <circle cx="35" cy="70" r="18" />
+                <circle cx="100" cy="70" r="18" />
+                <circle cx="165" cy="70" r="18" />
+                <path d="M53 70h29m36 0h29" />
+              </g>
+            </svg>
+            <figcaption><b>3 of 9</b> · Effect runs later</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the
+                effect runs later part of useeffect visible instead of leaving
+                it hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s37v3t s37v3d"
+            >
+              <title id="s37v3t">Dependency list</title>
+              <desc id="s37v3d">Dependency list in useEffect</desc>
+              <g
+                fill="#f0883e22"
+                stroke="#f0883e"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <circle cx="55" cy="70" r="28" />
+                <path d="M86 70h75m-18-15 19 15-19 15" />
+              </g>
+            </svg>
+            <figcaption><b>4 of 9</b> · Dependency list</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the
+                dependency list part of useeffect visible instead of leaving it
+                hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s37v4t s37v4d"
+            >
+              <title id="s37v4t">Stale value</title>
+              <desc id="s37v4d">Stale value in useEffect</desc>
+              <g
+                fill="#ff5ca822"
+                stroke="#ff5ca8"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <rect x="22" y="34" width="55" height="72" rx="8" />
+                <rect x="123" y="34" width="55" height="72" rx="8" />
+                <path d="M77 70h46" />
+              </g>
+            </svg>
+            <figcaption><b>5 of 9</b> · Stale value</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the
+                stale value part of useeffect visible instead of leaving it
+                hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s37v5t s37v5d"
+            >
+              <title id="s37v5t">Cleanup</title>
+              <desc id="s37v5d">Cleanup in useEffect</desc>
+              <g
+                fill="#79c0ff22"
+                stroke="#79c0ff"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <circle cx="35" cy="70" r="18" />
+                <circle cx="100" cy="70" r="18" />
+                <circle cx="165" cy="70" r="18" />
+                <path d="M53 70h29m36 0h29" />
+              </g>
+            </svg>
+            <figcaption><b>6 of 9</b> · Cleanup</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the
+                cleanup part of useeffect visible instead of leaving it hidden
+                in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s37v6t s37v6d"
+            >
+              <title id="s37v6t">Timer</title>
+              <desc id="s37v6d">Timer in useEffect</desc>
+              <g
+                fill="#56d36422"
+                stroke="#56d364"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <circle cx="55" cy="70" r="28" />
+                <path d="M86 70h75m-18-15 19 15-19 15" />
+              </g>
+            </svg>
+            <figcaption><b>7 of 9</b> · Timer</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the
+                timer part of useeffect visible instead of leaving it hidden in
+                code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s37v7t s37v7d"
+            >
+              <title id="s37v7t">Event listener</title>
+              <desc id="s37v7d">Event listener in useEffect</desc>
+              <g
+                fill="#e3b34122"
+                stroke="#e3b341"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <rect x="22" y="34" width="55" height="72" rx="8" />
+                <rect x="123" y="34" width="55" height="72" rx="8" />
+                <path d="M77 70h46" />
+              </g>
+            </svg>
+            <figcaption><b>8 of 9</b> · Event listener</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the
+                event listener part of useeffect visible instead of leaving it
+                hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s37v8t s37v8d"
+            >
+              <title id="s37v8t">Do not derive state</title>
+              <desc id="s37v8d">Do not derive state in useEffect</desc>
+              <g
+                fill="#bc8cff22"
+                stroke="#bc8cff"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <circle cx="35" cy="70" r="18" />
+                <circle cx="100" cy="70" r="18" />
+                <circle cx="165" cy="70" r="18" />
+                <path d="M53 70h29m36 0h29" />
+              </g>
+            </svg>
+            <figcaption><b>9 of 9</b> · Do not derive state</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the do
+                not derive state part of useeffect visible instead of leaving it
+                hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+        </div>
+        <details class="warmup-expander">
+          <summary>
+            <span class="warmup-label">Optional Warm-Up</span
+            ><span>5-Minute Wake-Up Challenge: Predict the Timeline</span>
+          </summary>
+          <div class="warmup-content">
+            <p>
+              <strong>Give yourself five minutes.</strong> Write the order in
+              which these events happen: component function runs, JSX appears,
+              effect runs, cleanup runs. You may use paper or a scratch file; do
+              not modify the entire React app.
+            </p>
+            <pre><code>render → commit visible UI → effect setup; cleanup runs before the next changed setup and on unmount</code></pre>
+            <div class="solution-item">
+              <button
+                type="button"
+                class="solution-toggle"
+                aria-expanded="false"
+              >
+                <span>Warm-Up solution</span
+                ><span class="solution-hint">Click to reveal</span>
+              </button>
+              <div class="solution-content">
+                <p>
+                  Effects do not interrupt rendering. They synchronize after
+                  React commits the result.
+                </p>
+              </div>
+            </div>
+          </div>
+        </details>
+        <hr class="section-divider" />
+        <h2>1. Learning Objectives</h2>
+        <div class="card">
+          <ul>
+            <li>Explain what outside system an effect synchronizes</li>
+            <li>Predict setup and cleanup timing</li>
+            <li>Choose honest effect dependencies</li>
+            <li>Recognize stale closures</li>
+            <li>Keep derived calculations out of effects</li>
+          </ul>
+        </div>
+        <h2>2. Pre-Coding Quiz</h2>
+        <p>
+          Need 4/5 to proceed. Choose from understanding; answer length is
+          deliberately unhelpful.
+        </p>
+        <div id="pre-quiz">
+          <div class="quiz-question" data-answer="a">
+            <div class="question-num">Question 1 of 5</div>
+            <p>What is the main purpose of useEffect?</p>
+            <label class="quiz-option" data-val="a"
+              >Understand why effects exist, when they run, why cleanup matters,
+              and why ordinary calculations should stay out of them.</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file, even when the feature or file performs a different job</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              The purpose is specific to this lesson, not generic cleanup. In
+              plain English: Render decides the screen. An effect updates
+              something React does not own, then cleans up after itself.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="b">
+            <div class="question-num">Question 2 of 5</div>
+            <p>Why does “Render is calculation” matter here?</p>
+            <label class="quiz-option" data-val="a"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="b"
+              >It identifies one concrete responsibility in the useeffect
+              flow</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              Naming the responsibility helps us trace where values and failures
+              belong.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="c">
+            <div class="question-num">Question 3 of 5</div>
+            <p>Which starting action is safest?</p>
+            <label class="quiz-option" data-val="a"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="c"
+              >Run the current feature and write down what it does before moving any code</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              Running the current feature first prevents you from moving code based on a guess.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="d">
+            <div class="question-num">Question 4 of 5</div>
+            <p>Why explain the problem before writing code?</p>
+            <label class="quiz-option" data-val="a"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >The problem determines whether the extra helper, hook, or file earns its
+              cost</label
+            >
+            <div class="explanation">
+              Tools are tradeoffs. Understanding the pain prevents ritual
+              refactoring.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="a">
+            <div class="question-num">Question 5 of 5</div>
+            <p>What kind of answer should a review prefer?</p>
+            <label class="quiz-option" data-val="a"
+              >A decision supported by observable behavior and a relevant
+              check</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              A concrete example and a matching test show another developer exactly why the change is needed.
+            </div>
+          </div>
+          <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+          <div class="quiz-result" id="pre-result"></div>
+        </div>
+        <hr class="section-divider" />
+        <h2>3. The Concept — Effects Synchronize Outside React</h2>
+        <div class="alert alert-info">
+          <strong>Big picture:</strong> Understand why effects exist, when they
+          run, why cleanup matters, and why ordinary calculations should stay
+          out of them.
+        </div>
+        <div class="card">
+          <h3>Rendering should stay pure</h3>
+          <p>
+            <strong>What problem does this solve?</strong> React may call a
+            component more than once while deciding UI.
+          </p>
+          <p>
+            <strong>Why should I care?</strong> Pure rendering produces the same
+            JSX without changing the outside world.
+          </p>
+          <p>
+            <strong>What would happen if React did not have this?</strong>
+            Without purity, merely checking UI could start timers or
+            subscriptions.
+          </p>
+          <pre><code>Problem
   ↓
 Idea
   ↓
@@ -28,8 +665,31 @@ Simple analogy: A blueprint describes a house; it does not turn on the electrici
   ↓
 Real React example: const visible = countries.filter(...) belongs during render.
   ↓
-Why professionals do it: Professionals keep calculation repeatable so React can schedule safely.</code></pre><p><strong>Technical:</strong> this is a boundary with an input, responsibility, and observable output.</p><p><strong>In plain English:</strong> one part of the app accepts something, does one understandable job, and hands back a result.</p></div>
-<div class="card"><h3>Effects synchronize external systems</h3><p><strong>What problem does this solve?</strong> Some work must happen because UI became active.</p><p><strong>Why should I care?</strong> Effects connect committed React state to timers, events, network APIs, or browser features.</p><p><strong>What would happen if React did not have this?</strong> Without effects, components lack a lifecycle-safe place for synchronization.</p><pre><code>Problem
+Why professionals do it: Professionals keep calculation repeatable so React can schedule safely.</code></pre>
+          <p>
+            <strong>Technical:</strong> this code receives something, performs one named job, and produces a result another part can use.
+          </p>
+          <p>
+            <strong>In plain English:</strong> one part of the app accepts
+            something, does one understandable job, and hands back a result.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Effects synchronize external systems</h3>
+          <p>
+            <strong>What problem does this solve?</strong> Some work must happen
+            because UI became active.
+          </p>
+          <p>
+            <strong>Why should I care?</strong> Effects connect committed React
+            state to timers, events, network APIs, or browser features.
+          </p>
+          <p>
+            <strong>What would happen if React did not have this?</strong>
+            Without effects, components lack a lifecycle-safe place for
+            synchronization.
+          </p>
+          <pre><code>Problem
   ↓
 Idea
   ↓
@@ -37,8 +697,31 @@ Simple analogy: After opening a shop, turn on the sign and subscribe to deliveri
   ↓
 Real React example: useEffect(() =&gt; { document.title = title }, [title])
   ↓
-Why professionals do it: Teams name the outside system and synchronization rule before writing an effect.</code></pre><p><strong>Technical:</strong> this is a boundary with an input, responsibility, and observable output.</p><p><strong>In plain English:</strong> one part of the app accepts something, does one understandable job, and hands back a result.</p></div>
-<div class="card"><h3>Dependencies describe what setup reads</h3><p><strong>What problem does this solve?</strong> An effect can accidentally keep an old value.</p><p><strong>Why should I care?</strong> Dependencies tell React when the synchronization is outdated.</p><p><strong>What would happen if React did not have this?</strong> Without correct dependencies, callbacks use stale state or subscriptions never update.</p><pre><code>Problem
+Why professionals do it: Teams name the outside system and synchronization rule before writing an effect.</code></pre>
+          <p>
+            <strong>Technical:</strong> this code receives something, performs one named job, and produces a result another part can use.
+          </p>
+          <p>
+            <strong>In plain English:</strong> one part of the app accepts
+            something, does one understandable job, and hands back a result.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Dependencies describe what setup reads</h3>
+          <p>
+            <strong>What problem does this solve?</strong> An effect can
+            accidentally keep an old value.
+          </p>
+          <p>
+            <strong>Why should I care?</strong> Dependencies tell React when the
+            synchronization is outdated.
+          </p>
+          <p>
+            <strong>What would happen if React did not have this?</strong>
+            Without correct dependencies, callbacks use stale state or
+            subscriptions never update.
+          </p>
+          <pre><code>Problem
   ↓
 Idea
   ↓
@@ -46,8 +729,30 @@ Simple analogy: Replace a printed schedule when its source timetable changes.
   ↓
 Real React example: An effect reading query includes query in its dependency array.
   ↓
-Why professionals do it: Professionals let lint rules expose missing dependencies instead of silencing them.</code></pre><p><strong>Technical:</strong> this is a boundary with an input, responsibility, and observable output.</p><p><strong>In plain English:</strong> one part of the app accepts something, does one understandable job, and hands back a result.</p></div>
-<div class="card"><h3>Cleanup undoes setup</h3><p><strong>What problem does this solve?</strong> Timers and listeners can survive after a component no longer needs them.</p><p><strong>Why should I care?</strong> Cleanup prevents duplicate work and updates from abandoned subscriptions.</p><p><strong>What would happen if React did not have this?</strong> Without cleanup, remounts accumulate listeners and memory.</p><pre><code>Problem
+Why professionals do it: Professionals let lint rules expose missing dependencies instead of silencing them.</code></pre>
+          <p>
+            <strong>Technical:</strong> this code receives something, performs one named job, and produces a result another part can use.
+          </p>
+          <p>
+            <strong>In plain English:</strong> one part of the app accepts
+            something, does one understandable job, and hands back a result.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Cleanup undoes setup</h3>
+          <p>
+            <strong>What problem does this solve?</strong> Timers and listeners
+            can survive after a component no longer needs them.
+          </p>
+          <p>
+            <strong>Why should I care?</strong> Cleanup prevents duplicate work
+            and updates from abandoned subscriptions.
+          </p>
+          <p>
+            <strong>What would happen if React did not have this?</strong>
+            Without cleanup, remounts accumulate listeners and memory.
+          </p>
+          <pre><code>Problem
   ↓
 Idea
   ↓
@@ -55,30 +760,522 @@ Simple analogy: Return the borrowed key when leaving the room.
   ↓
 Real React example: return () =&gt; window.removeEventListener('resize', handleResize)
   ↓
-Why professionals do it: Teams design setup and cleanup as a matched pair.</code></pre><p><strong>Technical:</strong> this is a boundary with an input, responsibility, and observable output.</p><p><strong>In plain English:</strong> one part of the app accepts something, does one understandable job, and hands back a result.</p></div>
-<hr class="section-divider"/><h2>4. Guided Lab</h2><div class="alert alert-success"><strong>Lab objective:</strong> complete one specific useeffect workflow and explain why every step exists.</div><div class="alert alert-info"><strong>Learner workspace:</strong> work in your own files. Hidden solutions are references, not automatic starter-code changes.</div><div class="step"><div class="step-num">1</div><div class="step-body"><p class="step-progress">Guided Analysis 1 of 5</p><h3>Name the external system</h3><div class="card"><p><strong>What problem does this solve?</strong> Not every 'after render' thought needs an effect.</p><p><strong>Why should I care?</strong> Naming the system prevents effects used as general calculation boxes.</p><p><strong>What would happen if React did not have this?</strong> Without this test, derived values become delayed duplicate state.</p></div><p><strong>Wait… why?</strong> This step changes one responsibility. Say what remains the same before editing.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 1 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>External system: document.title</code></pre><p>Use the idea and responsibility shown here; adapt only names that differ in your learner branch.</p></div></div></div></div>
-<div class="step"><div class="step-num">2</div><div class="step-body"><p class="step-progress">Guided Analysis 2 of 5</p><h3>Add the effect at top level</h3><div class="card"><p><strong>What problem does this solve?</strong> Synchronization should follow committed state.</p><p><strong>Why should I care?</strong> A top-level hook preserves call order.</p><p><strong>What would happen if React did not have this?</strong> Without stable order, React cannot match hook state.</p></div><p><strong>Wait… why?</strong> This step changes one responsibility. Say what remains the same before editing.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 2 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>useEffect(() =&gt; {
+Why professionals do it: Teams design setup and cleanup as a matched pair.</code></pre>
+          <p>
+            <strong>Technical:</strong> this code receives something, performs one named job, and produces a result another part can use.
+          </p>
+          <p>
+            <strong>In plain English:</strong> one part of the app accepts
+            something, does one understandable job, and hands back a result.
+          </p>
+        </div>
+        <hr class="section-divider" />
+        <h2>4. Guided Lab</h2>
+        <div class="alert alert-success">
+          <strong>Lab objective:</strong> complete one specific useeffect
+          workflow and explain why every step exists.
+        </div>
+        <div class="alert alert-info">
+          <strong>Learner workspace:</strong> work in your own files. Hidden
+          solutions are references, not automatic starter-code changes.
+        </div>
+        <div class="card"><h3>Exactly where do I work?</h3><p><strong>Main code:</strong> <code>src/App.jsx</code>. Add <code>useEffect</code> to the React import area at the top. Put both effects inside <code>App</code>, immediately after the <code>useCountrySearch(countries)</code> call and before <code>return</code>.</p><p><strong>Test:</strong> create <code>src/App.test.jsx</code> only when the testing step tells you to. Do not put effect code in <code>CountryList.jsx</code> or <code>CountryCard.jsx</code>.</p><p><strong>In plain English:</strong> App already knows <code>resultCount</code> and <code>clearSearch</code>, so App is the file that can connect those values to the browser tab title and Escape key.</p></div>
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <p class="step-progress">Guided Analysis 1 of 5</p>
+            <h3>Name the thing outside React</h3><p><strong>File:</strong> <code>src/App.jsx</code>. Inspect the values returned by <code>useCountrySearch</code>; do not type code yet.</p>
+            <div class="card">
+              <p>
+                <strong>What problem does this solve?</strong> Not every 'after
+                render' thought needs an effect.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> Naming the system prevents
+                effects used as general calculation boxes.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                Without this test, derived values become delayed duplicate
+                state.
+              </p>
+            </div>
+            <p>
+              <strong>Wait… why?</strong> This step changes one responsibility.
+              Say what remains the same before editing.
+            </p>
+            <div class="solution-item">
+              <button
+                type="button"
+                class="solution-toggle"
+                aria-expanded="false"
+              >
+                <span>Step 1 solution</span
+                ><span class="solution-hint">Click to reveal</span>
+              </button>
+              <div class="solution-content">
+                <pre><code>External system: document.title</code></pre>
+                <p>
+                  Use the idea and responsibility shown here; adapt only names
+                  that differ in your learner branch.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <p class="step-progress">Guided Analysis 2 of 5</p>
+            <h3>Add the browser-title effect</h3><p><strong>File:</strong> <code>src/App.jsx</code>. Add <code>useEffect</code> to the import at the top, then put this effect inside <code>App</code>, after the search-hook call and before <code>return</code>.</p>
+            <div class="card">
+              <p>
+                <strong>What problem does this solve?</strong> Synchronization
+                should follow committed state.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> A top-level hook preserves
+                call order.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                Without stable order, React cannot match hook state.
+              </p>
+            </div>
+            <p>
+              <strong>Wait… why?</strong> This step changes one responsibility.
+              Say what remains the same before editing.
+            </p>
+            <div class="solution-item">
+              <button
+                type="button"
+                class="solution-toggle"
+                aria-expanded="false"
+              >
+                <span>Step 2 solution</span
+                ><span class="solution-hint">Click to reveal</span>
+              </button>
+              <div class="solution-content">
+                <pre><code>useEffect(() =&gt; {
   document.title = `${resultCount} countries`;
-}, [resultCount]);</code></pre><p>Use the idea and responsibility shown here; adapt only names that differ in your learner branch.</p></div></div></div></div>
-<div class="step"><div class="step-num">3</div><div class="step-body"><p class="step-progress">Guided Analysis 3 of 5</p><h3>Explain the dependency</h3><div class="card"><p><strong>What problem does this solve?</strong> The effect reads resultCount.</p><p><strong>Why should I care?</strong> The dependency reruns setup when that input changes.</p><p><strong>What would happen if React did not have this?</strong> Without it, the title can show yesterday's count.</p></div><p><strong>Wait… why?</strong> This step changes one responsibility. Say what remains the same before editing.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 3 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>Reads inside effect: resultCount
-Dependency list: [resultCount]</code></pre><p>Use the idea and responsibility shown here; adapt only names that differ in your learner branch.</p></div></div></div></div>
-<div class="step"><div class="step-num">4</div><div class="step-body"><p class="step-progress">Guided Analysis 4 of 5</p><h3>Add and clean up an event listener</h3><div class="card"><p><strong>What problem does this solve?</strong> Browser listeners live outside React.</p><p><strong>Why should I care?</strong> Cleanup removes the exact function setup added.</p><p><strong>What would happen if React did not have this?</strong> Without cleanup, each mount adds another listener.</p></div><p><strong>Wait… why?</strong> This step changes one responsibility. Say what remains the same before editing.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 4 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>useEffect(() =&gt; {
+}, [resultCount]);</code></pre>
+                <p>
+                  Use the idea and responsibility shown here; adapt only names
+                  that differ in your learner branch.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <p class="step-progress">Guided Analysis 3 of 5</p>
+            <h3>Explain why resultCount is in the square brackets</h3><p><strong>File:</strong> <code>src/App.jsx</code>. Add a comment directly above the title effect; do not create another effect.</p>
+            <div class="card">
+              <p>
+                <strong>What problem does this solve?</strong> The effect reads
+                resultCount.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> The dependency reruns setup
+                when that input changes.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                Without it, the title can show yesterday's count.
+              </p>
+            </div>
+            <p>
+              <strong>Wait… why?</strong> This step changes one responsibility.
+              Say what remains the same before editing.
+            </p>
+            <div class="solution-item">
+              <button
+                type="button"
+                class="solution-toggle"
+                aria-expanded="false"
+              >
+                <span>Step 3 solution</span
+                ><span class="solution-hint">Click to reveal</span>
+              </button>
+              <div class="solution-content">
+                <pre><code>Reads inside effect: resultCount
+Dependency list: [resultCount]</code></pre>
+                <p>
+                  Use the idea and responsibility shown here; adapt only names
+                  that differ in your learner branch.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <p class="step-progress">Guided Analysis 4 of 5</p>
+            <h3>Add the Escape-key listener and remove it afterward</h3><p><strong>File:</strong> <code>src/App.jsx</code>. Put this second effect below the title effect and before <code>return</code>.</p>
+            <div class="card">
+              <p>
+                <strong>What problem does this solve?</strong> Browser listeners
+                live outside React.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> Cleanup removes the exact
+                function setup added.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                Without cleanup, each mount adds another listener.
+              </p>
+            </div>
+            <p>
+              <strong>Wait… why?</strong> This step changes one responsibility.
+              Say what remains the same before editing.
+            </p>
+            <div class="solution-item">
+              <button
+                type="button"
+                class="solution-toggle"
+                aria-expanded="false"
+              >
+                <span>Step 4 solution</span
+                ><span class="solution-hint">Click to reveal</span>
+              </button>
+              <div class="solution-content">
+                <pre><code>useEffect(() =&gt; {
   const onKey = e =&gt; e.key === 'Escape' &amp;&amp; clearSearch();
   window.addEventListener('keydown', onKey);
   return () =&gt; window.removeEventListener('keydown', onKey);
-}, [clearSearch]);</code></pre><p>Use the idea and responsibility shown here; adapt only names that differ in your learner branch.</p></div></div></div></div>
-<div class="step"><div class="step-num">5</div><div class="step-body"><p class="step-progress">Guided Analysis 5 of 5</p><h3>Verify lifecycle behavior</h3><div class="card"><p><strong>What problem does this solve?</strong> Code can look correct while leaking listeners.</p><p><strong>Why should I care?</strong> Mount/unmount checks prove cleanup.</p><p><strong>What would happen if React did not have this?</strong> Without verification, Strict Mode may expose duplicate behavior later.</p></div><p><strong>Wait… why?</strong> This step changes one responsibility. Say what remains the same before editing.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 5 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>Run npm test and npm run dev; change count, press Escape, then remount and confirm one response.</code></pre><p>Use the idea and responsibility shown here; adapt only names that differ in your learner branch.</p></div></div></div></div>
-<div class="card" style="border-color:var(--green)"><h3>After the lab: connect the pieces</h3><p>useEffect synchronizes committed React state with systems outside React; it is not a general-purpose calculation tool.</p><p><strong>In plain English:</strong> Render decides the screen. An effect updates something React does not own, then cleans up after itself.</p></div>
-<h2>5. Expected Files Changed</h2><div class="table-wrap"><table><tr><th>File</th><th>Action</th><th>Why</th></tr><tr><td><code>src/App.jsx</code></td><td>Update</td><td>Synchronize title or keyboard behavior</td></tr><tr><td><code>src/App.test.jsx</code></td><td>Update</td><td>Verify observable effect behavior</td></tr></table></div>
-<h2>6. Commit Checkpoint</h2><pre><code>git add src/App.jsx src/App.test.jsx
+}, [clearSearch]);</code></pre>
+                <p>
+                  Use the idea and responsibility shown here; adapt only names
+                  that differ in your learner branch.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <p class="step-progress">Guided Analysis 5 of 5</p>
+            <h3>Run the app and verify the two browser behaviors</h3><p><strong>Files:</strong> run the code from <code>src/App.jsx</code>; create <code>src/App.test.jsx</code> for the automated check.</p>
+            <div class="card">
+              <p>
+                <strong>What problem does this solve?</strong> Code can look
+                correct while leaking listeners.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> Mount/unmount checks prove
+                cleanup.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                Without verification, Strict Mode may expose duplicate behavior
+                later.
+              </p>
+            </div>
+            <p>
+              <strong>Wait… why?</strong> This step changes one responsibility.
+              Say what remains the same before editing.
+            </p>
+            <div class="solution-item">
+              <button
+                type="button"
+                class="solution-toggle"
+                aria-expanded="false"
+              >
+                <span>Step 5 solution</span
+                ><span class="solution-hint">Click to reveal</span>
+              </button>
+              <div class="solution-content">
+                <pre><code>Run npm test and npm run dev; change count, press Escape, then remount and confirm one response.</code></pre>
+                <p>
+                  Use the idea and responsibility shown here; adapt only names
+                  that differ in your learner branch.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="border-color: var(--green)">
+          <h3>After the lab: connect the pieces</h3>
+          <p>
+            useEffect synchronizes committed React state with systems outside
+            React; it is not a general-purpose calculation tool.
+          </p>
+          <p>
+            <strong>In plain English:</strong> Render decides the screen. An
+            effect updates something React does not own, then cleans up after
+            itself.
+          </p>
+        </div>
+        <h2>5. Expected Files Changed</h2>
+        <div class="table-wrap">
+          <table>
+            <tr>
+              <th>File</th>
+              <th>Action</th>
+              <th>Why</th>
+            </tr>
+            <tr>
+              <td><code>src/App.jsx</code></td>
+              <td>Create</td>
+              <td>Synchronize title or keyboard behavior</td>
+            </tr>
+            <tr>
+              <td><code>src/App.test.jsx</code></td>
+              <td>Update</td>
+              <td>Verify observable effect behavior</td>
+            </tr>
+          </table>
+        </div>
+        <h2>6. Commit Checkpoint</h2>
+        <pre><code>git add src/App.jsx src/App.test.jsx
 git commit -m "session-37: useeffect"</code></pre>
-<h2>7. Code Review Checklist</h2><div class="card"><div class="checklist-item"><input type="checkbox"/><label>Explain what outside system an effect synchronizes</label></div><div class="checklist-item"><input type="checkbox"/><label>Predict setup and cleanup timing</label></div><div class="checklist-item"><input type="checkbox"/><label>Choose honest effect dependencies</label></div><div class="checklist-item"><input type="checkbox"/><label>Recognize stale closures</label></div><div class="checklist-item"><input type="checkbox"/><label>Keep derived calculations out of effects</label></div></div>
-<hr class="section-divider"/><h2>8. Post-Coding Quiz</h2><div id="post-quiz"><div class="quiz-question" data-answer="a"><div class="question-num">Question 1 of 5</div><p>Which statement best captures effects synchronize outside react?</p><label class="quiz-option" data-val="a">useEffect synchronizes committed React state with systems outside React; it is not a general-purpose calculation tool.</label><label class="quiz-option" data-val="b">Move every responsibility into App so the complete process exists in one file, even when the component or boundary has a different responsibility</label><label class="quiz-option" data-val="c">Add a new abstraction before identifying the behavior or risk it should protect</label><label class="quiz-option" data-val="d">Judge the result only by whether the final page looks approximately correct</label><div class="explanation">This is the lesson's central boundary. In plain English: Render decides the screen. An effect updates something React does not own, then cleans up after itself.</div></div>
-<div class="quiz-question" data-answer="b"><div class="question-num">Question 2 of 5</div><p>What should guide the next engineering change?</p><label class="quiz-option" data-val="a">Move every responsibility into App so the complete process exists in one file</label><label class="quiz-option" data-val="b">Observable behavior, ownership, and focused evidence</label><label class="quiz-option" data-val="c">Add a new abstraction before identifying the behavior or risk it should protect</label><label class="quiz-option" data-val="d">Judge the result only by whether the final page looks approximately correct</label><div class="explanation">Professionals connect a proposed change to a real consequence rather than a preference.</div></div>
-<div class="quiz-question" data-answer="c"><div class="question-num">Question 3 of 5</div><p>What should remain stable during a refactor?</p><label class="quiz-option" data-val="a">Add a new abstraction before identifying the behavior or risk it should protect</label><label class="quiz-option" data-val="b">Move every responsibility into App so the complete process exists in one file</label><label class="quiz-option" data-val="c">The user-visible behavior and the public contract being protected</label><label class="quiz-option" data-val="d">Judge the result only by whether the final page looks approximately correct</label><div class="explanation">Internal files may move, but the promise to callers and users should change only intentionally.</div></div>
-<div class="quiz-question" data-answer="d"><div class="question-num">Question 4 of 5</div><p>What does a useful verification checkpoint do?</p><label class="quiz-option" data-val="a">Judge the result only by whether the final page looks approximately correct</label><label class="quiz-option" data-val="b">Move every responsibility into App so the complete process exists in one file</label><label class="quiz-option" data-val="c">Add a new abstraction before identifying the behavior or risk it should protect</label><label class="quiz-option" data-val="d">It checks the exact boundary or user journey that the step could break</label><div class="explanation">A targeted check makes failure easier to locate than one final visual glance.</div></div>
-<div class="quiz-question" data-answer="a"><div class="question-num">Question 5 of 5</div><p>What demonstrates mastery of this session?</p><label class="quiz-option" data-val="a">Explaining the decision, implementing it, and naming its tradeoff</label><label class="quiz-option" data-val="b">Move every responsibility into App so the complete process exists in one file</label><label class="quiz-option" data-val="c">Add a new abstraction before identifying the behavior or risk it should protect</label><label class="quiz-option" data-val="d">Judge the result only by whether the final page looks approximately correct</label><div class="explanation">Understanding includes the reason and cost, not merely copying the shown code.</div></div><button class="submit-btn" disabled>Submit Post-Quiz</button><div class="quiz-result" id="post-result"></div></div>
-<h2>9. Reflection Questions</h2><div class="card"><ol class="reflection-list"><li class="reflection-item"><p class="reflection-question">What problem did this lesson solve?</p><button type="button" class="reflection-answer-toggle" aria-expanded="false"><span>Model answer</span><span class="reflection-answer-hint">Click to reveal</span></button><p class="reflection-answer">useEffect synchronizes committed React state with systems outside React; it is not a general-purpose calculation tool.</p></li><li class="reflection-item"><p class="reflection-question">Why should a professional care?</p><button type="button" class="reflection-answer-toggle" aria-expanded="false"><span>Model answer</span><span class="reflection-answer-hint">Click to reveal</span></button><p class="reflection-answer">The boundary makes failures easier to locate and future changes easier to verify without rereading the entire application.</p></li><li class="reflection-item"><p class="reflection-question">What cost or tradeoff remains?</p><button type="button" class="reflection-answer-toggle" aria-expanded="false"><span>Model answer</span><span class="reflection-answer-hint">Click to reveal</span></button><p class="reflection-answer">Every new boundary, state, or document adds something developers must learn. Keep it only while it makes the behavior clearer than the simpler alternative.</p></li></ol></div>
-<h2>10. What Breaks If This Boundary Is Ignored?</h2><div class="card"><ul><li>The failure appears far from the responsibility that caused it.</li><li>Unrelated code changes together because ownership is unclear.</li><li>A visual check can pass while an important contract is broken.</li><li>The next learner inherits a rule without understanding its reason.</li></ul></div>
-<h2>11. What Engineering Concept Was Learned Today</h2><div class="card" style="border-color:var(--green)"><p><strong>useEffect synchronizes committed React state with systems outside React; it is not a general-purpose calculation tool.</strong></p><p><strong>In plain English:</strong> Render decides the screen. An effect updates something React does not own, then cleans up after itself.</p></div>
-<p><a href="../session-36/index.html">← Session 36</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-38/index.html">Session 38 →</a></p></div></main><script src="../../quiz.js" defer></script><script src="../../session-full.js" defer></script><script src="../../reflection-reveal.js" defer></script><script src="../../notes-widget.js" defer></script><script src="../../bookmark-widget.js" defer></script><div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;color:#ff5ca8">DRAFT</div></body></html>
+        <h2>7. Code Review Checklist</h2>
+        <div class="card">
+          <div class="checklist-item">
+            <input type="checkbox" /><label
+              >Explain what outside system an effect synchronizes</label
+            >
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" /><label
+              >Predict setup and cleanup timing</label
+            >
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" /><label
+              >Choose honest effect dependencies</label
+            >
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" /><label>Recognize stale closures</label>
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" /><label
+              >Keep derived calculations out of effects</label
+            >
+          </div>
+        </div>
+        <hr class="section-divider" />
+        <h2>8. Post-Coding Quiz</h2>
+        <div id="post-quiz">
+          <div class="quiz-question" data-answer="a">
+            <div class="question-num">Question 1 of 5</div>
+            <p>
+              Which statement best captures effects synchronize outside react?
+            </p>
+            <label class="quiz-option" data-val="a"
+              >useEffect synchronizes committed React state with systems outside
+              React; it is not a general-purpose calculation tool.</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file, even when the feature or file performs a different job</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              This is the main idea of the lesson. In plain English: Render
+              decides the screen. An effect updates something React does not
+              own, then cleans up after itself.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="b">
+            <div class="question-num">Question 2 of 5</div>
+            <p>What should guide the next engineering change?</p>
+            <label class="quiz-option" data-val="a"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="b"
+              >What the person can see, which file controls it, and a test that checks it</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              Professionals connect a proposed change to a real consequence
+              rather than a preference.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="c">
+            <div class="question-num">Question 3 of 5</div>
+            <p>What should remain stable during a refactor?</p>
+            <label class="quiz-option" data-val="a"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="c"
+              >The user-visible behavior and the inputs and results that other code already relies on being
+              protected</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              Internal files may move, but the promise to callers and users
+              should change only intentionally.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="d">
+            <div class="question-num">Question 4 of 5</div>
+            <p>What does a useful verification checkpoint do?</p>
+            <label class="quiz-option" data-val="a"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >It checks the exact boundary or user journey that the step could
+              break</label
+            >
+            <div class="explanation">
+              A targeted check makes failure easier to locate than one final
+              visual glance.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="a">
+            <div class="question-num">Question 5 of 5</div>
+            <p>What demonstrates mastery of this session?</p>
+            <label class="quiz-option" data-val="a"
+              >Explaining the decision, implementing it, and naming its
+              tradeoff</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              Understanding includes the reason and cost, not merely copying the
+              shown code.
+            </div>
+          </div>
+          <button class="submit-btn" disabled>Submit Post-Quiz</button>
+          <div class="quiz-result" id="post-result"></div>
+        </div>
+        <h2>9. Reflection Questions</h2>
+        <div class="card">
+          <ol class="reflection-list">
+            <li class="reflection-item">
+              <p class="reflection-question">
+                What problem did this lesson solve?
+              </p>
+              <button
+                type="button"
+                class="reflection-answer-toggle"
+                aria-expanded="false"
+              >
+                <span>Model answer</span
+                ><span class="reflection-answer-hint">Click to reveal</span>
+              </button>
+              <p class="reflection-answer">
+                useEffect synchronizes committed React state with systems
+                outside React; it is not a general-purpose calculation tool.
+              </p>
+            </li>
+            <li class="reflection-item">
+              <p class="reflection-question">Why should a professional care?</p>
+              <button
+                type="button"
+                class="reflection-answer-toggle"
+                aria-expanded="false"
+              >
+                <span>Model answer</span
+                ><span class="reflection-answer-hint">Click to reveal</span>
+              </button>
+              <p class="reflection-answer">
+                The boundary makes failures easier to locate and future changes
+                easier to verify without rereading the entire application.
+              </p>
+            </li>
+            <li class="reflection-item">
+              <p class="reflection-question">What cost or tradeoff remains?</p>
+              <button
+                type="button"
+                class="reflection-answer-toggle"
+                aria-expanded="false"
+              >
+                <span>Model answer</span
+                ><span class="reflection-answer-hint">Click to reveal</span>
+              </button>
+              <p class="reflection-answer">
+                Every new boundary, state, or document adds something developers
+                must learn. Keep it only while it makes the behavior clearer
+                than the simpler alternative.
+              </p>
+            </li>
+          </ol>
+        </div>
+        <h2>10. What Breaks If This Boundary Is Ignored?</h2>
+        <div class="card">
+          <ul>
+            <li>
+              The failure appears far from the responsibility that caused it.
+            </li>
+            <li>
+              Unrelated code changes together because ownership is unclear.
+            </li>
+            <li>
+              The page can look correct while another file receives the wrong input or result.
+            </li>
+            <li>
+              The next learner inherits a rule without understanding its reason.
+            </li>
+          </ul>
+        </div>
+        <h2>11. What Engineering Concept Was Learned Today</h2>
+        <div class="card" style="border-color: var(--green)">
+          <p>
+            <strong
+              >useEffect synchronizes committed React state with systems outside
+              React; it is not a general-purpose calculation tool.</strong
+            >
+          </p>
+          <p>
+            <strong>In plain English:</strong> Render decides the screen. An
+            effect updates something React does not own, then cleans up after
+            itself.
+          </p>
+        </div>
+        <p>
+          <a href="../session-36/index.html">← Session 36</a> ·
+          <a href="../../syllabus/index.html">Syllabus</a> ·
+          <a href="../session-38/index.html">Session 38 →</a>
+        </p>
+      </div>
+    </main>
+    <script src="../../quiz.js" defer></script>
+    <script src="../../session-full.js" defer></script>
+    <script src="../../reflection-reveal.js" defer></script>
+    <script src="../../notes-widget.js" defer></script>
+    <script src="../../bookmark-widget.js" defer></script>
+    <div
+      class="academy-draft-watermark"
+      aria-hidden="true"
+      style="
+        position: fixed;
+        right: 18px;
+        top: 76px;
+        z-index: 90;
+        color: #ff5ca8;
+      "
+    >
+      DRAFT
+    </div>
+  </body>
+</html>

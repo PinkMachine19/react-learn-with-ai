@@ -544,8 +544,7 @@
               in one file, even when separate features and boundaries change for
               entirely different reasons and serve unrelated parts of the app</label
             ><label class="quiz-option" data-val="c"
-              >Add a new abstraction before identifying the behavior or risk it
-              should protect</label
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
             ><label class="quiz-option" data-val="d"
               >Judge the result only by whether the final page looks
               approximately correct</label
@@ -566,8 +565,7 @@
               >It identifies one concrete responsibility in the architecture
               review flow</label
             ><label class="quiz-option" data-val="c"
-              >Add a new abstraction before identifying the behavior or risk it
-              should protect</label
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
             ><label class="quiz-option" data-val="d"
               >Judge the result only by whether the final page looks
               approximately correct</label
@@ -581,19 +579,18 @@
             <div class="question-num">Question 3 of 5</div>
             <p>Which starting action is safest?</p>
             <label class="quiz-option" data-val="a"
-              >Add a new abstraction before identifying the behavior or risk it
-              should protect</label
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
             ><label class="quiz-option" data-val="b"
               >Move every responsibility into App so the complete process exists
               in one file</label
             ><label class="quiz-option" data-val="c"
-              >Trace the current behavior before changing its boundary</label
+              >Run the current feature and write down what it does before moving any code</label
             ><label class="quiz-option" data-val="d"
               >Judge the result only by whether the final page looks
               approximately correct</label
             >
             <div class="explanation">
-              A map of current behavior prevents a redesign based on guesses.
+              Running the current feature first prevents you from moving code based on a guess.
             </div>
           </div>
           <div class="quiz-question" data-answer="d">
@@ -606,10 +603,9 @@
               >Move every responsibility into App so the complete process exists
               in one file</label
             ><label class="quiz-option" data-val="c"
-              >Add a new abstraction before identifying the behavior or risk it
-              should protect</label
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
             ><label class="quiz-option" data-val="d"
-              >The problem determines whether the proposed abstraction earns its
+              >The problem determines whether the extra helper, hook, or file earns its
               cost</label
             >
             <div class="explanation">
@@ -627,14 +623,13 @@
               >Move every responsibility into App so the complete process exists
               in one file</label
             ><label class="quiz-option" data-val="c"
-              >Add a new abstraction before identifying the behavior or risk it
-              should protect</label
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
             ><label class="quiz-option" data-val="d"
               >Judge the result only by whether the final page looks
               approximately correct</label
             >
             <div class="explanation">
-              Evidence makes the decision understandable and repeatable.
+              A concrete example and a matching test show another developer exactly why the change is needed.
             </div>
           </div>
           <button class="submit-btn" disabled>Submit Pre-Quiz</button>
@@ -671,8 +666,7 @@ Real React example: API → normalizer → state owner → list → card
   ↓
 Why professionals do it: Teams review change paths and contracts before rearranging folders.</code></pre>
           <p>
-            <strong>Technical:</strong> this is a boundary with an input,
-            responsibility, and observable output.
+            <strong>Technical:</strong> this code receives something, performs one named job, and produces a result another part can use.
           </p>
           <p>
             <strong>In plain English:</strong> one part of the app accepts
@@ -703,8 +697,7 @@ Real React example: A failing boundary test supports a normalization finding.
   ↓
 Why professionals do it: Professionals record the observed fact, consequence, and proposed response.</code></pre>
           <p>
-            <strong>Technical:</strong> this is a boundary with an input,
-            responsibility, and observable output.
+            <strong>Technical:</strong> this code receives something, performs one named job, and produces a result another part can use.
           </p>
           <p>
             <strong>In plain English:</strong> one part of the app accepts
@@ -736,8 +729,7 @@ Real React example: Rank duplicate API normalization above renaming a local vari
   ↓
 Why professionals do it: Teams spend limited time on risks with the strongest expected cost.</code></pre>
           <p>
-            <strong>Technical:</strong> this is a boundary with an input,
-            responsibility, and observable output.
+            <strong>Technical:</strong> this code receives something, performs one named job, and produces a result another part can use.
           </p>
           <p>
             <strong>In plain English:</strong> one part of the app accepts
@@ -768,8 +760,7 @@ Real React example: Extract a service, run service tests, then update the compon
   ↓
 Why professionals do it: Professionals pair each change with the evidence that proves it safe.</code></pre>
           <p>
-            <strong>Technical:</strong> this is a boundary with an input,
-            responsibility, and observable output.
+            <strong>Technical:</strong> this code receives something, performs one named job, and produces a result another part can use.
           </p>
           <p>
             <strong>In plain English:</strong> one part of the app accepts
@@ -786,11 +777,12 @@ Why professionals do it: Professionals pair each change with the evidence that p
           <strong>Learner workspace:</strong> work in your own files. Hidden
           solutions are references, not automatic starter-code changes.
         </div>
+        <div class="card"><h3>Exactly where do I work?</h3><p><strong>Create and write only:</strong> <code>docs/architecture-review.md</code>. Every guided step adds another heading or paragraph to that one document.</p><p><strong>Open only for inspection:</strong> <code>src/App.jsx</code>, <code>src/features/countries/useCountrySearch.js</code>, <code>src/component/CountryList.jsx</code>, <code>src/features/countries/CountryCard.jsx</code>, and <code>src/features/countries/countryServices.js</code>. Do not reorganize or edit those files in this review lab.</p><p><strong>In plain English:</strong> you are writing a report about how the current app works. You are not rebuilding the app.</p></div>
         <div class="step">
           <div class="step-num">1</div>
           <div class="step-body">
             <p class="step-progress">Guided Analysis 1 of 5</p>
-            <h3>Trace one user-visible journey</h3>
+            <h3>Trace one user-visible journey</h3><p><strong>Write in:</strong> <code>docs/architecture-review.md</code>, under <code>## 1. Current user journey</code>. <strong>Inspect:</strong> start in <code>src/App.jsx</code> and follow its imports.</p>
             <div class="card">
               <p>
                 <strong>What problem does this solve?</strong> Architecture
@@ -832,7 +824,7 @@ Why professionals do it: Professionals pair each change with the evidence that p
           <div class="step-num">2</div>
           <div class="step-body">
             <p class="step-progress">Guided Analysis 2 of 5</p>
-            <h3>Create an ownership table</h3>
+            <h3>Create a who-does-what table</h3><p><strong>Write in:</strong> <code>docs/architecture-review.md</code>, under <code>## 2. Who does what</code>. “Ownership” only means which file currently controls a piece of work.</p>
             <div class="card">
               <p>
                 <strong>What problem does this solve?</strong> Responsibilities
@@ -877,7 +869,7 @@ CountryCard.jsx | one-country presentation</code></pre>
           <div class="step-num">3</div>
           <div class="step-body">
             <p class="step-progress">Guided Analysis 3 of 5</p>
-            <h3>Write three evidence-based findings</h3>
+            <h3>Write three specific problems you actually found</h3><p><strong>Write in:</strong> <code>docs/architecture-review.md</code>, under <code>## 3. Problems found</code>. Name the exact source file and line or code phrase for each problem.</p>
             <div class="card">
               <p>
                 <strong>What problem does this solve?</strong> A complaint needs
@@ -919,7 +911,7 @@ CountryCard.jsx | one-country presentation</code></pre>
           <div class="step-num">4</div>
           <div class="step-body">
             <p class="step-progress">Guided Analysis 4 of 5</p>
-            <h3>Rank findings</h3>
+            <h3>Put the problems in a useful order</h3><p><strong>Write in:</strong> the same document under <code>## 4. What to fix first</code>. Put user-visible breakage before naming or folder preferences.</p>
             <div class="card">
               <p>
                 <strong>What problem does this solve?</strong> Not every issue
@@ -963,7 +955,7 @@ CountryCard.jsx | one-country presentation</code></pre>
           <div class="step-num">5</div>
           <div class="step-body">
             <p class="step-progress">Guided Analysis 5 of 5</p>
-            <h3>Plan one bounded refactor</h3>
+            <h3>Plan one small change</h3><p><strong>Write in:</strong> the same document under <code>## 5. One safe next change</code>. Do not edit <code>src</code> in this session.</p>
             <div class="card">
               <p>
                 <strong>What problem does this solve?</strong> The team needs a
@@ -1026,7 +1018,7 @@ CountryCard.jsx | one-country presentation</code></pre>
               <td>Record map, findings, ranking, and plan</td>
             </tr>
             <tr>
-              <td><code>src files</code></td>
+              <td><code>src/App.jsx</code> and the named country files above</td>
               <td>Inspect only</td>
               <td>
                 Use as evidence; change code only if your instructor requests it
@@ -1035,7 +1027,7 @@ CountryCard.jsx | one-country presentation</code></pre>
           </table>
         </div>
         <h2>6. Commit Checkpoint</h2>
-        <pre><code>git add docs/architecture-review.md src files
+        <pre><code>git add docs/architecture-review.md
 git commit -m "session-36: architecture review"</code></pre>
         <h2>7. Code Review Checklist</h2>
         <div class="card">
@@ -1079,14 +1071,13 @@ git commit -m "session-36: architecture review"</code></pre>
               in one file, even when separate features and boundaries change for
               entirely different reasons and serve unrelated parts of the app</label
             ><label class="quiz-option" data-val="c"
-              >Add a new abstraction before identifying the behavior or risk it
-              should protect</label
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
             ><label class="quiz-option" data-val="d"
               >Judge the result only by whether the final page looks
               approximately correct</label
             >
             <div class="explanation">
-              This is the lesson's central boundary. In plain English: Follow
+              This is the main idea of the lesson. In plain English: Follow
               one real user journey, find the risky handoff, and plan one repair
               you can prove.
             </div>
@@ -1098,10 +1089,9 @@ git commit -m "session-36: architecture review"</code></pre>
               >Move every responsibility into App so the complete process exists
               in one file</label
             ><label class="quiz-option" data-val="b"
-              >Observable behavior, ownership, and focused evidence</label
+              >What the person can see, which file controls it, and a test that checks it</label
             ><label class="quiz-option" data-val="c"
-              >Add a new abstraction before identifying the behavior or risk it
-              should protect</label
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
             ><label class="quiz-option" data-val="d"
               >Judge the result only by whether the final page looks
               approximately correct</label
@@ -1115,13 +1105,12 @@ git commit -m "session-36: architecture review"</code></pre>
             <div class="question-num">Question 3 of 5</div>
             <p>What should remain stable during a refactor?</p>
             <label class="quiz-option" data-val="a"
-              >Add a new abstraction before identifying the behavior or risk it
-              should protect</label
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
             ><label class="quiz-option" data-val="b"
               >Move every responsibility into App so the complete process exists
               in one file</label
             ><label class="quiz-option" data-val="c"
-              >The user-visible behavior and the public contract being
+              >The user-visible behavior and the inputs and results that other code already relies on being
               protected</label
             ><label class="quiz-option" data-val="d"
               >Judge the result only by whether the final page looks
@@ -1142,8 +1131,7 @@ git commit -m "session-36: architecture review"</code></pre>
               >Move every responsibility into App so the complete process exists
               in one file</label
             ><label class="quiz-option" data-val="c"
-              >Add a new abstraction before identifying the behavior or risk it
-              should protect</label
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
             ><label class="quiz-option" data-val="d"
               >It checks the exact boundary or user journey that the step could
               break</label
@@ -1163,8 +1151,7 @@ git commit -m "session-36: architecture review"</code></pre>
               >Move every responsibility into App so the complete process exists
               in one file</label
             ><label class="quiz-option" data-val="c"
-              >Add a new abstraction before identifying the behavior or risk it
-              should protect</label
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
             ><label class="quiz-option" data-val="d"
               >Judge the result only by whether the final page looks
               approximately correct</label
@@ -1240,7 +1227,7 @@ git commit -m "session-36: architecture review"</code></pre>
               Unrelated code changes together because ownership is unclear.
             </li>
             <li>
-              A visual check can pass while an important contract is broken.
+              The page can look correct while another file receives the wrong input or result.
             </li>
             <li>
               The next learner inherits a rule without understanding its reason.
