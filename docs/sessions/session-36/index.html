@@ -1,44 +1,1276 @@
-<!DOCTYPE html><html lang="en"><head>
-  <!-- Visit notification beacon -->
-  <script>
-    fetch('https://visit-relay.parmdeepchhabra.workers.dev/ping', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ path: location.pathname, referrer: document.referrer, site: location.hostname }),
-    }).catch(() => {});
-  </script>
-
-
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-B74JVERZLW"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-B74JVERZLW');
-  </script>
-<meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Session 36 — Architecture Review</title><link rel="stylesheet" href="../../styles.css"/><link rel="stylesheet" href="../../notes-widget.css"/><link rel="stylesheet" href="../../bookmark-widget.css"/><link rel="stylesheet" href="../../quiz-explain-modal.css"/><link rel="stylesheet" href="../../session-full.css"/><link rel="stylesheet" href="../../reflection-reveal.css"/></head><body><nav><div class="container"><a href="../../index.html" class="brand">⚛ React Learning</a><a href="../../syllabus/index.html">Syllabus</a><a href="../../sessions/index.html" class="active">Sessions</a><a href="../../quizzes/index.html">Quizzes</a><a href="../../labs/index.html">Labs</a></div></nav><main><div class="container">
-<div style="display:flex;gap:12px"><span class="badge badge-layer">Layer 6</span><span class="badge badge-current">Session 36</span><span style="color:var(--text-muted)">Architecture</span></div><h1>Architecture Review</h1><p class="subtitle">Audit the codebase as a system, record decisions and tradeoffs, and leave a prioritized refactor plan instead of a vague cleanup list.</p><div class="alert alert-info">Estimated time: 50–65 minutes · Milestone: Create a safe plan</div>
-<details class="warmup-expander"><summary><span class="warmup-label">Optional Warm-Up</span><span>5-Minute Wake-Up Challenge: Architecture Triage</span></summary><div class="warmup-content"><p><strong>Give yourself five minutes.</strong> Rank findings by user risk, change frequency, and repair cost. Use a scratch file, Node REPL, or browser console; no full React app run is required.</p><pre><code>const findings = [{name:'broken import', risk:5, frequency:5, cost:1},{name:'duplicate card shell', risk:2, frequency:3, cost:2},{name:'folder naming', risk:1, frequency:1, cost:1}];
-
-function rankFindings(findings) { /* highest value first */ }</code></pre><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Warm-Up solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>// One defensible solution
-function rankFindings(findings) {
-  const score = item =&gt; item.risk * item.frequency / item.cost;
-  return [...findings].sort((a, b) =&gt; score(b) - score(a));
-}</code><p>The ranking favors frequent, high-risk findings that are economical to repair.</p></div></div></div></details>
-<hr class="section-divider"/><h2>1. Learning Objectives</h2><div class="card"><ul><li>Map feature, UI, service, and data boundaries</li><li>Identify coupling and duplicated responsibilities</li><li>Prioritize findings by impact and evidence</li><li>Write concise architecture decision records</li><li>Define safe refactors with verification checkpoints</li></ul></div><h2>2. Pre-Coding Quiz</h2><p>Need 4/5 to proceed. Read every option: plausible distractors are intentionally similar in length.</p><div id="pre-quiz"><div class="quiz-question" data-answer="d"><div class="question-num">Question 1 of 5</div><p>What is the primary purpose of today’s Architecture Review work?</p><label class="quiz-option" data-val="a">Rename every related module while preserving its current location</label><label class="quiz-option" data-val="b">Centralize all responsibilities in App while retaining existing output</label><label class="quiz-option" data-val="c">Replace documented contracts with conventions understood by the team</label><label class="quiz-option" data-val="d">Clarify the target responsibility while preserving adjacent behavior</label><div class="explanation">The strongest answer preserves behavior while making responsibility and evidence clearer.</div></div><div class="quiz-question" data-answer="b"><div class="question-num">Question 2 of 5</div><p>Which signal should drive the first decision?</p><label class="quiz-option" data-val="a">A standard copied from an unrelated project with different constraints</label><label class="quiz-option" data-val="b">Evidence from ownership, observable behavior, and change pressure</label><label class="quiz-option" data-val="c">The option that creates the most narrowly named modules and folders</label><label class="quiz-option" data-val="d">The convention used most often by a different application team</label><div class="explanation">The strongest answer preserves behavior while making responsibility and evidence clearer.</div></div><div class="quiz-question" data-answer="a"><div class="question-num">Question 3 of 5</div><p>What should remain stable during the lab?</p><label class="quiz-option" data-val="a">The learner-visible contract and current observable behavior</label><label class="quiz-option" data-val="b">Every relative import path and all current module locations</label><label class="quiz-option" data-val="c">All internal component names and private implementation details</label><label class="quiz-option" data-val="d">The exact number, names, and nesting depth of source directories</label><div class="explanation">The strongest answer preserves behavior while making responsibility and evidence clearer.</div></div><div class="quiz-question" data-answer="c"><div class="question-num">Question 4 of 5</div><p>How should the change be verified?</p><label class="quiz-option" data-val="a">By disabling existing tests until the complete refactor has landed</label><label class="quiz-option" data-val="b">By confirming that no files, exports, or import paths were changed</label><label class="quiz-option" data-val="c">At the specific boundary the change is intended to improve</label><label class="quiz-option" data-val="d">Only by comparing the number of lines before and after the change</label><div class="explanation">The strongest answer preserves behavior while making responsibility and evidence clearer.</div></div><div class="quiz-question" data-answer="d"><div class="question-num">Question 5 of 5</div><p>What makes the result maintainable?</p><label class="quiz-option" data-val="a">Maximum abstraction before a second use case confirms the boundary</label><label class="quiz-option" data-val="b">A single module responsible for every layer and feature decision</label><label class="quiz-option" data-val="c">Detailed comments that restate each line and every obvious operation</label><label class="quiz-option" data-val="d">A focused contract with clear ownership and relevant evidence</label><div class="explanation">The strongest answer preserves behavior while making responsibility and evidence clearer.</div></div><button class="submit-btn" disabled>Submit Pre-Quiz</button><div class="quiz-result" id="pre-result"></div></div>
-<hr class="section-divider"/><h2>3. The Concept — Review the load-bearing paths</h2><p>Audit the codebase as a system, record decisions and tradeoffs, and leave a prioritized refactor plan instead of a vague cleanup list.</p><figure class="concept-figure"><div class="figure-label">Concept Visual 1 of 3</div><svg viewBox="0 0 760 280" role="img" aria-labelledby="s36v0t s36v0d"><title id="s36v0t">Map — Architecture Review</title><desc id="s36v0d">An inspector studies a bridge blueprint</desc><rect x="18" y="18" width="724" height="244" rx="28" fill="#0d1117" stroke="#58a6ff" stroke-width="3"/><circle cx="150" cy="140" r="65" fill="#58a6ff22" stroke="#58a6ff" stroke-width="5"/><path d="M235 140 H470" stroke="#8b949e" stroke-width="8" stroke-linecap="round"/><path d="M450 118 L480 140 L450 162" fill="none" stroke="#f0883e" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><rect x="515" y="76" width="150" height="128" rx="18" fill="#161b22" stroke="#ff5ca8" stroke-width="5"/><text x="150" y="147" text-anchor="middle" fill="#f0f6fc" font-size="22" font-weight="700">Map</text><path d="M545 115 h90 M545 140 h70 M545 165 h100" stroke="#f0f6fc" stroke-width="7" stroke-linecap="round" opacity=".85"/></svg><figcaption>Begin with data flow and ownership, not cosmetic preference.</figcaption></figure><figure class="concept-figure"><div class="figure-label">Concept Visual 2 of 3</div><svg viewBox="0 0 760 280" role="img" aria-labelledby="s36v1t s36v1d"><title id="s36v1t">Pressure — Architecture Review</title><desc id="s36v1d">Stress marks highlight boundaries and joints</desc><rect x="18" y="18" width="724" height="244" rx="28" fill="#0d1117" stroke="#3fb950" stroke-width="3"/><circle cx="150" cy="140" r="65" fill="#3fb95022" stroke="#3fb950" stroke-width="5"/><path d="M235 140 H470" stroke="#8b949e" stroke-width="8" stroke-linecap="round"/><path d="M450 118 L480 140 L450 162" fill="none" stroke="#f0883e" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><rect x="515" y="76" width="150" height="128" rx="18" fill="#161b22" stroke="#ff5ca8" stroke-width="5"/><text x="150" y="147" text-anchor="middle" fill="#f0f6fc" font-size="22" font-weight="700">Pressure</text><path d="M545 127 h90 M545 148 h70 M545 169 h100" stroke="#f0f6fc" stroke-width="7" stroke-linecap="round" opacity=".85"/></svg><figcaption>Frequent high-risk seams deserve attention first.</figcaption></figure><figure class="concept-figure"><div class="figure-label">Concept Visual 3 of 3</div><svg viewBox="0 0 760 280" role="img" aria-labelledby="s36v2t s36v2d"><title id="s36v2t">Decide — Architecture Review</title><desc id="s36v2d">A repair card records choice, reason, and consequence</desc><rect x="18" y="18" width="724" height="244" rx="28" fill="#0d1117" stroke="#d2a8ff" stroke-width="3"/><circle cx="150" cy="140" r="65" fill="#d2a8ff22" stroke="#d2a8ff" stroke-width="5"/><path d="M235 140 H470" stroke="#8b949e" stroke-width="8" stroke-linecap="round"/><path d="M450 118 L480 140 L450 162" fill="none" stroke="#f0883e" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/><rect x="515" y="76" width="150" height="128" rx="18" fill="#161b22" stroke="#ff5ca8" stroke-width="5"/><text x="150" y="147" text-anchor="middle" fill="#f0f6fc" font-size="22" font-weight="700">Decide</text><path d="M545 139 h90 M545 156 h70 M545 173 h100" stroke="#f0f6fc" stroke-width="7" stroke-linecap="round" opacity=".85"/></svg><figcaption>Decision records preserve context for future maintainers.</figcaption></figure>
-<hr class="section-divider"/><h2>4. Guided Lab</h2><div class="alert alert-success"><strong>Lab objective:</strong> Map feature, UI, service, and data boundaries and leave focused verification evidence.</div><div class="alert alert-info"><strong>Learner workspace:</strong> make these changes in your own <code>src</code> as you progress. This lesson page provides guidance and hidden solutions; it does not modify the starter source for you.</div>
-<div class="step"><div class="step-num">1</div><div class="step-body"><div class="figure-label">Guided Analysis 1 of 5</div><p><strong>Draw the current map</strong></p><p>Trace data from service through state to rendered UI and events back upward.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 1 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>data → service → hook/App → components → user
-user → handler → state → render</code></pre><p>Adapt names and paths to your project while preserving the responsibility demonstrated here.</p></div></div></div></div><div class="step"><div class="step-num">2</div><div class="step-body"><div class="figure-label">Guided Analysis 2 of 5</div><p><strong>Audit boundaries</strong></p><p>Check feature ownership, shared primitives, hook contracts, and service contracts.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 2 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>// Record evidence: imports, prop paths, tests, duplicate behavior.</code></pre><p>Adapt names and paths to your project while preserving the responsibility demonstrated here.</p></div></div></div></div><div class="step"><div class="step-num">3</div><div class="step-body"><div class="figure-label">Guided Analysis 3 of 5</div><p><strong>Rank findings</strong></p><p>Use risk, frequency, and repair cost instead of personal taste.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 3 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>priority = userRisk * changeFrequency / repairCost;</code></pre><p>Adapt names and paths to your project while preserving the responsibility demonstrated here.</p></div></div></div></div><div class="step"><div class="step-num">4</div><div class="step-body"><div class="figure-label">Guided Analysis 4 of 5</div><p><strong>Write an ADR</strong></p><p>Capture context, decision, alternatives, and consequences.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 4 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code># ADR-001: Group country code by feature
-Status: accepted
-Context: ...
-Decision: ...
-Consequences: ...</code></pre><p>Adapt names and paths to your project while preserving the responsibility demonstrated here.</p></div></div></div></div><div class="step"><div class="step-num">5</div><div class="step-body"><div class="figure-label">Guided Analysis 5 of 5</div><p><strong>Create a safe plan</strong></p><p>Give each refactor a behavior check and rollback-sized scope.</p><div class="solution-item"><button type="button" class="solution-toggle" aria-expanded="false"><span>Step 5 solution</span><span class="solution-hint">Click to reveal</span></button><div class="solution-content"><pre><code>1. Move country slice → run tests
-2. Extract UI primitives → run tests
-3. Extract search hook → run tests</code></pre><p>Adapt names and paths to your project while preserving the responsibility demonstrated here.</p></div></div></div></div>
-<h2>5. Expected Files Changed</h2><div class="card"><p>Your learner branch may change the files named by the milestone. Keep unrelated features untouched and verify imports after each step.</p></div><h2>6. Commit Checkpoint</h2><pre><code>git add src docs
-git commit -m "session-36: architecture review"</code></pre><h2>7. Code Review Checklist</h2><div class="card"><div class="checklist-item"><input type="checkbox"/><label>Map feature, UI, service, and data boundaries</label></div><div class="checklist-item"><input type="checkbox"/><label>Identify coupling and duplicated responsibilities</label></div><div class="checklist-item"><input type="checkbox"/><label>Prioritize findings by impact and evidence</label></div><div class="checklist-item"><input type="checkbox"/><label>Write concise architecture decision records</label></div></div>
-<hr class="section-divider"/><h2>8. Post-Coding Quiz</h2><div id="post-quiz"><div class="quiz-question" data-answer="c"><div class="question-num">Question 1 of 5</div><p>A refactor passes visually but breaks an existing contract. What is the best next action?</p><label class="quiz-option" data-val="a">Hide the failure behind a fallback and document it as expected behavior</label><label class="quiz-option" data-val="b">Expand the refactor across adjacent modules before investigating the cause</label><label class="quiz-option" data-val="c">Restore the contract or revise the change using focused evidence</label><label class="quiz-option" data-val="d">Delete the failing check after confirming that the page still renders</label><div class="explanation">The strongest answer preserves behavior while making responsibility and evidence clearer.</div></div><div class="quiz-question" data-answer="a"><div class="question-num">Question 2 of 5</div><p>Which review comment is most useful?</p><label class="quiz-option" data-val="a">This boundary owns X, while Y leaks through this specific public API</label><label class="quiz-option" data-val="b">The code feels unusual compared with conventions in another codebase</label><label class="quiz-option" data-val="c">Make every component reusable before identifying stable variation</label><label class="quiz-option" data-val="d">Add more folders throughout the project to create visual consistency</label><div class="explanation">The strongest answer preserves behavior while making responsibility and evidence clearer.</div></div><div class="quiz-question" data-answer="b"><div class="question-num">Question 3 of 5</div><p>When is an abstraction justified?</p><label class="quiz-option" data-val="a">When it removes visible dependencies by moving them behind global state</label><label class="quiz-option" data-val="b">When current use demonstrates a stable responsibility and variation</label><label class="quiz-option" data-val="c">Whenever two lines look similar despite serving different responsibilities</label><label class="quiz-option" data-val="d">Before requirements are known so later changes can fit the abstraction</label><div class="explanation">The strongest answer preserves behavior while making responsibility and evidence clearer.</div></div><div class="quiz-question" data-answer="d"><div class="question-num">Question 4 of 5</div><p>What does a focused checkpoint provide?</p><label class="quiz-option" data-val="a">A guarantee that future requirements will not invalidate the design</label><label class="quiz-option" data-val="b">Permission to skip behavior checks until all planned refactors finish</label><label class="quiz-option" data-val="c">A replacement for recording the alternatives and tradeoffs considered</label><label class="quiz-option" data-val="d">A bounded change paired with a relevant regression signal</label><div class="explanation">The strongest answer preserves behavior while making responsibility and evidence clearer.</div></div><div class="quiz-question" data-answer="c"><div class="question-num">Question 5 of 5</div><p>Which outcome best demonstrates mastery?</p><label class="quiz-option" data-val="a">Every component accepts an identical prop interface for consistency</label><label class="quiz-option" data-val="b">The implementation precisely matches the demonstrated solution screenshot</label><label class="quiz-option" data-val="c">The learner can implement, verify, and defend the decision and its cost</label><label class="quiz-option" data-val="d">The final folder tree is extensive and follows a fashionable convention</label><div class="explanation">The strongest answer preserves behavior while making responsibility and evidence clearer.</div></div><button class="submit-btn" disabled>Submit Post-Quiz</button><div class="quiz-result" id="post-result"></div></div>
-<h2>9. Reflection Questions</h2><div class="card"><ol class="reflection-list"><li class="reflection-item"><p class="reflection-question">What makes an architecture finding actionable?</p><button type="button" class="reflection-answer-toggle" aria-expanded="false"><span>Model answer</span><span class="reflection-answer-hint">Click to reveal</span></button><p class="reflection-answer">Concrete evidence, an affected behavior or maintenance cost, and a bounded next change.</p></li><li class="reflection-item"><p class="reflection-question">Why document rejected alternatives?</p><button type="button" class="reflection-answer-toggle" aria-expanded="false"><span>Model answer</span><span class="reflection-answer-hint">Click to reveal</span></button><p class="reflection-answer">Future maintainers can understand which constraints shaped the choice and avoid repeating old debates.</p></li><li class="reflection-item"><p class="reflection-question">What belongs in a refactor checkpoint?</p><button type="button" class="reflection-answer-toggle" aria-expanded="false"><span>Model answer</span><span class="reflection-answer-hint">Click to reveal</span></button><p class="reflection-answer">One small structural change plus tests or observable behavior that prove the contract stayed intact.</p></li></ol></div><h2>10. What Breaks If This Boundary Is Ignored?</h2><div class="card"><ul><li>Responsibilities drift across unrelated modules.</li><li>Safe changes become harder to verify and explain.</li><li>Future learners inherit coupling without its original reasoning.</li></ul></div><h2>11. What Engineering Concept Was Learned Today</h2><div class="card" style="border-color:var(--green)"><p><strong>Architecture review turns code evidence into explicit, reversible decisions.</strong></p></div><p><a href="../session-35/index.html">← Session 35</a> · <a href="../../syllabus/index.html">Syllabus</a> · <a href="../session-37/index.html">Session 37 →</a></p>
-</div></main><script src="../../quiz.js" defer></script><script src="../../session-full.js" defer></script><script src="../../reflection-reveal.js" defer></script><script src="../../notes-widget.js" defer></script><script src="../../bookmark-widget.js" defer></script><div class="academy-draft-watermark" aria-hidden="true" style="position:fixed;right:18px;top:76px;z-index:90;color:#ff5ca8">DRAFT</div></body></html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <script>
+      fetch("https://visit-relay.parmdeepchhabra.workers.dev/ping", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          path: location.pathname,
+          referrer: document.referrer,
+          site: location.hostname,
+        }),
+      }).catch(() => {});
+    </script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-B74JVERZLW"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "G-B74JVERZLW");
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Session 36 — Architecture Review</title>
+    <link rel="stylesheet" href="../../styles.css" />
+    <link rel="stylesheet" href="../../notes-widget.css" />
+    <link rel="stylesheet" href="../../bookmark-widget.css" />
+    <link rel="stylesheet" href="../../quiz-explain-modal.css" />
+    <link rel="stylesheet" href="../../session-full.css" />
+    <link rel="stylesheet" href="../../reflection-reveal.css" />
+  </head>
+  <body>
+    <nav>
+      <div class="container">
+        <a href="../../index.html" class="brand">⚛ React Learning</a
+        ><a href="../../syllabus/index.html">Syllabus</a
+        ><a href="../../sessions/index.html" class="active">Sessions</a
+        ><a href="../../quizzes/index.html">Quizzes</a
+        ><a href="../../labs/index.html">Labs</a>
+      </div>
+    </nav>
+    <main>
+      <div class="container">
+        <div style="display: flex; gap: 12px">
+          <span class="badge badge-layer">Layer 6</span
+          ><span class="badge badge-current">Session 36</span
+          ><span style="color: var(--text-muted)">Architecture</span>
+        </div>
+        <h1>Architecture Review</h1>
+        <p class="subtitle">
+          Learn how to inspect a React app as connected responsibilities, rank
+          real risks, and plan one safe improvement instead of performing a
+          vague cleanup.
+        </p>
+        <div class="alert alert-info">
+          Estimated time: 75–95 minutes · Milestone: Produce an evidence-based
+          review
+        </div>
+        <div class="figure-label">Visual Primer · 9 concepts</div>
+        <div class="concept-grid">
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s36v0t s36v0d"
+            >
+              <title id="s36v0t">User journey</title>
+              <desc id="s36v0d">User journey in Architecture Review</desc>
+              <g
+                fill="#58a6ff22"
+                stroke="#58a6ff"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <circle cx="55" cy="70" r="28" />
+                <path d="M86 70h75m-18-15 19 15-19 15" />
+              </g>
+            </svg>
+            <figcaption><b>1 of 9</b> · User journey</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the user
+                journey part of architecture review visible instead of leaving
+                it hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s36v1t s36v1d"
+            >
+              <title id="s36v1t">Data boundary</title>
+              <desc id="s36v1d">Data boundary in Architecture Review</desc>
+              <g
+                fill="#3fb95022"
+                stroke="#3fb950"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <rect x="22" y="34" width="55" height="72" rx="8" />
+                <rect x="123" y="34" width="55" height="72" rx="8" />
+                <path d="M77 70h46" />
+              </g>
+            </svg>
+            <figcaption><b>2 of 9</b> · Data boundary</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the data
+                boundary part of architecture review visible instead of leaving
+                it hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s36v2t s36v2d"
+            >
+              <title id="s36v2t">State owner</title>
+              <desc id="s36v2d">State owner in Architecture Review</desc>
+              <g
+                fill="#d2a8ff22"
+                stroke="#d2a8ff"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <circle cx="35" cy="70" r="18" />
+                <circle cx="100" cy="70" r="18" />
+                <circle cx="165" cy="70" r="18" />
+                <path d="M53 70h29m36 0h29" />
+              </g>
+            </svg>
+            <figcaption><b>3 of 9</b> · State owner</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the
+                state owner part of architecture review visible instead of
+                leaving it hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s36v3t s36v3d"
+            >
+              <title id="s36v3t">Rendering boundary</title>
+              <desc id="s36v3d">Rendering boundary in Architecture Review</desc>
+              <g
+                fill="#f0883e22"
+                stroke="#f0883e"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <circle cx="55" cy="70" r="28" />
+                <path d="M86 70h75m-18-15 19 15-19 15" />
+              </g>
+            </svg>
+            <figcaption><b>4 of 9</b> · Rendering boundary</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the
+                rendering boundary part of architecture review visible instead
+                of leaving it hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s36v4t s36v4d"
+            >
+              <title id="s36v4t">Interaction path</title>
+              <desc id="s36v4d">Interaction path in Architecture Review</desc>
+              <g
+                fill="#ff5ca822"
+                stroke="#ff5ca8"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <rect x="22" y="34" width="55" height="72" rx="8" />
+                <rect x="123" y="34" width="55" height="72" rx="8" />
+                <path d="M77 70h46" />
+              </g>
+            </svg>
+            <figcaption><b>5 of 9</b> · Interaction path</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the
+                interaction path part of architecture review visible instead of
+                leaving it hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s36v5t s36v5d"
+            >
+              <title id="s36v5t">Test coverage</title>
+              <desc id="s36v5d">Test coverage in Architecture Review</desc>
+              <g
+                fill="#79c0ff22"
+                stroke="#79c0ff"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <circle cx="35" cy="70" r="18" />
+                <circle cx="100" cy="70" r="18" />
+                <circle cx="165" cy="70" r="18" />
+                <path d="M53 70h29m36 0h29" />
+              </g>
+            </svg>
+            <figcaption><b>6 of 9</b> · Test coverage</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the test
+                coverage part of architecture review visible instead of leaving
+                it hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s36v6t s36v6d"
+            >
+              <title id="s36v6t">Coupling</title>
+              <desc id="s36v6d">Coupling in Architecture Review</desc>
+              <g
+                fill="#56d36422"
+                stroke="#56d364"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <circle cx="55" cy="70" r="28" />
+                <path d="M86 70h75m-18-15 19 15-19 15" />
+              </g>
+            </svg>
+            <figcaption><b>7 of 9</b> · Coupling</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the
+                coupling part of architecture review visible instead of leaving
+                it hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s36v7t s36v7d"
+            >
+              <title id="s36v7t">Change risk</title>
+              <desc id="s36v7d">Change risk in Architecture Review</desc>
+              <g
+                fill="#e3b34122"
+                stroke="#e3b341"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <rect x="22" y="34" width="55" height="72" rx="8" />
+                <rect x="123" y="34" width="55" height="72" rx="8" />
+                <path d="M77 70h46" />
+              </g>
+            </svg>
+            <figcaption><b>8 of 9</b> · Change risk</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the
+                change risk part of architecture review visible instead of
+                leaving it hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+          <figure class="concept-card">
+            <svg
+              viewBox="0 0 200 140"
+              role="img"
+              aria-labelledby="s36v8t s36v8d"
+            >
+              <title id="s36v8t">Smallest plan</title>
+              <desc id="s36v8d">Smallest plan in Architecture Review</desc>
+              <g
+                fill="#bc8cff22"
+                stroke="#bc8cff"
+                stroke-width="4"
+                stroke-linecap="round"
+              >
+                <circle cx="35" cy="70" r="18" />
+                <circle cx="100" cy="70" r="18" />
+                <circle cx="165" cy="70" r="18" />
+                <path d="M53 70h29m36 0h29" />
+              </g>
+            </svg>
+            <figcaption><b>9 of 9</b> · Smallest plan</figcaption>
+            <button
+              type="button"
+              class="concept-explanation-toggle"
+              aria-expanded="false"
+            >
+              <span>Explanation</span
+              ><span class="concept-explanation-hint">Click to reveal</span>
+            </button>
+            <div class="concept-explanation-text">
+              <p>
+                <strong>What problem does this solve?</strong> It makes the
+                smallest plan part of architecture review visible instead of
+                leaving it hidden in code.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> You can point to this stage
+                when explaining where information changes or where a failure
+                belongs.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                JavaScript could still build an interface, but we would need
+                another explicit way to manage this responsibility and its
+                timing.
+              </p>
+            </div>
+          </figure>
+        </div>
+        <details class="warmup-expander">
+          <summary>
+            <span class="warmup-label">Optional Warm-Up</span
+            ><span>5-Minute Wake-Up Challenge: Map One User Journey</span>
+          </summary>
+          <div class="warmup-content">
+            <p>
+              <strong>Give yourself five minutes.</strong> Draw the path from
+              loading countries to displaying a card. Mark where data enters,
+              changes shape, becomes state, and becomes JSX. You may use paper
+              or a scratch file; do not modify the entire React app.
+            </p>
+            <pre><code>API → service → hook/App → CountryList → CountryCard</code></pre>
+            <div class="solution-item">
+              <button
+                type="button"
+                class="solution-toggle"
+                aria-expanded="false"
+              >
+                <span>Warm-Up solution</span
+                ><span class="solution-hint">Click to reveal</span>
+              </button>
+              <div class="solution-content">
+                <p>Each arrow is a contract. Circle the least-tested arrow.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+        <hr class="section-divider" />
+        <h2>1. Learning Objectives</h2>
+        <div class="card">
+          <ul>
+            <li>Map one complete user journey</li>
+            <li>Find responsibilities that are duplicated or misplaced</li>
+            <li>Separate evidence from personal style preferences</li>
+            <li>Rank findings by impact and likelihood</li>
+            <li>Write a safe refactor with a verification checkpoint</li>
+          </ul>
+        </div>
+        <h2>2. Pre-Coding Quiz</h2>
+        <p>
+          Need 4/5 to proceed. Choose from understanding; answer length is
+          deliberately unhelpful.
+        </p>
+        <div id="pre-quiz">
+          <div class="quiz-question" data-answer="a">
+            <div class="question-num">Question 1 of 5</div>
+            <p>What is the main purpose of Architecture Review?</p>
+            <label class="quiz-option" data-val="a"
+              >Learn how to inspect a React app as connected responsibilities,
+              rank real risks, and plan one safe improvement instead of
+              performing a vague cleanup.</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file, even when separate features and boundaries change for
+              entirely different reasons and serve unrelated parts of the app</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              The purpose is specific to this lesson, not generic cleanup. In
+              plain English: Follow one real user journey, find the risky
+              handoff, and plan one repair you can prove.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="b">
+            <div class="question-num">Question 2 of 5</div>
+            <p>Why does “User journey” matter here?</p>
+            <label class="quiz-option" data-val="a"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="b"
+              >It identifies one concrete responsibility in the architecture
+              review flow</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              Naming the responsibility helps us trace where values and failures
+              belong.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="c">
+            <div class="question-num">Question 3 of 5</div>
+            <p>Which starting action is safest?</p>
+            <label class="quiz-option" data-val="a"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="c"
+              >Run the current feature and write down what it does before moving any code</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              Running the current feature first prevents you from moving code based on a guess.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="d">
+            <div class="question-num">Question 4 of 5</div>
+            <p>Why explain the problem before writing code?</p>
+            <label class="quiz-option" data-val="a"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >The problem determines whether the extra helper, hook, or file earns its
+              cost</label
+            >
+            <div class="explanation">
+              Tools are tradeoffs. Understanding the pain prevents ritual
+              refactoring.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="a">
+            <div class="question-num">Question 5 of 5</div>
+            <p>What kind of answer should a review prefer?</p>
+            <label class="quiz-option" data-val="a"
+              >A decision supported by observable behavior and a relevant
+              check</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              A concrete example and a matching test show another developer exactly why the change is needed.
+            </div>
+          </div>
+          <button class="submit-btn" disabled>Submit Pre-Quiz</button>
+          <div class="quiz-result" id="pre-result"></div>
+        </div>
+        <hr class="section-divider" />
+        <h2>3. The Concept — Review the Load-Bearing Paths</h2>
+        <div class="alert alert-info">
+          <strong>Big picture:</strong> Learn how to inspect a React app as
+          connected responsibilities, rank real risks, and plan one safe
+          improvement instead of performing a vague cleanup.
+        </div>
+        <div class="card">
+          <h3>Architecture is a map of responsibilities</h3>
+          <p>
+            <strong>What problem does this solve?</strong> A folder list does
+            not explain how the product works.
+          </p>
+          <p>
+            <strong>Why should I care?</strong> A responsibility map shows where
+            a change belongs.
+          </p>
+          <p>
+            <strong>What would happen if React did not have this?</strong>
+            Without this map, reviews become opinions about file names.
+          </p>
+          <pre><code>Problem
+  ↓
+Idea
+  ↓
+Simple analogy: A transit map shows useful routes, not every brick in a station.
+  ↓
+Real React example: API → normalizer → state owner → list → card
+  ↓
+Why professionals do it: Teams review change paths and contracts before rearranging folders.</code></pre>
+          <p>
+            <strong>Technical:</strong> this code receives something, performs one named job, and produces a result another part can use.
+          </p>
+          <p>
+            <strong>In plain English:</strong> one part of the app accepts
+            something, does one understandable job, and hands back a result.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Evidence beats taste</h3>
+          <p>
+            <strong>What problem does this solve?</strong> Developers can
+            dislike code that is still safe and understandable.
+          </p>
+          <p>
+            <strong>Why should I care?</strong> Evidence connects a finding to
+            user or maintenance risk.
+          </p>
+          <p>
+            <strong>What would happen if React did not have this?</strong>
+            Without evidence, review comments become personal preference.
+          </p>
+          <pre><code>Problem
+  ↓
+Idea
+  ↓
+Simple analogy: A doctor uses symptoms and tests, not favorite colors.
+  ↓
+Real React example: A failing boundary test supports a normalization finding.
+  ↓
+Why professionals do it: Professionals record the observed fact, consequence, and proposed response.</code></pre>
+          <p>
+            <strong>Technical:</strong> this code receives something, performs one named job, and produces a result another part can use.
+          </p>
+          <p>
+            <strong>In plain English:</strong> one part of the app accepts
+            something, does one understandable job, and hands back a result.
+          </p>
+        </div>
+        <div class="card">
+          <h3>Prioritize instead of listing everything</h3>
+          <p>
+            <strong>What problem does this solve?</strong> A long cleanup list
+            gives no useful starting point.
+          </p>
+          <p>
+            <strong>Why should I care?</strong> Impact and likelihood identify
+            the next valuable move.
+          </p>
+          <p>
+            <strong>What would happen if React did not have this?</strong>
+            Without ranking, easy cosmetic work can displace important
+            reliability work.
+          </p>
+          <pre><code>Problem
+  ↓
+Idea
+  ↓
+Simple analogy: A fire marshal fixes blocked exits before repainting walls.
+  ↓
+Real React example: Rank duplicate API normalization above renaming a local variable.
+  ↓
+Why professionals do it: Teams spend limited time on risks with the strongest expected cost.</code></pre>
+          <p>
+            <strong>Technical:</strong> this code receives something, performs one named job, and produces a result another part can use.
+          </p>
+          <p>
+            <strong>In plain English:</strong> one part of the app accepts
+            something, does one understandable job, and hands back a result.
+          </p>
+        </div>
+        <div class="card">
+          <h3>A plan needs a checkpoint</h3>
+          <p>
+            <strong>What problem does this solve?</strong> A large refactor can
+            break behavior halfway through.
+          </p>
+          <p>
+            <strong>Why should I care?</strong> Small stages make failures easy
+            to locate and reverse.
+          </p>
+          <p>
+            <strong>What would happen if React did not have this?</strong>
+            Without checkpoints, many changed boundaries fail at once.
+          </p>
+          <pre><code>Problem
+  ↓
+Idea
+  ↓
+Simple analogy: Repair one bridge span and inspect it before moving onward.
+  ↓
+Real React example: Extract a service, run service tests, then update the component.
+  ↓
+Why professionals do it: Professionals pair each change with the evidence that proves it safe.</code></pre>
+          <p>
+            <strong>Technical:</strong> this code receives something, performs one named job, and produces a result another part can use.
+          </p>
+          <p>
+            <strong>In plain English:</strong> one part of the app accepts
+            something, does one understandable job, and hands back a result.
+          </p>
+        </div>
+        <hr class="section-divider" />
+        <h2>4. Guided Lab</h2>
+        <div class="alert alert-success">
+          <strong>Lab objective:</strong> complete one specific architecture
+          review workflow and explain why every step exists.
+        </div>
+        <div class="alert alert-info">
+          <strong>Learner workspace:</strong> work in your own files. Hidden
+          solutions are references, not automatic starter-code changes.
+        </div>
+        <div class="card"><h3>Exactly where do I work?</h3><p><strong>Create and write only:</strong> <code>docs/architecture-review.md</code>. Every guided step adds another heading or paragraph to that one document.</p><p><strong>Open only for inspection:</strong> <code>src/App.jsx</code>, <code>src/features/countries/useCountrySearch.js</code>, <code>src/component/CountryList.jsx</code>, <code>src/features/countries/CountryCard.jsx</code>, and <code>src/features/countries/countryServices.js</code>. Do not reorganize or edit those files in this review lab.</p><p><strong>In plain English:</strong> you are writing a report about how the current app works. You are not rebuilding the app.</p></div>
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <p class="step-progress">Guided Analysis 1 of 5</p>
+            <h3>Trace one user-visible journey</h3><p><strong>Write in:</strong> <code>docs/architecture-review.md</code>, under <code>## 1. Current user journey</code>. <strong>Inspect:</strong> start in <code>src/App.jsx</code> and follow its imports.</p>
+            <div class="card">
+              <p>
+                <strong>What problem does this solve?</strong> Architecture
+                becomes concrete when tied to something a learner can do.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> The route reveals real
+                boundaries.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                Without a journey, the review floats above the code.
+              </p>
+            </div>
+            <p>
+              <strong>Wait… why?</strong> This step changes one responsibility.
+              Say what remains the same before editing.
+            </p>
+            <div class="solution-item">
+              <button
+                type="button"
+                class="solution-toggle"
+                aria-expanded="false"
+              >
+                <span>Step 1 solution</span
+                ><span class="solution-hint">Click to reveal</span>
+              </button>
+              <div class="solution-content">
+                <pre><code>Load page → fetch countries → normalize records → store result → render cards</code></pre>
+                <p>
+                  Use the idea and responsibility shown here; adapt only names
+                  that differ in your learner branch.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <p class="step-progress">Guided Analysis 2 of 5</p>
+            <h3>Create a who-does-what table</h3><p><strong>Write in:</strong> <code>docs/architecture-review.md</code>, under <code>## 2. Who does what</code>. “Ownership” only means which file currently controls a piece of work.</p>
+            <div class="card">
+              <p>
+                <strong>What problem does this solve?</strong> Responsibilities
+                can be duplicated across files.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> A table makes overlaps
+                visible.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                Without it, similar code may be missed.
+              </p>
+            </div>
+            <p>
+              <strong>Wait… why?</strong> This step changes one responsibility.
+              Say what remains the same before editing.
+            </p>
+            <div class="solution-item">
+              <button
+                type="button"
+                class="solution-toggle"
+                aria-expanded="false"
+              >
+                <span>Step 2 solution</span
+                ><span class="solution-hint">Click to reveal</span>
+              </button>
+              <div class="solution-content">
+                <pre><code>App.jsx | orchestration
+countryService.js | HTTP + normalization
+CountryList.jsx | list rendering
+CountryCard.jsx | one-country presentation</code></pre>
+                <p>
+                  Use the idea and responsibility shown here; adapt only names
+                  that differ in your learner branch.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <p class="step-progress">Guided Analysis 3 of 5</p>
+            <h3>Write three specific problems you actually found</h3><p><strong>Write in:</strong> <code>docs/architecture-review.md</code>, under <code>## 3. Problems found</code>. Name the exact source file and line or code phrase for each problem.</p>
+            <div class="card">
+              <p>
+                <strong>What problem does this solve?</strong> A complaint needs
+                an observable consequence.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> Evidence makes the review
+                fair and actionable.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                Without it, 'messy' cannot guide an edit.
+              </p>
+            </div>
+            <p>
+              <strong>Wait… why?</strong> This step changes one responsibility.
+              Say what remains the same before editing.
+            </p>
+            <div class="solution-item">
+              <button
+                type="button"
+                class="solution-toggle"
+                aria-expanded="false"
+              >
+                <span>Step 3 solution</span
+                ><span class="solution-hint">Click to reveal</span>
+              </button>
+              <div class="solution-content">
+                <pre><code>Finding: App parses API fields. Evidence: API field names appear in JSX. Risk: UI breaks when response shape changes.</code></pre>
+                <p>
+                  Use the idea and responsibility shown here; adapt only names
+                  that differ in your learner branch.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <p class="step-progress">Guided Analysis 4 of 5</p>
+            <h3>Put the problems in a useful order</h3><p><strong>Write in:</strong> the same document under <code>## 4. What to fix first</code>. Put user-visible breakage before naming or folder preferences.</p>
+            <div class="card">
+              <p>
+                <strong>What problem does this solve?</strong> Not every issue
+                deserves immediate work.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> Impact × likelihood provides
+                a defensible order.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                Without ranking, the plan follows convenience.
+              </p>
+            </div>
+            <p>
+              <strong>Wait… why?</strong> This step changes one responsibility.
+              Say what remains the same before editing.
+            </p>
+            <div class="solution-item">
+              <button
+                type="button"
+                class="solution-toggle"
+                aria-expanded="false"
+              >
+                <span>Step 4 solution</span
+                ><span class="solution-hint">Click to reveal</span>
+              </button>
+              <div class="solution-content">
+                <pre><code>1 High: duplicated normalization
+2 Medium: async state ambiguity
+3 Low: inconsistent file naming</code></pre>
+                <p>
+                  Use the idea and responsibility shown here; adapt only names
+                  that differ in your learner branch.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <p class="step-progress">Guided Analysis 5 of 5</p>
+            <h3>Plan one small change</h3><p><strong>Write in:</strong> the same document under <code>## 5. One safe next change</code>. Do not edit <code>src</code> in this session.</p>
+            <div class="card">
+              <p>
+                <strong>What problem does this solve?</strong> The team needs a
+                safe first move, not a dream architecture.
+              </p>
+              <p>
+                <strong>Why should I care?</strong> A checkpoint limits blast
+                radius.
+              </p>
+              <p>
+                <strong>What would happen if React did not have this?</strong>
+                Without a boundary, cleanup spreads indefinitely.
+              </p>
+            </div>
+            <p>
+              <strong>Wait… why?</strong> This step changes one responsibility.
+              Say what remains the same before editing.
+            </p>
+            <div class="solution-item">
+              <button
+                type="button"
+                class="solution-toggle"
+                aria-expanded="false"
+              >
+                <span>Step 5 solution</span
+                ><span class="solution-hint">Click to reveal</span>
+              </button>
+              <div class="solution-content">
+                <pre><code>Move normalization to service → run service tests → run component test → manually load page</code></pre>
+                <p>
+                  Use the idea and responsibility shown here; adapt only names
+                  that differ in your learner branch.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="border-color: var(--green)">
+          <h3>After the lab: connect the pieces</h3>
+          <p>
+            An architecture review turns observable change risk into a
+            prioritized, testable plan.
+          </p>
+          <p>
+            <strong>In plain English:</strong> Follow one real user journey,
+            find the risky handoff, and plan one repair you can prove.
+          </p>
+        </div>
+        <h2>5. Expected Files Changed</h2>
+        <div class="table-wrap">
+          <table>
+            <tr>
+              <th>File</th>
+              <th>Action</th>
+              <th>Why</th>
+            </tr>
+            <tr>
+              <td><code>docs/architecture-review.md</code></td>
+              <td>Create</td>
+              <td>Record map, findings, ranking, and plan</td>
+            </tr>
+            <tr>
+              <td><code>src/App.jsx</code> and the named country files above</td>
+              <td>Inspect only</td>
+              <td>
+                Use as evidence; change code only if your instructor requests it
+              </td>
+            </tr>
+          </table>
+        </div>
+        <h2>6. Commit Checkpoint</h2>
+        <pre><code>git add docs/architecture-review.md
+git commit -m "session-36: architecture review"</code></pre>
+        <h2>7. Code Review Checklist</h2>
+        <div class="card">
+          <div class="checklist-item">
+            <input type="checkbox" /><label
+              >Map one complete user journey</label
+            >
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" /><label
+              >Find responsibilities that are duplicated or misplaced</label
+            >
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" /><label
+              >Separate evidence from personal style preferences</label
+            >
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" /><label
+              >Rank findings by impact and likelihood</label
+            >
+          </div>
+          <div class="checklist-item">
+            <input type="checkbox" /><label
+              >Write a safe refactor with a verification checkpoint</label
+            >
+          </div>
+        </div>
+        <hr class="section-divider" />
+        <h2>8. Post-Coding Quiz</h2>
+        <div id="post-quiz">
+          <div class="quiz-question" data-answer="a">
+            <div class="question-num">Question 1 of 5</div>
+            <p>Which statement best captures review the load-bearing paths?</p>
+            <label class="quiz-option" data-val="a"
+              >An architecture review turns observable change risk into a
+              prioritized, testable plan.</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file, even when separate features and boundaries change for
+              entirely different reasons and serve unrelated parts of the app</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              This is the main idea of the lesson. In plain English: Follow
+              one real user journey, find the risky handoff, and plan one repair
+              you can prove.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="b">
+            <div class="question-num">Question 2 of 5</div>
+            <p>What should guide the next engineering change?</p>
+            <label class="quiz-option" data-val="a"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="b"
+              >What the person can see, which file controls it, and a test that checks it</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              Professionals connect a proposed change to a real consequence
+              rather than a preference.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="c">
+            <div class="question-num">Question 3 of 5</div>
+            <p>What should remain stable during a refactor?</p>
+            <label class="quiz-option" data-val="a"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="c"
+              >The user-visible behavior and the inputs and results that other code already relies on being
+              protected</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              Internal files may move, but the promise to callers and users
+              should change only intentionally.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="d">
+            <div class="question-num">Question 4 of 5</div>
+            <p>What does a useful verification checkpoint do?</p>
+            <label class="quiz-option" data-val="a"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >It checks the exact boundary or user journey that the step could
+              break</label
+            >
+            <div class="explanation">
+              A targeted check makes failure easier to locate than one final
+              visual glance.
+            </div>
+          </div>
+          <div class="quiz-question" data-answer="a">
+            <div class="question-num">Question 5 of 5</div>
+            <p>What demonstrates mastery of this session?</p>
+            <label class="quiz-option" data-val="a"
+              >Explaining the decision, implementing it, and naming its
+              tradeoff</label
+            ><label class="quiz-option" data-val="b"
+              >Move every responsibility into App so the complete process exists
+              in one file</label
+            ><label class="quiz-option" data-val="c"
+              >Add another helper, hook, or file before knowing what real problem it would solve</label
+            ><label class="quiz-option" data-val="d"
+              >Judge the result only by whether the final page looks
+              approximately correct</label
+            >
+            <div class="explanation">
+              Understanding includes the reason and cost, not merely copying the
+              shown code.
+            </div>
+          </div>
+          <button class="submit-btn" disabled>Submit Post-Quiz</button>
+          <div class="quiz-result" id="post-result"></div>
+        </div>
+        <h2>9. Reflection Questions</h2>
+        <div class="card">
+          <ol class="reflection-list">
+            <li class="reflection-item">
+              <p class="reflection-question">
+                What problem did this lesson solve?
+              </p>
+              <button
+                type="button"
+                class="reflection-answer-toggle"
+                aria-expanded="false"
+              >
+                <span>Model answer</span
+                ><span class="reflection-answer-hint">Click to reveal</span>
+              </button>
+              <p class="reflection-answer">
+                An architecture review turns observable change risk into a
+                prioritized, testable plan.
+              </p>
+            </li>
+            <li class="reflection-item">
+              <p class="reflection-question">Why should a professional care?</p>
+              <button
+                type="button"
+                class="reflection-answer-toggle"
+                aria-expanded="false"
+              >
+                <span>Model answer</span
+                ><span class="reflection-answer-hint">Click to reveal</span>
+              </button>
+              <p class="reflection-answer">
+                The boundary makes failures easier to locate and future changes
+                easier to verify without rereading the entire application.
+              </p>
+            </li>
+            <li class="reflection-item">
+              <p class="reflection-question">What cost or tradeoff remains?</p>
+              <button
+                type="button"
+                class="reflection-answer-toggle"
+                aria-expanded="false"
+              >
+                <span>Model answer</span
+                ><span class="reflection-answer-hint">Click to reveal</span>
+              </button>
+              <p class="reflection-answer">
+                Every new boundary, state, or document adds something developers
+                must learn. Keep it only while it makes the behavior clearer
+                than the simpler alternative.
+              </p>
+            </li>
+          </ol>
+        </div>
+        <h2>10. What Breaks If This Boundary Is Ignored?</h2>
+        <div class="card">
+          <ul>
+            <li>
+              The failure appears far from the responsibility that caused it.
+            </li>
+            <li>
+              Unrelated code changes together because ownership is unclear.
+            </li>
+            <li>
+              The page can look correct while another file receives the wrong input or result.
+            </li>
+            <li>
+              The next learner inherits a rule without understanding its reason.
+            </li>
+          </ul>
+        </div>
+        <h2>11. What Engineering Concept Was Learned Today</h2>
+        <div class="card" style="border-color: var(--green)">
+          <p>
+            <strong
+              >An architecture review turns observable change risk into a
+              prioritized, testable plan.</strong
+            >
+          </p>
+          <p>
+            <strong>In plain English:</strong> Follow one real user journey,
+            find the risky handoff, and plan one repair you can prove.
+          </p>
+        </div>
+        <p>
+          <a href="../session-35/index.html">← Session 35</a> ·
+          <a href="../../syllabus/index.html">Syllabus</a> ·
+          <a href="../session-37/index.html">Session 37 →</a>
+        </p>
+      </div>
+    </main>
+    <script src="../../quiz.js" defer></script>
+    <script src="../../session-full.js" defer></script>
+    <script src="../../reflection-reveal.js" defer></script>
+    <script src="../../notes-widget.js" defer></script>
+    <script src="../../bookmark-widget.js" defer></script>
+    <div
+      class="academy-draft-watermark"
+      aria-hidden="true"
+      style="
+        position: fixed;
+        right: 18px;
+        top: 76px;
+        z-index: 90;
+        color: #ff5ca8;
+      "
+    >
+      DRAFT
+    </div>
+  </body>
+</html>
