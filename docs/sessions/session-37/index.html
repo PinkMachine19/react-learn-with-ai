@@ -114,114 +114,12 @@
             <li>Keep derived calculations out of effects</li>
           </ul>
         </div>
-        <h2>2. Pre-Coding Quiz</h2>
-        <p>
-          Need 4/5 to proceed. Choose from understanding; answer length is
-          deliberately unhelpful.
-        </p>
-        <div id="pre-quiz">
-          <div class="quiz-question" data-answer="a">
-            <div class="question-num">Question 1 of 5</div>
-            <p>What is the main purpose of useEffect?</p>
-            <label class="quiz-option" data-val="a"
-              >Understand why effects exist, when they run, why cleanup matters,
-              and why ordinary calculations should stay out of them.</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file, even when the feature or file performs a different job</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              The purpose is specific to this lesson, not generic cleanup. In
-              plain English: Render decides the screen. An effect updates
-              something React does not own, then cleans up after itself.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="b">
-            <div class="question-num">Question 2 of 5</div>
-            <p>Why does “Render is calculation” matter here?</p>
-            <label class="quiz-option" data-val="a"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="b"
-              >It identifies one concrete responsibility in the useeffect
-              flow</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Naming the responsibility helps us trace where values and failures
-              belong.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="c">
-            <div class="question-num">Question 3 of 5</div>
-            <p>Which starting action is safest?</p>
-            <label class="quiz-option" data-val="a"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Run the current feature and write down what it does before moving any code</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Running the current feature first prevents you from moving code based on a guess.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="d">
-            <div class="question-num">Question 4 of 5</div>
-            <p>Why explain the problem before writing code?</p>
-            <label class="quiz-option" data-val="a"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >The problem determines whether the extra helper, hook, or file earns its
-              cost</label
-            >
-            <div class="explanation">
-              Tools are tradeoffs. Understanding the pain prevents ritual
-              refactoring.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="a">
-            <div class="question-num">Question 5 of 5</div>
-            <p>What kind of answer should a review prefer?</p>
-            <label class="quiz-option" data-val="a"
-              >A decision supported by observable behavior and a relevant
-              check</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              A concrete example and a matching test show another developer exactly why the change is needed.
-            </div>
-          </div>
-          <button class="submit-btn" disabled>Submit Pre-Quiz</button>
-          <div class="quiz-result" id="pre-result"></div>
-        </div>
-        <hr class="section-divider" />
+        <h2>2. Pre-Coding Quiz</h2><p>Need 4/5 to proceed. Every option describes a believable coding decision, so use the reason—not answer length—to choose.</p><div id="pre-quiz"><div class="quiz-question" data-answer="b"><div class="question-num">Question 1 of 5</div><p>Which task actually needs useEffect?</p><label class="quiz-option" data-val="a">Calculating filteredCountries from countries and searchTerm</label><label class="quiz-option" data-val="b">Updating document.title after resultCount changes</label><label class="quiz-option" data-val="c">Choosing singular or plural text during rendering</label><label class="quiz-option" data-val="d">Building a className from the current status</label><div class="explanation">The browser tab title exists outside React’s JSX. The other three answers can be calculated directly while rendering.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 2 of 5</div><p>When does an effect normally run?</p><label class="quiz-option" data-val="a">Before React calls the component function while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="b">While React is comparing JSX expressions</label><label class="quiz-option" data-val="c">After React puts the rendered update on the page</label><label class="quiz-option" data-val="d">Only after the component has been removed</label><div class="explanation">React renders and commits the screen first, then runs the effect. This keeps rendering focused on calculating JSX.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 3 of 5</div><p>An effect reads resultCount. Which dependency list best describes that setup?</p><label class="quiz-option" data-val="a">[] because resultCount is already declared in App</label><label class="quiz-option" data-val="b">[resultCount] because the effect must resync when the count changes</label><label class="quiz-option" data-val="c">[countries] because all displayed counts ultimately come from country data</label><label class="quiz-option" data-val="d">No array because effects should always run after every render</label><div class="explanation">List the value the effect reads. When resultCount changes, React knows the browser title is now out of date and runs the effect again.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 4 of 5</div><p>Why does a window event listener usually need cleanup?</p><label class="quiz-option" data-val="a">React removes every browser listener before each render</label><label class="quiz-option" data-val="b">The listener can survive after the component stops needing it</label><label class="quiz-option" data-val="c">Cleanup prevents the component function from returning JSX</label><label class="quiz-option" data-val="d">The browser permits only one listener for each keyboard key while preserving the existing behavior throughout the entire component tree</label><div class="explanation">window owns the listener, not React. Cleanup removes it during unmount or before a changed effect installs its replacement.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 5 of 5</div><p>Which value should remain a normal render calculation?</p><label class="quiz-option" data-val="a">A subscription to browser online-status changes while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="b">A timer that sends analytics every minute</label><label class="quiz-option" data-val="c">The number produced by filteredCountries.length</label><label class="quiz-option" data-val="d">A keydown listener that clears the search box</label><div class="explanation">The length is already available from current data and needs no outside synchronization. Putting it in effect-driven state creates a delayed second copy.</div></div><button class="submit-btn" disabled>Submit Pre-Quiz</button><div class="quiz-result" id="pre-result"></div></div>
+<hr class="section-divider" />
         <h2>3. The Concept — Effects Synchronize Outside React</h2>
         <div class="alert alert-info">
           <strong>Big picture:</strong> Understand why effects exist, when they
@@ -647,114 +545,12 @@ git commit -m "session-37: useeffect"</code></pre>
           </div>
         </div>
         <hr class="section-divider" />
-        <h2>8. Post-Coding Quiz</h2>
-        <div id="post-quiz">
-          <div class="quiz-question" data-answer="a">
-            <div class="question-num">Question 1 of 5</div>
-            <p>
-              Which statement best captures effects synchronize outside react?
-            </p>
-            <label class="quiz-option" data-val="a"
-              >useEffect synchronizes committed React state with systems outside
-              React; it is not a general-purpose calculation tool.</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file, even when the feature or file performs a different job</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              This is the main idea of the lesson. In plain English: Render
-              decides the screen. An effect updates something React does not
-              own, then cleans up after itself.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="b">
-            <div class="question-num">Question 2 of 5</div>
-            <p>What should guide the next engineering change?</p>
-            <label class="quiz-option" data-val="a"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="b"
-              >What the person can see, which file controls it, and a test that checks it</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Professionals connect a proposed change to a real consequence
-              rather than a preference.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="c">
-            <div class="question-num">Question 3 of 5</div>
-            <p>What should remain stable during a refactor?</p>
-            <label class="quiz-option" data-val="a"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >The user-visible behavior and the inputs and results that other code already relies on being
-              protected</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Internal files may move, but the promise to callers and users
-              should change only intentionally.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="d">
-            <div class="question-num">Question 4 of 5</div>
-            <p>What does a useful verification checkpoint do?</p>
-            <label class="quiz-option" data-val="a"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >It checks the exact boundary or user journey that the step could
-              break</label
-            >
-            <div class="explanation">
-              A targeted check makes failure easier to locate than one final
-              visual glance.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="a">
-            <div class="question-num">Question 5 of 5</div>
-            <p>What demonstrates mastery of this session?</p>
-            <label class="quiz-option" data-val="a"
-              >Explaining the decision, implementing it, and naming its
-              tradeoff</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Understanding includes the reason and cost, not merely copying the
-              shown code.
-            </div>
-          </div>
-          <button class="submit-btn" disabled>Submit Post-Quiz</button>
-          <div class="quiz-result" id="post-result"></div>
-        </div>
-        <h2>9. Reflection Questions</h2>
+        <h2>8. Post-Coding Quiz</h2><div id="post-quiz"><div class="quiz-question" data-answer="a"><div class="question-num">Question 1 of 5</div><p>The tab title keeps showing an old count. What should you inspect first?</p><label class="quiz-option" data-val="a">Whether resultCount is missing from the effect dependency array</label><label class="quiz-option" data-val="b">Whether CountryCard imports the shared Button component while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="c">Whether the title effect returns an empty JSX fragment</label><label class="quiz-option" data-val="d">Whether CountryList stores each rendered card in state</label><div class="explanation">A missing dependency lets the effect keep an older resultCount. The visible list can update while document.title remains stale.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 2 of 5</div><p>In development, an effect adds two listeners but production appears to add one. What is the likely lesson?</p><label class="quiz-option" data-val="a">Strict Mode exposed setup that was not correctly undone by cleanup</label><label class="quiz-option" data-val="b">Production automatically combines duplicate browser callbacks</label><label class="quiz-option" data-val="c">Dependency arrays are ignored while the development server runs</label><label class="quiz-option" data-val="d">Event listeners must always be declared outside React components while preserving the existing behavior throughout the entire component tree</label><div class="explanation">Development Strict Mode deliberately repeats setup and cleanup to reveal unsafe effects. Correct cleanup makes the repeated check harmless.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 3 of 5</div><p>Which cleanup removes the listener correctly?</p><label class="quiz-option" data-val="a">return () => window.removeEventListener('keydown', () => clearSearch())</label><label class="quiz-option" data-val="b">return window.removeEventListener('keydown', handleKey)</label><label class="quiz-option" data-val="c">return () => window.removeEventListener('keydown', handleKey)</label><label class="quiz-option" data-val="d">return () => document.removeEventListener('click', handleKey)</label><div class="explanation">removeEventListener needs the same event type and same function reference used by addEventListener. A new arrow function is a different listener.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 4 of 5</div><p>An effect exists only to set resultCount state from filteredCountries.length. What is the best revision?</p><label class="quiz-option" data-val="a">Keep the effect but add resultCount to its dependency array</label><label class="quiz-option" data-val="b">Calculate resultCount directly from filteredCountries during rendering</label><label class="quiz-option" data-val="c">Move the effect into CountryCard so it runs once per country</label><label class="quiz-option" data-val="d">Store filteredCountries and resultCount in separate global variables while preserving the existing behavior throughout the entire component tree</label><div class="explanation">resultCount contains no new information. Direct calculation stays current automatically and avoids an extra render caused by the effect.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 5 of 5</div><p>What does a focused test for the title effect prove?</p><label class="quiz-option" data-val="a">The component used exactly one call to useEffect</label><label class="quiz-option" data-val="b">Every browser supports the same tab-management interface</label><label class="quiz-option" data-val="c">Changing the visible result count updates document.title</label><label class="quiz-option" data-val="d">The effect callback is located before App’s return statement</label><div class="explanation">Test the behavior a person or browser can observe. The implementation may later move while the title behavior remains protected.</div></div><button class="submit-btn" disabled>Submit Post-Quiz</button><div class="quiz-result" id="post-result"></div></div>
+<h2>9. Reflection Questions</h2>
         <div class="card">
           <ol class="reflection-list">
             <li class="reflection-item">

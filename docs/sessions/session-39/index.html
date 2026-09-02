@@ -113,116 +113,12 @@
             <li>Test each state as visible behavior</li>
           </ul>
         </div>
-        <h2>2. Pre-Coding Quiz</h2>
-        <p>
-          Need 4/5 to proceed. Choose from understanding; answer length is
-          deliberately unhelpful.
-        </p>
-        <div id="pre-quiz">
-          <div class="quiz-question" data-answer="a">
-            <div class="question-num">Question 1 of 5</div>
-            <p>What is the main purpose of Loading and Error States?</p>
-            <label class="quiz-option" data-val="a"
-              >Model loading, error, empty, and success as separate honest
-              states so the learner always understands what the application is
-              doing.</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file, even when the feature or file performs a different job</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              The purpose is specific to this lesson, not generic cleanup. In
-              plain English: Always tell the user whether the app is waiting,
-              succeeded with data, succeeded with nothing, or failed—and what
-              they can do next.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="b">
-            <div class="question-num">Question 2 of 5</div>
-            <p>Why does “Idle” matter here?</p>
-            <label class="quiz-option" data-val="a"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="b"
-              >It identifies one concrete responsibility in the loading and
-              error states flow</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Naming the responsibility helps us trace where values and failures
-              belong.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="c">
-            <div class="question-num">Question 3 of 5</div>
-            <p>Which starting action is safest?</p>
-            <label class="quiz-option" data-val="a"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Run the current feature and write down what it does before moving any code</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Running the current feature first prevents you from moving code based on a guess.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="d">
-            <div class="question-num">Question 4 of 5</div>
-            <p>Why explain the problem before writing code?</p>
-            <label class="quiz-option" data-val="a"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >The problem determines whether the extra helper, hook, or file earns its
-              cost</label
-            >
-            <div class="explanation">
-              Tools are tradeoffs. Understanding the pain prevents ritual
-              refactoring.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="a">
-            <div class="question-num">Question 5 of 5</div>
-            <p>What kind of answer should a review prefer?</p>
-            <label class="quiz-option" data-val="a"
-              >A decision supported by observable behavior and a relevant
-              check</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              A concrete example and a matching test show another developer exactly why the change is needed.
-            </div>
-          </div>
-          <button class="submit-btn" disabled>Submit Pre-Quiz</button>
-          <div class="quiz-result" id="pre-result"></div>
-        </div>
-        <hr class="section-divider" />
+        <h2>2. Pre-Coding Quiz</h2><p>Need 4/5 to proceed. Every option describes a believable coding decision, so use the reason—not answer length—to choose.</p><div id="pre-quiz"><div class="quiz-question" data-answer="a"><div class="question-num">Question 1 of 5</div><p>Why use one status value instead of isLoading, isError, and isSuccess booleans?</p><label class="quiz-option" data-val="a">A string status prevents contradictory main states from being true together</label><label class="quiz-option" data-val="b">React refuses to render more than one boolean condition while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="c">Boolean state cannot change after a fetch call begins</label><label class="quiz-option" data-val="d">A status string automatically retries failed requests</label><div class="explanation">One status can hold only one main phase at a time. Separate booleans can accidentally show loading, error, and success together.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 2 of 5</div><p>The request succeeds with an empty array. Which screen is honest?</p><label class="quiz-option" data-val="a">An error message saying the server failed</label><label class="quiz-option" data-val="b">A loading spinner that remains until data exists</label><label class="quiz-option" data-val="c">A clear no-countries message</label><label class="quiz-option" data-val="d">The previous successful country list</label><div class="explanation">An empty result is successful communication with zero records. It needs different wording and recovery from an actual failure.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 3 of 5</div><p>When should App set status to loading?</p><label class="quiz-option" data-val="a">Immediately before starting or retrying the request</label><label class="quiz-option" data-val="b">Only after response.json finishes parsing</label><label class="quiz-option" data-val="c">After CountryList renders the first card</label><label class="quiz-option" data-val="d">Inside CountryCard whenever it receives new props while preserving the existing behavior throughout the entire component tree</label><div class="explanation">Loading begins when the request starts, not when it finishes. Immediate feedback tells the person their action was recognized.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 4 of 5</div><p>What should retry normally do first?</p><label class="quiz-option" data-val="a">Keep the old error visible and append another spinner</label><label class="quiz-option" data-val="b">Clear the stale error and start the same loading function again</label><label class="quiz-option" data-val="c">Reload the entire browser without using application code while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="d">Change the status directly from error to success</label><div class="explanation">Retry begins a new attempt. Clear stale failure information, enter loading, and reuse the request function so behavior does not split.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 5 of 5</div><p>Why is a blank screen during fetching a problem?</p><label class="quiz-option" data-val="a">React requires every component to render a spinner</label><label class="quiz-option" data-val="b">The person cannot tell whether work is happening or the app is broken</label><label class="quiz-option" data-val="c">A blank screen always causes the fetch request to cancel while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="d">Browsers prevent JSON parsing unless text is displayed</label><div class="explanation">Async work takes time. A visible loading state communicates progress and separates normal waiting from failure.</div></div><button class="submit-btn" disabled>Submit Pre-Quiz</button><div class="quiz-result" id="pre-result"></div></div>
+<hr class="section-divider" />
         <h2>3. The Concept — Async UI Is a State Machine</h2>
         <div class="alert alert-info">
           <strong>Big picture:</strong> Model loading, error, empty, and success
@@ -643,112 +539,12 @@ git commit -m "session-39: loading and error states"</code></pre>
           </div>
         </div>
         <hr class="section-divider" />
-        <h2>8. Post-Coding Quiz</h2>
-        <div id="post-quiz">
-          <div class="quiz-question" data-answer="a">
-            <div class="question-num">Question 1 of 5</div>
-            <p>Which statement best captures async ui is a state machine?</p>
-            <label class="quiz-option" data-val="a"
-              >Reliable async UI represents each request phase explicitly and
-              gives every failure a visible recovery path.</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file, even when the feature or file performs a different job</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              This is the main idea of the lesson. In plain English: Always
-              tell the user whether the app is waiting, succeeded with data,
-              succeeded with nothing, or failed—and what they can do next.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="b">
-            <div class="question-num">Question 2 of 5</div>
-            <p>What should guide the next engineering change?</p>
-            <label class="quiz-option" data-val="a"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="b"
-              >What the person can see, which file controls it, and a test that checks it</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Professionals connect a proposed change to a real consequence
-              rather than a preference.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="c">
-            <div class="question-num">Question 3 of 5</div>
-            <p>What should remain stable during a refactor?</p>
-            <label class="quiz-option" data-val="a"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >The user-visible behavior and the inputs and results that other code already relies on being
-              protected</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Internal files may move, but the promise to callers and users
-              should change only intentionally.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="d">
-            <div class="question-num">Question 4 of 5</div>
-            <p>What does a useful verification checkpoint do?</p>
-            <label class="quiz-option" data-val="a"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >It checks the exact boundary or user journey that the step could
-              break</label
-            >
-            <div class="explanation">
-              A targeted check makes failure easier to locate than one final
-              visual glance.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="a">
-            <div class="question-num">Question 5 of 5</div>
-            <p>What demonstrates mastery of this session?</p>
-            <label class="quiz-option" data-val="a"
-              >Explaining the decision, implementing it, and naming its
-              tradeoff</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Understanding includes the reason and cost, not merely copying the
-              shown code.
-            </div>
-          </div>
-          <button class="submit-btn" disabled>Submit Post-Quiz</button>
-          <div class="quiz-result" id="post-result"></div>
-        </div>
-        <h2>9. Reflection Questions</h2>
+        <h2>8. Post-Coding Quiz</h2><div id="post-quiz"><div class="quiz-question" data-answer="a"><div class="question-num">Question 1 of 5</div><p>Loading and error are visible at the same time. What should you inspect?</p><label class="quiz-option" data-val="a">Whether independent booleans were left true together</label><label class="quiz-option" data-val="b">Whether the country API returned more than ten records</label><label class="quiz-option" data-val="c">Whether CountryCard uses an h2 for each name</label><label class="quiz-option" data-val="d">Whether the retry button uses the shared Button component</label><div class="explanation">Contradictory screens often come from flags updated separately. A single status or carefully exclusive transitions prevent this combination.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 2 of 5</div><p>A retry succeeds, but the old error message remains. What transition is missing?</p><label class="quiz-option" data-val="a">Clear the error when a new request starts or succeeds</label><label class="quiz-option" data-val="b">Set status to idle after every successful response</label><label class="quiz-option" data-val="c">Move the error string into CountryCard state</label><label class="quiz-option" data-val="d">Convert the successful country array into an error object</label><div class="explanation">Old failure text is stale once a new attempt begins or succeeds. Clear it as part of the loading or success transition.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 3 of 5</div><p>An older slow request replaces data from a newer fast request. What happened?</p><label class="quiz-option" data-val="a">CountryList rendered too many CountryCard components while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="b">The responses completed out of order and stale work was accepted</label><label class="quiz-option" data-val="c">response.ok changed after the response was parsed</label><label class="quiz-option" data-val="d">The loading message caused an additional request</label><div class="explanation">Network requests can finish in a different order from their start order. Cancellation or request IDs can prevent an older result from winning.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 4 of 5</div><p>Which test best proves retry works?</p><label class="quiz-option" data-val="a">Assert that an error appears, click Try Again, then resolve successfully and expect countries</label><label class="quiz-option" data-val="b">Check that loadCountries contains a catch statement</label><label class="quiz-option" data-val="c">Verify that the retry button has exactly one CSS class while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="d">Snapshot App before any mocked request completes</label><div class="explanation">The useful promise is recovery: failure appears, the person retries, and success becomes visible. The test should follow that whole behavior.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 5 of 5</div><p>When should old country cards remain visible during a refresh?</p><label class="quiz-option" data-val="a">Always, because removing old data is a React error</label><label class="quiz-option" data-val="b">Never, because every request must blank the entire page</label><label class="quiz-option" data-val="c">Only when the product deliberately chooses stale-while-loading behavior and labels it clearly</label><label class="quiz-option" data-val="d">Whenever the network request lasts longer than one render while preserving the existing behavior throughout the entire component tree</label><div class="explanation">Keeping old data can be a valid product choice, but it must be intentional and communicated. Otherwise stale cards can mislead the person.</div></div><button class="submit-btn" disabled>Submit Post-Quiz</button><div class="quiz-result" id="post-result"></div></div>
+<h2>9. Reflection Questions</h2>
         <div class="card">
           <ol class="reflection-list">
             <li class="reflection-item">

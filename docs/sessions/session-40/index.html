@@ -114,116 +114,12 @@
             <li>Write a prioritized next-iteration roadmap</li>
           </ul>
         </div>
-        <h2>2. Pre-Coding Quiz</h2>
-        <p>
-          Need 4/5 to proceed. Choose from understanding; answer length is
-          deliberately unhelpful.
-        </p>
-        <div id="pre-quiz">
-          <div class="quiz-question" data-answer="a">
-            <div class="question-num">Question 1 of 5</div>
-            <p>What is the main purpose of Capstone Review?</p>
-            <label class="quiz-option" data-val="a"
-              >Walk the complete application from untrusted API data to visible
-              interaction, defend every boundary, and prove the important user
-              journeys.</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file, even when the feature or file performs a different job</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              The purpose is specific to this lesson, not generic cleanup. In
-              plain English: You can tell the app’s whole story, show that it
-              survives problems, and explain why the code is divided the way it
-              is.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="b">
-            <div class="question-num">Question 2 of 5</div>
-            <p>Why does “External data” matter here?</p>
-            <label class="quiz-option" data-val="a"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="b"
-              >It identifies one concrete responsibility in the capstone review
-              flow</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Naming the responsibility helps us trace where values and failures
-              belong.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="c">
-            <div class="question-num">Question 3 of 5</div>
-            <p>Which starting action is safest?</p>
-            <label class="quiz-option" data-val="a"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Run the current feature and write down what it does before moving any code</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Running the current feature first prevents you from moving code based on a guess.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="d">
-            <div class="question-num">Question 4 of 5</div>
-            <p>Why explain the problem before writing code?</p>
-            <label class="quiz-option" data-val="a"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >The problem determines whether the extra helper, hook, or file earns its
-              cost</label
-            >
-            <div class="explanation">
-              Tools are tradeoffs. Understanding the pain prevents ritual
-              refactoring.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="a">
-            <div class="question-num">Question 5 of 5</div>
-            <p>What kind of answer should a review prefer?</p>
-            <label class="quiz-option" data-val="a"
-              >A decision supported by observable behavior and a relevant
-              check</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              A concrete example and a matching test show another developer exactly why the change is needed.
-            </div>
-          </div>
-          <button class="submit-btn" disabled>Submit Pre-Quiz</button>
-          <div class="quiz-result" id="pre-result"></div>
-        </div>
-        <hr class="section-divider" />
+        <h2>2. Pre-Coding Quiz</h2><p>Need 4/5 to proceed. Every option describes a believable coding decision, so use the reason—not answer length—to choose.</p><div id="pre-quiz"><div class="quiz-question" data-answer="a"><div class="question-num">Question 1 of 5</div><p>Which path best describes how remote country data reaches the screen?</p><label class="quiz-option" data-val="a">API → country service → App state → CountryList → CountryCard</label><label class="quiz-option" data-val="b">CountryCard → Button → API → App state → CountryList</label><label class="quiz-option" data-val="c">App CSS → country service → useEffect → browser storage while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="d">CountryList → API → useCountrySearch → shared Button</label><div class="explanation">The service retrieves and converts outside data, App holds the screen state, CountryList repeats cards, and CountryCard presents one item.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 2 of 5</div><p>Why does CountryList own favorites in the current application?</p><label class="quiz-option" data-val="a">It is the highest component in the application</label><label class="quiz-option" data-val="b">All CountryCard consumers are its children and App does not use favorites</label><label class="quiz-option" data-val="c">React state must always live beside an array map call while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="d">CountryCard cannot receive callback props</label><div class="explanation">CountryList is the lowest shared parent that can serve every card. Moving favorites to App would place the state higher than its actual users require.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 3 of 5</div><p>Which test belongs closest to countryServices.js?</p><label class="quiz-option" data-val="a">Typing in search reduces the visible cards while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="b">A malformed API response is rejected or handled</label><label class="quiz-option" data-val="c">Clicking Favorite changes its button label</label><label class="quiz-option" data-val="d">The clear button empties the search input</label><div class="explanation">Malformed-response handling is a service concern. The other options describe component or hook behavior.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 4 of 5</div><p>What does npm run build check that a browser walkthrough may miss?</p><label class="quiz-option" data-val="a">Whether every explanation in the tutorial is memorable while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="b">Whether production bundling resolves imports and creates deployable output</label><label class="quiz-option" data-val="c">Whether the API will always remain online</label><label class="quiz-option" data-val="d">Whether every possible user interaction has a test</label><div class="explanation">The production build catches packaging, import, and asset problems. It does not guarantee server uptime or complete behavioral coverage.</div></div>
+<div class="quiz-question" data-answer="b"><div class="question-num">Question 5 of 5</div><p>What makes a capstone explanation convincing?</p><label class="quiz-option" data-val="a">It uses the largest possible number of architecture terms while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="b">It names the files, follows a real action, and explains why each part exists</label><label class="quiz-option" data-val="c">It repeats every source line in the order it appears</label><label class="quiz-option" data-val="d">It claims the current structure will never need to change</label><div class="explanation">Real understanding connects behavior to concrete files and reasons. Vocabulary without the working story does not demonstrate mastery.</div></div><button class="submit-btn" disabled>Submit Pre-Quiz</button><div class="quiz-result" id="pre-result"></div></div>
+<hr class="section-divider" />
         <h2>3. The Concept — One Product, Connected Boundaries</h2>
         <div class="alert alert-info">
           <strong>Big picture:</strong> Walk the complete application from
@@ -643,114 +539,12 @@ git commit -m "session-40: capstone review"</code></pre>
           </div>
         </div>
         <hr class="section-divider" />
-        <h2>8. Post-Coding Quiz</h2>
-        <div id="post-quiz">
-          <div class="quiz-question" data-answer="a">
-            <div class="question-num">Question 1 of 5</div>
-            <p>
-              Which statement best captures one product, connected boundaries?
-            </p>
-            <label class="quiz-option" data-val="a"
-              >The capstone is complete when behavior works, boundaries can be
-              explained, and evidence supports the important decisions.</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file, even when the feature or file performs a different job</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              This is the main idea of the lesson. In plain English: You can
-              tell the app’s whole story, show that it survives problems, and
-              explain why the code is divided the way it is.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="b">
-            <div class="question-num">Question 2 of 5</div>
-            <p>What should guide the next engineering change?</p>
-            <label class="quiz-option" data-val="a"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="b"
-              >What the person can see, which file controls it, and a test that checks it</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Professionals connect a proposed change to a real consequence
-              rather than a preference.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="c">
-            <div class="question-num">Question 3 of 5</div>
-            <p>What should remain stable during a refactor?</p>
-            <label class="quiz-option" data-val="a"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >The user-visible behavior and the inputs and results that other code already relies on being
-              protected</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Internal files may move, but the promise to callers and users
-              should change only intentionally.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="d">
-            <div class="question-num">Question 4 of 5</div>
-            <p>What does a useful verification checkpoint do?</p>
-            <label class="quiz-option" data-val="a"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >It checks the exact boundary or user journey that the step could
-              break</label
-            >
-            <div class="explanation">
-              A targeted check makes failure easier to locate than one final
-              visual glance.
-            </div>
-          </div>
-          <div class="quiz-question" data-answer="a">
-            <div class="question-num">Question 5 of 5</div>
-            <p>What demonstrates mastery of this session?</p>
-            <label class="quiz-option" data-val="a"
-              >Explaining the decision, implementing it, and naming its
-              tradeoff</label
-            ><label class="quiz-option" data-val="b"
-              >Move every responsibility into App so the complete process exists
-              in one file</label
-            ><label class="quiz-option" data-val="c"
-              >Add another helper, hook, or file before knowing what real problem it would solve</label
-            ><label class="quiz-option" data-val="d"
-              >Judge the result only by whether the final page looks
-              approximately correct</label
-            >
-            <div class="explanation">
-              Understanding includes the reason and cost, not merely copying the
-              shown code.
-            </div>
-          </div>
-          <button class="submit-btn" disabled>Submit Post-Quiz</button>
-          <div class="quiz-result" id="post-result"></div>
-        </div>
-        <h2>9. Reflection Questions</h2>
+        <h2>8. Post-Coding Quiz</h2><div id="post-quiz"><div class="quiz-question" data-answer="a"><div class="question-num">Question 1 of 5</div><p>Search works, but clearing it does not restore all countries. Which route should you trace?</p><label class="quiz-option" data-val="a">Button onClick → clearSearch → searchTerm update → filteredCountries → CountryList</label><label class="quiz-option" data-val="b">CountryCard count state → country service → document.title → App CSS while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="c">API status → Favorite button → CountryCard region → search input</label><label class="quiz-option" data-val="d">CountryList map → npm build → browser history → clearSearch</label><div class="explanation">Follow the actual user action through its callback, state change, recalculation, and rendered list. That route isolates where the behavior stopped.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 2 of 5</div><p>The API changes name.common to displayName. Which file should absorb most of that change?</p><label class="quiz-option" data-val="a">src/features/countries/countryServices.js</label><label class="quiz-option" data-val="b">src/features/countries/CountryCard.jsx while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="c">src/component/CountryList.jsx</label><label class="quiz-option" data-val="d">src/component/ui/button.jsx</label><div class="explanation">The service translates provider fields into the app’s familiar Country shape. Keeping that translation there protects presentation components.</div></div>
+<div class="quiz-question" data-answer="a"><div class="question-num">Question 3 of 5</div><p>Which capstone evidence best protects the favorite feature?</p><label class="quiz-option" data-val="a">A test that clicks Add favorite and observes the changed label</label><label class="quiz-option" data-val="b">A screenshot showing several country cards before interaction while preserving the existing behavior throughout the entire component tree</label><label class="quiz-option" data-val="c">A comment stating that CountryList owns state</label><label class="quiz-option" data-val="d">A successful test of response.ok handling</label><div class="explanation">The favorite promise is interactive and visible. A click-and-observe test proves the state route works rather than merely documenting its intention.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 4 of 5</div><p>Tests pass, but npm run build fails on an import path. Is the capstone ready to deploy?</p><label class="quiz-option" data-val="a">Yes, because tests always represent production exactly</label><label class="quiz-option" data-val="b">Yes, if the development server displayed the page once</label><label class="quiz-option" data-val="c">No, because the production package cannot be created successfully</label><label class="quiz-option" data-val="d">No, because passing tests should be deleted before building while preserving the existing behavior throughout the entire component tree</label><div class="explanation">Tests and builds check different risks. A failed production build is a real deployment blocker even when behavior tests pass.</div></div>
+<div class="quiz-question" data-answer="c"><div class="question-num">Question 5 of 5</div><p>Which next-step note is most useful?</p><label class="quiz-option" data-val="a">Improve architecture when there is more time</label><label class="quiz-option" data-val="b">Maybe add more tests and polish later</label><label class="quiz-option" data-val="c">Add a test for an API record missing name because the service currently assumes it exists</label><label class="quiz-option" data-val="d">Rewrite every component to prepare for unknown future features while preserving the existing behavior throughout the entire component tree</label><div class="explanation">A useful next step names the exact risk, location, and evidence needed. Vague cleanup language gives the next developer no actionable starting point.</div></div><button class="submit-btn" disabled>Submit Post-Quiz</button><div class="quiz-result" id="post-result"></div></div>
+<h2>9. Reflection Questions</h2>
         <div class="card">
           <ol class="reflection-list">
             <li class="reflection-item">
